@@ -1,2 +1,16 @@
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\Wonderland Private Server\bin\Debug\Wonderland Private Server.exe.config
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe.config
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\Octokit.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Form1.resources
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Properties.Resources.resources
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.exe
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\GupdtSrv.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\GupdtSrv.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\WloPSrvUpdater.exe
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\WloPSrvUpdater.pdb
