@@ -32,6 +32,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DBConnector">
+      <HintPath>DBConnector\bin\Debug\DBConnector.dll</HintPath>
+    </Reference>
+    <Reference Include="GupdtSrv, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>GupdtSrv\bin\Debug\GupdtSrv.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
     <Reference Include="Octokit">
       <HintPath>packages\Octokit.0.4.1\lib\net45\Octokit.dll</HintPath>
     </Reference>
@@ -49,8 +57,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="cGlobal.cs" />
+    <Compile Include="Config\Game\PetConfigs.cs" />
     <Compile Include="Config\Repository.cs" />
     <Compile Include="Config\Update.cs" />
+    <Compile Include="DataManagement\DataBase\UserDataBase.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -65,6 +75,7 @@
     <Compile Include="UI\ShutDown Dialog.Designer.cs">
       <DependentUpon>ShutDown Dialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\Log.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -95,18 +106,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ActionCodes\" />
+    <Folder Include="Code\Enums\" />
+    <Folder Include="Code\Objects\" />
+    <Folder Include="DataManagement\DataFiles\" />
+    <Folder Include="GM\" />
+    <Folder Include="Maps\Islands\NorthIsland\" />
     <Folder Include="Network\" />
-    <Folder Include="Utilities\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="GupdtSrv\GupdtSrv.csproj">
-      <Project>{ad0e6a50-c8a5-42c1-badf-5bc148ffde01}</Project>
-      <Name>GupdtSrv</Name>
-    </ProjectReference>
-    <ProjectReference Include="WloPSrvUpdater\WloPSrvUpdater.csproj">
-      <Project>{8fb75dee-2430-4856-b1a6-e4240d2f579f}</Project>
-      <Name>WloPSrvUpdater</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

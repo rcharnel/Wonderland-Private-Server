@@ -1,0 +1,5 @@
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\DBConnector\bin\Debug\DBConnector.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\DBConnector\bin\Debug\DBConnector.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\DBConnector\obj\Debug\DBConnector.csprojResolveAssemblyReference.cache
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\DBConnector\obj\Debug\DBConnector.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\DBConnector\obj\Debug\DBConnector.pdb

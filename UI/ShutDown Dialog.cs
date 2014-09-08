@@ -28,7 +28,7 @@ namespace Wonderland_Private_Server.UI
 
         private async void ShutDown_Dialog_Load(object sender, EventArgs e)
         {
-            Task shutdwn = new Task(() =>
+            Task shutdwn = new Task(new Action(() =>
             {
                 int max = cGlobal.ThreadManager.Count;
                 int cnt = 0;
@@ -54,7 +54,7 @@ namespace Wonderland_Private_Server.UI
                 Thread.Sleep(5000);
 
                 this.Invoke(new Action(() => { Close(); }));
-            });
+            }));
              shutdwn.Start();
         }
 
