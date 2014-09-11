@@ -37,9 +37,32 @@ namespace Wonderland_Private_Server
             //load Updater
             cGlobal.GClient.Initialize(ref cGlobal.ThreadManager);
 
-            //intial check  if theres an update
-
+            #region intial check  if theres an update
             Thread.Sleep(2000);
+            Utilities.LogServices.Log("Checking For Update...");
+            if (cGlobal.GClient.UpdateFound && cGlobal.GClient.AutoUpdate)
+            {
+                if (cGlobal.GClient.AutoUpdate_At < DateTime.Now)
+                {
+                    updating = true;
+                    run = false;
+                    goto ShutDwn;
+                }
+            }
+            #endregion
+
+            #region Initialize Objects
+            cGlobal.WLO_World = new Network.WorldManager();
+
+
+            #endregion
+
+
+            #region Initialize the Wonderland Server
+            cGlobal.WLO_World.Initialize();
+            Network.ListenSocket.Initialize();
+            #endregion
+
             do
             {
                 if (cGlobal.GClient.UpdateFound && cGlobal.GClient.AutoUpdate)
@@ -51,9 +74,16 @@ namespace Wonderland_Private_Server
                     }
                 }
 
+
+                foreach (var t in cGlobal.ThreadManager.ToList())
+                    if (!t.IsAlive)
+                        cGlobal.ThreadManager.Remove(t);
+
                 Thread.Sleep(1);
             }
             while (run);
+
+            ShutDwn:
 
             this.Invoke(new Action(() => { this.Enabled = false; }));
 

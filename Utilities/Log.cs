@@ -28,11 +28,11 @@ namespace Wonderland_Private_Server.Utilities
         /// Logs a system/Error event
         /// </summary>
         /// <param name="info"></param>
-        public static void Log(object info)
+        public static void Log(object info, string stype = "")
         {
-            if(info is string)
-            LogHistory.Enqueue(new LogItem() {happenat = DateTime.Now, eventtype = "System", message = info.ToString() });
-            else if(info is Exception)
+            if (info is string)
+                LogHistory.Enqueue(new LogItem() { happenat = DateTime.Now, eventtype = (stype == "") ? "System" : stype, message = info.ToString() });
+            else if (info is Exception)
             {
                 //Handle Exceptions differently
                 LogItem error = new LogItem();

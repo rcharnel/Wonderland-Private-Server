@@ -56,19 +56,74 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionCodes\AC.cs" />
+    <Compile Include="Bots\Cupid.cs" />
+    <Compile Include="Bots\GmBot.cs" />
     <Compile Include="cGlobal.cs" />
+    <Compile Include="Code\Enums\BattleEnum.cs" />
+    <Compile Include="Code\Enums\CharEnums.cs" />
+    <Compile Include="Code\Enums\Class1.cs" />
+    <Compile Include="Code\Enums\DataBaseEnums.cs" />
+    <Compile Include="Code\Enums\DBEnums.cs" />
+    <Compile Include="Code\Enums\ItemEnums.cs" />
+    <Compile Include="Code\Enums\MapEnums.cs" />
+    <Compile Include="Code\Enums\NpcEnums.cs" />
+    <Compile Include="Code\Enums\PetEnums.cs" />
+    <Compile Include="Code\Enums\PlayerEnums.cs" />
+    <Compile Include="Code\Enums\StatEnums.cs" />
+    <Compile Include="Code\Enums\WorldEnums.cs" />
+    <Compile Include="Code\Interface\Fighter.cs" />
+    <Compile Include="Code\Objects\Battle.cs" />
+    <Compile Include="Code\Objects\Character.cs" />
+    <Compile Include="Code\Objects\Class1.cs" />
+    <Compile Include="Code\Objects\Equipement.cs" />
+    <Compile Include="Code\Objects\Guild.cs" />
+    <Compile Include="Code\Objects\inGameSettings.cs" />
+    <Compile Include="Code\Objects\Inventory.cs" />
+    <Compile Include="Code\Objects\Item.cs" />
+    <Compile Include="Code\Objects\Mail.cs" />
+    <Compile Include="Code\Objects\Pet.cs" />
+    <Compile Include="Code\Objects\Player.cs" />
+    <Compile Include="Code\Objects\Quest.cs" />
+    <Compile Include="Code\Objects\RiceBall.cs" />
+    <Compile Include="Code\Objects\Skills.cs" />
+    <Compile Include="Code\Objects\Team.cs" />
+    <Compile Include="Code\Objects\Tent.cs" />
+    <Compile Include="Code\Objects\TentItem.cs" />
+    <Compile Include="Code\Objects\Trade.cs" />
+    <Compile Include="Code\Objects\Warp.cs" />
     <Compile Include="Config\Game\PetConfigs.cs" />
     <Compile Include="Config\Repository.cs" />
     <Compile Include="Config\Update.cs" />
+    <Compile Include="DataManagement\DataBase\CharacterDataBase.cs" />
+    <Compile Include="DataManagement\DataBase\GameDataBase.cs" />
     <Compile Include="DataManagement\DataBase\UserDataBase.cs" />
+    <Compile Include="DataManagement\DataFiles\Compound2Dat.cs" />
+    <Compile Include="DataManagement\DataFiles\EveExt.cs" />
+    <Compile Include="DataManagement\DataFiles\EveLoader.cs" />
+    <Compile Include="DataManagement\DataFiles\GroundMMg.cs" />
+    <Compile Include="DataManagement\DataFiles\ItemManager.cs" />
+    <Compile Include="DataManagement\DataFiles\NpcManager.cs" />
+    <Compile Include="DataManagement\DataFiles\SceneLoader.cs" />
+    <Compile Include="DataManagement\DataFiles\SkillManager.cs" />
+    <Compile Include="Delegates.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GM\BigLetterLogo.cs" />
+    <Compile Include="Maps\Map.cs" />
+    <Compile Include="Maps\MapObject.cs" />
+    <Compile Include="Network\Client.cs" />
+    <Compile Include="Network\Socket.cs" />
+    <Compile Include="Network\Listener.cs" />
+    <Compile Include="Network\Packet.cs" />
+    <Compile Include="Network\WorldManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Config\Settings.cs" />
     <Compile Include="UI\ShutDown Dialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -106,13 +161,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ActionCodes\" />
-    <Folder Include="Code\Enums\" />
-    <Folder Include="Code\Objects\" />
-    <Folder Include="DataManagement\DataFiles\" />
-    <Folder Include="GM\" />
+    <Folder Include="bin\Debug\Data\" />
+    <Folder Include="bin\Release\Data\" />
+    <Folder Include="GM\Commands\" />
+    <Folder Include="Items\" />
     <Folder Include="Maps\Islands\NorthIsland\" />
-    <Folder Include="Network\" />
+    <Folder Include="Quests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

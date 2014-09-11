@@ -14,3 +14,5 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\GupdtS
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\DBConnector.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\DBConnector.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.xml
