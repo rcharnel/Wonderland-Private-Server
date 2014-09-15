@@ -51,7 +51,8 @@ namespace Wonderland_Private_Server.UI
                     Process.Start(start);                    
 
                 }
-                Thread.Sleep(5000);
+                dispMsg = "Server Shutdown Completed..";
+                Thread.Sleep(3000);
 
                 this.Invoke(new Action(() => { Close(); }));
             }));

@@ -19,6 +19,7 @@ namespace Wonderland_Private_Server
         public static Network.WorldManager WLO_World;
 
 
+        public static DBConnector.DBOAuth gDataBaseConnection = new DBConnector.DBOAuth();
         public static DataManagement.DataBase.CharacterDataBase gCharacterDataBase;
         public static DataManagement.DataBase.UserDataBase gUserDataBase;
         public static DataManagement.DataBase.GameDataBase gGameDataBase;

@@ -20,14 +20,13 @@ namespace DBConnector
     {
         bool VerifyPassword(string check, string with);
     }
-
     public sealed class DBOAuth:IDBConnector
     {
+
         //Not all settings might be used depending on type of DB
         //Server Type 
-
-
-        const DBType ServType = DBType.Undefined;
+        
+        const DBType ServType = DBType.Sqlite;
 
         //MySql/SQl Settings
         const string User = "";
@@ -37,14 +36,24 @@ namespace DBConnector
         const string ServerIP = "";
         
         //SQLite Settings
-        const string FileLocation = "";
+        //Change to location of DB File
+        const string FileLocation = "C:\\PServerFiles\\WonderlandPServer.s3db";
 
         public DBType TypeofDB { get { return ServType; } }
         public bool VerifyConnection()
         {
             switch(ServType)
             {
-                case DBType.Sqlite: return System.IO.File.Exists(FileLocation);
+                case DBType.Sqlite:
+                    {
+                        if (System.IO.File.Exists(FileLocation))
+                        {
+                            SQLiteConnection cnn = new SQLiteConnection(Connection_String);
+                            cnn.Open();
+                            cnn.Close();
+                            return true;
+                        }
+                    }break;
             }
             return false;
         }
@@ -75,17 +84,22 @@ namespace DBConnector
             {
                 case DBType.Sqlite:
                     {
-                        SQLiteConnection cnn = new SQLiteConnection(FileLocation);
-                        cnn.Open();
-                        SQLiteCommand mycommand = new SQLiteCommand(cnn);
-                        mycommand.CommandText = query;
-                        SQLiteDataReader reader = mycommand.ExecuteReader();
-                        dt.Load(reader);
-                        reader.Close();
-                        cnn.Close();
-                        return dt;
-                    }
+                        SQLiteConnection cnn = new SQLiteConnection(Connection_String);
+                        try
+                        {
+                            cnn.Open();
+                            SQLiteCommand mycommand = new SQLiteCommand(cnn);
+                            mycommand.CommandText = query;
+                            SQLiteDataReader reader = mycommand.ExecuteReader();
+                            dt.Load(reader);
+                            reader.Close();
+                            cnn.Close();
+                            return dt;
+                        }
+                        catch { cnn.Close(); }
+                    }break;
             }
+
             return null;
         }
 
@@ -98,7 +112,7 @@ namespace DBConnector
             {
                 case DBType.Sqlite:
                     {
-                        SQLiteConnection cnn = new SQLiteConnection(FileLocation);
+                        SQLiteConnection cnn = new SQLiteConnection(Connection_String);
                         cnn.Open();
                         SQLiteCommand mycommand = new SQLiteCommand(cnn);
                         mycommand.CommandText = string.Format("select* from {0} where {1}", Table, where);
@@ -117,7 +131,7 @@ namespace DBConnector
             {
                 case DBType.Sqlite:
                     {
-                        SQLiteConnection cnn = new SQLiteConnection(FileLocation);
+                        SQLiteConnection cnn = new SQLiteConnection(Connection_String);
                         cnn.Open();
                         SQLiteCommand mycommand = new SQLiteCommand(cnn);
                         mycommand.CommandText = sql;

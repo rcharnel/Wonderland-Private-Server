@@ -22,7 +22,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             byte[] data = File.ReadAllBytes(filename);
             eveData = data;
             try { ReadData(data); }
-            catch (Exception e) { Utilities.LogServices.Log(e.Message, this.ToString()); return false; }
+            catch (Exception e) { Utilities.LogServices.Log(e); return false; }
             Utilities.LogServices.Log("done loading Eve");
             return true;
         }

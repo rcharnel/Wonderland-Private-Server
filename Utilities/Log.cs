@@ -7,10 +7,15 @@ using System.Collections.Concurrent;
 
 namespace Wonderland_Private_Server.Utilities
 {
-    struct LogItem
+    public enum LogType
+    {
+        SYS,
+        ERR,
+    }
+    public struct LogItem
     {
         public DateTime happenat;
-        public string eventtype;
+        public LogType eventtype;
         public string message;
         public string where;
         public override string ToString()
@@ -21,24 +26,26 @@ namespace Wonderland_Private_Server.Utilities
 
     public static class LogServices
     {
-        static ConcurrentQueue<LogItem> LogHistory;
-
+        public static ConcurrentQueue<LogItem> LogHistory = new ConcurrentQueue<LogItem>();
 
         /// <summary>
         /// Logs a system/Error event
         /// </summary>
         /// <param name="info"></param>
-        public static void Log(object info, string stype = "")
+        public static void Log(object info, LogType stype = LogType.SYS)
         {
             if (info is string)
-                LogHistory.Enqueue(new LogItem() { happenat = DateTime.Now, eventtype = (stype == "") ? "System" : stype, message = info.ToString() });
+            {
+                var sys = new LogItem() { happenat = DateTime.Now, eventtype = stype, message = info.ToString() };
+                LogHistory.Enqueue(sys);
+            }
             else if (info is Exception)
             {
                 //Handle Exceptions differently
                 LogItem error = new LogItem();
                 error.message = (info as Exception).Message;
                 error.where = (info as Exception).StackTrace;
-                error.eventtype = "Error";
+                error.eventtype = LogType.ERR;
                 error.happenat = DateTime.Now;
                 LogHistory.Enqueue(error);
             }

@@ -31,11 +31,44 @@ namespace Wonderland_Private_Server
         }
 
 
+        void GuiThread()
+        {
+            do
+            {
+                if(Utilities.LogServices.LogHistory.Count > 0)
+                {
+                    Utilities.LogItem j;
+
+                    if (Utilities.LogServices.LogHistory.TryDequeue(out j))
+                    {
+                        this.Invoke(new Action(() =>
+                        {
+                            switch (j.eventtype)
+                            {
+                                case Utilities.LogType.SYS: SystemLog.AppendText(j.happenat.ToShortTimeString() + "|" + j.eventtype + "|" + j.message+"\r\n"); break;
+                            }
+                        }));
+                    }
+                }
+                Thread.Sleep(1);
+            }
+            while (true);
+        }
         void MainThreadWork()
         {
 
             //load Updater
             cGlobal.GClient.Initialize(ref cGlobal.ThreadManager);
+
+
+
+            #region Intialize Base Threads
+            Utilities.LogServices.Log("Intializing Gui Thread");
+            Thread tmp2 = new Thread(new ThreadStart(GuiThread));
+            tmp2.Start();
+            cGlobal.ThreadManager.Add(tmp2);
+
+            #endregion
 
             #region intial check  if theres an update
             Thread.Sleep(2000);
@@ -52,13 +85,37 @@ namespace Wonderland_Private_Server
             #endregion
 
             #region Initialize Objects
+            Utilities.LogServices.Log("Intializing Objs");
             cGlobal.WLO_World = new Network.WorldManager();
+
+            cGlobal.gCharacterDataBase = new DataManagement.DataBase.CharacterDataBase();
+            cGlobal.gEveManager = new DataManagement.DataFiles.EveManager();
+            cGlobal.gGameDataBase = new DataManagement.DataBase.GameDataBase();
+            cGlobal.gItemManager = new DataManagement.DataFiles.ItemManager();
+            cGlobal.gSkillManager = new DataManagement.DataFiles.SkillDataFile();
+            cGlobal.gUserDataBase = new DataManagement.DataBase.UserDataBase();
+            
+
+            #endregion
+
+            #region DataBase Initialization
+            Utilities.LogServices.Log("Verifying DataBase Authencation Setup");
+            if(cGlobal.gDataBaseConnection.VerifyConnection())
+                Utilities.LogServices.Log("Connection Successful");
+            else
+                Utilities.LogServices.Log("Connection not successful");
+
+            Utilities.LogServices.Log("Verifying DataBase Tables");
+            cGlobal.gUserDataBase.VerifySetup();
+            cGlobal.gCharacterDataBase.VerifySetup();
+            cGlobal.gGameDataBase.VerifySetup();
 
 
             #endregion
 
 
             #region Initialize the Wonderland Server
+            Utilities.LogServices.Log("Jump Starting Server...");
             cGlobal.WLO_World.Initialize();
             Network.ListenSocket.Initialize();
             #endregion
