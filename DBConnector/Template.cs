@@ -75,7 +75,7 @@ namespace DBConnector
 
         }
 
-        public DataTable GetDataTable(string query)
+        public DataTable GetDataTable(string query,KeyValuePair<string,string>[] parameters = null)
         {
 
             DataTable dt = new DataTable();
@@ -90,6 +90,9 @@ namespace DBConnector
                             cnn.Open();
                             SQLiteCommand mycommand = new SQLiteCommand(cnn);
                             mycommand.CommandText = query;
+                            if (parameters != null)
+                                foreach (var t in parameters)
+                                    mycommand.Parameters.AddWithValue(t.Key, t.Value);
                             SQLiteDataReader reader = mycommand.ExecuteReader();
                             dt.Load(reader);
                             reader.Close();
@@ -102,8 +105,7 @@ namespace DBConnector
 
             return null;
         }
-
-        public DataTable GetDataTable(string Table, string where)
+        public DataTable GetDataTable(string Table, string where, KeyValuePair<string, string>[] parameters = null)
         {
 
             DataTable dt = new DataTable();
@@ -116,6 +118,9 @@ namespace DBConnector
                         cnn.Open();
                         SQLiteCommand mycommand = new SQLiteCommand(cnn);
                         mycommand.CommandText = string.Format("select* from {0} where {1}", Table, where);
+                        if (parameters != null)
+                            foreach (var t in parameters)
+                                mycommand.Parameters.AddWithValue(t.Key, t.Value);
                         SQLiteDataReader reader = mycommand.ExecuteReader();
                         dt.Load(reader);
                         reader.Close();
@@ -124,7 +129,7 @@ namespace DBConnector
             }
             return dt;
         }
-        public int ExecuteNonQuery(string sql)
+        public int ExecuteNonQuery(string sql, KeyValuePair<string, string>[] parameters = null)
         {
             int rowsUpdated = 0;
             switch (ServType)
@@ -135,6 +140,9 @@ namespace DBConnector
                         cnn.Open();
                         SQLiteCommand mycommand = new SQLiteCommand(cnn);
                         mycommand.CommandText = sql;
+                        if (parameters != null)
+                            foreach (var t in parameters)
+                                mycommand.Parameters.AddWithValue(t.Key, t.Value);
                         rowsUpdated = mycommand.ExecuteNonQuery();
                         cnn.Close();
                     } break;
@@ -157,71 +165,41 @@ namespace DBConnector
         //    return "";
         //}
 
-        //public bool Update(String tableName, Dictionary<string, string> data, String where)
-        //{
-        //    g.Log(cActionType.DatabaseAction, "Updating " + tableName);
-        //    String vals = "";
-        //    Boolean returnCode = true;
-        //    if (data.Count >= 1)
-        //    {
-        //        foreach (KeyValuePair<String, String> val in data)
-        //        {
-        //            vals += String.Format(" {0} = '{1}',", val.Key.ToString(), val.Value.ToString());
-        //        }
-        //        vals = vals.Substring(0, vals.Length - 1);
-        //    }
-        //    try
-        //    {
-        //        this.ExecuteNonQuery(String.Format("update {0} set {1} where {2};", tableName, vals, where));
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        g.LogError(this.ToString(), e.Message);
-        //        returnCode = false;
-        //    }
-        //    return returnCode;
-        //}
+        public void Update(String tableName, Dictionary<string, string> data, String where, KeyValuePair<string, string>[] parameters = null)
+        {
+            String vals = "";
+            if (data.Count >= 1)
+            {
+                foreach (KeyValuePair<String, String> val in data)
+                {
+                    vals += String.Format(" {0} = '{1}',", val.Key.ToString(), val.Value.ToString());
+                }
+                vals = vals.Substring(0, vals.Length - 1);
+            }
+            this.ExecuteNonQuery(String.Format("update {0} set {1} where {2};", tableName, vals, where), parameters);
 
-        //public bool Delete(String tableName, String where)
-        //{
-        //    g.Log(cActionType.DatabaseAction, "Deleting from " + tableName);
-        //    Boolean returnCode = true;
-        //    try
-        //    {
-        //        this.ExecuteNonQuery(String.Format("delete from {0} where {1};", tableName, where));
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        g.LogError(this.ToString(), e.Message);
-        //        returnCode = false;
-        //    }
-        //    return returnCode;
-        //}
+        }
 
-        //public bool Insert(String tableName, Dictionary<String, String> data)
-        //{
-        //    g.Log(cActionType.DatabaseAction, "Inserting into " + tableName);
-        //    String columns = "";
-        //    String values = "";
-        //    Boolean returnCode = true;
-        //    foreach (KeyValuePair<String, String> val in data)
-        //    {
-        //        columns += String.Format(" {0},", val.Key.ToString());
-        //        values += String.Format(" '{0}',", val.Value);
-        //    }
-        //    columns = columns.Substring(0, columns.Length - 1);
-        //    values = values.Substring(0, values.Length - 1);
-        //    try
-        //    {
-        //        this.ExecuteNonQuery(String.Format("insert into {0}({1}) values({2});", tableName, columns, values));
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        g.LogError(this.ToString(), e.Message);
-        //        returnCode = false;
-        //    }
-        //    return returnCode;
-        //}
+        public void Delete(String tableName, String where, KeyValuePair<string, string>[] parameters = null)
+        {
+            this.ExecuteNonQuery(String.Format("delete from {0} where {1};", tableName, where, parameters));
+        }
+
+        public void Insert(String tableName, Dictionary<String, String> data)
+        {
+            String columns = "";
+            String values = "";
+
+            foreach (KeyValuePair<String, String> val in data)
+            {
+                columns += String.Format(" {0},", val.Key.ToString());
+                values += String.Format(" '{0}',", val.Value);
+            }
+            columns = columns.Substring(0, columns.Length - 1);
+            values = values.Substring(0, values.Length - 1);
+
+            this.ExecuteNonQuery(String.Format("insert into {0}({1}) values({2});", tableName, columns, values));
+        }
 
         //public bool ClearDB()
         //{

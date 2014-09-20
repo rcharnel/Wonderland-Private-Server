@@ -82,8 +82,8 @@ namespace Wonderland_Private_Server.Code.Objects
             m_nTimer = Environment.TickCount;
             ip = ((IPEndPoint)sock.RemoteEndPoint).Address;
             port = ((IPEndPoint)sock.RemoteEndPoint).Port;
-            //ThreadPool.QueueUserWorkItem(Recv_Send);
             wrk.Start();
+            cGlobal.ThreadManager.Add(wrk);
             aclist = new Dictionary<int, ActionCodes.AC>();
             base.Clear();
             BlockSave = true;

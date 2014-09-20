@@ -35,7 +35,7 @@ namespace Wonderland_Private_Server
         {
             do
             {
-                if(Utilities.LogServices.LogHistory.Count > 0)
+                if (Utilities.LogServices.LogHistory.Count > 0)
                 {
                     Utilities.LogItem j;
 
@@ -45,7 +45,9 @@ namespace Wonderland_Private_Server
                         {
                             switch (j.eventtype)
                             {
-                                case Utilities.LogType.SYS: SystemLog.AppendText(j.happenat.ToShortTimeString() + "|" + j.eventtype + "|" + j.message+"\r\n"); break;
+                                case Utilities.LogType.SYS: SystemLog.AppendText(j.happenat.ToShortTimeString() + "|" + j.eventtype + "|" + j.message + "\r\n=============================\r\n"); break;
+                                case Utilities.LogType.NET: NetWorkLog.AppendText(j.happenat.ToShortTimeString() + "|" + j.eventtype + "|" + j.message + "r\n===========================\r\n"); break;
+                                case Utilities.LogType.ERR: errorLog.AppendText(j.happenat.ToShortTimeString() + "|" + j.where + "|" + j.message + "\r\n============================\r\n"); break;
                             }
                         }));
                     }

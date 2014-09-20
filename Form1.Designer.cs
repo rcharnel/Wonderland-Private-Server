@@ -35,13 +35,19 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.SystemLog = new System.Windows.Forms.RichTextBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.NetWorkLog = new System.Windows.Forms.RichTextBox();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.errorLog = new System.Windows.Forms.RichTextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -94,6 +100,8 @@
             // tabControl2
             // 
             this.tabControl2.Controls.Add(this.tabPage3);
+            this.tabControl2.Controls.Add(this.tabPage4);
+            this.tabControl2.Controls.Add(this.tabPage5);
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl2.Location = new System.Drawing.Point(3, 3);
             this.tabControl2.Name = "tabControl2";
@@ -112,6 +120,15 @@
             this.tabPage3.Text = "System";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // SystemLog
+            // 
+            this.SystemLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SystemLog.Location = new System.Drawing.Point(3, 3);
+            this.SystemLog.Name = "SystemLog";
+            this.SystemLog.Size = new System.Drawing.Size(655, 346);
+            this.SystemLog.TabIndex = 0;
+            this.SystemLog.Text = "";
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.textBox1);
@@ -124,14 +141,45 @@
             this.tabPage2.Text = "Update";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // SystemLog
+            // tabPage4
             // 
-            this.SystemLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SystemLog.Location = new System.Drawing.Point(3, 3);
-            this.SystemLog.Name = "SystemLog";
-            this.SystemLog.Size = new System.Drawing.Size(655, 346);
-            this.SystemLog.TabIndex = 0;
-            this.SystemLog.Text = "";
+            this.tabPage4.Controls.Add(this.NetWorkLog);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(661, 352);
+            this.tabPage4.TabIndex = 1;
+            this.tabPage4.Text = "NetWork";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // NetWorkLog
+            // 
+            this.NetWorkLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.NetWorkLog.Location = new System.Drawing.Point(3, 3);
+            this.NetWorkLog.Name = "NetWorkLog";
+            this.NetWorkLog.Size = new System.Drawing.Size(655, 346);
+            this.NetWorkLog.TabIndex = 0;
+            this.NetWorkLog.Text = "";
+            // 
+            // tabPage5
+            // 
+            this.tabPage5.Controls.Add(this.errorLog);
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage5.Size = new System.Drawing.Size(661, 352);
+            this.tabPage5.TabIndex = 2;
+            this.tabPage5.Text = "Errors";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // errorLog
+            // 
+            this.errorLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.errorLog.Location = new System.Drawing.Point(3, 3);
+            this.errorLog.Name = "errorLog";
+            this.errorLog.Size = new System.Drawing.Size(655, 346);
+            this.errorLog.TabIndex = 0;
+            this.errorLog.Text = "";
             // 
             // Form1
             // 
@@ -151,6 +199,8 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage5.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -167,6 +217,10 @@
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.RichTextBox SystemLog;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.RichTextBox NetWorkLog;
+        private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.RichTextBox errorLog;
     }
 }
 

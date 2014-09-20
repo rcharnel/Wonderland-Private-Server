@@ -61,6 +61,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCodes\AC.cs" />
+    <Compile Include="ActionCodes\AC0.cs" />
+    <Compile Include="ActionCodes\AC09.cs" />
+    <Compile Include="ActionCodes\AC35.cs" />
+    <Compile Include="ActionCodes\AC63.cs" />
     <Compile Include="Bots\Cupid.cs" />
     <Compile Include="Bots\GmBot.cs" />
     <Compile Include="cGlobal.cs" />
@@ -135,6 +139,7 @@
       <DependentUpon>ShutDown Dialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\Log.cs" />
+    <Compile Include="Web\WebServer.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -171,6 +176,7 @@
     <Folder Include="Items\" />
     <Folder Include="Maps\Islands\NorthIsland\" />
     <Folder Include="Quests\" />
+    <Folder Include="UI\WebUI\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="x64\SQLite.Interop.dll">

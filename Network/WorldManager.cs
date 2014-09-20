@@ -191,7 +191,7 @@ namespace Wonderland_Private_Server.Network
             while (!killFlag);
 
             foreach (var c in ConnectedPlayers.Values)
-                foreach(var p in c.Values)
+                foreach(var p in c.Values.ToList())
             {
                 p.Disconnect();
                 PlayerDisconnected(p);
@@ -241,75 +241,56 @@ namespace Wonderland_Private_Server.Network
         /// <param CharacterName="map"></param>
         /// <param CharacterName="src"></param>
         /// <returns></returns>
-        //public bool TransferinGame(ushort map, ref Player src)
-        //{
-        //    lock (mylock)
-        //    {
-        //        bool loadmap = false;
-        //        // load map if necessary
-        //        if (MapList.ContainsKey(map))
-        //            try { MapList[map].onLogin(ref src); loadmap = true; if (WorldEvent != null) WorldEvent(src, WorldEventType.PlayerLogon); }
-        //            catch (Exception ex) { Utilities.LogServices.Log(ex.Message); }
-        //        else
-        //        {
-        //            try
-        //            {
-        //                Map newmap = null;
-        //                foreach (var m in MapList.Values.ToList())
-        //                {
-        //                    if (m.MapID == map)
-        //                    {
-        //                         newmap = m.Copy<Map>();
-        //                        if (newmap != null)
-        //                        {
-        //                            newmap.onLogin(ref src);
-        //                            MapList.TryAdd(m.MapID, newmap);
-        //                            Utilities.LogServices.Log("Loaded Map (" + m.MapID.ToString() + ") " + m.Name);
-        //                            if (WorldEvent != null) WorldEvent(src, WorldEventType.PlayerLogon);
-        //                            return true;
-        //                        }
-        //                    }
-                            
-        //                }
-        //                if(newmap == null)
-        //                {
-        //                    newmap = new Map();
-        //                }
-        //            }
-        //            catch (Exception ex) { Utilities.LogServices.Log(ex.Message); }
-        //        }
-        //        return loadmap;
-        //    }
-        //}
+        public bool TransferinGame(ushort map, ref Player src)
+        {
+            lock (mylock)
+            {
+                bool loadmap = false;
+                // load map if necessary
+                if (MapList.ContainsKey(map))
+                    try { MapList[map].onLogin(ref src); loadmap = true; }
+                    catch (Exception ex) { Utilities.LogServices.Log(ex.Message); }
+                else
+                {
+                    try
+                    {
+                        var newmap = cGlobal.GetMap(map);
 
-        //public void Teleport(byte portalID, WarpData map, Player target)
-        //{
-        //    Player r = target;
-        //    if (MapList.ContainsKey(map.DstMap))
-        //        try { MapList[map.DstMap].onWarp_In(portalID, ref r, map); }
-        //        catch (Exception ex) { Utilities.LogServices.Log(ex.Message); }
-        //    else
-        //    {
-        //        try
-        //        {
-        //            var list = cGlobal.PluginSystem.MapList.ToList();
-        //            foreach (var m in list)
-        //            {
-        //                if (m.MapID == map.DstMap)
-        //                {
-        //                    Map newmap = m.Copy<Map>();
-        //                    if (newmap != null)
-        //                    {
-        //                        newmap.onWarp_In(portalID, ref r, map);
-        //                        MapList.TryAdd(newmap.MapID, newmap);
-        //                        Utilities.LogServices.Log("Loaded Map (" + newmap.MapID.ToString() + ") " + newmap.Name);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex) { Utilities.LogServices.Log(ex.Message); }
-        //    }
-        //}
+                        if (newmap != null)
+                        {
+                            newmap.onLogin(ref src);
+                            MapList.TryAdd(newmap.MapID, newmap);
+                            Utilities.LogServices.Log("Loaded Map (" + newmap.MapID.ToString() + ") " + newmap.Name);
+                        }
+                    }
+                    catch (Exception ex) { Utilities.LogServices.Log(ex.Message); }
+                }
+                return loadmap;
+            }
+        }
+
+        public void Teleport(byte portalID, WarpData map, Player target)
+        {
+            Player r = target;
+            if (MapList.ContainsKey(map.DstMap))
+                try { MapList[map.DstMap].onWarp_In(portalID, ref r, map); }
+                catch (Exception ex) { Utilities.LogServices.Log(ex.Message); }
+            else
+            {
+                try
+                {
+                    var newmap = cGlobal.GetMap(map.DstMap);
+
+                    if (newmap != null)
+                    {
+                        newmap.onWarp_In(portalID, ref r, map);
+                        MapList.TryAdd(newmap.MapID, newmap);
+                        Utilities.LogServices.Log("Loaded Map (" + newmap.MapID.ToString() + ") " + newmap.Name);
+                    }
+                }
+                catch (Exception ex) { Utilities.LogServices.Log(ex.Message); }
+            }
+        }
         /// <summary>
         /// Used via GM command
         /// </summary>
@@ -416,15 +397,15 @@ namespace Wonderland_Private_Server.Network
             catch (Exception e) { }
 
             //unlock CharacterName
-            //cGlobal.gCharacterDataBase.unLockName(c.CharacterName);
+            cGlobal.gCharacterDataBase.unLockName(c.CharacterName);
             //send dc packet
             SendPacket bye = new SendPacket();
             bye.PackArray(new byte[] { 1, 1 });
             bye.Pack32(c.ID);
             BroadcastTo(bye, c.ID, true);
             //save data
-            //if (cGlobal.gCharacterDataBase.WritePlayer(c.ID, c))
-            //    Utilities.LogServices.Log(c.UserName + " Info has been Fully Saved");
+            if (cGlobal.gCharacterDataBase.WritePlayer(c.ID, c))
+                Utilities.LogServices.Log(c.UserName + " Info has been Fully Saved");
 
             Utilities.LogServices.Log(String.Format("Client {0} {1} Disconnected.", c.ClientIP+":"+c.ClientPort, c.UserName));
         }
