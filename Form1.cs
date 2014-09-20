@@ -96,6 +96,7 @@ namespace Wonderland_Private_Server
             cGlobal.gItemManager = new DataManagement.DataFiles.ItemManager();
             cGlobal.gSkillManager = new DataManagement.DataFiles.SkillDataFile();
             cGlobal.gUserDataBase = new DataManagement.DataBase.UserDataBase();
+            cGlobal.gNpcManager = new DataManagement.DataFiles.NpcDat();
             
 
             #endregion
@@ -115,6 +116,12 @@ namespace Wonderland_Private_Server
 
             #endregion
 
+            #region Load Data Files
+            cGlobal.gItemManager.LoadItems("Data\\Item.dat");
+            cGlobal.gSkillManager.LoadSkills("Data\\Skill.dat");
+            cGlobal.gEveManager.LoadFile("Data\\eve.Emg");
+            cGlobal.gNpcManager.LoadNpc("Data\\Npc.dat");
+            #endregion
 
             #region Initialize the Wonderland Server
             Utilities.LogServices.Log("Jump Starting Server...");

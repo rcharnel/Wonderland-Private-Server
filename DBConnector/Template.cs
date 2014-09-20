@@ -103,7 +103,7 @@ namespace DBConnector
                     }break;
             }
 
-            return null;
+            return new DataTable();
         }
         public DataTable GetDataTable(string Table, string where, KeyValuePair<string, string>[] parameters = null)
         {

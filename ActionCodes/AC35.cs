@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
-    class AC35
+    public class AC35:AC
     {
     }
 }

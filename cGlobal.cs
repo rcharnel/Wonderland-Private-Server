@@ -28,6 +28,7 @@ namespace Wonderland_Private_Server
         public static DataManagement.DataFiles.ItemManager gItemManager;
         public static DataManagement.DataFiles.SkillDataFile gSkillManager;
         public static DataManagement.DataFiles.EveManager gEveManager;
+        public static DataManagement.DataFiles.NpcDat gNpcManager;
 
 
         public static ActionCodes.AC GetActionCode(int ID)
@@ -37,7 +38,7 @@ namespace Wonderland_Private_Server
                                select c))
             {
                 ActionCodes.AC m = null;
-
+                string var = y.Namespace;
                 try
                 {
                     m = (Activator.CreateInstance(y) as ActionCodes.AC);

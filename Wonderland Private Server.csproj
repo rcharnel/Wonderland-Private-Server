@@ -122,6 +122,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GM\BigLetterLogo.cs" />
+    <Compile Include="Maps\Islands\NorthIsland\NorthIsland60000\TopNorthIsland%2860000%29.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\MapObject.cs" />
     <Compile Include="Network\Client.cs" />
@@ -174,7 +175,9 @@
     <Folder Include="bin\Release\Data\" />
     <Folder Include="GM\Commands\" />
     <Folder Include="Items\" />
-    <Folder Include="Maps\Islands\NorthIsland\" />
+    <Folder Include="Maps\Islands\NorthIsland\NorthIsland60000\Items\" />
+    <Folder Include="Maps\Islands\NorthIsland\NorthIsland60000\Objs\" />
+    <Folder Include="Maps\Islands\NorthIsland\NorthIsland60000\Portals\" />
     <Folder Include="Quests\" />
     <Folder Include="UI\WebUI\" />
   </ItemGroup>
