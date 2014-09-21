@@ -23,6 +23,9 @@ namespace Wonderland_Private_Server.Code.Objects
 
         ushort floorcolor = 39062, wallcolor = 39064;
         
+        public Tent()
+        {
+        }
         public Tent(Player src):base()
         {
             Closed = true;
@@ -34,7 +37,7 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             get
             {
-                return (ushort)owner.ID;
+                return (owner != null) ? (ushort)owner.ID : (ushort)0;
             }
         }
         public string Name

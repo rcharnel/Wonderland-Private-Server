@@ -416,6 +416,8 @@ namespace Wonderland_Private_Server.Code.Objects
         }
         public void Send(SendPacket pkt, bool queue = false)//TODO finished for multi packs
         {
+            if (pkt == null) return;
+
             if (!killFlag)
             {
                 SendPacket o = pkt;

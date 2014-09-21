@@ -261,6 +261,7 @@ namespace Wonderland_Private_Server.Network
                             newmap.onLogin(ref src);
                             MapList.TryAdd(newmap.MapID, newmap);
                             Utilities.LogServices.Log("Loaded Map (" + newmap.MapID.ToString() + ") " + newmap.Name);
+                            loadmap = true;
                         }
                     }
                     catch (Exception ex) { Utilities.LogServices.Log(ex.Message); }

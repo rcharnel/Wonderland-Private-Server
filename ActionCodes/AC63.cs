@@ -180,7 +180,7 @@ namespace Wonderland_Private_Server.ActionCodes
 
                             SendPacket tmp = new SendPacket();
                             tmp.PackArray(new byte[] { 63, 2 });
-                            tmp.Pack32(p.UserID);
+                            tmp.Pack32(p.UserID); 
                             p.Send(tmp);
                             if (char1 > 0)
                                 charsrc1 = cGlobal.gCharacterDataBase.GetCharacterData(char1);
@@ -339,10 +339,13 @@ namespace Wonderland_Private_Server.ActionCodes
             p.PackArray(new byte[] { 23, 11 });
             p.PackArray(c.Eqs._23_11Data);
             c.Send(p);
-            SendPacket tmp = new SendPacket();
-            tmp.PackArray(new byte[] { 19, 4 });
-            tmp.Pack32(c.Pets.BattlePet.ID);
-            c.Send(tmp); 
+            if (c.Pets.BattlePet != null)
+            {
+                SendPacket tmp = new SendPacket();
+                tmp.PackArray(new byte[] { 19, 4 });
+                tmp.Pack32(c.Pets.BattlePet.ID);
+                c.Send(tmp);
+            }
             SendPacket g = new SendPacket();
             //    g.PackArray(new byte[]{(24, 6);
             //    g.PackArray(new byte[] { 001, 008, 047, 001, 002, 244, 050, 001, 003, 012, 043, 001 });
