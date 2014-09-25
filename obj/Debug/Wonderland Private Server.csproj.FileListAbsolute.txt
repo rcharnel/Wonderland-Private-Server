@@ -10,7 +10,6 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonder
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.exe
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.pdb
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\GupdtSrv.dll
-C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\GupdtSrv.pdb
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\DBConnector.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\DBConnector.pdb

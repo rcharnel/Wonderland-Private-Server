@@ -258,6 +258,7 @@ namespace Wonderland_Private_Server.Code.Objects
                         if (Items[chk].ItemID == 0 && Items[chk].ParentSlot == 0) continue;
                         else if (matrix[0] + (item.InvHeight - 1) > 51 && matrix[1] + (item.InvWidth - 1) > 6) return false;
                         else if (Items[chk].ItemID != 0 && Items[chk].ParentSlot != 0) return false;
+                        else if (Items[chk].ItemID != 0 && Items[chk].ItemID != item.ItemID) return false;
                     }
                 return true;
             }

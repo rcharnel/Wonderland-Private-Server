@@ -489,7 +489,7 @@ namespace Wonderland_Private_Server.Maps
                     gi.Expires = DateTime.Now.AddMinutes(2);
 
                     byte a = 0;
-                    while (Items_Dropped.ContainsKey(a) && a < 255) { if (a > 255)return false; a++; }
+                    while (Items_Dropped.ContainsKey((byte)(a + 1)) && a < 255) { if (a > 255)return false; a++; }
 
                     Items_Dropped.Add((byte)(a + 1), gi);
 

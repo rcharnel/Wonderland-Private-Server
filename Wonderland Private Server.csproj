@@ -37,7 +37,7 @@
     </Reference>
     <Reference Include="GupdtSrv, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>GupdtSrv\bin\Debug\GupdtSrv.dll</HintPath>
+      <HintPath>..\..\..\Dropbox\Wonderland Online Dev Group\DLLs\GupdtSrv.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -65,6 +65,9 @@
     <Compile Include="ActionCodes\AC.cs" />
     <Compile Include="ActionCodes\AC0.cs" />
     <Compile Include="ActionCodes\AC09.cs" />
+    <Compile Include="ActionCodes\AC2.cs" />
+    <Compile Include="ActionCodes\AC23.cs" />
+    <Compile Include="ActionCodes\AC32.cs" />
     <Compile Include="ActionCodes\AC35.cs" />
     <Compile Include="ActionCodes\AC63.cs" />
     <Compile Include="Bots\Cupid.cs" />
