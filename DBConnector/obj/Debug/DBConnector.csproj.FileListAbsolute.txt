@@ -9,3 +9,14 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\DBConnector\bin\
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\DBConnector\bin\Debug\System.Data.SQLite.Linq.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\DBConnector\bin\Debug\System.Data.SQLite.xml
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\DBConnector\obj\Debug\DBConnector.csprojResolveAssemblyReference.cache
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\DBConnector\obj\Debug\DBConnector.csprojResolveAssemblyReference.cache
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\DBConnector\bin\Debug\x64\SQLite.Interop.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\DBConnector\bin\Debug\x86\SQLite.Interop.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\DBConnector\bin\Debug\DBConnector.dll.config
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\DBConnector\bin\Debug\DBConnector.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\DBConnector\bin\Debug\DBConnector.pdb
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\DBConnector\bin\Debug\System.Data.SQLite.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\DBConnector\bin\Debug\System.Data.SQLite.Linq.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\DBConnector\bin\Debug\System.Data.SQLite.xml
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\DBConnector\obj\Debug\DBConnector.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\DBConnector\obj\Debug\DBConnector.pdb
