@@ -39,7 +39,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>GupdtSrv\bin\Debug\GupdtSrv.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Octokit">
       <HintPath>packages\Octokit.0.4.1\lib\net45\Octokit.dll</HintPath>
     </Reference>
@@ -182,6 +184,10 @@
     <Folder Include="UI\WebUI\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Debug\UnRar.exe" />
+    <Content Include="bin\Debug\WloPSrvUpdater.exe" />
+    <Content Include="bin\Release\UnRar.exe" />
+    <Content Include="bin\Release\WloPSrvUpdater.exe" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

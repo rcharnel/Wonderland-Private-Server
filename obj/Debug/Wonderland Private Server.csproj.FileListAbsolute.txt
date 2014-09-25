@@ -18,3 +18,4 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\System
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.xml
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\x64\SQLite.Interop.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\x86\SQLite.Interop.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\MySql.Data.dll

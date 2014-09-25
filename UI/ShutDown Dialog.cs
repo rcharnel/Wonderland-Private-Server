@@ -39,6 +39,9 @@ namespace Wonderland_Private_Server.UI
                     t.Abort();
                     Thread.Sleep(1000);
                 }
+                perct += 20;
+                dispMsg = "Stopping Tcp Listener";
+                Network.ListenSocket.Kill();
 
                 perct = 100;
                 if (isupdating)
