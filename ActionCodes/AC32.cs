@@ -28,7 +28,7 @@ namespace Wonderland_Private_Server.ActionCodes
                 p.Emote = r.Unpack8(2);
                 SendPacket s = new SendPacket();
                 s.PackArray(new byte[] { 32, 1 });
-                    s.Pack32(p.ID);
+                    s.Pack32(p.UserID);
                 s.Pack8(r.Unpack8(2));
                 p.CurrentMap.Broadcast(s, p.ID);
 
@@ -42,7 +42,7 @@ namespace Wonderland_Private_Server.ActionCodes
                 p.Emote = r.Unpack8(2);
                 SendPacket s = new SendPacket();
                 s.PackArray(new byte[] { 32, 2 });
-                s.Pack32(p.ID);
+                s.Pack32(p.UserID);
                 s.Pack8(r.Unpack8(2));
                 p.CurrentMap.Broadcast(s, p.ID);
             }

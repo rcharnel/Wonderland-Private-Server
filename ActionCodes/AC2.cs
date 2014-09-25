@@ -82,7 +82,7 @@ namespace Wonderland_Private_Server.ActionCodes
                             s.PackArray(new byte[]{2,2});
                             s.Pack32(p.ID);
                             s.PackNString(str);
-                            p.CurrentMap.Broadcast(s, p.ID);
+                            p.CurrentMap.Broadcast(s, p.UserID);
 
                             break;
                         #endregion

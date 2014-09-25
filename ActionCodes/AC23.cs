@@ -17,7 +17,8 @@ namespace Wonderland_Private_Server.ActionCodes
             switch (p.B)
             {
                 // case 1: Recv1(ref r, p); break;
-                //case 2: Recv2(ref r, p); break;
+                case 2: Recv2(ref r, p); break; // Get item ground
+                case 3: Recv3(ref r, p); break; // drop item g round
                 case 10: Recv10(ref r, p); break;//move item inv
                 case 11: Recv11(ref r, p); break;//item selected to wear in inv
                 case 12: Recv12(ref r, p); break; //item selected to remove
@@ -29,6 +30,29 @@ namespace Wonderland_Private_Server.ActionCodes
             try
             {
 
+            }
+            catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
+        void Recv2(ref Player p, RecvPacket r)
+        {
+            try
+            {
+                byte pos = r.Unpack8(2);
+                p.CurrentMap.PickUpItem(pos, ref p);
+            }
+            catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
+        void Recv3(ref Player p, RecvPacket r)
+        {
+            try
+            {
+                byte pos = r.Unpack8(2);
+                byte qnt = r.Unpack8(3);
+                byte ukn = r.Unpack8(4);
+                var item = p.Inv[pos];
+                p.Inv.RemoveItem(pos, qnt);
+               
+                p.CurrentMap.DropItem(item, p);
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
