@@ -34,12 +34,9 @@ namespace Wonderland_Private_Server.ActionCodes
             try
             {
                 string str = r.UnpackNChar(2);
-
                 string[] words = str.Split(' ');
-
                 if (words.Length >= 1)
                 {
-
                     switch (words[0])
                     {
                         #region item add
@@ -66,7 +63,30 @@ namespace Wonderland_Private_Server.ActionCodes
                                                 i.CopyFrom(cGlobal.gItemManager.GetItem(itemid));
                                                 i.Ammt = ammt;
 
-                                                p.Inv.AddItem(i);
+                                                #region filter item
+                                                switch (itemid)
+                                                {
+                                                   case 34076: // radio set only 1 item 
+                                                        byte a = 0;
+                                                        if (p.Inv.ContainsItem(34076,out a))
+                                                        {
+
+                                                        }
+                                                        else
+                                                        {
+                                                            p.Inv.AddItem(i);
+                                                        }
+
+                                                        break;
+
+                                                   default:
+
+                                                        p.Inv.AddItem(i);
+
+                                                        break;
+
+                                                }
+                                               
                                                 
                                             }
 
@@ -75,8 +95,8 @@ namespace Wonderland_Private_Server.ActionCodes
                                 } break;
 
                             }
-                        #endregion
-                        #region default
+                       
+                        
                         default :
                             SendPacket s = new SendPacket();
                             s.PackArray(new byte[]{2,2});
@@ -86,11 +106,12 @@ namespace Wonderland_Private_Server.ActionCodes
 
                             break;
                         #endregion
+                        #endregion
                     }
                 }
             }
 
-
+                       
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
     }
