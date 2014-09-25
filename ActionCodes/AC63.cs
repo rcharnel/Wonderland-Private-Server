@@ -69,10 +69,10 @@ namespace Wonderland_Private_Server.ActionCodes
                 {
                     #region Login
                     cGlobal.gCharacterDataBase.GetCharacterData(p.m_charids[charNum], ref p);
-                    SendPacket tmp = new SendPacket();
-                    tmp.PackArray(new byte[] { 63, 2 });
-                    tmp.Pack32(p.UserID);
-                    p.Send(tmp);
+                    //SendPacket tmp = new SendPacket();
+                    //tmp.PackArray(new byte[] { 63, 2 });
+                    //tmp.Pack32(p.UserID);
+                    //p.Send(tmp);
                     NormalLog(p);
                     #endregion
                 }
@@ -294,7 +294,7 @@ namespace Wonderland_Private_Server.ActionCodes
             c.BlockSave = false;
             //c.CharacterState = GameCharacter.PlayerState.Logging_In;
             //a connection request was recieved
-            c.DataOut = SendType.Multi;
+           // c.DataOut = SendType.Multi;
             SendPacket p = new SendPacket();
             p.PackArray(new byte[] { 20, 8 });
             c.Send(p);
