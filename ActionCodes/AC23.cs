@@ -49,9 +49,15 @@ namespace Wonderland_Private_Server.ActionCodes
                 byte pos = r.Unpack8(2);
                 byte qnt = r.Unpack8(3);
                 byte ukn = r.Unpack8(4);
-                var item = p.Inv.RemoveItem(pos, qnt);    
+                var item = p.Inv.RemoveItem(pos, qnt);  
+                cItem ret = null;
+
                 if(item != null)
-                p.CurrentMap.DropItem(item, p);
+                if((ret = p.CurrentMap.DropItem(item, p)) != null)
+                {
+                    item.CopyFrom(ret);
+                    p.Inv.AddItem(item, pos, false);
+                }
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }

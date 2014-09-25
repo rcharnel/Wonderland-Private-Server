@@ -475,21 +475,33 @@ namespace Wonderland_Private_Server.Maps
         //}
 
         #region Item
-        public virtual bool DropItem(cItem item, Player src)
+        public virtual cItem DropItem(cItem item, Player src)
         {
             var rand = new Random();
-            if ((Items_Dropped.Count + 1) <= 255)
+            int max = item.Ammt;
+            int cnt = 0;
+
+            while (cnt < max)
             {
-               
+                if ((Items_Dropped.Count + 1) <= 255)
+                {
+
                     DroppedItem gi = new DroppedItem();
                     gi.CopyFrom(item);
                     gi.Ammt = 1;
-                    gi.X = (ushort)(src.X - 25 + (rand.Next(0, 240) * 1.2));
-                    gi.Y += (ushort)(src.Y + (rand.Next(0, 124) * 1.2));
+                    gi.X = (ushort)(src.X - 25 + (rand.Next(0, 220) * 1.2));
+                    gi.Y += (ushort)(src.Y + (rand.Next(0, 114) * 1.2));
                     gi.Expires = DateTime.Now.AddMinutes(2);
 
                     byte a = 0;
-                    while (Items_Dropped.ContainsKey((byte)(a + 1)) && a < 255) { if (a > 255)return false; a++; }
+                    while (Items_Dropped.ContainsKey((byte)(a + 1)) && a < 255)
+                    {
+                        if (a > 255)
+                        {
+                            item.Ammt = (byte)(cnt + 1);
+                            return item;
+                        } a++;
+                    }
 
                     Items_Dropped.Add((byte)(a + 1), gi);
 
@@ -504,10 +516,18 @@ namespace Wonderland_Private_Server.Maps
                         p.PackBoolean(c == src);//true = 1
                         c.Send(p);
                     }
-                return true;
+                }
+                else
+                    break;
+                cnt++;
             }
 
-            return false;
+            if(cnt != max)
+            {
+                item.Ammt = (byte)(cnt + 1);
+                return item;
+            }
+            return null;
         }
         public virtual void PickUpItem(UInt16 itemLoc, ref Player src)
         {
