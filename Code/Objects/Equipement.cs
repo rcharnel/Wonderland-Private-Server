@@ -160,12 +160,11 @@ namespace Wonderland_Private_Server.Code.Objects
                     int level = 1;
 
                     long tmp = m_totalexp;
-                    uint exp = (uint)CalcMaxExp(BitConverter.GetBytes(Reborn)[0], level);
 
-                    while (tmp >= exp )
+                    while (tmp >= (uint)CalcMaxExp(BitConverter.GetBytes(Reborn)[0], level))
                     {
                         if (!Reborn && level + 1 > 199) break;
-                        tmp -= exp;
+                        tmp -= (uint)CalcMaxExp(BitConverter.GetBytes(Reborn)[0], level);
                         level++;
                     }
 
@@ -937,7 +936,7 @@ namespace Wonderland_Private_Server.Code.Objects
                 {
                     Dictionary<byte, uint[]> tmp = new Dictionary<byte, uint[]>();
                     for (byte a = 1; a < 7; a++)
-                        tmp.Add(a, new uint[] { clothes[a].ItemID, clothes[a].Damage, clothes[a].Ammt, (uint)clothes[a].Data.EquipPos, 0, 0, 0, 0 });
+                        tmp.Add(a, new uint[] { clothes[a].ItemID, clothes[a].Damage, clothes[a].Ammt, (uint)clothes[a].Equippped_At, 0, 0, 0, 0 });
                     return tmp;
                 }
             }
@@ -1911,7 +1910,7 @@ namespace Wonderland_Private_Server.Code.Objects
                 {
                     Dictionary<byte, uint[]> tmp = new Dictionary<byte, uint[]>();
                     for (byte a = 1; a < 7; a++)
-                        tmp.Add(a, new uint[] { clothes[a].ItemID, clothes[a].Damage, clothes[a].Ammt, (uint)clothes[a].Data.EquipPos, 0, 0, 0, 0 });
+                        tmp.Add(a, new uint[] { clothes[a].ItemID, clothes[a].Damage, clothes[a].Ammt, (uint)clothes[a].Equippped_At, 0, 0, 0, 0 });
                     return tmp;
                 }
             }

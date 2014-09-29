@@ -52,9 +52,11 @@ namespace Wonderland_Private_Server.ActionCodes
                 byte qnt = r.Unpack8(3);
                 byte ukn = r.Unpack8(4);
                 var item = p.Inv[pos];
+
                 if (item != null)
                 {
-                  if (item.Data.able_to_trade)                    
+
+                  if (item.Dropable)                    
                     {
                         cItem ret = null;                        
                             if ((ret = p.CurrentMap.DropItem(item, p)) != null)

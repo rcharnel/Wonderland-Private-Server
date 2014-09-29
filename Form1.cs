@@ -61,6 +61,8 @@ namespace Wonderland_Private_Server
 
             //load Updater
             cGlobal.GClient.Initialize(ref cGlobal.ThreadManager);
+            cGlobal.GClient.GitinfoUpdated += GClient_GitinfoUpdated;
+            cGlobal.GClient.onError += GClient_onError;
 
 
 
@@ -131,6 +133,8 @@ namespace Wonderland_Private_Server
 
             do
             {
+                cGlobal.GClient.UpdtCheck = 0;
+                #region Update Section
                 if (cGlobal.GClient.UpdateFound && cGlobal.GClient.AutoUpdate)
                 {
                     if (cGlobal.GClient.AutoUpdate_At < DateTime.Now)
@@ -139,7 +143,7 @@ namespace Wonderland_Private_Server
                         break;
                     }
                 }
-
+                #endregion
 
                 foreach (var t in cGlobal.ThreadManager.ToList())
                     if (!t.IsAlive)
@@ -167,11 +171,36 @@ namespace Wonderland_Private_Server
 
         }
 
+        void GClient_onError(object sender, Exception e)
+        {
+            Utilities.LogServices.Log(e);
+        }
+
+        void GClient_GitinfoUpdated(object sender, EventArgs e)
+        {
+            this.BeginInvoke(new Action(() => { 
+            UpdatePane.Controls.Clear();
+            var list = cGlobal.GClient.ReleasesFnd;
+
+            foreach (var y in list.OrderByDescending(c => new Version(c.TagName)))
+                UpdatePane.Controls.Add(new Utilities.Update.GitUpdateItem(cGlobal.GClient.myVersion, y));
+            
+            }));
+            
+
+        }
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (run || blockclose)
                 e.Cancel = true;
             run = false;
+        }
+
+        private void GitBranch_TextChanged(object sender, EventArgs e)
+        {
+            if (cGlobal.GClient != null)
+                cGlobal.GClient.Branch = GitBranch.Text;
         }
 
     }

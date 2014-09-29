@@ -146,6 +146,12 @@
       <DependentUpon>ShutDown Dialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\Log.cs" />
+    <Compile Include="Utilities\Update\GitUpdateItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Utilities\Update\GitUpdateItem.Designer.cs">
+      <DependentUpon>GitUpdateItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="Web\WebServer.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -158,9 +164,13 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="UI\ShutDown Dialog.resx">
       <DependentUpon>ShutDown Dialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utilities\Update\GitUpdateItem.resx">
+      <DependentUpon>GitUpdateItem.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -186,12 +196,18 @@
     <Folder Include="Maps\Islands\NorthIsland\NorthIsland60000\Portals\" />
     <Folder Include="Quests\" />
     <Folder Include="UI\WebUI\" />
+    <Folder Include="Utilities\Task\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Debug\UnRar.exe" />
     <Content Include="bin\Debug\WloPSrvUpdater.exe" />
     <Content Include="bin\Release\UnRar.exe" />
     <Content Include="bin\Release\WloPSrvUpdater.exe" />
+    <EmbeddedResource Include="Resources\1383936576_refresh.png" />
+    <EmbeddedResource Include="Resources\bullet_green.png" />
+    <EmbeddedResource Include="Resources\bullet_red.png" />
+    <EmbeddedResource Include="Resources\checkmark-24-48.png" />
+    <EmbeddedResource Include="Resources\install_button.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
