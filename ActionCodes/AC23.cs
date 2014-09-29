@@ -54,10 +54,11 @@ namespace Wonderland_Private_Server.ActionCodes
                 var item = p.Inv[pos];
                 if (item != null)
                 {
-                  if (item.Data.able_to_trade)                    
+                    
+                  if (VerifyItemType(item))                 
                     {
                         cItem ret = null;                        
-                            if ((ret = p.CurrentMap.DropItem(item, p)) != null)
+                          if ((ret = p.CurrentMap.DropItem(item, p)) != null)                        
                             {
                                 item.CopyFrom(ret);
                                 p.Inv.RemoveItem(pos, qnt);
@@ -152,6 +153,34 @@ namespace Wonderland_Private_Server.ActionCodes
 
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
+        bool VerifyItemType(cItem Item)
+        {
+            int n = (int)Item.Data.itemType;
+            switch(n)
+            {
+                case 1: // katana/falchion
+                    return true; 
+                case 10:// fan
+                    return true;
+                case 11:// gun
+                    return true;
+                case 12:// body item
+                    if ((Item.Data.ItemID >= 21001) && (Item.Data.ItemID < 21174))
+                    {
+                        return true;
+                    }
+                    return false;
+                    
+                case 21: // quest item
+                    return false;
+                default :
+                    return false;
+                    
+
+            }
+            
+
         }
     }
 }

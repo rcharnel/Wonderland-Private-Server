@@ -354,8 +354,7 @@ namespace Wonderland_Private_Server.Network
         //        catch (Exception e) { DLogger.ErrorLog(e); }
         //    }
         //}
-
-
+       
         /// <summary>
         /// Broadcasts a packet to all
         /// </summary>
