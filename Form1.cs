@@ -14,9 +14,7 @@ namespace Wonderland_Private_Server
     public partial class Form1 : Form
     {
         bool run = true; bool blockclose = true; bool updating;
-        
-       
-
+          
 
         public Form1()
         {
@@ -29,42 +27,55 @@ namespace Wonderland_Private_Server
             MainThread.IsBackground = true;
             MainThread.Start();
         }
-
-
+        
         void GuiThread()
         {
             do
             {
+                #region LogGUI
                 if (Utilities.LogServices.LogHistory.Count > 0)
                 {
                     Utilities.LogItem j;
 
                     if (Utilities.LogServices.LogHistory.TryDequeue(out j))
                     {
-                        this.Invoke(new Action(() =>
+                        try
                         {
-                            switch (j.eventtype)
+                            this.Invoke(new Action(() =>
                             {
-                                case Utilities.LogType.SYS: SystemLog.AppendText(j.happenat.ToShortTimeString() + "|" + j.eventtype + "|" + j.message + "\r\n=============================\r\n"); break;
-                                case Utilities.LogType.NET: NetWorkLog.AppendText(j.happenat.ToShortTimeString() + "|" + j.eventtype + "|" + j.message + "r\n===========================\r\n"); break;
-                                case Utilities.LogType.ERR: errorLog.AppendText(j.happenat.ToShortTimeString() + "|" + j.where + "|" + j.message + "\r\n============================\r\n"); break;
-                            }
-                        }));
+                                switch (j.eventtype)
+                                {
+                                    case Utilities.LogType.SYS: SystemLog.AppendText(j.happenat.ToShortTimeString() + "|" + j.eventtype + "|" + j.message + "\r\n=============================\r\n"); break;
+                                    case Utilities.LogType.NET: NetWorkLog.AppendText(j.happenat.ToShortTimeString() + "|" + j.eventtype + "|" + j.message + "r\n===========================\r\n"); break;
+                                    case Utilities.LogType.ERR: errorLog.AppendText(j.happenat.ToShortTimeString() + "|" + j.where + "|" + j.message + "\r\n============================\r\n"); break;
+                                }
+                            }));
+                        }
+                        catch { }
                     }
                 }
+                #endregion
                 Thread.Sleep(1);
             }
             while (true);
         }
+
         void MainThreadWork()
         {
+            //load settings file
+            cGlobal.SrvSettings.LoadSettings();
 
             //load Updater
             cGlobal.GClient.Initialize(ref cGlobal.ThreadManager);
             cGlobal.GClient.GitinfoUpdated += GClient_GitinfoUpdated;
             cGlobal.GClient.onError += GClient_onError;
-
-
+            
+            if (GitUptOption.SelectedIndex != (byte)Config.Update.UpdtControl)
+                        GitUptOption.SelectedIndex = (byte)Config.Update.UpdtControl;
+                    if (updtrefresh.Value != cGlobal.GClient.UpdtCheck)
+                        updtrefresh.Value = cGlobal.GClient.UpdtCheck;
+                    if (GitBranch.Text != cGlobal.GClient.Branch)
+                        GitBranch.Text = cGlobal.GClient.Branch;
 
             #region Intialize Base Threads
             Utilities.LogServices.Log("Intializing Gui Thread");
@@ -133,9 +144,8 @@ namespace Wonderland_Private_Server
 
             do
             {
-                cGlobal.GClient.UpdtCheck = 0;
                 #region Update Section
-                if (cGlobal.GClient.UpdateFound && cGlobal.GClient.AutoUpdate)
+                if (cGlobal.GClient.UpdateFound && Config.Update.UpdtControl == Config.UpdtSetting.Auto)
                 {
                     if (cGlobal.GClient.AutoUpdate_At < DateTime.Now)
                     {
@@ -144,11 +154,11 @@ namespace Wonderland_Private_Server
                     }
                 }
                 #endregion
-
+                #region Thread Management
                 foreach (var t in cGlobal.ThreadManager.ToList())
                     if (!t.IsAlive)
                         cGlobal.ThreadManager.Remove(t);
-
+                #endregion
                 Thread.Sleep(1);
             }
             while (run);
@@ -171,6 +181,7 @@ namespace Wonderland_Private_Server
 
         }
 
+        #region Git Client Events
         void GClient_onError(object sender, Exception e)
         {
             Utilities.LogServices.Log(e);
@@ -178,17 +189,22 @@ namespace Wonderland_Private_Server
 
         void GClient_GitinfoUpdated(object sender, EventArgs e)
         {
-            this.BeginInvoke(new Action(() => { 
-            UpdatePane.Controls.Clear();
-            var list = cGlobal.GClient.ReleasesFnd;
+            try
+            {
+                this.BeginInvoke(new Action(() =>
+                {
+                    UpdatePane.Controls.Clear();
+                    var list = cGlobal.GClient.ReleasesFnd;
 
-            foreach (var y in list.OrderByDescending(c => new Version(c.TagName)))
-                UpdatePane.Controls.Add(new Utilities.Update.GitUpdateItem(cGlobal.GClient.myVersion, y));
-            
-            }));
-            
+                    foreach (var y in list.OrderByDescending(c => new Version(c.TagName)))
+                        UpdatePane.Controls.Add(new Utilities.Update.GitUpdateItem(cGlobal.GClient.myVersion, y));
+
+                }));
+            }
+            catch { }
 
         }
+        #endregion
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -199,8 +215,20 @@ namespace Wonderland_Private_Server
 
         private void GitBranch_TextChanged(object sender, EventArgs e)
         {
-            if (cGlobal.GClient != null)
+            if (cGlobal.GClient != null && cGlobal.GClient.Branch != GitBranch.Text)
                 cGlobal.GClient.Branch = GitBranch.Text;
+        }
+
+        private void updtrefresh_ValueChanged(object sender, EventArgs e)
+        {
+            if (cGlobal.GClient != null && cGlobal.GClient.UpdtCheck != updtrefresh.Value)
+                cGlobal.GClient.UpdtCheck = (int)updtrefresh.Value;
+        }
+
+        private void GitUptOption_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Config.Update.UpdtControl != (Config.UpdtSetting)GitUptOption.SelectedIndex)
+                Config.Update.UpdtControl = (Config.UpdtSetting)GitUptOption.SelectedIndex;
         }
 
     }

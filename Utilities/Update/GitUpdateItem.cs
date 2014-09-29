@@ -20,16 +20,17 @@ namespace Wonderland_Private_Server.Utilities.Update
             textBox1.Text = gitrelease.Body;
             label1.Text = string.Format("{0} - {1}", gitrelease.TagName, gitrelease.PublishedAt.Value.UtcDateTime.ToShortDateString());
 
-            if (curver < new Version(gitrelease.TagName + ".0"))
+
+            if (curver < new Version((gitrelease.TagName.Split('.').Length <4)?gitrelease.TagName + ".0":gitrelease.TagName))
             {
                 pictureBox1.Visible = false;
             }
-            else if (curver > new Version(gitrelease.TagName+".0"))
+            else if (curver > new Version((gitrelease.TagName.Split('.').Length < 4) ? gitrelease.TagName + ".0" : gitrelease.TagName))
             {
                 pictureBox1.Visible = false;
                 button1.Visible = false;
             }
-            else if (curver == new Version(gitrelease.TagName + ".0"))
+            else if (curver == new Version((gitrelease.TagName.Split('.').Length < 4) ? gitrelease.TagName + ".0" : gitrelease.TagName))
             {
                 button1.Visible = false;
             }
