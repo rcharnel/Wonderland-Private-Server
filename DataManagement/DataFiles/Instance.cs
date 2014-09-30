@@ -91,6 +91,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             ci.ListPlayers.Add(src.UserID, src);
 
             InstanceList.Add(ci.ID, ci);
+
             src.CurInstance = ci.ID;
 
             
@@ -112,21 +113,21 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             s.PackString(ci.Text);
             s.Pack32(src.UserID);            
             cGlobal.WLO_World.BroadcastTo(s, directTo : src.UserID);
-           // src.Send(s);
+           
 
             SendPacket sc = new SendPacket();
             sc.PackArray(new byte[] { 85,2,0});            
             cGlobal.WLO_World.BroadcastTo(sc, directTo: src.UserID);
-            //src.Send(s);
+            
             
         }
-        public void CheckMembers(ref Player src,byte CurTab)
+        public void CheckMembers(ref Player src,byte gg)
         {
             if (InstanceList.ContainsKey(src.CurInstance))
             {
                 SendPacket s = new SendPacket();
                 s.PackArray(new byte[] {85,6});
-                s.Pack8(CurTab); // test
+                s.Pack8(gg); //???
                 s.Pack8((byte)InstanceList[src.CurInstance].Tabs);//total                
                 s.Pack8((byte)InstanceList[src.CurInstance].ListPlayers.Count);//current players comfirmado
                 s.Pack8((byte)InstanceList[src.CurInstance].ListPlayers.Count);
@@ -167,48 +168,113 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
 
         public void ExitInstancia(ref Player src)
         {
-            if (InstanceList.ContainsKey(src.CurInstance))
+            int CurInstantance = src.CurInstance;
+            uint srcID = src.UserID;
+
+            if (InstanceList.ContainsKey(CurInstantance))
             {
                 //check here if exist + members
-                int check = InstanceList[src.CurInstance].ListPlayers.Count - 1;
+                int check = InstanceList[CurInstantance].ListPlayers.Count - 1;
                 if (check <= 0){ check = 0;}
 
                 SendPacket s = new SendPacket();
                 s.PackArray(new byte[] { 85, 12 });
-                s.Pack8((byte)check);
-                s.Pack32(src.UserID);
-                s.Pack16((UInt16)src.CurInstance);
-                s.Pack8(1);
+                s.Pack8((byte)check); // numero de pessoas que ficaram
+                s.Pack32(srcID); // id de quem saiu
+                s.Pack16((UInt16)CurInstantance);
+                if (InstanceList[CurInstantance].Creater == srcID)
+                {
+                    InstanceList[CurInstantance].Creater = 0;
+                    s.Pack8(1);
+                }// 0 membro // 1 criador 
+  
+                else s.Pack8(0); // 0 membro // 1 criador
+
                 cGlobal.WLO_World.BroadcastTo(s); //global packet
 
-
-                if (check == 0) // remove instance
+                
+                if (check == 0) // remove instance not players
                 {
-                    InstanceList.Remove(src.CurInstance);
+                    InstanceList.Remove(CurInstantance);
 
                     s = new SendPacket();
                     s.PackArray(new byte[] { 85, 11, 2 });
-                    s.Pack16((UInt16)src.CurInstance);
+                    s.Pack16((UInt16)CurInstantance);
                     cGlobal.WLO_World.BroadcastTo(s); //global packet                    
                 }
+               
 
                 s = new SendPacket();
                 s.PackArray(new byte[] { 85, 5, 2 });
                 src.Send(s);
             }
-
-            src.CurInstance = 0; // player exit instance.
+            // se existe a instancia então remova o player e deixe os outros.
+            if (InstanceList.ContainsKey(CurInstantance))
+            {
+                InstanceList[CurInstantance].ListPlayers.Remove(srcID);
+            }
+            src.CurInstance = 0;
 
         }
-        
-        ////if windows open, cliente auto send 85,2 to update list
-        //public void UPList(ref Player src)
+        public void PreJoin(uint src,int id)
+        {
+            if (InstanceList.ContainsKey(id))
+            {
+                var tmp = InstanceList[id];
+
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] {85,4});
+                s.Pack16((UInt16)tmp.ID);
+                s.Pack8((byte)tmp.ListPlayers.Count);
+                foreach (var pair in tmp.ListPlayers)
+                {
+                    s.PackString(pair.Value.CharacterName);
+                    s.Pack32(pair.Value.UserID);
+                }
+                cGlobal.WLO_World.BroadcastTo(s, directTo: src);
+
+            }
+
+        }
+        public void Join(ref Player src,int id)
+        {
+            var tmp = InstanceList[id];
+
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[] { 85,7});            
+            s.Pack8(1); // teste
+            s.Pack8((byte)(tmp.CountPlayer + 1)); // new player count
+            s.Pack32(src.UserID);
+            s.Pack16((UInt16)tmp.ID);
+            cGlobal.WLO_World.BroadcastTo(s); // here global packet
+
+            InstanceList[tmp.ID].ListPlayers.Add(src.UserID, src); //add player
+            src.CurInstance = tmp.ID; // add id instance to player.
+
+            s = new SendPacket();
+            s.PackArray(new byte[]{85, 5});
+            s.Pack8(1);//test
+            s.Pack8(1);//test
+            s.Pack16((UInt16)tmp.ID);
+            s.Pack8((byte)tmp.CountPlayer);
+            s.PackString(tmp.Text); // text = null = 0;
+            s.Pack32(tmp.Creater); // id creater instancia
+            cGlobal.WLO_World.BroadcastTo(s, directTo: src.UserID);
+
+            s = new SendPacket();
+            s.PackArray(new byte[] { 85,3,0 });
+            src.Send(s);
+
+        }
+
+        ////Confirm exit member
+        //public void ConfirmExit(uint idplayer)
         //{
         //    SendPacket s = new SendPacket();
-        //    s.PackArray(new byte[] { 85,1,1,1,0 });
+        //    s.PackArray(new byte[] { 85, 1, 1, 1, 0 });
         //    src.Send(s);
         //    s = new SendPacket();
-        //    s.PackArray(new byte[] {85,13,0,0});
+        //    s.PackArray(new byte[] { 85, 13, 0, 0 });
         //    src.Send(s);
 
         //}
@@ -217,11 +283,19 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
     class CInstance
     {        
         public string Text; // descrição
-        public uint Creater; // Quem criou
+        public uint Creater; // ID Quem criou
         public string NameCreater; // nome de quem criou
         public  int TimerElapsed; // tempo decorrido
-        public int ID; // id desta instancia
-        public int CountPlayer; // numero de jogadores        
+        public int ID; // id desta instancia Key dictionary
+        public int CountPlayer
+        {
+            get
+            {
+                if (ListPlayers.Count != null) return ListPlayers.Count;
+                else return 0;
+
+            }
+        }
         public int Tabs
         {
             get

@@ -16,10 +16,12 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             switch (p.B)
             {
-                case 1: Recv1(ref r, p); break;
-                case 2: Recv2(ref r, p); break;
-                case 3: Recv3(ref r, p); break;
-                case 6: Recv6(ref r, p); break;
+                case 1: Recv1(ref r, p); break; // Update list instances.
+                case 2: Recv2(ref r, p); break; // update list too.
+                case 3: Recv3(ref r, p); break; // create instance
+                case 4: Recv4(ref r, p); break; // pre join
+                case 5: Recv5(ref r, p); break; // join
+                case 6: Recv6(ref r, p); break; // exit instance.
                 case 10: Recv10(ref r, p); break;//chek members
                 case 11: Recv11(ref r, p); break;//chek membersTabs
                 default: Utilities.LogServices.Log("AC " + p.A + "," + p.B + " has not been coded"); break;
@@ -66,6 +68,26 @@ namespace Wonderland_Private_Server.ActionCodes
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
+        void Recv4(ref Player p, RecvPacket r)
+        {
+            int tmp = r.Unpack16(2); // get id instance selected
+            try
+            {
+                cGlobal.gInstance.PreJoin(p.UserID,tmp);
+
+            }
+            catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
+        void Recv5(ref Player p, RecvPacket r)
+        {
+            int tmp = r.Unpack16(2); // get id instance selected
+            try
+            {
+                cGlobal.gInstance.Join(ref p, tmp);
+
+            }
+            catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
         void Recv6(ref Player p, RecvPacket r)
         {            
             
@@ -92,8 +114,17 @@ namespace Wonderland_Private_Server.ActionCodes
             {
                 switch(tmp)
                 {
-                    case 1: // confirm my exit
-                        p.CurInstance = 0;
+                    case 0: 
+                        if (p.CurInstance != 0)
+                        {
+                            cGlobal.gInstance.CheckMembers(ref p, 1);
+                        }
+                        break;
+                    case 1: 
+                        if (p.CurInstance != 0)
+                        {
+                            cGlobal.gInstance.CheckMembers(ref p, 1);
+                        }
                         break;
                     default://check tabs
                         cGlobal.gInstance.CheckMembers(ref p, tmp);
