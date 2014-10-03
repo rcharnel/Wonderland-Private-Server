@@ -118,12 +118,12 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             s.PackArray(new byte[]{85,8});
             int tab = GetIndexTab(InstanceList.Count);
             s.Pack8((byte)tab);
-            s.Pack16((UInt16)ci.ID);
-            s.PackString(src.CharacterName);
-            s.PackString(ci.Text);
+            s.Pack16((UInt16)ci.ID); // ID INSTANCIA
+            s.PackString(src.CharacterName); // CHAR NAME
+            s.PackString(ci.Text); // DESCRITION INSTANCE
             s.Pack8(1);
-            s.Pack8(0);
-            cGlobal.WLO_World.BroadcastTo(s); // this global
+            s.Pack8(0); // count + NAME GUILD
+            cGlobal.WLO_World.BroadcastTo(s); // Packet global
 
            s = new SendPacket();
             s.PackArray(new byte[] { 85,5,1,1 });
@@ -259,9 +259,9 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             // se existe a instancia então remova o player e deixe os outros.
             if (InstanceList.ContainsKey(CurInstantance))
             {
-                InstanceList[CurInstantance].ListPlayers.Remove(src);
+                InstanceList[CurInstantance].RemoveMember(src.UserID);
             }
-            src.CurInstance = 0;
+            //src.CurInstance = 0;
 
         }
         public void PreJoin(uint src,int id)
@@ -276,8 +276,8 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                 s.Pack8((byte)tmp.ListPlayers.Count);
                 foreach (var pair in tmp.ListPlayers)
                 {
-                    s.PackString(pair.CharacterName);
-                    s.Pack32(pair.UserID);
+                    s.PackString(pair.Value.CharacterName);
+                    s.Pack32(pair.Value.UserID);
                 }
                 cGlobal.WLO_World.BroadcastTo(s, directTo: src);
 
@@ -296,7 +296,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             s.Pack16((UInt16)tmp.ID);
             cGlobal.WLO_World.BroadcastTo(s); // here global packet
 
-            InstanceList[tmp.ID].ListPlayers.Add(src); //add player
+            InstanceList[tmp.ID].ListPlayers.Add(src.UserID,src); //add player
             src.CurInstance = tmp.ID; // add id instance to player.
 
             s = new SendPacket();
@@ -315,17 +315,27 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
 
         }
 
-        ////Confirm exit member
-        //public void ConfirmExit(uint idplayer)
-        //{
-        //    SendPacket s = new SendPacket();
-        //    s.PackArray(new byte[] { 85, 1, 1, 1, 0 });
-        //    src.Send(s);
-        //    s = new SendPacket();
-        //    s.PackArray(new byte[] { 85, 13, 0, 0 });
-        //    src.Send(s);
+        //Demiss player
+        public void Demiss(ref Player src,uint member)
+        {
+            int CurInstance = src.CurInstance;
+            if (InstanceList.ContainsKey(CurInstance))
+            {
+                InstanceList[CurInstance].RemoveMember(member);
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 85, 12 });
+                s.Pack8((byte)(InstanceList[CurInstance].CountPlayer - 1)); // numero de pessoas que ficaram
+                s.Pack32(member); // id de quem saiu
+                s.Pack16((UInt16)CurInstance);
+                s.Pack8(0); // 0 membro // 1 criador
+                cGlobal.WLO_World.BroadcastTo(s); //global packet
 
-        //}
+                s = new SendPacket();
+                s.PackArray(new byte[] { 85,5,4 });
+                cGlobal.WLO_World.BroadcastTo(s, directTo: member);
+            }         
+
+        }
     } 
 
     class CInstance
@@ -355,14 +365,20 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                 else return 1;
             }
         }
-        public List<Player> ListPlayers = new List<Player>();
+        public Dictionary<uint,Player> ListPlayers = new Dictionary<uint,Player>();
 
         public void RemoveMember(uint ID)
         {
-            var item = ListPlayers.Find(x => x.UserID == ID);
-            if (item != null)
-                ListPlayers.Remove(item);
+            if (ListPlayers.ContainsKey(ID))
+            {
+                ListPlayers[ID].CurInstance = 0;
+                ListPlayers.Remove(ID);
+            }
+            //var item = ListPlayers.Find(x => x.UserID == ID);
+            //if (item != null)            
+            //    ListPlayers.Remove(item);
         }
+        
     }
     class Data
     {

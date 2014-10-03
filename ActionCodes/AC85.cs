@@ -24,6 +24,7 @@ namespace Wonderland_Private_Server.ActionCodes
                 case 6: Recv6(ref r, p); break; // exit instance.
                 case 10: Recv10(ref r, p); break;//chek members
                 case 11: Recv11(ref r, p); break;//chek membersTabs
+                case 13: Recv13(ref r, p); break;//demiss member
                 default: Utilities.LogServices.Log("AC " + p.A + "," + p.B + " has not been coded"); break;
             }
         }
@@ -31,7 +32,7 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                cGlobal.gInstance.Send81_1(ref p);
+                cGlobal.gInstance.Send81_1(ref p,1);
 
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
@@ -117,12 +118,23 @@ namespace Wonderland_Private_Server.ActionCodes
             try
             {
                 // move tab members
-                if ((tmp >= 1) && (tmp < 4))
+                if (p.CurInstance != 0)
                 {
-                    cGlobal.gInstance.CheckMembers(ref p, tmp);
+                    if ((tmp >= 1) && (tmp < 4))
+                    {
+                        cGlobal.gInstance.CheckMembers(ref p, tmp);
 
+                    }
                 }
             } 
+            catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
+        void Recv13(ref Player p, RecvPacket r)
+        {
+            try
+            {                
+
+            }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
     }
