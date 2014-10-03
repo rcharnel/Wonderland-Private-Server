@@ -119,7 +119,7 @@
     <Compile Include="DataManagement\DataFiles\EveExt.cs" />
     <Compile Include="DataManagement\DataFiles\EveLoader.cs" />
     <Compile Include="DataManagement\DataFiles\GroundMMg.cs" />
-    <Compile Include="DataManagement\DataFiles\Instance.cs" />
+    <Compile Include="Code\Objects\Instance.cs" />
     <Compile Include="DataManagement\DataFiles\ItemManager.cs" />
     <Compile Include="DataManagement\DataFiles\NpcManager.cs" />
     <Compile Include="DataManagement\DataFiles\SceneLoader.cs" />
@@ -133,6 +133,7 @@
     </Compile>
     <Compile Include="GM\BigLetterLogo.cs" />
     <Compile Include="Maps\Islands\NorthIsland\NorthIsland60000\TopNorthIsland%2860000%29.cs" />
+    <Compile Include="Maps\Islands\WellingVillager\TheCapitol\3F\3F.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\MapObject.cs" />
     <Compile Include="Network\Client.cs" />

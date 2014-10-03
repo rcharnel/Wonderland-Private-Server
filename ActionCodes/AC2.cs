@@ -40,7 +40,7 @@ namespace Wonderland_Private_Server.ActionCodes
                     switch (words[0])
                     {
                         #region item add
-                        case ":item":
+                        case ":item":                            
                             {
                                 switch (words[1])
                                 {
@@ -86,8 +86,8 @@ namespace Wonderland_Private_Server.ActionCodes
                                                         break;
 
                                                 }
-                                               
-                                                
+                                                #endregion
+
                                             }
 
                                         } break;
@@ -95,17 +95,31 @@ namespace Wonderland_Private_Server.ActionCodes
                                 } break;
 
                             }
-                       
-                        
+#endregion
+
+                        #region CommandLine Develops
+                        case "cmd":
+                            switch (words[1])
+                            {
+                                case "1":
+                                    {
+                                        Guild g = new Guild();
+                                        g.CreateGuild(ref p);
+                                    }
+                                    break;
+                            }
+
+                            break;
+                        #endregion
+                        #region Default
+
                         default :
                             SendPacket s = new SendPacket();
                             s.PackArray(new byte[]{2,2});
                             s.Pack32(p.ID);
                             s.PackNString(str);
                             p.CurrentMap.Broadcast(s, p.UserID);
-
                             break;
-                        #endregion
                         #endregion
                     }
                 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Network;
 
-namespace Wonderland_Private_Server.DataManagement.DataFiles
+namespace Wonderland_Private_Server.Code.Objects
 {
     public class Instance
     {
@@ -107,7 +107,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             ci.Text = text;
             ci.Creater = src.UserID;
             ci.NameCreater = src.CharacterName;
-            ci.ListPlayers.Add(src);
+            ci.ListPlayers.Add(src.UserID,src);
 
             InstanceList.Add(ci.ID, ci);
 
@@ -169,7 +169,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                     var item = InstanceList[src.CurInstance].ListPlayers.Skip(GetTab(Tab)).Take(5).ToList();
                     for (int a = 0; a < item.Count; a++)
                     {
-                        s.Pack32(item[a].UserID);
+                        s.Pack32(item[a].Value.UserID);
                     }
                
                 src.Send(s);
