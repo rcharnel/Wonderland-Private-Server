@@ -57,7 +57,7 @@ namespace Wonderland_Private_Server.ActionCodes
                 {
                     InvItemCell i = new InvItemCell();
                     i.CopyFrom(u);
-                    tp.Eqs.SetEQ((byte)u.Data.EquipPos, i);
+                    tp.Eqs.SetEQ((byte)u.Equippped_At, i);
                 }
                 tp.FillHP(); tp.FillSP();
                 tp.Settings.Set(3, 31);

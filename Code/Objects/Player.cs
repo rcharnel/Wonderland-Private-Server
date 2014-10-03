@@ -754,10 +754,10 @@ namespace Wonderland_Private_Server.Code.Objects
             if (i.ItemID > 0)
             {
                 Inv[index].Clear();
-                if (Eqs.Level >= i.Data.Level)
+                if (Eqs.Level >= i.Level)
                 {
                     DataOut = SendType.Multi;
-                    var retrem = Eqs.SetEQ((byte)i.Data.EquipPos, i);
+                    var retrem = Eqs.SetEQ((byte)i.Equippped_At, i);
                     if (retrem != null && retrem.ItemID > 0)
                         Inv.AddItem(retrem, index, false);
                     Eqs.Send8_1();//send ac8

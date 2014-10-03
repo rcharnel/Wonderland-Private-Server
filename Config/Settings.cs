@@ -11,8 +11,14 @@ namespace Wonderland_Private_Server.Config
     public class Settings
     {
         readonly object m_Lock = new object();
-        public Dictionary<string, string> Config { get; set; }
-
+        Dictionary<string, string> Config
+        {
+            get
+            {
+                var test =  new Dictionary<string, string>() ;
+                return test;
+            }
+        }
         public string this[string key]
         {
             get
@@ -49,10 +55,8 @@ namespace Wonderland_Private_Server.Config
 
         public Settings()
         {
-            Config = new Dictionary<string, string>();
             Reset();
         }
-        public bool isConfigured { get { return Config.ContainsKey("DBCONN"); } }
         public void Reset()
         {
             Config.Clear();
@@ -70,7 +74,7 @@ namespace Wonderland_Private_Server.Config
                             case "[Version]":
                                 {
                                     ver = file.ReadLine();
-                                    if (ver != "V8") return false;
+                                    if (ver != "V9") return false;
                                 } break;
                             case "[Settings]":
                                 {

@@ -11,7 +11,7 @@ namespace Wonderland_Private_Server
     static class cGlobal
     {
         public static List<System.Threading.Thread> ThreadManager = new List<System.Threading.Thread>();
-
+        public static Config.Settings SrvSettings = new Config.Settings();
 
         public static gitClient GClient = new gitClient();
 

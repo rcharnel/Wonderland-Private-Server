@@ -35,7 +35,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         public UInt32 BuyingPrice;
         public UInt32 SellingPrice;
         public byte EquipLimit;
-        public UInt16 UnknownWord1;
+        public UInt16 Control;
         public UInt32 UnknownDWord1;
         public byte SetID;
         public UInt32 AntiSeal;
@@ -100,7 +100,26 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             {
                 switch ((byte)itemType)
                 {
-                    case 29: return false;
+                    case 23:
+                    case 3:
+                    case 31:
+                    case 32:
+                    case 1:
+                    case 10:
+                    case 12:
+                    case 14:
+                    case 15:
+                    case 5:
+                    case 6:
+                    case 8:
+                    case 9:
+                    case 4:
+                    case 37:
+                    case 36:
+                    case 35:
+                    case 34:
+                    case 33:
+                    case 2:
                     case 13: return true;
                     default: return false;
                 }
@@ -173,7 +192,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             BuyingPrice = dwordXor(getDWord(data, ptr)); ptr += 4;
             SellingPrice = dwordXor(getDWord(data, ptr)); ptr += 4;
             EquipLimit = byteXor(data[ptr]); ptr++;//use limit maybe
-            UnknownWord1 = wordXor(Unpack16(data, ptr)); ptr += 2;//control
+            Control = wordXor(Unpack16(data, ptr)); ptr += 2;//control
             UnknownDWord1 = dwordXor(getDWord(data, ptr)); ptr += 4;
             SetID = byteXor(data[ptr]); ptr++;
             AntiSeal = dwordXor(getDWord(data, ptr)); ptr += 4;
@@ -248,11 +267,12 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                     int at = 0;
                     for (int n = 0; n < max; n++)
                     {
-                        cItem i = new cItem();
+                        ItemData f = new ItemData();                        
+                        f.mydata = new byte[457];
+                        Array.Copy(data, at, f.mydata, 0, 457);
+                        f.Load();
+                        cItem i = new cItem(f);
                         i.Ammt = 1;
-                        i.Data.mydata = new byte[457];
-                        Array.Copy(data, at, i.Data.mydata, 0, 457);
-                        i.Data.Load();
                         itemList.Add(i.ItemID, i);
                         at += 457;
                     }

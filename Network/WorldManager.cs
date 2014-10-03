@@ -168,7 +168,7 @@ namespace Wonderland_Private_Server.Network
                 Thread.Sleep(120);
 
                 
-            if(exptimer.Elapsed >= new TimeSpan(0,1,30))
+            if(exptimer.Elapsed >= new TimeSpan(0,0,30))
                 {
                     foreach (var m in MapList.Values.ToList())
                         try

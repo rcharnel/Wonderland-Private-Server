@@ -597,7 +597,7 @@ namespace Wonderland_Private_Server.Maps
                     {
                         p.Pack8(3);
                         p.Pack8(1);
-                        unk = Items_Dropped[a].Data.UnknownWord1;
+                        unk = Items_Dropped[a].Control;
                     }
 
                     p.Pack16((ushort)a);

@@ -44,4 +44,17 @@ namespace Wonderland_Private_Server.Code.Enums
         Monster_Records = 101,
         Critical_Increase = 137,
     }
+
+    public enum usetype
+    {
+        AnyChar_Pet = 0,
+        MaleChar,
+        FemaleChar,
+        AnyChar,
+        BeastPet = 13,
+        AnyChar_Pet2 = 10,
+        AnyPet = 8,
+        HumanPet = 9,
+        WindElement = 12,
+    }
 }
