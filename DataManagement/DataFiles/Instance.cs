@@ -43,23 +43,42 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         }
 
 
-        public int GetIndexTab(int value)
-        {
-            int a = 0;
-            foreach(var pair in InstanceList)
-            {
-                a++;
-                if (pair.Key == value)
-                {
+        public int GetIndexTab(int a)
+        {            
                     if (a <= 5) return 1;
                     else if ((a > 5) && (a <= 10)) return 2;
                     else if ((a > 10) && (a <= 15)) return 3;
                     else if ((a > 15) && (a <= 20)) return 4;
-                    else return 5;
-                }                
-            }
-            return 0;
+                    else return 5;         
         }
+        int GetTab(int CurTab)
+        {
+            if (CurTab == 1)
+                return 0;
+            else if (CurTab == 2)
+                return 5;
+            else if (CurTab == 3)
+                return 10;
+            else if (CurTab == 4)
+                return 15;
+            else
+                return 20;
+
+        }
+        public int GetNumberPerTab(int Tab,int number)
+        {
+            switch(Tab)
+            {
+                case 1: if (number > 5) { return 5; } else { return number; } break;
+                case 2: if (number > 10) { return 5; } else { return number - 5; } break;
+                case 3: if (number > 15) { return 5; } else { return number - 10; } break;
+                case 4: if (number > 20) { return 5; } else { return number - 20; } break;           
+
+            }
+            return 1;// error
+        }
+            
+        
         int VerifyExitInstanceInList(int id)
         {            
             var g = InstanceData[id];
@@ -68,11 +87,11 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             {
             gg:
                 tmp++;
-            if (InstanceList.ContainsKey(tmp))
-            {
-                goto gg;
-            }
-            else { return tmp; }
+                if (InstanceList.ContainsKey(tmp))
+                {
+                    goto gg;
+                }
+                else { return tmp; }
             }
             else
             {
@@ -88,7 +107,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             ci.Text = text;
             ci.Creater = src.UserID;
             ci.NameCreater = src.CharacterName;
-            ci.ListPlayers.Add(src.UserID, src);
+            ci.ListPlayers.Add(src);
 
             InstanceList.Add(ci.ID, ci);
 
@@ -97,14 +116,14 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             
             SendPacket s = new SendPacket();
             s.PackArray(new byte[]{85,8});
-            int tab = GetIndexTab(src.CurInstance);
+            int tab = GetIndexTab(InstanceList.Count);
             s.Pack8((byte)tab);
             s.Pack16((UInt16)ci.ID);
             s.PackString(src.CharacterName);
             s.PackString(ci.Text);
             s.Pack8(1);
             s.Pack8(0);
-            cGlobal.WLO_World.BroadcastTo(s); // this global players
+            cGlobal.WLO_World.BroadcastTo(s); // this global
 
            s = new SendPacket();
             s.PackArray(new byte[] { 85,5,1,1 });
@@ -121,42 +140,71 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             
             
         }
-        public void CheckMembers(ref Player src,byte gg)
-        {
+        public void CheckMembers(ref Player src,byte Tab)
+        {           
+            //int skip = 0;
+
             if (InstanceList.ContainsKey(src.CurInstance))
             {
                 SendPacket s = new SendPacket();
                 s.PackArray(new byte[] {85,6});
-                s.Pack8(gg); //???
-                s.Pack8((byte)InstanceList[src.CurInstance].Tabs);//total                
-                s.Pack8((byte)InstanceList[src.CurInstance].ListPlayers.Count);//current players comfirmado
-                s.Pack8((byte)InstanceList[src.CurInstance].ListPlayers.Count);
-                foreach (var pair in InstanceList[src.CurInstance].ListPlayers)
-                {
-                    s.Pack32(pair.Key);
-                }
+                s.Pack8((byte)InstanceList[src.CurInstance].Tabs);//total Tabs
+                s.Pack8(Tab); // current tab                           
+                s.Pack8((byte)InstanceList[src.CurInstance].ListPlayers.Count);//TotalPlayers
+                int tmp = GetNumberPerTab(Tab,InstanceList[src.CurInstance].ListPlayers.Count);
+                s.Pack8((byte)tmp); // number player per tab 5 max                
+
+                //if (Tab == 1)
+                //    skip = 0;
+                //else if (Tab == 2)
+                //    skip = 5;
+                //else if (Tab == 3)
+                //    skip = 10;
+                //else if (Tab == 4)
+                //    skip = 15;
+                //else
+                //    skip = 20;
+
+
+                    var item = InstanceList[src.CurInstance].ListPlayers.Skip(GetTab(Tab)).Take(5).ToList();
+                    for (int a = 0; a < item.Count; a++)
+                    {
+                        s.Pack32(item[a].UserID);
+                    }
+               
                 src.Send(s);
             }
         }
         
-        public void Send81_1(ref Player src) // UPDATE LIST INSTANCE !!!
+        public void Send81_1(ref Player src,int TabResquest) // UPDATE LIST INSTANCE !!!
         {
             SendPacket s = new SendPacket();
             s.PackArray(new byte[] { 85,1});
-            s.Pack8((byte)Tabs); // number Tab
-            s.Pack8(1); // unknow
+            s.Pack8((byte)Tabs); // total Tabs
+            s.Pack8((byte)TabResquest); // Tab request (current tab)
            
             if (InstanceList.Count > 0)
             {
-                s.Pack8((byte)InstanceList.Count);//number instances
-                foreach (var pair in InstanceList)
+                s.Pack8((byte)InstanceList.Count);//total instances
+
+                var item = InstanceList.Skip(GetTab(TabResquest)).Take(5).ToList();
+
+                for (int a = 0; a < item.Count; a++)
                 {
-                    s.Pack16((UInt16)pair.Value.ID);
-                    s.PackString(pair.Value.NameCreater);
-                    s.PackString(pair.Value.Text);
+                    s.Pack16((UInt16)item[a].Value.ID);
+                    s.PackString(item[a].Value.NameCreater);
+                    s.PackString(item[a].Value.Text);
                     s.Pack8(1);
                     s.Pack8(0);
-                }                
+                }
+                //foreach (var pair in InstanceList.Take(5))
+                //{
+                //    s.Pack16((UInt16)pair.Value.ID);
+                //    s.PackString(pair.Value.NameCreater);
+                //    s.PackString(pair.Value.Text);
+                //    s.Pack8(1);
+                //    s.Pack8(0);
+                //}                
             }
             else {s.Pack8(0); }
             src.Send(s);
@@ -211,7 +259,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             // se existe a instancia então remova o player e deixe os outros.
             if (InstanceList.ContainsKey(CurInstantance))
             {
-                InstanceList[CurInstantance].ListPlayers.Remove(srcID);
+                InstanceList[CurInstantance].ListPlayers.Remove(src);
             }
             src.CurInstance = 0;
 
@@ -228,8 +276,8 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                 s.Pack8((byte)tmp.ListPlayers.Count);
                 foreach (var pair in tmp.ListPlayers)
                 {
-                    s.PackString(pair.Value.CharacterName);
-                    s.Pack32(pair.Value.UserID);
+                    s.PackString(pair.CharacterName);
+                    s.Pack32(pair.UserID);
                 }
                 cGlobal.WLO_World.BroadcastTo(s, directTo: src);
 
@@ -248,7 +296,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             s.Pack16((UInt16)tmp.ID);
             cGlobal.WLO_World.BroadcastTo(s); // here global packet
 
-            InstanceList[tmp.ID].ListPlayers.Add(src.UserID, src); //add player
+            InstanceList[tmp.ID].ListPlayers.Add(src); //add player
             src.CurInstance = tmp.ID; // add id instance to player.
 
             s = new SendPacket();
@@ -307,15 +355,13 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                 else return 1;
             }
         }
-        public Dictionary<uint, Player> ListPlayers = new Dictionary<uint, Player>();
+        public List<Player> ListPlayers = new List<Player>();
 
         public void RemoveMember(uint ID)
         {
-            if (ListPlayers.ContainsKey(ID))
-            {
-                ListPlayers.Remove(ID);
-            }
-
+            var item = ListPlayers.Find(x => x.UserID == ID);
+            if (item != null)
+                ListPlayers.Remove(item);
         }
     }
     class Data

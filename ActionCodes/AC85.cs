@@ -17,7 +17,7 @@ namespace Wonderland_Private_Server.ActionCodes
             switch (p.B)
             {
                 case 1: Recv1(ref r, p); break; // Update list instances.
-                case 2: Recv2(ref r, p); break; // update list too.
+                case 2: Recv2(ref r, p); break; // Tab list instances.
                 case 3: Recv3(ref r, p); break; // create instance
                 case 4: Recv4(ref r, p); break; // pre join
                 case 5: Recv5(ref r, p); break; // join
@@ -38,13 +38,17 @@ namespace Wonderland_Private_Server.ActionCodes
         }
         void Recv2(ref Player p, RecvPacket r)
         {
+            int tmp = r.Unpack8(2);
             try
             {
-                switch (r.Unpack8(2))
+                switch (tmp)
                 {
 
                     case 1:
-                        cGlobal.gInstance.Send81_1(ref p);
+                        cGlobal.gInstance.Send81_1(ref p,tmp);
+                        break;
+                    case 2:
+                        cGlobal.gInstance.Send81_1(ref p,tmp);
                         break;
                 }
 
@@ -112,28 +116,13 @@ namespace Wonderland_Private_Server.ActionCodes
             byte tmp = r.Unpack8(2);
             try
             {
-                switch(tmp)
+                // move tab members
+                if ((tmp >= 1) && (tmp < 4))
                 {
-                    case 0: 
-                        if (p.CurInstance != 0)
-                        {
-                            cGlobal.gInstance.CheckMembers(ref p, 1);
-                        }
-                        break;
-                    case 1: 
-                        if (p.CurInstance != 0)
-                        {
-                            cGlobal.gInstance.CheckMembers(ref p, 1);
-                        }
-                        break;
-                    default://check tabs
-                        cGlobal.gInstance.CheckMembers(ref p, tmp);
-                        break;
+                    cGlobal.gInstance.CheckMembers(ref p, tmp);
 
                 }
-                    
-
-            }
+            } 
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
     }
