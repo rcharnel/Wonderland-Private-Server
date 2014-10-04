@@ -33,6 +33,9 @@ namespace Wonderland_Private_Server.UI
                 int max = cGlobal.ThreadManager.Count;
                 int cnt = 0;
 
+                dispMsg = "Shutting Down Server";
+                cGlobal.WLO_World.Kill();
+                perct += 10;
                 foreach (var t in cGlobal.ThreadManager.ToList())
                 {
                     dispMsg = string.Format("Aborting Threads {0}/{1}", ++cnt, max);
@@ -55,7 +58,7 @@ namespace Wonderland_Private_Server.UI
 
                 }
                 dispMsg = "Server Shutdown Completed..";
-                Thread.Sleep(3000);
+                Thread.Sleep(1500);
 
                 this.Invoke(new Action(() => { Close(); }));
             }));
