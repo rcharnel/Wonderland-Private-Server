@@ -36,3 +36,5 @@ C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debu
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Utilities.Update.GitUpdateItem.resources
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Utilities.Update.GitUpdateItem.resources
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\GupdtSrv.dll

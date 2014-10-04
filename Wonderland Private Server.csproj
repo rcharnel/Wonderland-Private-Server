@@ -52,7 +52,7 @@
     </Reference>
     <Reference Include="GupdtSrv, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Dropbox\Wonderland Online Dev Group\DLLs\GupdtSrv.dll</HintPath>
+      <HintPath>..\..\..\Dropbox\Dlls\GupdtSrv.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -86,6 +86,7 @@
     <Compile Include="ActionCodes\AC32.cs" />
     <Compile Include="ActionCodes\AC35.cs" />
     <Compile Include="ActionCodes\AC63.cs" />
+    <Compile Include="ActionCodes\AC85.cs" />
     <Compile Include="Bots\Cupid.cs" />
     <Compile Include="Bots\GmBot.cs" />
     <Compile Include="cGlobal.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="Code\Objects\Equipement.cs" />
     <Compile Include="Code\Objects\Guild.cs" />
     <Compile Include="Code\Objects\inGameSettings.cs" />
+    <Compile Include="Code\Objects\Instance.cs" />
     <Compile Include="Code\Objects\Inventory.cs" />
     <Compile Include="Code\Objects\Item.cs" />
     <Compile Include="Code\Objects\Mail.cs" />
@@ -250,7 +252,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

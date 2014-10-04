@@ -24,5 +24,8 @@
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.5, .NETCore4.5" />
     </frameworkAssemblies>
+    <references>
+      <reference file="Octokit.dll" />
+    </references>
   </metadata>
 </package>

@@ -3,3 +3,11 @@
 ################################################################################
 
 /GupdtSrv
+/.nuget
+/bin/Debug
+/FakesAssemblies
+/Fakes
+/obj/Debug
+/packages
+/Wonderland Private Server.csproj.user
+/Wonderland Private Server.v11.suo
