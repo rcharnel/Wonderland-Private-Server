@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.SQLite;
+using System.IO;
 
 
 namespace DBConnector
@@ -20,24 +21,55 @@ namespace DBConnector
     {
         bool VerifyPassword(string check, string with);
     }
+
     public sealed class DBOAuth:IDBConnector
     {
 
         //Not all settings might be used depending on type of DB
         //Server Type 
-        
-        const DBType ServType = DBType.Sqlite;
+
+        readonly DBType ServType = DBType.Sqlite;
 
         //MySql/SQl Settings
-        const string User = "";
-        const string Pass = "";
-        const string DataBase = "";
-        const string Port = "";
-        const string ServerIP = "";
+        readonly string User = "";
+        readonly string Pass = "";
+        readonly string DataBase = "";
+        readonly string Port = "";
+        readonly string ServerIP = "";
         
         //SQLite Settings
         //Change to location of DB File
-        const string FileLocation = "C:\\PServerFiles\\WonderlandPServer.s3db";
+        readonly string FileLocation = "C:\\PServerFiles\\WonderlandPServer.s3db";
+
+        //Override File used in debugging 
+        readonly string OverrideFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.database.txt";
+
+        public DBOAuth()
+        {
+            if (System.IO.File.Exists(OverrideFile))
+            {
+
+                try
+                {
+                    string line = "";
+                    using (StreamReader file = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.database.txt"))
+                        while ((line = file.ReadLine()) != null)
+                        {
+                            switch (line.Split('|')[0])
+                            {
+                                case "Type": ServType = (DBType)byte.Parse(line.Split('|')[1]); break;
+                                case "User": User = line.Split('|')[1]; break;
+                                case "Pass": Pass = line.Split('|')[1]; break;
+                                case "DB": DataBase = line.Split('|')[1]; break;
+                                case "Port": Port = line.Split('|')[1]; break;
+                                case "IP": ServerIP = line.Split('|')[1]; break;
+                                case "File": FileLocation = line.Split('|')[1]; break;
+                            }
+                        }
+                }
+                catch { }
+            }
+        }
 
         public DBType TypeofDB { get { return ServType; } }
         public bool VerifyConnection()

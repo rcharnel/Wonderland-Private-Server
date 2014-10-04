@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wonderland Private Server", "Wonderland Private Server.csproj", "{4B9B2879-7725-4CFD-B919-3DFE3FEAA076}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBConnector", "DBConnector\DBConnector.csproj", "{6BBC2E05-AA32-455F-B0B2-72DBA562C8D4}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{77E68E29-2596-48EB-A6BE-DA71BC7838F2}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
@@ -15,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{77E68E
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GupdtSrv", "GupdtSrv\GupdtSrv.csproj", "{AD0E6A50-C8A5-42C1-BADF-5BC148FFDE01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBConnector", "DBConnector\DBConnector.csproj", "{6BBC2E05-AA32-455F-B0B2-72DBA562C8D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,14 +26,14 @@ Global
 		{4B9B2879-7725-4CFD-B919-3DFE3FEAA076}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B9B2879-7725-4CFD-B919-3DFE3FEAA076}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B9B2879-7725-4CFD-B919-3DFE3FEAA076}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6BBC2E05-AA32-455F-B0B2-72DBA562C8D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6BBC2E05-AA32-455F-B0B2-72DBA562C8D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6BBC2E05-AA32-455F-B0B2-72DBA562C8D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6BBC2E05-AA32-455F-B0B2-72DBA562C8D4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AD0E6A50-C8A5-42C1-BADF-5BC148FFDE01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AD0E6A50-C8A5-42C1-BADF-5BC148FFDE01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD0E6A50-C8A5-42C1-BADF-5BC148FFDE01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD0E6A50-C8A5-42C1-BADF-5BC148FFDE01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BBC2E05-AA32-455F-B0B2-72DBA562C8D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BBC2E05-AA32-455F-B0B2-72DBA562C8D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BBC2E05-AA32-455F-B0B2-72DBA562C8D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BBC2E05-AA32-455F-B0B2-72DBA562C8D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

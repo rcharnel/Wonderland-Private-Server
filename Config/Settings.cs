@@ -66,7 +66,7 @@ namespace Wonderland_Private_Server.Config
             try
             {
                 string line = ""; string ver = "";
-                using (StreamReader file = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.wlo"))
+                using (StreamReader file = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo"))
                     while ((line = file.ReadLine()) != null)
                     {
                         switch (line)

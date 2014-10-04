@@ -1,0 +1,18 @@
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\Wonderland Private Server.exe.config
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\x64\SQLite.Interop.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\x86\SQLite.Interop.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\Wonderland Private Server.exe
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\Wonderland Private Server.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\DBConnector.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\GupdtSrv.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\Octokit.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\System.Data.SQLite.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\DBConnector.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\GupdtSrv.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Release\System.Data.SQLite.xml
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Release\Wonderland_Private_Server.Form1.resources
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Release\Wonderland_Private_Server.Properties.Resources.resources
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Release\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Release\Wonderland Private Server.csproj.GenerateResource.Cache
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Release\Wonderland Private Server.exe
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Release\Wonderland Private Server.pdb
