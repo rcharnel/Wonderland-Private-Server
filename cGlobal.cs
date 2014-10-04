@@ -29,7 +29,7 @@ namespace Wonderland_Private_Server
         public static DataManagement.DataFiles.SkillDataFile gSkillManager;
         public static DataManagement.DataFiles.EveManager gEveManager;
         public static DataManagement.DataFiles.NpcDat gNpcManager;
-        public static Wonderland_Private_Server.Code.Objects.Instance gInstance = new Wonderland_Private_Server.Code.Objects.Instance();
+        //public static Wonderland_Private_Server.Code.Objects.Instance gInstance = new Wonderland_Private_Server.Code.Objects.Instance();
 
         public static ActionCodes.AC GetActionCode(int ID)
         {
