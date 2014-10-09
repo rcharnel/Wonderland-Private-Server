@@ -104,7 +104,7 @@ namespace Wonderland_Private_Server.ActionCodes
                                 case "1":
                                     {
                                         Guild g = new Guild();
-                                        g.CreateGuild(ref p);
+                                        //g.CreateGuild(ref p);
                                     }
                                     break;
                             }

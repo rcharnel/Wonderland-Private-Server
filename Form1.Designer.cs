@@ -42,16 +42,16 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.UpdatePane = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.updtrefresh = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.GitUptOption = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.tabControl3 = new System.Windows.Forms.TabControl();
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.tabPage8 = new System.Windows.Forms.TabPage();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.updtrefresh = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabControl2.SuspendLayout();
@@ -60,9 +60,9 @@
             this.tabPage5.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updtrefresh)).BeginInit();
             this.tabPage6.SuspendLayout();
             this.tabControl3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.updtrefresh)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -83,14 +83,14 @@
             // 
             // tabControl1
             // 
+            this.tabControl1.Controls.Add(this.tabPage6);
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage6);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 24);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(755, 410);
+            this.tabControl1.Size = new System.Drawing.Size(755, 417);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
@@ -130,6 +130,7 @@
             // SystemLog
             // 
             this.SystemLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SystemLog.HideSelection = false;
             this.SystemLog.Location = new System.Drawing.Point(3, 3);
             this.SystemLog.Name = "SystemLog";
             this.SystemLog.Size = new System.Drawing.Size(727, 346);
@@ -150,6 +151,7 @@
             // NetWorkLog
             // 
             this.NetWorkLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.NetWorkLog.HideSelection = false;
             this.NetWorkLog.Location = new System.Drawing.Point(3, 3);
             this.NetWorkLog.Name = "NetWorkLog";
             this.NetWorkLog.Size = new System.Drawing.Size(727, 346);
@@ -170,6 +172,7 @@
             // errorLog
             // 
             this.errorLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.errorLog.HideSelection = false;
             this.errorLog.Location = new System.Drawing.Point(3, 3);
             this.errorLog.Name = "errorLog";
             this.errorLog.Size = new System.Drawing.Size(727, 346);
@@ -211,6 +214,41 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Update Options";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(181, 45);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(43, 13);
+            this.label4.TabIndex = 4;
+            this.label4.Text = "minutes";
+            // 
+            // updtrefresh
+            // 
+            this.updtrefresh.Location = new System.Drawing.Point(105, 43);
+            this.updtrefresh.Name = "updtrefresh";
+            this.updtrefresh.Size = new System.Drawing.Size(70, 20);
+            this.updtrefresh.TabIndex = 3;
+            this.updtrefresh.ValueChanged += new System.EventHandler(this.updtrefresh_ValueChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(65, 45);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(34, 13);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Every";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(2, 22);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(81, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Check Updates";
+            // 
             // GitUptOption
             // 
             this.GitUptOption.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -241,7 +279,7 @@
             this.tabPage6.Location = new System.Drawing.Point(4, 22);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(747, 384);
+            this.tabPage6.Size = new System.Drawing.Size(747, 391);
             this.tabPage6.TabIndex = 2;
             this.tabPage6.Text = "System";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -254,7 +292,7 @@
             this.tabControl3.Location = new System.Drawing.Point(3, 3);
             this.tabControl3.Name = "tabControl3";
             this.tabControl3.SelectedIndex = 0;
-            this.tabControl3.Size = new System.Drawing.Size(741, 378);
+            this.tabControl3.Size = new System.Drawing.Size(741, 385);
             this.tabControl3.TabIndex = 0;
             // 
             // tabPage7
@@ -262,9 +300,9 @@
             this.tabPage7.Location = new System.Drawing.Point(4, 22);
             this.tabPage7.Name = "tabPage7";
             this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage7.Size = new System.Drawing.Size(733, 352);
+            this.tabPage7.Size = new System.Drawing.Size(733, 359);
             this.tabPage7.TabIndex = 0;
-            this.tabPage7.Text = "tabPage7";
+            this.tabPage7.Text = "Status";
             this.tabPage7.UseVisualStyleBackColor = true;
             // 
             // tabPage8
@@ -272,51 +310,16 @@
             this.tabPage8.Location = new System.Drawing.Point(4, 22);
             this.tabPage8.Name = "tabPage8";
             this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage8.Size = new System.Drawing.Size(733, 352);
+            this.tabPage8.Size = new System.Drawing.Size(733, 359);
             this.tabPage8.TabIndex = 1;
             this.tabPage8.Text = "Tasks";
             this.tabPage8.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(2, 22);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(81, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Check Updates";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(65, 45);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(34, 13);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Every";
-            // 
-            // updtrefresh
-            // 
-            this.updtrefresh.Location = new System.Drawing.Point(105, 43);
-            this.updtrefresh.Name = "updtrefresh";
-            this.updtrefresh.Size = new System.Drawing.Size(70, 20);
-            this.updtrefresh.TabIndex = 3;
-            this.updtrefresh.ValueChanged += new System.EventHandler(this.updtrefresh_ValueChanged);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(181, 45);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(43, 13);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "minutes";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(755, 434);
+            this.ClientSize = new System.Drawing.Size(755, 441);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -334,9 +337,9 @@
             this.tabPage2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.updtrefresh)).EndInit();
             this.tabPage6.ResumeLayout(false);
             this.tabControl3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.updtrefresh)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

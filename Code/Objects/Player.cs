@@ -15,7 +15,7 @@ using Wonderland_Private_Server.GM;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
-    public class Player : Character, Fighter, Network.cSocket
+    public class Player : Character, Fighter,cSocket
     {
         readonly object mylock = new object();
         Thread wrk;
@@ -64,6 +64,7 @@ namespace Wonderland_Private_Server.Code.Objects
         WarpData gpsMap;
         Tent m_tent;
         #endregion
+
 
         public Maps.MapObject object_interactingwith;
         Dictionary<int, ActionCodes.AC> aclist;
@@ -156,6 +157,7 @@ namespace Wonderland_Private_Server.Code.Objects
 
         #region Player
 
+        #region Player.Game
         public bool BlockSave { get; set; }
         public bool inGame { get; set; }
         public PlayerState State
@@ -176,6 +178,47 @@ namespace Wonderland_Private_Server.Code.Objects
             }
         }
         public IReadOnlyList<Quest> Completed_Quest { get { return m_started_Quests.Where(c => c.progress == c.total).ToList(); } }
+        public SendType DataOut
+        {
+            get { return dataout; }
+            set
+            {
+                prevdataout = dataout; dataout = value;
+                if (prevdataout == SendType.Multi && value == SendType.Normal) Send(MultiPkt);
+                else if (value == SendType.Multi) MultiPkt = new SendPacket(false, true);
+
+            }
+        }
+        #endregion
+        #region Player.Character
+        public override uint ID
+        {
+            get
+            {
+                return (uint)((int)UserID + ((slot == 2) ? 4500000 : 0));
+            }
+        }
+        public override string CharacterName
+        {
+            get
+            {
+                return (this.GM) ?  GMStuff.Name + " " + base.CharacterName : base.CharacterName;
+            }
+            set
+            {
+                base.CharacterName = value;
+            }
+        }
+        #endregion
+        #region Player.Guild
+        public bool inGuild { get { return (m_guild == null); } }
+        public string GuildName { get { return (m_guild != null) ? m_guild.GuildName : ""; } }
+        public Guild CurGuild { get { return m_guild; } set { m_guild = value; } }
+        public byte[] GuildInsigne { get { return new byte[1]; } }
+
+        #endregion
+
+
         public inGameSettings Settings
         {
             get
@@ -204,35 +247,12 @@ namespace Wonderland_Private_Server.Code.Objects
         public Tent Tent { get { return m_tent; } }
        // public BattleArea BattleScene { get { return m_battle; } set { m_battle = value; } }
         public cRiceBall RiceBall { get { return m_riceball; } }
-        public SendType DataOut
-        {
-            get { return dataout; }
-            set
-            {
-                prevdataout = dataout; dataout = value;
-                if (prevdataout == SendType.Multi && value == SendType.Normal) Send(MultiPkt);
-                else if (value == SendType.Multi) MultiPkt = new SendPacket(false, true);
 
-            }
-        }
-        public override uint ID
-        {
-            get
-            {
-                return (uint)((int)UserID + ((slot == 2) ? 4500000 : 0));
-            }
-        }
-        public override string CharacterName
-        {
-            get
-            {
-                return (this.GM) ?  GMStuff.Name + " " + base.CharacterName : base.CharacterName;
-            }
-            set
-            {
-                base.CharacterName = value;
-            }
-        }
+        
+
+
+       
+        
 
         #endregion
 

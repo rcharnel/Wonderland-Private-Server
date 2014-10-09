@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GupdtSrv;
 using System.Reflection;
+using Wonderland_Private_Server.Code.Objects;
 
 namespace Wonderland_Private_Server
 {
@@ -18,18 +19,25 @@ namespace Wonderland_Private_Server
 
         public static Network.WorldManager WLO_World;
 
-
+        #region DataBase
         public static DBConnector.DBOAuth gDataBaseConnection = new DBConnector.DBOAuth();
         public static DataManagement.DataBase.CharacterDataBase gCharacterDataBase;
         public static DataManagement.DataBase.UserDataBase gUserDataBase;
         public static DataManagement.DataBase.GameDataBase gGameDataBase;
+        #endregion
 
-
+        #region DataFiles
         public static DataManagement.DataFiles.ItemManager gItemManager;
         public static DataManagement.DataFiles.SkillDataFile gSkillManager;
         public static DataManagement.DataFiles.EveManager gEveManager;
         public static DataManagement.DataFiles.NpcDat gNpcManager;
-        public static Wonderland_Private_Server.Code.Objects.Instance gInstance = new Wonderland_Private_Server.Code.Objects.Instance();
+        #endregion
+
+        #region Systems
+        public static Instance gInstanceSystem = new Instance();
+        public static GuildSystem gGuildSystem = new GuildSystem();
+
+        #endregion
 
         public static ActionCodes.AC GetActionCode(int ID)
         {
@@ -48,7 +56,6 @@ namespace Wonderland_Private_Server
             }
             return null;
         }
-
         public static Maps.Map GetMap(ushort mapid)
         {
             foreach (var y in (from c in Assembly.GetExecutingAssembly().GetTypes()

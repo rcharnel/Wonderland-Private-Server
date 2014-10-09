@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.SQLite;
+using MySql.Data.MySqlClient;
 using System.IO;
 
 
@@ -86,6 +87,17 @@ namespace DBConnector
                             return true;
                         }
                     }break;
+                case DBType.MySQl:
+                    {
+                        try
+                        {
+                            MySqlConnection conn = new MySqlConnection(Connection_String);
+                            conn.Open();
+                            conn.Close();
+                            return true;
+                        }
+                        catch { }
+                    }break;
             }
             return false;
         }
@@ -114,6 +126,7 @@ namespace DBConnector
 
             switch (ServType)
             {
+                #region SQLITE
                 case DBType.Sqlite:
                     {
                         SQLiteConnection cnn = new SQLiteConnection(Connection_String);
@@ -133,9 +146,30 @@ namespace DBConnector
                         }
                         catch { cnn.Close(); }
                     }break;
+                #endregion
+                #region MYSQL
+                case DBType.MySQl:
+                    {
+                        MySqlConnection cnn = new MySqlConnection(Connection_String);
+                        try
+                        {
+                            cnn.Open();
+                            MySqlCommand mycommand = new MySqlCommand(query, cnn);
+                            if (parameters != null)
+                                foreach (var t in parameters)
+                                    mycommand.Parameters.AddWithValue(t.Key, t.Value);
+                            MySqlDataReader reader = mycommand.ExecuteReader();
+                            dt.Load(reader);
+                            reader.Close();
+                            cnn.Close();
+                            return dt;
+                        }
+                        catch { cnn.Close(); }
+                    }break;
+                #endregion
             }
 
-            return new DataTable();
+            return null;
         }
         public DataTable GetDataTable(string Table, string where, KeyValuePair<string, string>[] parameters = null)
         {
@@ -144,6 +178,7 @@ namespace DBConnector
 
             switch (ServType)
             {
+                #region SQLITE
                 case DBType.Sqlite:
                     {
                         SQLiteConnection cnn = new SQLiteConnection(Connection_String);
@@ -158,14 +193,31 @@ namespace DBConnector
                         reader.Close();
                         cnn.Close();
                     } break;
+                #endregion
+                #region MYSQL
+                case DBType.MySQl:
+                    {
+                        MySqlConnection cnn = new MySqlConnection(Connection_String);
+                        cnn.Open();
+                        MySqlCommand mycommand = new MySqlCommand(string.Format("select* from {0} where {1}", Table, where), cnn);
+                        if (parameters != null)
+                            foreach (var t in parameters)
+                                mycommand.Parameters.AddWithValue(t.Key, t.Value);
+                        MySqlDataReader reader = mycommand.ExecuteReader();
+                        dt.Load(reader);
+                        reader.Close();
+                        cnn.Close();
+                    } break;
+                #endregion
             }
-            return dt;
+            return null;
         }
         public int ExecuteNonQuery(string sql, KeyValuePair<string, string>[] parameters = null)
         {
             int rowsUpdated = 0;
             switch (ServType)
             {
+                #region SQLITE
                 case DBType.Sqlite:
                     {
                         SQLiteConnection cnn = new SQLiteConnection(Connection_String);
@@ -178,6 +230,20 @@ namespace DBConnector
                         rowsUpdated = mycommand.ExecuteNonQuery();
                         cnn.Close();
                     } break;
+                #endregion
+                #region MYSQL
+                case DBType.MySQl:
+                    {
+                        MySqlConnection cnn = new MySqlConnection(Connection_String);
+                        cnn.Open();
+                        MySqlCommand mycommand = new MySqlCommand(sql, cnn);
+                        if (parameters != null)
+                            foreach (var t in parameters)
+                                mycommand.Parameters.AddWithValue(t.Key, t.Value);
+                        rowsUpdated = mycommand.ExecuteNonQuery();
+                        cnn.Close();
+                    } break;
+                #endregion
             }
             return rowsUpdated;
         }

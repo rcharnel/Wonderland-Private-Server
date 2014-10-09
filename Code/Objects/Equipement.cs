@@ -15,10 +15,8 @@ namespace Wonderland_Private_Server.Code.Objects
     public class EquipementManager
     {
         readonly object m_Lock = new object();
-
         protected cSocket host;
         Dictionary<byte, EquipmentCell> clothes;
-
         byte head;
         int m_currexp, m_curhp, m_cursp, gold, m_skillpoint, m_potential;
         long m_totalexp = 0;
@@ -74,6 +72,7 @@ namespace Wonderland_Private_Server.Code.Objects
             clothes = new Dictionary<byte, EquipmentCell>();
             for (byte a = 1; a < 7; a++)
                 clothes.Add(a, new EquipmentCell());
+
         }
 
         #region Definitions
@@ -140,14 +139,8 @@ namespace Wonderland_Private_Server.Code.Objects
                     return (uint)gold;
                 }
             }
-            set
-            {
-                lock (m_Lock)
-                {
-                    gold = (int)value;
-                }
-            }
         }
+        
         /// <summary>
         /// a Character's level
         /// </summary>
@@ -1015,6 +1008,8 @@ namespace Wonderland_Private_Server.Code.Objects
                     } break;
             }
         }
+
+        #region Gold Methods
         public void SendGold()
         {
             SendPacket p = new SendPacket();
@@ -1022,7 +1017,36 @@ namespace Wonderland_Private_Server.Code.Objects
             p.Pack32(Gold);
             host.Send(p);
         }
-        
+        public bool AddGold(int g)
+        {
+            lock (m_Lock)
+            {
+                if (gold >= 999999) return false;
+                gold += g;
+                return true;
+            }
+        }
+        public bool TakeGold(int g)
+        {
+            lock (m_Lock)
+            {
+                if (gold < g) return false;
+                
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 26, 2 });
+                s.Pack32((uint)g); //gold decrescimo
+                host.Send(s);
+                gold -= g;
+                return true;
+            }
+
+        }
+        public void SetGold(int g)
+        {
+            gold = g;
+        }
+        #endregion
+
         /// <summary>
         /// Removes a Character's Equipment
         /// </summary>
