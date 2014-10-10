@@ -11,6 +11,7 @@ using Wonderland_Private_Server.Code.Interface;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.GM;
+using Wonderland_Private_Server.DataManagement.DataFiles;
 
 
 namespace Wonderland_Private_Server.Code.Objects
@@ -49,7 +50,7 @@ namespace Wonderland_Private_Server.Code.Objects
         #region Player Def
         PlayerState m_state;
         TradeManager m_trade;
-        //BattleArea m_battle;
+        Battle m_battle;
         Guild m_guild;
         cRiceBall m_riceball;
         cPetList m_pets;
@@ -101,6 +102,7 @@ namespace Wonderland_Private_Server.Code.Objects
             m_pets = new cPetList(this);
             m_tent = new Tent(this);
             m_riceball = new cRiceBall(this);
+            m_teammembers = new List<Player>();
         }
         ~Player()
         {
@@ -164,11 +166,13 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             get
             {
-                //if (m_battle != null)
-                //{
-                //    if (CurHP != 0)
-                //        return PlayerState.InGame_Battling_Alive;
-                //}
+                if (m_battle != null)
+                {
+                    if (CurHP != 0)
+                        return PlayerState.InGame_Battling_Alive;
+                    else
+                        return PlayerState.InGame_Battling_Dead;
+                }
 
                 return m_state;
             }
@@ -245,26 +249,22 @@ namespace Wonderland_Private_Server.Code.Objects
         public EquipementManager Eqs { get { return ((EquipementManager)this) ?? null; } }
         public cPetList Pets { get { return m_pets; } }
         public Tent Tent { get { return m_tent; } }
-       // public BattleArea BattleScene { get { return m_battle; } set { m_battle = value; } }
+
+        public Battle BattleScene { get { return m_battle; } set { m_battle = value; } }
         public cRiceBall RiceBall { get { return m_riceball; } }
-
-        
-
-
-       
-        
-
+                
         #endregion
 
         #region Fighter
+        public Skill SkillEffect { get; set; }
         public BattleSide BattlePosition { get; set; }
-        public eFighterType TypeofFighter { get; set; }
-        //public BattleAction myAction { get; set; }
+        public eFighterType TypeofFighter { get { return ( BattlePosition == BattleSide.Watching)? eFighterType.Watcher:eFighterType.player; } }
+        public BattleAction myAction { get; set; }
         public UInt16 ClickID { get { return 0; } set { } }
         public UInt16 OwnerID { get { return 0; } set { } }
         public byte GridX { get; set; }
         public byte GridY { get; set; }
-        public bool ActionDone { get { return false; /*(myAction != null || DateTime.Now > rndend);*/ } }
+        public bool ActionDone { get { return (myAction != null || DateTime.Now > rndend); } }
         public DateTime RdEndTime { set { rndend = value; } }
         public Int32 MaxHP { get { return (Eqs != null) ? Eqs.FullHP : 0; } }
         public Int16 MaxSP { get { return (Eqs != null) ? (short)Eqs.FullSP : (short)0; } }

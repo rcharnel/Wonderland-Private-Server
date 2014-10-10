@@ -22,7 +22,7 @@ namespace Wonderland_Private_Server.Maps
         protected Dictionary<byte, WarpData> Destinations;
         protected Dictionary<byte, WarpPortal> Portals;
         protected Dictionary<ushort, MapObject > MapObjects;
-        protected List<Battle> Battles;
+        protected Dictionary<int,Battle> Battles;
         protected Dictionary<uint,Tent> Tents;
 
         public virtual ushort MapID { get { return 0; } }
@@ -39,7 +39,7 @@ namespace Wonderland_Private_Server.Maps
             Portals = new Dictionary<byte, WarpPortal>();
             MapObjects = new Dictionary<ushort, MapObject>();
             Tents = new Dictionary<uint, Tent>();
-            Battles = new List<Battle>();
+            Battles = new Dictionary<int,Battle>();
             Items_Dropped = new Dictionary<byte, DroppedItem>(255);
             LoadData();
         }
@@ -194,6 +194,8 @@ namespace Wonderland_Private_Server.Maps
         }
         public virtual void UpdateMap()
         {
+            foreach (var battl in Battles.Values.ToList())
+                battl.Process();
         }
 
         public virtual bool Teleport(TeleportType teletype, ref Player sender, byte portalID, WarpData warp = null)
@@ -384,82 +386,77 @@ namespace Wonderland_Private_Server.Maps
 
         #region BattleSection
 
-        //public void onPk_Started(Player starter, Player enemy) //TODO these should be lists of players
-        //{
-        //    Battle battle = new Battle(myhost.GameDataBase.GetBattleBG(MapID), myhost);
-        //    battle.TypeofBattle = eBattleType.pk;
-        //    battle.startedby = starter;
+        public void onPk_Started(Player starter,Player enemy) //TODO these should be lists of players
+        {
+            int a = 1;
+            while(Battles.ContainsKey(a))
+                a++;
 
-        //    //starter team
-        //    BattleArea right = new BattleArea(5, myhost,ref battle);
-        //    starter.BattlePosition = BattleSide.Attacking;
-        //    starter.BattleScene = right;
-        //    right.Add(eBattleType.pk, starter);
-        //    foreach (Player d in starter.TeamMembers)
-        //    {
-        //        d.BattlePosition = BattleSide.Attacking;
-        //        d.BattleScene = right;
-        //        right.Add(eBattleType.pk,d);
-        //    }
+            Battle battle = new Battle(cGlobal.gGameDataBase.GetBattleBG(MapID),a);
+            battle.TypeofBattle = eBattleType.pk;
+            battle.startedby = starter;
 
-        //    //enemy team
-        //    BattleArea left = new BattleArea(2, myhost, ref battle);
-        //    enemy.BattlePosition = BattleSide.Defending;
-        //    enemy.BattleScene = left;
-        //    left.Add(eBattleType.pk, enemy);
-        //    foreach (Player d in enemy.TeamMembers)
-        //    {
-        //        d.BattlePosition = BattleSide.Defending;
-        //        d.BattleScene = left;
-        //        left.Add(eBattleType.pk, d);
-        //    }
+            //starter team
+            starter.BattlePosition = BattleSide.Attacking;
+            starter.BattleScene = battle;
+            battle[BattleSide.Attacking].Add(eBattleType.pk, starter);
 
-        //    //watch
-        //    BattleArea watch = new BattleArea(4, myhost, ref battle);
+            foreach (Player d in starter.TeamMembers)
+            {
+                d.BattlePosition = BattleSide.Attacking;
+                d.BattleScene = battle;
+                battle[BattleSide.Attacking].Add(eBattleType.pk, d);
+            }
 
-        //    battle.Side.Add(2, left);
-        //    battle.Side.Add(5, right);            
-        //    battle.Side.Add(4, watch);
-            
-        //    battle.StartBattle();
-        //    //battle.BattleState = eBattleState.Active;
-        //    //MapUpdate += battle.Process;
-        //    //battle.StartRound();
-        //    //Battles_in_Map.Add(battle);
-        //}
-        //public void onMob_Ambush()
-        //{
-        //    //20,12 packet
-        //}
+            //enemy team
+            enemy.BattlePosition = BattleSide.Defending;
+            battle[BattleSide.Defending].Add(eBattleType.pk, enemy);
+            enemy.BattleScene = battle;
+            foreach (Player d in enemy.TeamMembers)
+            {
+                d.BattlePosition = BattleSide.Defending;
+                d.BattleScene = battle;
+                battle[BattleSide.Defending].Add(eBattleType.pk, d);
+            }
+
+            battle.StartBattle();
+            battle.BattleState = eBattleState.Active;
+            battle.StartRound();
+            Battles.Add(a,battle);
+        }
+        public void onMob_Ambush()
+        {
+            //20,12 packet
+        }
         //public void StartPKNpc(Player starter, PetFighter enemy) //TODO these should be lists of players
-        //{
+       // {
 
-        //    //Battle battle = new Battle(g);
-        //    //battle.Type = eBattleType.pk;
-        //    //battle.Background = g.GameDataBase.GetMapBackground(MapID);
+            //Battle battle = new Battle(g);
+            //battle.Type = eBattleType.pk;
+            //battle.Background = g.GameDataBase.GetMapBackground(MapID);
 
-        //    //Player f = new Player(g);
-        //    //f.SetFrom(starter);
-        //    //f.clickID = enemy.clickID;
-        //    //f.Position = BattleSide.right;
-        //    //battle.startedby = f;
-        //    //f.StartedBattle = true;
-        //    //battle.FighterJoined(f);
-        //    //foreach (Player d in starter.character.MyTeam.TeamMembers)
-        //    //{
-        //    //    Player fe = new Player(g);
-        //    //    fe.SetFrom(d);
-        //    //    fe.clickID = enemy.clickID;
-        //    //    fe.Position = BattleSide.right;
-        //    //    battle.FighterJoined(fe);
-        //    //}
-        //    //enemy.Position = BattleSide.left;
-        //    //battle.FighterJoined(enemy);
-        //    //battle.Send_BattleInfo();
-        //    //battle.BattleState = eBattleState.Active;
-        //    //MapUpdate += battle.Process;
-        //    //battle.StartRound();
-        //    //Battles_in_Map.Add(battle);
+            //Player f = new Player(g);
+            //f.SetFrom(starter);
+            //f.clickID = enemy.clickID;
+            //f.Position = BattleSide.right;
+            //battle.startedby = f;
+            //f.StartedBattle = true;
+            //battle.FighterJoined(f);
+            //foreach (Player d in starter.character.MyTeam.TeamMembers)
+            //{
+            //    Player fe = new Player(g);
+            //    fe.SetFrom(d);
+            //    fe.clickID = enemy.clickID;
+            //    fe.Position = BattleSide.right;
+            //    battle.FighterJoined(fe);
+            //}
+            //enemy.Position = BattleSide.left;
+            //battle.FighterJoined(enemy);
+            //battle.Send_BattleInfo();
+            //battle.BattleState = eBattleState.Active;
+            //MapUpdate += battle.Process;
+            //battle.StartRound();
+            //Battles_in_Map.Add(battle);
         //}
 
 

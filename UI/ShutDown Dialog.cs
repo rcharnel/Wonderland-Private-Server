@@ -53,7 +53,7 @@ namespace Wonderland_Private_Server.UI
                     dispMsg = "Launching Updater";
                     ProcessStartInfo start = new ProcessStartInfo();
                     start.FileName = Environment.CurrentDirectory + "\\WloPSrvUpdater.exe";
-                    start.Arguments = cGlobal.GClient.Branch+ " "+cGlobal.GClient.myVersion;
+                    start.Arguments = cGlobal.GClient.Branch+ " "+cGlobal.GClient.myVersion + " " +cGlobal.GClient.UpdateInfo.TagName;
                     Process.Start(start);                    
 
                 }

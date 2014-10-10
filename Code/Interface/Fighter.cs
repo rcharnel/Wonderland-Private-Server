@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.Code.Objects;
+using Wonderland_Private_Server.DataManagement.DataFiles;
 
 namespace Wonderland_Private_Server.Code.Interface
 {
@@ -15,7 +16,7 @@ namespace Wonderland_Private_Server.Code.Interface
         eFighterType TypeofFighter { get; }
         PlayerState State { get; }
         cPetList Pets { get; }
-        //BattleAction myAction { get; set; }
+        BattleAction myAction { get; set; }
         UInt16 ClickID { get; set; }
         UInt16 OwnerID { get; set; }
         byte Level { get; }
@@ -27,8 +28,10 @@ namespace Wonderland_Private_Server.Code.Interface
         DateTime RdEndTime { set; }
         Int32 MaxHP { get; }
         Int16 MaxSP { get; }
+        EquipementManager Eqs { get; }
         ElementType Element { get; }
         RebornJob Job { get; }
+        Skill SkillEffect { get; set; }
         bool Reborn { get; }
 
     }

@@ -9,7 +9,7 @@ using Wonderland_Private_Server.Code.Enums;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
-    public class AC2 : AC
+    public class AC02 : AC
     {
         public override int ID { get { return 2; } }
         public override void ProcessPkt(ref Player r, RecvPacket p)

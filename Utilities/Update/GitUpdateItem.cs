@@ -17,11 +17,17 @@ namespace Wonderland_Private_Server.Utilities.Update
         public GitUpdateItem(Version curver,Release gitrelease)
         {
             InitializeComponent();
+
+
             textBox1.Text = gitrelease.Body;
-            label1.Text = string.Format("{0} - {1}", gitrelease.TagName, gitrelease.PublishedAt.Value.UtcDateTime.ToShortDateString());
+            label1.Text = string.Format("{0} - {1}", gitrelease.TagName, (gitrelease.PublishedAt != null)?gitrelease.PublishedAt.Value.UtcDateTime.ToShortDateString():"TBA");
 
-
-            if (curver < new Version((gitrelease.TagName.Split('.').Length <4)?gitrelease.TagName + ".0":gitrelease.TagName))
+            if(gitrelease.Prerelease)
+            {
+                pictureBox1.Visible = false;
+                button1.Visible = false;
+            }
+            else if (curver < new Version((gitrelease.TagName.Split('.').Length <4)?gitrelease.TagName + ".0":gitrelease.TagName))
             {
                 pictureBox1.Visible = false;
             }

@@ -979,7 +979,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             }
 
             //load equips
-            src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM characters where charID = '" + charID + "' AND storID =1");
+            src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM inventory where charID = '" + charID + "' AND storID =1");
 
             if (src.Rows.Count > 0)
             {
@@ -1150,7 +1150,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             insert.Add("head", c.Head.ToString());
             insert.Add("body", ((byte)c.Body).ToString());
             insert.Add("nickname", c.Nickname);
-            insert.Add("location_map", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.CurrentMap.MapID.ToString() : player.PrevMap.DstMap.ToString());
+            insert.Add("location_map",(c.CurrentMap.TypeofMap == MapType.Regular) ? c.CurrentMap.MapID.ToString() : player.PrevMap.DstMap.ToString());
             insert.Add("location_x", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.X.ToString() : player.PrevMap.DstX_Axis.ToString());
             insert.Add("location_y", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.Y.ToString() : player.PrevMap.DstY_Axis.ToString());
             insert.Add("haircolor", c.HairColor.ToString());

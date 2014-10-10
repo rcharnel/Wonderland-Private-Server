@@ -18,7 +18,7 @@ namespace Wonderland_Private_Server.Network
     /// </summary>
     public class WorldManager
     {
-        Thread Mainthrd;
+        Thread Mainthrd,Mapthrd,Eventthrd;
         bool killFlag;
         readonly ManualResetEvent mylock;
         //readonly Semaphore ProcessLock,SendLock;
@@ -101,6 +101,12 @@ namespace Wonderland_Private_Server.Network
             Mainthrd = new Thread(new ThreadStart(Mainwrk));
             Mainthrd.Name = "World Manager Main Thread";
             Mainthrd.Start();
+            Mapthrd = new Thread(new ThreadStart(Mapwrk));
+            Mapthrd.Name = "World Manager Main Thread";
+            Mapthrd.Start();
+            Eventthrd = new Thread(new ThreadStart(Eventwrk));
+            Eventthrd.Name = "World Manager Main Thread";
+            Eventthrd.Start();
         }
 
         public void Kill()
@@ -110,6 +116,10 @@ namespace Wonderland_Private_Server.Network
             mylock.Set();
             while (Mainthrd != null && Mainthrd.IsAlive) { Thread.Sleep(1); }
             Mainthrd = null;
+            while (Mapthrd != null && Mapthrd.IsAlive) { Thread.Sleep(1); }
+            Mapthrd = null;
+            while (Eventthrd != null && Eventthrd.IsAlive) { Thread.Sleep(1); }
+            Eventthrd = null;
         }
 
         void Mainwrk()// processes connected clients
@@ -179,14 +189,6 @@ namespace Wonderland_Private_Server.Network
                         catch { }
                     exptimer.Restart();
                 }
-
-
-
-                #region Maps
-
-                #endregion
-
-
             }
             while (!killFlag);
 
@@ -198,6 +200,24 @@ namespace Wonderland_Private_Server.Network
             }
 
             MapList.Clear();
+        }
+        void Mapwrk()// processes connected clients
+        {
+            do
+            {
+                foreach (var map in MapList.Values.ToList())
+                    map.UpdateMap();
+                Thread.Sleep(1);
+            }
+            while (!killFlag);
+        }
+        void Eventwrk()// processes connected clients
+        {
+            do
+            {
+                Thread.Sleep(120);
+            }
+            while (!killFlag);
         }
 
 
