@@ -20,6 +20,10 @@ namespace Wonderland_Private_Server.Code.Objects
         readonly object mylock = new object();
         Thread wrk;
 
+        public int CurInstance;//test
+        public UInt16 GuildID; //test
+        //public UInt16 BufferGuildRequest;
+
         #region Acc Def
         uint m_dbuserid;
         string m_user, m_deletekey;

@@ -1,9 +1,0 @@
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\System.Data.SQLite.Fakes.xml
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\System.Data.SQLite.Fakes.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\System.Data.SQLite.Fakes.pdb
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\Microsoft.QualityTools.Testing.Fakes.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\System.Data.SQLite.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\System.Data.SQLite.xml
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\o\f.csprojResolveAssemblyReference.cache
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\o\System.Data.SQLite.Fakes.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\o\System.Data.SQLite.Fakes.pdb

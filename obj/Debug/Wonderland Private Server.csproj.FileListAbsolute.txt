@@ -24,24 +24,6 @@ C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debu
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojFakesResolveAssemblyReference.cache
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\fakes.args
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\Microsoft.QualityTools.Testing.Fakes.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\System.Data.SQLite.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\System.Data.SQLite.Fakes.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\System.Data.SQLite.Fakes.pdb
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\System.Data.SQLite.Fakes.xml
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\b\System.Data.SQLite.xml
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\f.ah
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\f.ch
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\f.cs
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\f.csproj
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\f.fakes
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\f.fakesconfig
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\f.snk
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\o\f.csproj.FileListAbsolute.txt
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\o\f.csprojResolveAssemblyReference.cache
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\o\System.Data.SQLite.Fakes.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Fakes\sdsql\o\System.Data.SQLite.Fakes.pdb
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\x64\SQLite.Interop.dll
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\x86\SQLite.Interop.dll
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe
@@ -57,3 +39,23 @@ C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debu
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.exe
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.pdb
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe.config
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.exe
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.pdb
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\x64\SQLite.Interop.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\x86\SQLite.Interop.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.pdb
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\DBConnector.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Microsoft.QualityTools.Testing.Fakes.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Octokit.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.Linq.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\DBConnector.pdb
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.xml
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojFakesResolveAssemblyReference.cache
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Form1.resources
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Properties.Resources.resources
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache

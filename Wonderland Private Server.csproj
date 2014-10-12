@@ -68,7 +68,9 @@
     <Compile Include="ActionCodes\AC23.cs" />
     <Compile Include="ActionCodes\AC32.cs" />
     <Compile Include="ActionCodes\AC35.cs" />
+    <Compile Include="ActionCodes\AC39.cs" />
     <Compile Include="ActionCodes\AC63.cs" />
+    <Compile Include="ActionCodes\AC85.cs" />
     <Compile Include="Bots\Cupid.cs" />
     <Compile Include="Bots\GmBot.cs" />
     <Compile Include="cGlobal.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="Code\Objects\Equipement.cs" />
     <Compile Include="Code\Objects\Guild.cs" />
     <Compile Include="Code\Objects\inGameSettings.cs" />
+    <Compile Include="Code\Objects\Instance.cs" />
     <Compile Include="Code\Objects\Inventory.cs" />
     <Compile Include="Code\Objects\Item.cs" />
     <Compile Include="Code\Objects\Mail.cs" />
