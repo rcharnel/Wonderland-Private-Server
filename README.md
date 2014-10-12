@@ -16,10 +16,6 @@ Private Server for wonderland online
 </ul>
 
 
-
-
-
-
 <ul><h1>Warpable Maps</h1>
 <li>South Beach</li>
 <li>Upper North Island</li>
