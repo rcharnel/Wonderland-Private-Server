@@ -10,9 +10,9 @@ using Wonderland_Private_Server.Code.Enums;
 
 namespace Wonderland_Private_Server.DataManagement.DataFiles
 {
-    public class AttackPattern
+    public class SkillAttackPattern
     {
-        //APattern APattern;
+        AttackPattern APattern;
         int GradeStartRange;
         int GradeEndRange;
 
@@ -26,67 +26,67 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         }
         public void Set(byte ptr, byte data, byte Max)
         {
-            //APattern = (APattern)data;
-            //int w = 0;
-            //int bon = 0;
-            //int m = 0;
-            //switch (ptr)
-            //{
-            //    case 1: { w = 0; bon = 1; m = 25; } break;
-            //    case 2: { w = 25; bon = 1; m = 50; } break;
-            //    case 3: { bon = 1; w = 50; m = 75; } break;
-            //    case 4: { w = 75; m = 100; } break;
-            //}
+            APattern = (AttackPattern)data;
+            int w = 0;
+            int bon = 0;
+            int m = 0;
+            switch (ptr)
+            {
+                case 1: { w = 0; bon = 1; m = 25; } break;
+                case 2: { w = 25; bon = 1; m = 50; } break;
+                case 3: { bon = 1; w = 50; m = 75; } break;
+                case 4: { w = 75; m = 100; } break;
+            }
 
-            //GradeStartRange = (int)Math.Floor((double)((w / 100.0) * Max) + bon);
-            //if (Max == 0) GradeEndRange = 1;
-            //else
-            //    GradeEndRange = (int)Math.Floor((double)((m / 100.0) * Max));
+            GradeStartRange = (int)Math.Floor((double)((w / 100.0) * Max) + bon);
+            if (Max == 0) GradeEndRange = 1;
+            else
+                GradeEndRange = (int)Math.Floor((double)((m / 100.0) * Max));
         }
 
-        //public List<byte[]> GetTargets(byte[] tgrid, BattleSide loc)
-        //{
+        public List<byte[]> GetTargets(byte[] tgrid, BattleSide loc)
+        {
 
-        //    List<byte[]> trglist = new List<byte[]>();
-        //    switch (loc)
-        //    {
-        //        case BattleSide.left:
-        //            {
-        //                switch (APattern)
-        //                {
-        //                    case APattern.Single: trglist.Add(tgrid); break;
-        //                    case APattern.HorizontalLine:
-        //                        {
-        //                            trglist.Add(new byte[] { tgrid[0], (byte)(tgrid[1] - 1) });
-        //                            trglist.Add(new byte[] { tgrid[0], (byte)(tgrid[1] + 1) });
-        //                        } break;
-        //                    case APattern.VerticalLine:
-        //                        {
-        //                            trglist.Add(new byte[] { (byte)(tgrid[0] - 1), (byte)(tgrid[1]) });
-        //                            trglist.Add(new byte[] { (byte)(tgrid[0] + 1), (byte)(tgrid[1]) });
-        //                        } break;
-        //                } break;
-        //            }
-        //        case BattleSide.right:
-        //            {
-        //                switch (APattern)
-        //                {
-        //                    case APattern.Single: trglist.Add(tgrid); break;
-        //                    case APattern.HorizontalLine:
-        //                        {
-        //                            trglist.Add(new byte[] { tgrid[0], (byte)(tgrid[1] - 1) });
-        //                            trglist.Add(new byte[] { tgrid[0], (byte)(tgrid[1] + 1) });
-        //                        } break;
-        //                    case APattern.VerticalLine:
-        //                        {
-        //                            trglist.Add(new byte[] { (byte)(tgrid[0] - 1), (byte)(tgrid[1]) });
-        //                            trglist.Add(new byte[] { (byte)(tgrid[0] + 1), (byte)(tgrid[1]) });
-        //                        } break;
-        //                } break;
-        //            }
-        //    }
-        //    return trglist;
-        //}
+            List<byte[]> trglist = new List<byte[]>();
+            switch (loc)
+            {
+                case BattleSide.Defending:
+                    {
+                        switch (APattern)
+                        {
+                            case AttackPattern.Single: trglist.Add(tgrid); break;
+                            case AttackPattern.HorizontalLine:
+                                {
+                                    trglist.Add(new byte[] { tgrid[0], (byte)(tgrid[1] - 1) });
+                                    trglist.Add(new byte[] { tgrid[0], (byte)(tgrid[1] + 1) });
+                                } break;
+                            case AttackPattern.VerticalLine:
+                                {
+                                    trglist.Add(new byte[] { (byte)(tgrid[0] - 1), (byte)(tgrid[1]) });
+                                    trglist.Add(new byte[] { (byte)(tgrid[0] + 1), (byte)(tgrid[1]) });
+                                } break;
+                        } break;
+                    }
+                case BattleSide.Attacking:
+                    {
+                        switch (APattern)
+                        {
+                            case AttackPattern.Single: trglist.Add(tgrid); break;
+                            case AttackPattern.HorizontalLine:
+                                {
+                                    trglist.Add(new byte[] { tgrid[0], (byte)(tgrid[1] - 1) });
+                                    trglist.Add(new byte[] { tgrid[0], (byte)(tgrid[1] + 1) });
+                                } break;
+                            case AttackPattern.VerticalLine:
+                                {
+                                    trglist.Add(new byte[] { (byte)(tgrid[0] - 1), (byte)(tgrid[1]) });
+                                    trglist.Add(new byte[] { (byte)(tgrid[0] + 1), (byte)(tgrid[1]) });
+                                } break;
+                        } break;
+                    }
+            }
+            return trglist;
+        }
     }
 
     public class Skill
@@ -103,11 +103,18 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         public bool givenatquest;
         public byte Grade;
         public uint Exp;
-        //public SkillType Type { get { if (Data != null)return (SkillType)Data.Type; else return SkillType.None; } }
+
+        int tyrns_in_effect;
+
+        public void DecreaseTurns()
+        {
+        }
+
+        public SkillType Type { get { if (Data != null)return (SkillType)Data.Type; else return SkillType.None; } }
         public string Name { get { return ASCIIEncoding.ASCII.GetString(GetData().SkillName).Replace("'", string.Empty).Replace("\0", string.Empty); } }
         public double AnimtionTime { get { return Data.Decimal2; } }
         public ushort AttackPower() { if (Data.MaxSkillLevel == 0)Data.MaxSkillLevel = 1; return (ushort)Math.Floor((double)(((Grade * 100.0) / (double)Data.MaxSkillLevel) / 100.0) * Data.AdditinalHarm); }
-        //public ElementType ElementType { get { return (ElementType)Data.ElementType; } set { Data.ElementType = (byte)value; } }
+        public ElementType ElementType { get { return (ElementType)Data.ElementType; } set { Data.ElementType = (byte)value; } }
         public ushort SkillID { get { if (Data != null) return Data.SkillID; else return 0; } }
         public ushort SPUsage { get { return Data.SP; } }
         public ushort PrecedingSkill { get { return Data.SkillID2; } }
@@ -117,28 +124,28 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         {
             return Data;
         }
-        //public EffectLayer EffectLayer { get { return (EffectLayer)Data.EffectLayer; } }
-       // public EffectType TargetEffect { get { return (EffectType)Data.Effect; } }
-        AttackPattern[] GetPatternList()
+        public EffectLayer EffectLayer { get { return (EffectLayer)Data.EffectLayer; } }
+        public EffectType TargetEffect { get { return (EffectType)Data.Effect; } }
+        SkillAttackPattern[] GetPatternList()
         {
-            List<AttackPattern> tmp = new List<AttackPattern>();
-            AttackPattern o = new AttackPattern();
+            List<SkillAttackPattern> tmp = new List<SkillAttackPattern>();
+            SkillAttackPattern o = new SkillAttackPattern();
             o.Set(1, Data.SkillPattern1, Data.MaxSkillLevel);
             tmp.Add(o);
-            o = new AttackPattern();
+            o = new SkillAttackPattern();
             o.Set(2, Data.SkillPattern2, Data.MaxSkillLevel);
             tmp.Add(o);
-            o = new AttackPattern();
+            o = new SkillAttackPattern();
             o.Set(3, Data.SkillPattern3, Data.MaxSkillLevel);
             tmp.Add(o);
-            o = new AttackPattern();
+            o = new SkillAttackPattern();
             o.Set(4, Data.SkillPattern4, Data.MaxSkillLevel);
             tmp.Add(o);
             return tmp.ToArray();
         }
-        public AttackPattern PatternofAttack()
+        public SkillAttackPattern PatternofAttack()
         {
-            foreach (AttackPattern o in GetPatternList())
+            foreach (SkillAttackPattern o in GetPatternList())
             {
                 if (o.isInRange(Grade))
                     return o;

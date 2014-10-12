@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Objects;
+using Wonderland_Private_Server.Code.Enums;
 
 namespace Wonderland_Private_Server.Maps
 {
@@ -12,7 +13,9 @@ namespace Wonderland_Private_Server.Maps
         //public NpcEntries ObjInfo { private get; set; }
         //public InteractableObj DataOverride { private get; set; }
         //public InteractableObjType ObjType { get; set; }
-        public ushort CickID { get; set; }
+
+        public virtual MapObjType Type { get { return MapObjType.None; } }
+        public virtual ushort CickID { get; set; }
         public bool IsVisible { get; set; }
         public bool CanAttack(Player p)
         {

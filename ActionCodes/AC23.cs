@@ -22,6 +22,7 @@ namespace Wonderland_Private_Server.ActionCodes
                 case 10: Recv10(ref r, p); break;//move item inv
                 case 11: Recv11(ref r, p); break;//item selected to wear in inv
                 case 12: Recv12(ref r, p); break; //item selected to remove
+                case 124: Recv124(ref r, p); break; //confirm destroy 
                 default: Utilities.LogServices.Log("AC " + p.A + "," + p.B + " has not been coded"); break;
             }
         }
@@ -39,6 +40,7 @@ namespace Wonderland_Private_Server.ActionCodes
             {
                 byte pos = r.Unpack8(2);
                 p.CurrentMap.PickUpItem(pos, ref p);
+               
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
@@ -50,9 +52,33 @@ namespace Wonderland_Private_Server.ActionCodes
                 byte qnt = r.Unpack8(3);
                 byte ukn = r.Unpack8(4);
                 var item = p.Inv[pos];
-                p.Inv.RemoveItem(pos, qnt);
-               
-                p.CurrentMap.DropItem(item, p);
+
+                if (item != null)
+                {
+
+                  if (item.Dropable)                    
+                    {
+                        cItem ret = null;                        
+                            if ((ret = p.CurrentMap.DropItem(item, p)) != null)
+                            {
+                                item.CopyFrom(ret);
+                                p.Inv.RemoveItem(pos, qnt);
+                                // p.Inv.AddItem(item, pos, false);
+
+                            }
+                    }
+                  else
+                  {
+                      // test need ASK destroy
+                      SendPacket s = new SendPacket();
+                      s.PackArray(new byte[] { 23, 212, 255 });
+                      s.Pack8(pos);
+                      s.Pack16(item.ItemID);
+                      s.Pack8(qnt);
+                      p.Send(s);
+
+                  }
+                }
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
@@ -84,7 +110,7 @@ namespace Wonderland_Private_Server.ActionCodes
 
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
-        }//item selected to wear in inv
+        }
         void Recv12(ref Player p, RecvPacket r) //item selected to remove
         {
             try
@@ -103,6 +129,29 @@ namespace Wonderland_Private_Server.ActionCodes
             try
             {
                 
+            }
+            catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
+        void Recv124(ref Player p, RecvPacket r)
+        {
+            
+            try
+            {
+                byte pos = r.Unpack8(2);
+                byte qnt = r.Unpack8(3);
+                byte ukn = r.Unpack8(4); //??
+                var item = p.Inv[pos];
+                if (item != null)
+                {
+                    // test confirm destroy item
+                    SendPacket s = new SendPacket();
+                    s.PackArray(new byte[] { 23,26 });                    
+                    s.Pack16(item.ItemID);
+                    s.Pack8(qnt);
+                    p.Send(s);
+                    p.Inv.RemoveItem(pos, qnt);
+                }
+
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }

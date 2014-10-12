@@ -258,6 +258,7 @@ namespace Wonderland_Private_Server.Code.Objects
                         if (Items[chk].ItemID == 0 && Items[chk].ParentSlot == 0) continue;
                         else if (matrix[0] + (item.InvHeight - 1) > 51 && matrix[1] + (item.InvWidth - 1) > 6) return false;
                         else if (Items[chk].ItemID != 0 && Items[chk].ParentSlot != 0) return false;
+                        else if (Items[chk].ItemID != 0 && Items[chk].ItemID != item.ItemID) return false;
                     }
                 return true;
             }
@@ -314,17 +315,17 @@ namespace Wonderland_Private_Server.Code.Objects
             //Get item first
             if (Items[slot].ItemID > 0)
             {
-                switch (Items[slot].Data.itemType)
+                switch (Items[slot].Type)
                 {
                     case eItemType.tent: host.Tent.Open(); break;
                     default:
                         {
                             host.DataOut = SendType.Multi;
-                            switch (tgrt)
-                            {
-                                case 0: for (int a = 0; a < 2; a++) host.AddStat((byte)Items[slot].Data.statType[a], (byte)Items[slot].Data.statVal[a]); break;
-                                //default:for (int a = 0; a < 2; a++) 
-                            }
+                            //switch (tgrt)
+                            //{
+                            //    case 0: for (int a = 0; a < 2; a++) host.AddStat((byte)Items[slot].Data.statType[a], (byte)Items[slot].Data.statVal[a]); break;
+                            //    //default:for (int a = 0; a < 2; a++) 
+                            //}
                             Items[slot].Ammt -= 1;
                             SendPacket p = new SendPacket();
                             p.PackArray(new byte[] { 23, 9 });
@@ -344,7 +345,7 @@ namespace Wonderland_Private_Server.Code.Objects
             //Get item first
             if (Items[slot].ItemID > 0)
             {
-                switch (Items[slot].Data.itemType)
+                switch (Items[slot].Type)
                 {
                     case eItemType.tent: host.Tent.Close(); break;
                 }

@@ -7,7 +7,7 @@ using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Network;
 
 namespace Wonderland_Private_Server.Code.Objects
-{//
+{//////
     public class Instance
     {
         Dictionary<int, CInstance> InstanceList;

@@ -6,18 +6,24 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.DataManagement.DataFiles;
+using Wonderland_Private_Server.Code.Interface;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
-    public class Pet : PetEquipementManager
+    public class Pet : PetEquipementManager,Fighter
     {
+         #region FighterDef
+        public event BattleEvent onBattleAction;
+        DateTime rndend;
+        cPetList pets = new cPetList(null);
+        #endregion
         public Npc npcData;
         public byte Groupslot;
         byte m_amity;
         string name;
 
-        public UInt32 OwnerID { get { return (owner != null) ? owner.ID : 0; } }
-        public UInt16 ID { get { return npcData.NpcID; } }
+        public UInt32 OwnerID { get { return (owner != null) ? owner.ID : 0; } set { } }
+        public uint ID { get { return npcData.NpcID; } }
         public byte Amity { get { return m_amity; } }
         public string Name { get { return (!string.IsNullOrEmpty(name)) ? name : npcData.NpcName; } }
 
@@ -39,6 +45,45 @@ namespace Wonderland_Private_Server.Code.Objects
             base.Wis = npcData.WIS;
             base.Agi = npcData.AGI;
         }
+
+        #region Fighter Properties
+        public FighterState BattleState { get { return FighterState.Alive; } }
+        public Skill SkillEffect { get; set; }
+        public BattleSide BattlePosition { get; set; }
+        public eFighterType TypeofFighter { get { return eFighterType.Npc; } }
+        public BattleAction myAction { get; set; }
+        public UInt16 ClickID { get { return 0; } set { } }
+        public byte GridX { get; set; }
+        public byte GridY { get; set; }
+        public bool ActionDone { get { return (myAction != null || DateTime.Now > rndend); } }
+        public DateTime RdEndTime { set { rndend = value; } }
+        public Int32 MaxHP { get { return FullHP; } }
+        public Int16 MaxSP { get { return (short)FullSP; } }
+        public override int CurHP
+        {
+            get
+            {
+                return base.CurHP;
+            }
+            set
+            {
+                base.CurHP = value;
+            }
+        }
+        public override int CurSP
+        {
+            get
+            {
+                return base.CurSP;
+            }
+            set
+            {
+                base.CurSP = value;
+            }
+        }
+
+        public cPetList Pets { get { return pets; } }
+        #endregion
     }
     
     
@@ -118,6 +163,7 @@ namespace Wonderland_Private_Server.Code.Objects
         }      
         
 
+
         //public characterPet GetPetinBattleMode()
         //{
         //    foreach (characterPet e in myPets)
@@ -162,7 +208,7 @@ namespace Wonderland_Private_Server.Code.Objects
                     if (petlist.ContainsKey(n) && petlist[n] != null)
                     {
                         p.Pack8(n);
-                        p.Pack16(petlist[n].ID);
+                        p.Pack16(((ushort)petlist[n].ID));
                         p.Pack32((uint)petlist[n].TotalExp);
                         p.Pack8(petlist[n].Level);
                         p.Pack32(100);// p.Pack32((uint)petlist[n].CurHP);

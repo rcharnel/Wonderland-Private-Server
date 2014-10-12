@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Interface;
 using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.Network;
+using Wonderland_Private_Server.DataManagement.DataFiles;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
@@ -15,71 +16,105 @@ namespace Wonderland_Private_Server.Code.Objects
 ( (flag:gb)  50.1 s (player x, y, enermy x, y, ushort skill, timer 0 )
      * 
      * */
+    public class BattleAction
+    {
+        public Fighter src;
+        public Fighter dst;
+        public Skill skill;
+        public byte unknownbyte;
+        public byte unknownbyte2;
+    }
+
     public class Battle
     {
+        readonly object mylock = new object();
+        bool blockupdt;
+
         #region Definitions
         DateTime roundend_time;
 
-        //public Dictionary<byte,BattleArea> Side;
+        public Dictionary<byte, BattleArea> Side;
 
         public eBattleType TypeofBattle;
         public eBattleState BattleState;
         public eBattleRoundState RoundState;
 
-        public UInt16 Background;
+        public UInt16 Background,battleID;
         public Fighter startedby;
-
+        
         #endregion
+        public UInt16 BattleID { get { return battleID; } }
+        public BattleArea this[BattleSide key]
+        {
+            get
+            {
+                lock (mylock)
+                {
+                    // If this key is in the dictionary, return its value.
+                    if (Side.Values.Count(c=>c.Position == key) > 0)
+                    {
+                        // The key was found; return its value. 
+                        return Side.Values.Single(c=>c.Position == key);
+                    }
+                    else
+                    {
+                        // The key was not found; return null. 
+                        return null;
+                    }
+                }
+            }
+        }
+        
 
-
-        public Battle(UInt16 BG)
+        public Battle(UInt16 BG,int BattleID)
         {
             Background = BG;
-            //Side.Add(2,new BattleArea(2,g));
-            //Side.Add(4,new BattleArea(4,g));
-            //Side.Add(5,new BattleArea(5,g));
+            Side = new Dictionary<byte, BattleArea>();
+            Side.Add(2, new BattleArea(2, this));
+            Side.Add(4, new BattleArea(4, this));
+            Side.Add(5, new BattleArea(5, this));
         }
 
         #region BattleCmd Order 
 
-        //public bool HasOrders { get { return ((Side[2].Fighters_Alive.Count(c => c.myAction != null) > 0) || (Side[5].Fighters_Alive.Count(c => c.myAction != null) > 0)); } }
-        //public List<BattleAction> NextAction
-        //{
-        //    get
-        //    {
-        //        List<Fighter> tmp = new List<Fighter>();
-        //        List<BattleAction> cmdtmp = new List<BattleAction>();
-        //        List<Fighter> fighters = new List<Fighter>();
-        //        fighters.AddRange(Side[2].Fighters_Alive); fighters.AddRange(Side[5].Fighters_Alive);
-        //        var fighters_with_cmds = fighters.Where(c => c.myAction != null).ToList();
-        //        var orderedlist = fighters_with_cmds.OrderByDescending(c => c.FullSpd);
-        //        var trgt = orderedlist.First();//get fastest person
-        //        fighters_with_cmds.Remove(trgt);
-        //        tmp.Add(trgt);
-        //        // we will go through n add possible combo players
+        public bool HasOrders { get { return ((Side[2].Fighters_Alive.Count(c => c.myAction != null) > 0) || (Side[5].Fighters_Alive.Count(c => c.myAction != null) > 0)); } }
+        public List<BattleAction> NextAction
+        {
+            get
+            {
+                List<Fighter> tmp = new List<Fighter>();
+                List<BattleAction> cmdtmp = new List<BattleAction>();
+                List<Fighter> fighters = new List<Fighter>();
+                fighters.AddRange(Side[2].Fighters_Alive); fighters.AddRange(Side[5].Fighters_Alive);
+                var fighters_with_cmds = fighters.Where(c => c.myAction != null).ToList();
+                var orderedlist = fighters_with_cmds.OrderByDescending(c => c.FullSpd);
+                var trgt = orderedlist.First();//get fastest person
+                fighters_with_cmds.Remove(trgt);
+                tmp.Add(trgt);
+                // we will go through n add possible combo players
 
-        //        for (int a = 0; a < fighters_with_cmds.Count; a++)
-        //        {
-        //            orderedlist = fighters_with_cmds.OrderByDescending(c => c.FullSpd);
-        //            var chk = orderedlist.First();//get fastest person
-        //            fighters_with_cmds.Remove(chk);
-        //            //if (trgt.BattlePosition == chk.BattlePosition && inSpdRange(chk, tmp) && trgt.myAction.dst == chk.myAction.dst)
-        //            //{
-        //            //    tmp.Add(chk);
-        //            //}
-        //            //else
-        //            //    fighters_with_cmds.Add(chk);
-        //        }
-        //        foreach (Fighter y in tmp)
-        //        {
-        //            BattleAction tmpe = y.myAction;
-        //            y.myAction = null;
-        //            cmdtmp.Add(tmpe);
+                for (int a = 0; a < fighters_with_cmds.Count; a++)
+                {
+                    orderedlist = fighters_with_cmds.OrderByDescending(c => c.FullSpd);
+                    var chk = orderedlist.First();//get fastest person
+                    fighters_with_cmds.Remove(chk);
+                    //if (trgt.BattlePosition == chk.BattlePosition && inSpdRange(chk, tmp) && trgt.myAction.dst == chk.myAction.dst)
+                    //{
+                    //    tmp.Add(chk);
+                    //}
+                    //else
+                    //    fighters_with_cmds.Add(chk);
+                }
+                foreach (Fighter y in tmp)
+                {
+                    BattleAction tmpe = y.myAction;
+                    y.myAction = null;
+                    cmdtmp.Add(tmpe);
 
-        //        }
-        //        return cmdtmp;
-        //    }
-        //}
+                }
+                return cmdtmp;
+            }
+        }
 
         #endregion
 
@@ -91,54 +126,75 @@ namespace Wonderland_Private_Server.Code.Objects
             }
         }
 
-        //public IEnumerable<List<Fighter>> AllFighters
-        //{
-        //    get
-        //    {
-        //        return (from list in (from cell in Side.Values select cell.fighterlist) join list in list);
-        //    }
-        //}
-        //bool AllReady { get { return false;// (Side[2].AllReady && Side[5].AllReady); } }
+        public IEnumerable<List<Fighter>> AllFighters
+        {
+            get
+            {
+                return (from list in (from cell in Side.Values select cell.fighterlist) select list);
+            }
+        }
+        bool AllReady { get { return (Side[2].AllReady && Side[5].AllReady); } }
 
         #region Processing
 
-        //public void Process()
-        //{
-        //    if (BattleState == eBattleState.Active)//battle has activated
-        //    {
-        //        //check if each side has players that are alive
-        //        //if (!(Side[2].Fighters_Alive.Count() > 0 && Side[5].Fighters_Alive.Count() > 0) && RoundState != eBattleRoundState.CalculatingState)
-        //        //{
-        //        //    BattleState = eBattleState.Ended;
-        //        //    EndBattle(eBattleLeaveType.BattleFinished); return;
-        //        //}
-        //        //check if every1 sent a command during ready round (
-        //        if (AllReady && !HasOrders && RoundState == eBattleRoundState.ReadyState)//every1 ready no action
-        //            RoundState = eBattleRoundState.EndedState;
-        //        else if (RoundState == eBattleRoundState.EndedState && HasOrders)//action finished more left
-        //            RoundState = eBattleRoundState.ReadyState;
-        //        //else if (RoundState == eBattleRoundState.EndedState && !HasOrders)//Round over no action
-        //        //    StartRound();
-        //        else if (roundend_time < DateTime.Now && RoundState == eBattleRoundState.PrepState || AllReady && RoundState == eBattleRoundState.PrepState)//Planning stage Every1 ready/timefinished
-        //       RoundState = eBattleRoundState.ReadyState;
-        //        //else if (AllReady && HasOrders && RoundState == eBattleRoundState.ReadyState)//every1 ready has orders ready to do action i guess
-        //        //    Calculate();
-        //    }
-        //}
+        public void Process()
+        {
+            if (blockupdt) return;
+            blockupdt = true;
+            if (BattleState == eBattleState.Active)//battle has activated
+            {
+                //check if each side has players that are alive
+                if (!(Side[2].Fighters_Alive.Count() > 0 && Side[5].Fighters_Alive.Count() > 0) && RoundState != eBattleRoundState.CalculatingState)
+                {
+                    BattleState = eBattleState.Ended;
+                    EndBattle(eBattleLeaveType.BattleFinished); return;
+                }
+                //check if every1 sent a command during ready round (
+                if (AllReady && !HasOrders && RoundState == eBattleRoundState.ReadyState)//every1 ready no action
+                    RoundState = eBattleRoundState.EndedState;
+                else if (RoundState == eBattleRoundState.EndedState && HasOrders)//action finished more left
+                    RoundState = eBattleRoundState.ReadyState;
+                else if (RoundState == eBattleRoundState.EndedState && !HasOrders)//Round over no action
+                    StartRound();
+                else if (roundend_time < DateTime.Now && RoundState == eBattleRoundState.PrepState || AllReady && RoundState == eBattleRoundState.PrepState)//Planning stage Every1 ready/timefinished
+                    RoundState = eBattleRoundState.ReadyState;
+                else if (AllReady && HasOrders && RoundState == eBattleRoundState.ReadyState)//every1 ready has orders ready to do action i guess
+                    Calculate();
+            }
+            blockupdt = false;
+        }
         
         //Send StartRd info
-        //public void StartRound()
-        //{
-        //    RoundState = eBattleRoundState.PrepState;
-        //    foreach (var h in Side[2].Fighters_Alive)
-        //        h.RdEndTime = DateTime.Now.AddSeconds(20); 
-        //    foreach (var h in Side[5].Fighters_Alive.Where(c => !c.ActionDone))
-        //        h.RdEndTime = DateTime.Now.AddSeconds(20); 
-        //}
+        public void StartRound()
+        {
+            RoundState = eBattleRoundState.PrepState;
+            Side[2].onRoundStart();
+            foreach (var h in Side[2].Fighters_Alive)
+                h.RdEndTime = DateTime.Now.AddSeconds(20);
+            Side[5].onRoundStart();
+            foreach (var h in Side[5].Fighters_Alive)
+                h.RdEndTime = DateTime.Now.AddSeconds(20);
+        }
         //Rcv Attk
-        //public void PLayer_BattleAction(BattleAction data)
+        public void PLayer_BattleAction(BattleAction data)
+        {
+            data.unknownbyte = 1;
+            if (Side[(byte)BattleSide.Attacking].BattleActionRecieved(data) || Side[(byte)BattleSide.Defending].BattleActionRecieved(data))
+            {
+                SendPacket p = new SendPacket();
+                p.PackArray(new byte[]{53, 5});
+                p.Pack8(data.src.GridX);
+                p.Pack8(data.src.GridY);
+
+                foreach (Player gr in Side[(byte)BattleSide.Attacking].fighterlist.Where(c => c is Player))
+                    gr.Send(p);
+                foreach (Player gr in Side[(byte)BattleSide.Defending].fighterlist.Where(c => c is Player))
+                    gr.Send(p);
+            }
+        }
+
+        //public void NPC_BattleAction(BattleAction data)
         //{
-        //    data.unknownbyte = 1;
         //    if (Rightside.BattleActionRecieved(data) || Leftside.BattleActionRecieved(data))
         //    {
         //        SendPacket p = new SendPacket();
@@ -156,69 +212,49 @@ namespace Wonderland_Private_Server.Code.Objects
         //        }
         //    }
         //}
-
-        //public void NPC_BattleAction(BattleAction data)
-        //{
-        //    if (Rightside.BattleActionRecieved(data) || Leftside.BattleActionRecieved(data))
-        //    {
-        //        SendPacket p = new SendPacket();
-        //        p.Header(53, 5);
-        //        p.Pack8(data.src.GridX);
-        //        p.Pack8(data.src.GridY);
-        //        p.SetSize();
-        //        foreach (Player gr in Rightside.fighterlist.Where(c =>c is Player))
-        //        {
-        //            g.SendPacket(gr.playerinfo, p);
-        //        }
-        //        foreach (Player gr in Leftside.fighterlist.Where(c => c is Player))
-        //        {
-        //            g.SendPacket(gr.playerinfo, p);
-        //        }
-        //    }
-        //}
         //End Battle for all players
 
-        //public void StartBattle()
-        //{
-        //    foreach (Player fighter in Side[2].fighterlist.Where(c => c is Player))
-        //    {
-        //        if (fighter != null && fighter.TypeofFighter == eFighterType.player)
-        //        {
-        //            fighter.DataOut = SendType.Multi;
-        //            fighter.Send8_1();
-        //            Send_11_250(Background, fighter.BattleScene.fighterlist, fighter);
-        //            Send_11_5(fighter);
-        //            SendPacket p = new SendPacket();
-        //            p.PackArray(new byte[]{11, 10});
-        //            p.Pack8(1);
-        //            fighter.Send(p);
-        //        }
-        //    }
-        //    foreach (Player fighter in Side[5].fighterlist.Where(c => c is Player))
-        //    {
-        //        if (fighter != null && fighter.TypeofFighter == eFighterType.player)
-        //        {
-        //            (fighter as Player).DataOut = SendType.Multi;
-        //            (fighter as Player).Send8_1();
-        //            Send_11_250(Background, fighter.BattleScene.fighterlist, fighter);
-        //            Send_11_5(fighter);
-        //            SendPacket p = new SendPacket();
-        //            p.PackArray(new byte[] { 11, 10 });
-        //            p.Pack8(1);
-        //            fighter.Send(p);
-        //        }
-        //    }
-        //    foreach (Player fighter in Side[2].fighterlist.Where(c => c is Player))
-        //        fighter.DataOut = SendType.Normal;
-        //    foreach (Player fighter in Side[5].fighterlist.Where(c => c is Player))
-        //        fighter.DataOut = SendType.Normal;
-        //    BattleState = eBattleState.Active;
-        //}
-        //public void EndBattle(eBattleLeaveType t)
-        //{
-        //    //if (BattleOver != null) BattleOver(this,t);
-        //    //BattleState = eBattleState.Ended;
-        //}
+        public void StartBattle()
+        {
+            foreach (Player fighter in Side[2].fighterlist.Where(c => c is Player))
+            {
+                if (fighter != null && fighter.TypeofFighter == eFighterType.player)
+                {
+                    fighter.DataOut = SendType.Multi;
+                    fighter.Send8_1();
+                    Send_11_250(Background,Side[2].fighterlist, fighter);
+                    Send_11_5(fighter);
+                    SendPacket p = new SendPacket();
+                    p.PackArray(new byte[] { 11, 10 });
+                    p.Pack8(1);
+                    fighter.Send(p);
+                }
+            }
+            foreach (Player fighter in Side[5].fighterlist.Where(c => c is Player))
+            {
+                if (fighter != null && fighter.TypeofFighter == eFighterType.player)
+                {
+                    (fighter as Player).DataOut = SendType.Multi;
+                    (fighter as Player).Send8_1();
+                    Send_11_250(Background,Side[5].fighterlist, fighter);
+                    Send_11_5(fighter);
+                    SendPacket p = new SendPacket();
+                    p.PackArray(new byte[] { 11, 10 });
+                    p.Pack8(1);
+                    fighter.Send(p);
+                }
+            }
+            foreach (Player fighter in Side[2].fighterlist.Where(c => c is Player))
+                fighter.DataOut = SendType.Normal;
+            foreach (Player fighter in Side[5].fighterlist.Where(c => c is Player))
+                fighter.DataOut = SendType.Normal;
+            BattleState = eBattleState.Active;
+        }
+
+        public void EndBattle(eBattleLeaveType t)
+        {
+            BattleState = eBattleState.Ended;
+        }
     
         #endregion
 
@@ -227,171 +263,170 @@ namespace Wonderland_Private_Server.Code.Objects
         #region Battle processing
 
 
-        //public void Calculate()
-        //{
-        //    RoundState = eBattleRoundState.CalculatingState;
-        //    ushort skillid = 0;
-        //    bool flee = false;
-        //    byte dmtype = 0;//miss = 0,hpdmg = 25,spdmg = 26,debuff = 223,sealing = 221,healing = 232,buff = 225,
-        //    uint[] dmg = new uint[2];
-        //    bool miss = false;
-        //    //19 per attacker
-        //    //Second part is the Attk/miss
-        //    //get list for next move which is already reordered by spd
-        //    var e = NextAction;
-        //    SendPacket moveData = new SendPacket();
-        //    List<Fighter> ppl_involved = new List<Fighter>();
-        //    foreach (var q in e)
-        //    {
-        //        skillid = q.skill.SkillID;
+        void Calculate()
+        {
+            RoundState = eBattleRoundState.CalculatingState;
+            ushort skillid = 0;
+            bool flee = false;
+            byte dmtype = 0;//miss = 0,hpdmg = 25,spdmg = 26,debuff = 223,sealing = 221,healing = 232,buff = 225,
+            uint[] dmg = new uint[2];
+            bool miss = false;
+            //19 per attacker
+            //Second part is the Attk/miss
+            //get list for next move which is already reordered by spd
+            var e = NextAction;
+            SendPacket moveData = new SendPacket(false,true);
+            List<Fighter> ppl_involved = new List<Fighter>();
+            foreach (var q in e)
+            {
+                skillid = q.skill.SkillID;
 
-        //        var pat = q.skill.PatternofAttack();
-        //        if (q.skill.EffectLayer == EffectLayer.Flee) pat.Set(1, 1, 1);
+                var pat = q.skill.PatternofAttack();
+                if (q.skill.EffectLayer == EffectLayer.Flee) pat.Set(1, 1, 1);
 
-        //        var re = AttackableTargets(pat.GetTargets(new byte[] { q.dst.GridX, q.dst.GridY }, q.dst.Position), q.dst.Position);
+                var re = AttackableTargets(pat.GetTargets(new byte[] { q.dst.GridX, q.dst.GridY }, q.dst.BattlePosition), q.dst.BattlePosition);
 
-        //        List<uint[]> targets = new List<uint[]>();
-        //        if (re.Count > 1)
-        //            moveData.Pack16(28);
-        //        else if (re.Count == 1)
-        //        {
-        //            moveData.Pack16((byte)Atktype(q.skill.EffectLayer));
-        //            moveData.Pack8(q.src.GridX); moveData.Pack8(q.src.GridY);
-        //            moveData.Pack16(skillid);
-        //            moveData.Pack8(0); //affect by poison? switch to 1
-        //            moveData.Pack8((byte)re.Count);
-        //            foreach (var y in re)
-        //            {
-        //                if (SucessRate(q))
-        //                {
-        //                    dmg = GetDamage(q, y);
-        //                    if (q.skill.EffectLayer != EffectLayer.Flee)
-        //                        q.src.myRewards.AddFrom(y.Attackedby(q.src, dmg[0], q.skill));
-        //                    else
-        //                        flee = true;
-        //                }
-        //                else
-        //                {
-        //                    switch (q.skill.EffectLayer)
-        //                    {
-        //                        case EffectLayer.Physical: { miss = true; } break;
-        //                        case EffectLayer.Flee: { miss = true; skillid = 60046; } break;
-        //                    }
-        //                }
-        //                var et = GetState(miss, q.skill, y);
+                List<uint[]> targets = new List<uint[]>();
+                if (re.Count > 1)
+                    moveData.Pack16(28);
+                else if (re.Count == 1)
+                {
+                    moveData.Pack16((byte)Atktype(q.skill.EffectLayer));
+                    moveData.Pack8(q.src.GridX); moveData.Pack8(q.src.GridY);
+                    moveData.Pack16(skillid);
+                    moveData.Pack8(0); //affect by poison? switch to 1
+                    moveData.Pack8((byte)re.Count);
+                    foreach (var y in re)
+                    {
+                        if (SucessRate(q))
+                        {
+                            dmg = GetDamage(q, y);
+                            if (q.skill.EffectLayer != EffectLayer.Flee)
+                            {}//q.src.myRewards.AddFrom(y.Attackedby(q.src, dmg[0], q.skill));
+                            else
+                                flee = true;
+                        }
+                        else
+                        {
+                            switch (q.skill.EffectLayer)
+                            {
+                                case EffectLayer.Physical: { miss = true; } break;
+                                case EffectLayer.Flee: { miss = true; skillid = 60046; } break;
+                            }
+                        }
+                        var et = GetState(miss, q.skill, y);
 
-        //                moveData.Pack8(y.GridX);
-        //                moveData.Pack8(y.GridY);
-        //                moveData.Pack8(et[0]);
-        //                moveData.Pack8(et[1]);
-        //                moveData.Pack8(et[2]);
-        //                moveData.Pack8(et[3]);//miss
-        //                moveData.Pack32(dmg[0]);
-        //                moveData.Pack16((ushort)dmg[1]);
-        //            }
+                        moveData.Pack8(y.GridX);
+                        moveData.Pack8(y.GridY);
+                        moveData.Pack8(et[0]);
+                        moveData.Pack8(et[1]);
+                        moveData.Pack8(et[2]);
+                        moveData.Pack8(et[3]);//miss
+                        moveData.Pack32(dmg[0]);
+                        moveData.Pack16((ushort)dmg[1]);
+                    }
 
-        //            ppl_involved.Add(q.src);
+                    ppl_involved.Add(q.src);
 
-        //        }
-        //    }
-        //    if (e[0].dst.CurHP == 0 && e[0].dst.itemreward != null)
-        //    {
-        //        foreach (var s in ppl_involved)
-        //        {
-        //            if (s is PetFighter)
-        //            {
+                }
+            }
+            //if (e[0].dst.CurHP == 0 && e[0].dst.itemreward != null)
+            //{
+            //    foreach (var s in ppl_involved)
+            //    {
+            //        if (s is PetFighter)
+            //        {
 
-        //            }
-        //            else if (s is Player)
-        //            {
-        //                //(s as Player).playerinfo.character.MyInventory.RecieveItem(
-        //            }
-        //        }
-        //    }
-        //    if (flee && !miss)
-        //        foreach (var s in ppl_involved)
-        //            RemFighter(eBattleLeaveType.RunAway, s);
-        //    if (ppl_involved.Count > 0)
-        //    {
-        //        Leftside.Send_Attack(ppl_involved, moveData.data.ToArray());
-        //        Rightside.Send_Attack(ppl_involved, moveData.data.ToArray());
-        //        Stands.Send_Attack(ppl_involved, moveData.data.ToArray());
-        //    }
-        //    RoundState = eBattleRoundState.EndedState;
-        //    delay = DateTime.Now.AddSeconds(2.4);
-        //}
+            //        }
+            //        else if (s is Player)
+            //        {
+            //            //(s as Player).playerinfo.character.MyInventory.RecieveItem(
+            //        }
+            //    }
+            //}
+            if (flee && !miss)
+                foreach (var s in ppl_involved)
+                    RemFighter(eBattleLeaveType.RunAway, s);
+            if (ppl_involved.Count > 0)
+            {
+                Side[(byte)BattleSide.Defending].Send_Attack(ppl_involved, moveData.Data.ToArray());
+                Side[(byte)BattleSide.Attacking].Send_Attack(ppl_involved, moveData.Data.ToArray());
+                Side[(byte)BattleSide.Watching].Send_Attack(ppl_involved, moveData.Data.ToArray());
+            }
+            RoundState = eBattleRoundState.EndedState;
+            //delay = DateTime.Now.AddSeconds(2.4);
+        }
 
         #endregion
 
         #region BattleSide Control
-        //public void onJoinBattle(Fighter f)
-        //{
-        //    Side[(byte)f.BattlePosition].Add(TypeofBattle, f);
-        //    if (f.TypeofFighter == eFighterType.player)
-        //    {
-        //        (f as Player).DataOut = SendType.Multi;
-        //        //Send_11_250_BattlePost((f as Player));
+        public void onJoinBattle(Fighter f)
+        {
+            Side[(byte)f.BattlePosition].Add(TypeofBattle, f);
+            if (f.TypeofFighter == eFighterType.player)
+            {
+                (f as Player).DataOut = SendType.Multi;
+                //Send_11_250_BattlePost((f as Player));
 
-        //        SendPacket p = new SendPacket();
-        //        p.PackArray(new byte[] { 11, 10 });
-        //        p.Pack8(1);
-        //        (f as Player).Send(p);
-        //    }
-        //    //Send_11_4n5_InBattle(f, AllFighters);
-        //    if (f.TypeofFighter == eFighterType.player)
-        //        (f as Player).DataOut = SendType.Normal;
-        //}
-        ////Watching Battle
-        //public void onWatchBattle(Fighter f)
-        //{
-        //    f.BattlePosition = BattleSide.Watching;
-        //    Side[4].Add(TypeofBattle, f);
-        //    (f as Player).DataOut = SendType.Multi;
-        //    //Send_11_250_BattlePost((f as Player));
-        //    SendPacket p = new SendPacket();
-        //    p.PackArray(new byte[] { 11, 10 });
-        //    p.Pack8(1);
-        //    (f as Player).Send(p);
-        //    (f as Player).DataOut = SendType.Normal;
-        //}
+                SendPacket p = new SendPacket();
+                p.PackArray(new byte[] { 11, 10 });
+                p.Pack8(1);
+                (f as Player).Send(p);
+            }
+            //Send_11_4n5_InBattle(f, AllFighters);
+            if (f.TypeofFighter == eFighterType.player)
+                (f as Player).DataOut = SendType.Normal;
+        }
+        //Watching Battle
+        public void onWatchBattle(Fighter f)
+        {
+            f.BattlePosition = BattleSide.Watching;
+            Side[4].Add(TypeofBattle, f);
+            (f as Player).DataOut = SendType.Multi;
+            //Send_11_250_BattlePost((f as Player));
+            SendPacket p = new SendPacket();
+            p.PackArray(new byte[] { 11, 10 });
+            p.Pack8(1);
+            (f as Player).Send(p);
+            (f as Player).DataOut = SendType.Normal;
+        }
 
-        //public void RemFighter(eBattleLeaveType o, Fighter src)
-        //{
-        //    if (Leftside.Fighters_Alive.Count(c => c != src) == 0 || Rightside.Fighters_Alive.Count(c => c != src) == 0)
-        //    {
-        //        FighterLeft(this, src.Position, o, src);
-        //        if (o == eBattleLeaveType.Dced)
-        //            EndBattle(eBattleLeaveType.RunAway);
-        //        else if (o == eBattleLeaveType.Spawn)
-        //            EndBattle(eBattleLeaveType.BattleFinished);
-        //        else
-        //            EndBattle(o);
-        //    }
-        //    else
-        //        FighterLeft(this, src.Position, o, src);
-        //}
-        //public void RemFighter(eBattleLeaveType o, uint ID)
-        //{
-        //    Fighter src = FindPlayerbyID(ID);
-        //    RemFighter(o, src);
-        //}
+        public void RemFighter(eBattleLeaveType o, Fighter src)
+        {
+            if (Side[(byte)BattleSide.Defending].Fighters_Alive.Count(c => c != src) == 0 || Side[(byte)BattleSide.Attacking].Fighters_Alive.Count(c => c != src) == 0)
+            {
+                Side[(byte)src.BattlePosition].onFighterLeft(this, src.BattlePosition, o, src);
+                if (o == eBattleLeaveType.Dced)
+                    EndBattle(eBattleLeaveType.RunAway);
+                else if (o == eBattleLeaveType.Spawn)
+                    EndBattle(eBattleLeaveType.BattleFinished);
+                else
+                    EndBattle(o);
+            }
+            else
+                Side[(byte)src.BattlePosition].onFighterLeft(this, src.BattlePosition, o, src);
+        }
+        public void RemFighter(eBattleLeaveType o, uint ID)
+        {
+            RemFighter(o, FindFighter(ID));
+        }
 
-        //public Fighter FindFighter(uint ID)
-        //{
-        //    foreach (var t in Side.Values.ToList())
-        //        foreach (Player r in t.fighterlist)
-        //            if (r.ID == ID)
-        //                return r;
-        //    return null;
-        //}
-        //public Fighter FindFighter(byte x, byte y)
-        //{
-        //    foreach (var t in Side.Values.ToList())
-        //        foreach (Player r in t.fighterlist)
-        //            if ((r as Fighter).GridX == x && (r as Fighter).GridY == y)
-        //                return r;
-        //    return null;
-        //}
+        public Fighter FindFighter(uint ID)
+        {
+            foreach (var t in Side.Values.ToList())
+                foreach (Player r in t.fighterlist)
+                    if (r.ID == ID)
+                        return r;
+            return null;
+        }
+        public Fighter FindFighter(byte x, byte y)
+        {
+            foreach (var t in Side.Values.ToList())
+                foreach (Player r in t.fighterlist)
+                    if ((r as Fighter).GridX == x && (r as Fighter).GridY == y)
+                        return r;
+            return null;
+        }
         #endregion
 
         #region Calculations
@@ -516,22 +551,36 @@ namespace Wonderland_Private_Server.Code.Objects
         //#region Quick Send/GEt
         void Send_11_5(Player target)
         {
-            //List<Fighter> flist = new List<Fighter>();
-            //if (target != startedby)
-            //{
-            //    flist.AddRange(Rightside.fighterlist.Where(h => h.TypeofFighter != eFighterType.player));
-            //    flist.AddRange(Leftside.fighterlist.Where(h => h.TypeofFighter != eFighterType.player));
-            //}
-            //else
-            //{
-            //    flist.AddRange(Rightside.fighterlist.Where(h => h != startedby && h.Position != startedby.Position));
-            //    flist.AddRange(Leftside.fighterlist.Where(h => h != startedby && h.Position != startedby.Position));
-            //}
+            List<Fighter> flist = new List<Fighter>();
+            if (target != startedby)
+            {
+                flist.AddRange(Side[(byte)BattleSide.Attacking] .fighterlist.Where(h => h.TypeofFighter != eFighterType.player));
+                flist.AddRange(Side[(byte)BattleSide.Defending].fighterlist.Where(h => h.TypeofFighter != eFighterType.player));
+            }
+            else
+            {
+                flist.AddRange(Side[(byte)BattleSide.Attacking].fighterlist.Where(h => h != startedby && h.BattlePosition != startedby.BattlePosition));
+                flist.AddRange(Side[(byte)BattleSide.Defending].fighterlist.Where(h => h != startedby && h.BattlePosition != startedby.BattlePosition));
+            }
 
 
-            //if (flist.Count > 0)
-            //    foreach (Fighter u in flist)
-            //        Send11_5(u, target.playerinfo);
+            if (flist.Count > 0)
+                foreach (Fighter f in flist)
+                {
+                    SendPacket p = new SendPacket();
+                    p.PackArray(new byte[] { 11, 5 });
+                    p.Pack8((byte)f.BattlePosition);//p.Pack8(3); 
+                    p.Pack8((byte)f.TypeofFighter);
+                    p.Pack32(f.ID);
+                    p.Pack16(f.ClickID); p.Pack32(f.OwnerID);
+                    p.Pack8(f.GridX); p.Pack8(f.GridY);
+                    p.Pack32((uint)f.MaxHP); p.Pack16((ushort)f.MaxSP);
+                    p.Pack32((uint)f.CurHP); p.Pack16((ushort)f.CurSP);
+                    p.Pack8((byte)f.Level);
+                    p.Pack8((byte)f.Element);
+                    p.Pack8(Convert.ToByte(f.Reborn)); p.Pack8((byte)f.Job);
+                    target.Send(p);
+                }
 
         }
         //void Send_11_4n5_InBattle(Fighter data, List<Fighter> targets)
@@ -640,7 +689,7 @@ namespace Wonderland_Private_Server.Code.Objects
         //    ot.SetSize();
         //    g.SendPacket(watcher.playerinfo, ot);
         //}
-        //public void Send11_4(byte bval1, UInt32 id, UInt16 wval, byte bval2, Player target)
+        //void Send11_4(byte bval1, UInt32 id, UInt16 wval, byte bval2, Player target)
         //{
         //    SendPacket p = new SendPacket(target);
         //    p.Header(11, 4);
@@ -652,7 +701,7 @@ namespace Wonderland_Private_Server.Code.Objects
         //    p.Send();
         //}
 
-        //public void Send11_5(Fighter f, Player target)
+        //void Send11_5(Fighter f, Player target)
         //{
         //    SendPacket p = new SendPacket(target);
         //    p.Header(11, 5);
@@ -669,510 +718,510 @@ namespace Wonderland_Private_Server.Code.Objects
         //    p.SetSize();
         //    p.Send();
         //}
-        //List<Fighter> AttackableTargets(List<byte[]> kl, BattleSide loc)
-        //{
-        //    List<Fighter> tmp = new List<Fighter>();
-        //    foreach (var k in kl)
-        //    {
-        //        var y = FindFighter(k[0], k[1]);
-        //        if (y != null && y.Position == loc && y.Fighter_Status != eFighterState.Dead)
-        //            tmp.Add(y);
-        //    }
-        //    if (tmp.Count == 0)
-        //        switch (loc)
-        //        {
-        //            case BattleSide.left:
-        //                {
-        //                    foreach (Fighter u in Rightside.Fighters_Alive)
-        //                    {
-        //                        tmp.Add(u); break;
-        //                    }
-        //                } break;
-        //            case BattleSide.right:
-        //                {
-        //                    foreach (Fighter u in Leftside.Fighters_Alive)
-        //                    {
-        //                        tmp.Add(u); break;
-        //                    }
-        //                } break;
-        //        }
-        //    return tmp;
-        //}
+        List<Fighter> AttackableTargets(List<byte[]> kl, BattleSide loc)
+        {
+            List<Fighter> tmp = new List<Fighter>();
+            foreach (var k in kl)
+            {
+                var y = FindFighter(k[0], k[1]);
+                if (y != null && y.BattlePosition == loc && y.BattleState != FighterState.Dead)
+                    tmp.Add(y);
+            }
+            if (tmp.Count == 0)
+                switch (loc)
+                {
+                    case BattleSide.Defending:
+                        {
+                            foreach (Fighter u in Side[(byte)BattleSide.Attacking].Fighters_Alive)
+                            {
+                                tmp.Add(u); break;
+                            }
+                        } break;
+                    case BattleSide.Attacking:
+                        {
+                            foreach (Fighter u in Side[(byte)BattleSide.Defending].Fighters_Alive)
+                            {
+                                tmp.Add(u); break;
+                            }
+                        } break;
+                }
+            return tmp;
+        }
 
-        //byte Atktype(EffectLayer q)
-        //{
-        //    switch (q)
-        //    {
-        //        case EffectLayer.Flee:
-        //        case EffectLayer.Buffs1:
-        //        case EffectLayer.Defend:
-        //        case EffectLayer.Healing1:
-        //        case EffectLayer.Seals1:
-        //        case EffectLayer.Magical:
-        //        case EffectLayer.Physical: return 17;
-        //        case EffectLayer.Mana: return 28;
-        //        case EffectLayer.noEffects: return 23;
-        //    }
-        //    return 0;
-        //}
+        byte Atktype(EffectLayer q)
+        {
+            switch (q)
+            {
+                case EffectLayer.Flee:
+                case EffectLayer.Buffs1:
+                case EffectLayer.Defend:
+                case EffectLayer.Healing1:
+                case EffectLayer.Seals1:
+                case EffectLayer.Magical:
+                case EffectLayer.Physical: return 17;
+                case EffectLayer.Mana: return 28;
+                case EffectLayer.None: return 23;
+            }
+            return 0;
+        }
 
-        //byte DmgType(EffectLayer q)
-        //{
-        //    switch (q)
-        //    {
-        //        case EffectLayer.Flee:
-        //        //case EffectLayer.Buffs1:
-        //        case EffectLayer.Defend:
-        //        //case EffectLayer.Healing1:
-        //        //case EffectLayer.Seals1:
-        //        case EffectLayer.Magical:
-        //        case EffectLayer.Physical: return 25;
-        //        //case EffectLayer.Mana: attktype = 28; break;
-        //        //case EffectLayer.noEffects: attktype = 23; break;
-        //    }
-        //    return 0;
-        //}
+        byte DmgType(EffectLayer q)
+        {
+            switch (q)
+            {
+                case EffectLayer.Flee:
+                //case EffectLayer.Buffs1:
+                case EffectLayer.Defend:
+                //case EffectLayer.Healing1:
+                //case EffectLayer.Seals1:
+                case EffectLayer.Magical:
+                case EffectLayer.Physical: return 25;
+                //case EffectLayer.Mana: attktype = 28; break;
+                //case EffectLayer.noEffects: attktype = 23; break;
+            }
+            return 0;
+        }
 
-        //uint[] GetDamage(BattleAction d, Fighter trgt)
-        //{
-        //    double tmp = 0;
-        //    bool add = false;
-        //    switch (d.skill.EffectLayer)
-        //    {
-        //        case EffectLayer.Physical: { add = true; tmp = GetAtkDamage(d.src.Stats.sFullAtk, d.skill.AttackPower(), trgt.Stats.sFullDef,(float)GetElementCorrection(d.src.Stats.element, trgt.Stats.element)); } break;
-        //        case EffectLayer.Magical: { add = true; tmp = GetMatkDamage(d.src.Stats.sFullMatk, d.skill.AttackPower(), trgt.Stats.sFullMdef, (float)GetElementCorrection(d.src.Stats.element, trgt.Stats.element)); } break;
-        //    }
+        uint[] GetDamage(BattleAction d, Fighter trgt)
+        {
+            double tmp = 0;
+            bool add = false;
+            switch (d.skill.EffectLayer)
+            {
+                case EffectLayer.Physical: { add = true; tmp = GetAtkDamage((ushort)d.src.FullAtk, d.skill.AttackPower(),(ushort)trgt.FullDef, (float)GetElementCorrection(d.src.Element, trgt.Element)); } break;
+                case EffectLayer.Magical: { add = true; tmp = GetMatkDamage(d.src.FullMatk, d.skill.AttackPower(), trgt.FullMdef, (float)GetElementCorrection(d.src.Element, trgt.Element)); } break;
+            }
 
-        //    return new uint[] { (uint)Math.Round(tmp), BitConverter.GetBytes(add)[0]};
-        //}
+            return new uint[] { (uint)Math.Round(tmp), BitConverter.GetBytes(add)[0] };
+        }
 
-        //byte[] GetState(bool miss, Skill j, Fighter dst)
-        //{
-        //    byte[] res = new byte[4];
-        //    if (miss)
-        //    {
-        //        switch (j.EffectLayer)
-        //        {
-        //            case EffectLayer.Physical:
-        //            case EffectLayer.Seals1:
-        //                {
-        //                    res[0] = 0;
-        //                    res[1] = 1;
-        //                    res[2] = 1;
-        //                    res[3] = 0;
-        //                } break;
-        //            case EffectLayer.Flee:
-        //                {
-        //                    res[0] = 0;
-        //                    res[1] = 2;
-        //                    res[2] = 1;
-        //                    res[3] = 0;
-        //                } break;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (dst.SkillUsedOn.skilleffectlayer == EffectLayer.Defend)
-        //        {
-        //            if (j.SkillID == 11056)
-        //            {
-        //                res[0] = 1;
-        //                res[1] = 0;
-        //                res[2] = 1;
-        //                res[3] = (byte)DmgType(j.EffectLayer);
-        //            }
-        //            else
-        //            {
-        //                res[0] = 1;
-        //                res[1] = 1;
-        //                res[2] = 1;
-        //                res[3] = (byte)DmgType(j.EffectLayer);
-        //            }
-        //        }
-        //        else
-        //            switch (j.EffectLayer)
-        //            {
-        //                case EffectLayer.Flee:
-        //                    {
-        //                        res[0] = 0;
-        //                        res[1] = 1;
-        //                        res[2] = 1;
-        //                        res[3] = (byte)DmgType(j.EffectLayer);
-        //                    } break;
-        //                case EffectLayer.Physical:                            
-        //                case EffectLayer.Magical:
-        //                case EffectLayer.Healing1:
-        //                    {
-        //                        res[0] = 1;
-        //                        res[1] = 0;
-        //                        res[2] = 1;
-        //                        res[3] = (byte)DmgType(j.EffectLayer);
-        //                    } break;
-        //                case EffectLayer.Seals2:
-        //                    {
-        //                        switch (j.GetData().UnknownByte7)
-        //                        {
-        //                            case 0:
-        //                                {
-        //                                    res[0] = 1;
-        //                                    res[1] = 0;
-        //                                    res[2] = 1;
-        //                                    res[3] = (byte)DmgType(j.EffectLayer);
-        //                                } break;
-        //                            case 1:
-        //                                {
-        //                                    res[0] = 1;
-        //                                    res[1] = 1;
-        //                                    res[2] = 1;
-        //                                    res[3] = (byte)DmgType(j.EffectLayer);
-        //                                } break;
-        //                        }
-        //                    } break;
-        //            }
-        //    }
-        //    return res;
-        //}
-        //bool SucessRate(BattleAction t)
-        //{
-        //    bool success = false;
-        //    switch (t.skill.EffectLayer)
-        //    {
-        //        case EffectLayer.Flee:
-        //            {
-        //                switch (t.src.Position)
-        //                {
-        //                    case BattleSide.left: success = CanFlee((byte)t.src.Stats.Level, (byte)Rightside.fighterlist[0].Stats.Level); break;
-        //                    case BattleSide.right: success = CanFlee((byte)t.src.Stats.Level, (byte)Leftside.fighterlist[0].Stats.Level); break;
-        //                }
-        //            } break;
-        //        default: success = Succuss_miss(((79.0 / 100.0) * 100), 100, 0); break;
-        //    }
-        //    return success;
-        //}
-        
-        //bool inSpdRange(Fighter chk, List<Fighter> agst)
-        //{
-        //    bool ret = false;
-        //    foreach (Fighter w in agst.Where(c => c != chk))
-        //    {
-        //        if ((w.Stats.sFullSpd.CompareTo((UInt16)(chk.Stats.sFullSpd - 100)) >= 0) &&
-        //                (chk.Stats.sFullSpd.CompareTo((UInt16)(w.Stats.sFullSpd - 100)) >= 0))
-        //            ret = true;
-        //    }
-        //    return ret;
-        //}
-        //#endregion
+        byte[] GetState(bool miss, Skill j, Fighter dst)
+        {
+            byte[] res = new byte[4];
+            if (miss)
+            {
+                switch (j.EffectLayer)
+                {
+                    case EffectLayer.Physical:
+                    case EffectLayer.Seals1:
+                        {
+                            res[0] = 0;
+                            res[1] = 1;
+                            res[2] = 1;
+                            res[3] = 0;
+                        } break;
+                    case EffectLayer.Flee:
+                        {
+                            res[0] = 0;
+                            res[1] = 2;
+                            res[2] = 1;
+                            res[3] = 0;
+                        } break;
+                }
+            }
+            else
+            {
+                if (dst.SkillEffect != null && dst.SkillEffect.EffectLayer == EffectLayer.Defend)
+                {
+                    if (j.SkillID == 11056)
+                    {
+                        res[0] = 1;
+                        res[1] = 0;
+                        res[2] = 1;
+                        res[3] = (byte)DmgType(j.EffectLayer);
+                    }
+                    else
+                    {
+                        res[0] = 1;
+                        res[1] = 1;
+                        res[2] = 1;
+                        res[3] = (byte)DmgType(j.EffectLayer);
+                    }
+                }
+                else
+                    switch (j.EffectLayer)
+                    {
+                        case EffectLayer.Flee:
+                            {
+                                res[0] = 0;
+                                res[1] = 1;
+                                res[2] = 1;
+                                res[3] = (byte)DmgType(j.EffectLayer);
+                            } break;
+                        case EffectLayer.Physical:
+                        case EffectLayer.Magical:
+                        case EffectLayer.Healing1:
+                            {
+                                res[0] = 1;
+                                res[1] = 0;
+                                res[2] = 1;
+                                res[3] = (byte)DmgType(j.EffectLayer);
+                            } break;
+                        case EffectLayer.Seals2:
+                            {
+                                switch (j.GetData().UnknownByte7)
+                                {
+                                    case 0:
+                                        {
+                                            res[0] = 1;
+                                            res[1] = 0;
+                                            res[2] = 1;
+                                            res[3] = (byte)DmgType(j.EffectLayer);
+                                        } break;
+                                    case 1:
+                                        {
+                                            res[0] = 1;
+                                            res[1] = 1;
+                                            res[2] = 1;
+                                            res[3] = (byte)DmgType(j.EffectLayer);
+                                        } break;
+                                }
+                            } break;
+                    }
+            }
+            return res;
+        }
+        bool SucessRate(BattleAction t)
+        {
+            bool success = false;
+            switch (t.skill.EffectLayer)
+            {
+                case EffectLayer.Flee:
+                    {
+                        //switch (t.src.BattlePosition)
+                        //{
+                        //    case BattleSide.Defending: success = CanFlee((byte)t.src.Level, (byte)Rightside.fighterlist[0].Stats.Level); break;
+                        //    case BattleSide.Attacking: success = CanFlee((byte)t.src.Level, (byte)Leftside.fighterlist[0].Stats.Level); break;
+                                
+                        //}
+                        success = true;
+                    } break;
+                default: success = Succuss_miss(((79.0 / 100.0) * 100), 100, 0); break;
+            }
+            return success;
+        }
+
+        bool inSpdRange(Fighter chk, List<Fighter> agst)
+        {
+            bool ret = false;
+            foreach (Fighter w in agst.Where(c => c != chk))
+            {
+                if ((w.FullSpd.CompareTo((UInt16)(chk.FullSpd - 100)) >= 0) &&
+                        (chk.FullSpd.CompareTo((UInt16)(w.FullSpd - 100)) >= 0))
+                    ret = true;
+            }
+            return ret;
+        }
     }
 
-    //public class BattleArea
-    //{
-    //    Battle battleRef;
-    //    int pos;int turn;
-    //    public BattleSide Position { get { return (BattleSide)pos; } }
-    //    public List<Fighter> fighterlist = new List<Fighter>(8);
-        
-    //    PluginHost g;
+    public class BattleArea
+    {
+        Battle battleRef;
+        int pos; int turn;
+        public BattleSide Position { get { return (BattleSide)pos; } }
+        public List<Fighter> fighterlist = new List<Fighter>(8);
 
-    //    public BattleArea(byte side, PluginHost g,ref Battle area)
-    //    {
-    //        battleRef = area;
-    //        this.g = g;
-    //    }
-    //    public bool AllReady { get { if (fighterlist.Count(c => c.ActionDone) == fighterlist.Count)return true; else return false; } }
-    //    public byte[] Placement
-    //    {
-    //        get
-    //        {
-    //            byte x = 0;
-    //            byte y = 2;
-    //            switch (Position)
-    //            {
-    //                case BattleSide.Defending: x = 1; break;
-    //                case BattleSide.Attacking: x = 4; break;
-    //            }
-    //            switch (fighterlist.Count)
-    //            {
-    //                case 0: break;
-    //                case 1: y += 1; break;
-    //                case 2: y -= 1; break;
-    //                case 3: y += 2; break;
-    //            }
-    //            return new byte[] { x, y };
-    //        }
-    //    }
-    //    public int Count
-    //    {
-    //        get
-    //        {
-    //            return fighterlist.Count;
-    //        }
-    //    }
-    //    public List<Fighter> Fighters_Alive
-    //    {
-    //        get
-    //        {
-    //            return fighterlist.Where(c => c.State == PlayerState.InGame_Battling_Alive).ToList();
-    //        }
-    //    }
 
-    //    //public void onRoundStart(object sender, EventArgs e)
-    //    //{
-    //    //    foreach (Fighter f in fighterlist.ToList())
-    //    //    {
-    //    //        f.SkillUsedOn.DecreaseTurns(Battle);
-    //    //        if (f.TypeofFighter == eFighterType.Npc)
-    //    //        {
-    //    //            /* if (f.AI != null)
-    //    //                 f.AI.ProcessMove();*/
-    //    //        }
-    //    //        else if (f.TypeofFighter == eFighterType.player)
-    //    //        {
-    //    //            (f as Player).playerinfo.DataOut = SendType.Multi;
-    //    //            f.ActionDone = false;
-    //    //            switch (Position)
-    //    //            {
-    //    //                case Side.right:
-    //    //                    {
-    //    //                        foreach (Fighter ft in fighterlist.ToList())
-    //    //                        {
-    //    //                            Send51_1(ft, 25, (ushort)ft.CurHP, (f as Player).playerinfo);
-    //    //                            Send51_1(ft, 26, (ushort)ft.CurSP, (f as Player).playerinfo);
-    //    //                        }
-    //    //                        foreach (Fighter lt in Battle.Leftside.fighterlist)
-    //    //                            Send51_1(lt, 25, (ushort)lt.CurHP, (f as Player).playerinfo);
-    //    //                    } break;
-    //    //                case Side.left:
-    //    //                    {
-    //    //                        foreach (Fighter ft in fighterlist.ToList())
-    //    //                        {
-    //    //                            Send51_1(ft, 25, (ushort)ft.CurHP, (f as Player).playerinfo);
-    //    //                            Send51_1(ft, 26, (ushort)ft.CurSP, (f as Player).playerinfo);
-    //    //                        }
-    //    //                        foreach (Fighter lt in Battle.Rightside.fighterlist)
-    //    //                            Send51_1(lt, 25, (ushort)lt.CurHP, (f as Player).playerinfo);
-    //    //                    } break;
-    //    //            }
-    //    //            SendPacket p = new SendPacket((f as Player).playerinfo);
-    //    //            p.Header(52, 1);
-    //    //            p.SetSize();
-    //    //            p.Send();
-    //    //            (f as Player).playerinfo.DataOut = SendType.Normal;
-    //    //        }
-    //    //    }
-    //    //    foreach (Fighter f in fighterlist.ToList())
-    //    //        if (f.TypeofFighter == eFighterType.player)
-    //    //            (f as Player).playerinfo.DataOut = SendType.Normal;
-    //    //}
-    //    public void FightStarted(object sender, EventArgs e)
-    //    {
+        public BattleArea(byte side, Battle area)
+        {
+            pos = side;
+            battleRef = area;
+        }
+        public bool AllReady { get { if (fighterlist.Count(c => c.ActionDone) == fighterlist.Count)return true; else return false; } }
+        byte[] Placement
+        {
+            get
+            {
+                byte x = 0;
+                byte y = 2;
+                switch (Position)
+                {
+                    case BattleSide.Defending: x = 1; break;
+                    case BattleSide.Attacking: x = 4; break;
+                }
+                switch (fighterlist.Count)
+                {
+                    case 0: break;
+                    case 1: y += 1; break;
+                    case 2: y -= 1; break;
+                    case 3: y += 2; break;
+                }
+                return new byte[] { x, y };
+            }
+        }
+        public int Count
+        {
+            get
+            {
+                return fighterlist.Count;
+            }
+        }
+        public List<Fighter> Fighters_Alive
+        {
+            get
+            {
+                return fighterlist.Where(c => c.BattleState == FighterState.Alive).ToList();
+            }
+        }
 
-    //    }
-    //    public void onBattleOver(Battle sender, eBattleLeaveType t)
-    //    {
-    //        //if (Position == BattleSide.Watching)
-    //        //    foreach (Fighter fighter in fighterlist.ToList())
-    //        //        FighterLeft(sender, fighter.BattlePosition, eBattleLeaveType.RunAway, fighter);
-    //        //else
-    //        //    foreach (Fighter fighter in fighterlist.ToList())
-    //        //        FighterLeft(sender, fighter.BattlePosition, t, fighter);
-    //    }
-    //    public void Send51_1(Fighter t, byte skill, ushort amt, Player target)
-    //    {
-    //        SendPacket p = new SendPacket();
-    //        p.PackArray(new byte[] { 51, 1 });
-    //        p.Pack8((byte)t.GridX); p.Pack8((byte)t.GridY);
-    //        p.Pack8(skill);
-    //        p.Pack16(amt);
-    //        p.Pack16(0);
-    //        target.Send(p);
-    //    }
-    //    public void Add(eBattleType h, Fighter fighter)
-    //    {
-    //        if (fighter.TypeofFighter == eFighterType.player)
-    //        {
-    //            fighter.GridX = Placement[0];
-    //            fighter.GridY = Placement[1];
+        public void onRoundStart()
+        {
+            foreach (Fighter f in fighterlist.ToList())
+            {
+                if(f.SkillEffect != null)
+                f.SkillEffect.DecreaseTurns();
+                if (f.TypeofFighter == eFighterType.Npc)
+                {
+                    /* if (f.AI != null)
+                         f.AI.ProcessMove();*/
+                }
+                else if (f.TypeofFighter == eFighterType.player)
+                {
+                    (f as Player).DataOut = SendType.Multi;
 
-    //            if (fighter.Pets.BattlePet != null)
-    //            {
-    //                //Fighter pet = new Fighter(g);
-    //                //pet.SetFrom(fighter.playerinfo.pets.GetPetinBattleMode());//finish later
-    //                //pet.actionDone = false;
-    //                //if (fighter.starter)
-    //                //    pet.starter = true;
-    //                //pet.myBattleType = Fighter.eFighterType.Pet;
-    //                //pet.GridX = (byte)(fighter.GridX - 1);
-    //                //pet.GridY = fighter.GridY;
-    //                //pet.myplayerInfo = fighter.playerinfo;
-    //                //pet.ownerID = fighter.ID;
-    //                //pet.clickID = fighter.clickID;//not the right one
-    //                //fighterlist.Add(pet);
-    //            }
-    //        }
-    //        else if (fighter.TypeofFighter == eFighterType.Npc)
-    //        {
-    //            fighter.GridX = Placement[0];
-    //            fighter.GridY = Placement[1];
-    //        }
-    //        fighterlist.Add(fighter);
-    //    }
-    //    public void onFighterLeft(Battle src, BattleSide side, eBattleLeaveType exit, Fighter fighter)
-    //    {
-    //        if (this.Position == side)
-    //        {
-    //            bool defeat = false;
-    //            if (fighter.TypeofFighter == eFighterType.Pet || fighter.TypeofFighter == eFighterType.Npc)
-    //            {
+                    switch (Position)
+                    {
+                        case BattleSide.Attacking:
+                            {
+                                foreach (Fighter ft in fighterlist.ToList())
+                                {
+                                    Send51_1(ft, 25, (ushort)ft.CurHP, (f as Player));
+                                    Send51_1(ft, 26, (ushort)ft.CurSP, (f as Player));
+                                }
+                                foreach (Fighter lt in battleRef[BattleSide.Defending].fighterlist)
+                                    Send51_1(lt, 25, (ushort)lt.CurHP, (f as Player));
+                            } break;
+                        case BattleSide.Defending:
+                            {
+                                foreach (Fighter ft in fighterlist.ToList())
+                                {
+                                    Send51_1(ft, 25, (ushort)ft.CurHP, (f as Player));
+                                    Send51_1(ft, 26, (ushort)ft.CurSP, (f as Player));
+                                }
+                                foreach (Fighter lt in battleRef[BattleSide.Attacking].fighterlist)
+                                    Send51_1(lt, 25, (ushort)lt.CurHP, (f as Player));
+                            } break;
+                    }
+                    SendPacket p = new SendPacket();
+                    p.PackArray(new byte[] { 52, 1 });
+                    (f as Player).Send(p);
+                    (f as Player).DataOut = SendType.Normal;
+                }
+            }
+            foreach (Fighter f in fighterlist.ToList())
+                if (f.TypeofFighter == eFighterType.player)
+                    (f as Player).DataOut = SendType.Normal;
+        }
+        public void FightStarted(object sender, EventArgs e)
+        {
 
-    //                SendPacket p = new SendPacket();
-    //                p.PackArray(new byte[] { 11, 1 });
-    //                p.Pack8((byte)fighter.GridX); p.Pack8((byte)fighter.GridY);
+        }
+        public void onBattleOver(Battle sender, eBattleLeaveType t)
+        {
+            //if (Position == BattleSide.Watching)
+            //    foreach (Fighter fighter in fighterlist.ToList())
+            //        FighterLeft(sender, fighter.BattlePosition, eBattleLeaveType.RunAway, fighter);
+            //else
+            //    foreach (Fighter fighter in fighterlist.ToList())
+            //        FighterLeft(sender, fighter.BattlePosition, t, fighter);
+        }
+        public void Send51_1(Fighter t, byte skill, ushort amt, Player target)
+        {
+            SendPacket p = new SendPacket();
+            p.PackArray(new byte[] { 51, 1 });
+            p.Pack8((byte)t.GridX); p.Pack8((byte)t.GridY);
+            p.Pack8(skill);
+            p.Pack16(amt);
+            p.Pack16(0);
+            target.Send(p);
+        }
+        public void Add(eBattleType h, Fighter fighter)
+        {
+            if (fighter.TypeofFighter == eFighterType.player)
+            {
+                fighter.GridX = Placement[0];
+                fighter.GridY = Placement[1];
 
-    //                //foreach (Fighter u in src.AllFighters)
-    //                //    if (u is Player)
-    //                //        (u as Player).Send(p);
+                if (fighter.Pets.BattlePet != null)
+                {
+                    //Fighter pet = new Fighter(g);
+                    //pet.SetFrom(fighter.playerinfo.pets.GetPetinBattleMode());//finish later
+                    //pet.actionDone = false;
+                    //if (fighter.starter)
+                    //    pet.starter = true;
+                    //pet.myBattleType = Fighter.eFighterType.Pet;
+                    //pet.GridX = (byte)(fighter.GridX - 1);
+                    //pet.GridY = fighter.GridY;
+                    //pet.myplayerInfo = fighter.playerinfo;
+                    //pet.ownerID = fighter.ID;
+                    //pet.clickID = fighter.clickID;//not the right one
+                    //fighterlist.Add(pet);
+                }
+            }
+            else if (fighter.TypeofFighter == eFighterType.Npc)
+            {
+                fighter.GridX = Placement[0];
+                fighter.GridY = Placement[1];
+            }
+            fighterlist.Add(fighter);
+        }
+        public void onFighterLeft(Battle src, BattleSide side, eBattleLeaveType exit, Fighter fighter)
+        {
+            if (this.Position == side)
+            {
+                bool defeat = false;
+                if (fighter.TypeofFighter == eFighterType.Pet || fighter.TypeofFighter == eFighterType.Npc)
+                {
 
-    //                if (fighter.TypeofFighter == eFighterType.Pet)
-    //                {
-    //                    if (fighter.CurHP == 0)
-    //                    {
-    //                        defeat = true;
-    //                        (fighter as PetFighter).CurHP++;
-    //                    }
-    //                    else
-    //                        (fighter as PetFighter).CurHP = (fighter as PetFighter).CurHP;
-    //                    (fighter as PetFighter).CurSP = (fighter as PetFighter).CurSP;
-    //                }
+                    SendPacket p = new SendPacket();
+                    p.PackArray(new byte[] { 11, 1 });
+                    p.Pack8((byte)fighter.GridX); p.Pack8((byte)fighter.GridY);
 
-    //            }
-    //            else if (fighter.TypeofFighter == eFighterType.player)
-    //            {
-    //                //(fighter as Player).playerinfo.character.MySkills.CheckforUpdate();
-    //                //SendPacket t = new SendPacket();
-    //                //t.Header(11, 12);
-    //                //if ((fighter as Player).StartedBattle)
-    //                //    t.Pack8(1);
-    //                //else
-    //                //    t.Pack8(2);
-    //                //g.SendPacket((fighter as Player).playerinfo, t);
-    //                //if ((fighter as Player).CurHP != 0)
-    //                //    (fighter as Player).CurHP = fighter.CurHP;
-    //                //else
-    //                //{
-    //                //    defeat = true;
-    //                //    (fighter as Player).CurHP += 1;
-    //                //}
-    //                //(fighter as Player).CurSP = (fighter as Player).CurSP;
-    //                //t.Pack32(0);
-    //                //(fighter as Player).Send(t);
+                    //foreach (Fighter u in src.AllFighters)
+                    //    if (u is Player)
+                    //        (u as Player).Send(p);
 
-    //                //switch (exit)//Rewards proccessed on leave
-    //                //{
-    //                //    case eBattleLeaveType.BattleFinished:
-    //                //        {
-    //                //            //(fighter as Player).playerinfo.character.MyStats.Send_GoldGain((uint)(fighter as Player).myRewards.gold);
-    //                //            //if (!defeat)
-    //                //            //    (fighter as Player).playerinfo.character.MyStats.CurExp += (int)(fighter as Player).myRewards.exp;
-    //                //            //else
-    //                //            //    if ((fighter as Player).playerinfo.character.MyStats.CurExp - (int)Math.Round(((fighter as Player).playerinfo.character.MyStats.CurExp * .06)) > 0)
-    //                //            //        (fighter as Player).playerinfo.character.MyStats.CurExp -= (int)Math.Round(((fighter as Player).playerinfo.character.MyStats.CurExp * .06));
-    //                //            /*if (fighter.myRewards.IM > 0)
-    //                //                (fighter as Player).playerinfo.IM_Points += fighter.myRewards.IM;*/
-    //                //        } break;
-    //                //}
-    //                SendPacket p = new SendPacket();
-    //                p.PackArray(new byte[] { 11, 0 });
-    //                p.Pack32(fighter.ID);
-    //                p.Pack16(0);
-    //                (fighter as Player).CurrentMap.Broadcast(p);
-    //                p = new SendPacket();
-    //                p.PackArray(new byte[] { 11, 1 });
-    //                p.Pack8((byte)fighter.GridX); p.Pack8((byte)fighter.GridY);
-    //                p.Pack8(0);
-    //                (fighter as Player).Send(p);
-    //            }
-    //            fighterlist.Remove(fighter);
-    //        }
-    //    }
-    //    public void Leave_Fight(ref Fighter src)
-    //    {
+                    if (fighter.TypeofFighter == eFighterType.Pet)
+                    {
+                        if (fighter.CurHP == 0)
+                        {
+                            defeat = true;
+                            fighter.CurHP++;
+                        }
+                        else
+                            fighter.CurHP = fighter.CurHP;
+                        fighter.CurSP = fighter.CurSP;
+                    }
 
-    //    }
-    //    //public bool BattleActionRecieved(BattleAction h)
-    //    //{
-    //    //    foreach (Fighter e in fighterlist.ToList())
-    //    //        if (h.src == e)
-    //    //        {
-    //    //            e.myAction = h;
-    //    //            return true;
-    //    //        }
-    //    //    return false;
-    //    //}
-    //    //public List<Fighter> Fightersbyspd
-    //    //{
-    //    //    get
-    //    //    {
-    //    //        return fighterlist.OrderBy(r => r.FullSpd).ToList();
-    //    //    }
-    //    //}
-    //    //public void Send_Attack(Fighter src, ushort skill, Fighter dst, bool miss, uint Damg)
-    //    //{
-    //    //    foreach (Fighter rt in fighterlist.ToList())
-    //    //    {
-    //    //        if (rt.TypeofFighter == eFighterType.player)
-    //    //        {
-    //    //            (rt as Player).DataOut = SendType.Multi;
-    //    //            SendPacket p = new SendPacket();
-    //    //            p.PackArray(new byte[]{50, 6});
-    //    //            p.Pack8((byte)src.GridX); p.Pack8((byte)src.GridY);
-    //    //            p.Pack8(0);
-    //    //           (rt as Player).Send(p);
-    //    //            p = new SendPacket();
-    //    //            p.PackArray(new byte[]{50, 1});
-    //    //            p.Pack16(17);
-    //    //            p.Pack8((byte)src.GridX); p.Pack8((byte)src.GridY);
-    //    //            p.Pack16(skill);
-    //    //            p.Pack8(0); p.Pack8(1);
-    //    //            p.Pack8((byte)dst.GridX); p.Pack8((byte)dst.GridY);
-    //    //            p.Pack8(1);
-    //    //            p.Pack8(0);
-    //    //            p.Pack8(1);
-    //    //            if (!miss)
-    //    //                p.Pack8(25);
-    //    //            else
-    //    //                p.Pack8(0);
-    //    //            //Second part is damage calculation
-    //    //            p.Pack32(Damg);
-    //    //            p.Pack8(1);
-    //    //           (rt as Player).Send(p);
-    //    //            (rt as Player).DataOut = SendType.Normal;
-    //    //        }
-    //    //    }
-    //    //}
-    //    //public void Send_Attack(List<Fighter> r, byte[] data)
-    //    //{
-    //    //    SendPacket w = new SendPacket();
-    //    //    w.PackArray(new byte[] { 50, 1 });
-    //    //    w.PackArray(data);
+                }
+                else if (fighter.TypeofFighter == eFighterType.player)
+                {
+                    //(fighter as Player).playerinfo.character.MySkills.CheckforUpdate();
+                    //SendPacket t = new SendPacket();
+                    //t.Header(11, 12);
+                    //if ((fighter as Player).StartedBattle)
+                    //    t.Pack8(1);
+                    //else
+                    //    t.Pack8(2);
+                    //g.SendPacket((fighter as Player).playerinfo, t);
+                    //if ((fighter as Player).CurHP != 0)
+                    //    (fighter as Player).CurHP = fighter.CurHP;
+                    //else
+                    //{
+                    //    defeat = true;
+                    //    (fighter as Player).CurHP += 1;
+                    //}
+                    //(fighter as Player).CurSP = (fighter as Player).CurSP;
+                    //t.Pack32(0);
+                    //(fighter as Player).Send(t);
 
-    //    //    foreach (Fighter rt in fighterlist.ToList())
-    //    //    {
-    //    //        if (rt.TypeofFighter == eFighterType.player)
-    //    //        {
-    //    //            (rt as Player).DataOut = SendType.Multi;
-    //    //            foreach (var s in r)
-    //    //            {
-    //    //                SendPacket p = new SendPacket();
-    //    //                p.PackArray(new byte[] { 50, 6 });
-    //    //                p.Pack8((byte)s.GridX); p.Pack8((byte)s.GridY);
-    //    //                p.Pack8(0);
-    //    //                (rt as Player).Send(p);
-    //    //            }
-    //    //            (rt as Player).Send(w);
-    //    //            (rt as Player).DataOut = SendType.Normal;
-    //    //        }
-    //    //    }
-    //    //}
+                    //switch (exit)//Rewards proccessed on leave
+                    //{
+                    //    case eBattleLeaveType.BattleFinished:
+                    //        {
+                    //            //(fighter as Player).playerinfo.character.MyStats.Send_GoldGain((uint)(fighter as Player).myRewards.gold);
+                    //            //if (!defeat)
+                    //            //    (fighter as Player).playerinfo.character.MyStats.CurExp += (int)(fighter as Player).myRewards.exp;
+                    //            //else
+                    //            //    if ((fighter as Player).playerinfo.character.MyStats.CurExp - (int)Math.Round(((fighter as Player).playerinfo.character.MyStats.CurExp * .06)) > 0)
+                    //            //        (fighter as Player).playerinfo.character.MyStats.CurExp -= (int)Math.Round(((fighter as Player).playerinfo.character.MyStats.CurExp * .06));
+                    //            /*if (fighter.myRewards.IM > 0)
+                    //                (fighter as Player).playerinfo.IM_Points += fighter.myRewards.IM;*/
+                    //        } break;
+                    //}
+                    SendPacket p = new SendPacket();
+                    p.PackArray(new byte[] { 11, 0 });
+                    p.Pack32(fighter.ID);
+                    p.Pack16(0);
+                    (fighter as Player).CurrentMap.Broadcast(p);
+                    p = new SendPacket();
+                    p.PackArray(new byte[] { 11, 1 });
+                    p.Pack8((byte)fighter.GridX); p.Pack8((byte)fighter.GridY);
+                    p.Pack8(0);
+                    (fighter as Player).Send(p);
+                }
+                fighterlist.Remove(fighter);
+            }
+        }
+        public void Leave_Fight(ref Fighter src)
+        {
 
-    //}
+        }
+        public bool BattleActionRecieved(BattleAction h)
+        {
+            foreach (Fighter e in fighterlist.ToList())
+                if (h.src == e)
+                {
+                    e.myAction = h;
+                    return true;
+                }
+            return false;
+        }
+        public List<Fighter> Fightersbyspd
+        {
+            get
+            {
+                return fighterlist.OrderBy(r => r.FullSpd).ToList();
+            }
+        }
+        public void Send_Attack(Fighter src, ushort skill, Fighter dst, bool miss, uint Damg)
+        {
+            foreach (Fighter rt in fighterlist.ToList())
+            {
+                if (rt.TypeofFighter == eFighterType.player)
+                {
+                    (rt as Player).DataOut = SendType.Multi;
+                    SendPacket p = new SendPacket();
+                    p.PackArray(new byte[]{50, 6});
+                    p.Pack8((byte)src.GridX); p.Pack8((byte)src.GridY);
+                    p.Pack8(0);
+                   (rt as Player).Send(p);
+                    p = new SendPacket();
+                    p.PackArray(new byte[]{50, 1});
+                    p.Pack16(17);
+                    p.Pack8((byte)src.GridX); p.Pack8((byte)src.GridY);
+                    p.Pack16(skill);
+                    p.Pack8(0); p.Pack8(1);
+                    p.Pack8((byte)dst.GridX); p.Pack8((byte)dst.GridY);
+                    p.Pack8(1);
+                    p.Pack8(0);
+                    p.Pack8(1);
+                    if (!miss)
+                        p.Pack8(25);
+                    else
+                        p.Pack8(0);
+                    //Second part is damage calculation
+                    p.Pack32(Damg);
+                    p.Pack8(1);
+                   (rt as Player).Send(p);
+                    (rt as Player).DataOut = SendType.Normal;
+                }
+            }
+        }
+        public void Send_Attack(List<Fighter> r, byte[] data)
+        {
+            SendPacket w = new SendPacket();
+            w.PackArray(new byte[] { 50, 1 });
+            w.PackArray(data);
+
+            foreach (Fighter rt in fighterlist.ToList())
+            {
+                if (rt.TypeofFighter == eFighterType.player)
+                {
+                    (rt as Player).DataOut = SendType.Multi;
+                    foreach (var s in r)
+                    {
+                        SendPacket p = new SendPacket();
+                        p.PackArray(new byte[] { 50, 6 });
+                        p.Pack8((byte)s.GridX); p.Pack8((byte)s.GridY);
+                        p.Pack8(0);
+                        (rt as Player).Send(p);
+                    }
+                    (rt as Player).Send(w);
+                    (rt as Player).DataOut = SendType.Normal;
+                }
+            }
+        }
+
+    }
 }

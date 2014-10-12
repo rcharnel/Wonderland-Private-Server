@@ -6,22 +6,35 @@ using System.Threading.Tasks;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
-    public class WarpData
+    public class WarpData : Maps.MapObject
     {
-        public ushort ID;
-        public ushort DstMap;
-        public ushort DstX_Axis;
-        public ushort DstY_Axis;
+        public override Enums.MapObjType Type
+        {
+            get
+            {
+                return Enums.MapObjType.WarpData;
+            }
+        }
+        public virtual ushort DstMap { get; set; }
+        public virtual ushort DstX_Axis { get; set; }
+        public virtual ushort DstY_Axis { get; set; }
     }
-    public class WarpPortal
+
+    public class WarpPortal:Maps.MapObject
     {
-        public ushort ID;
-        public int Dst;
-        protected int accessLvl;
+        public virtual int Dst { get { return 0; } }
+        public override Enums.MapObjType Type
+        {
+            get
+            {
+                return Enums.MapObjType.WarPortal;
+            }
+        }
+        protected virtual int accessLvl { get { return 0; } }        
         public virtual bool Enter(ref Player src)
         {
             //portal Requirements
-            return false;
+            return true;
         }
     }
 }

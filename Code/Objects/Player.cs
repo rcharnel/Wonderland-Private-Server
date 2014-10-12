@@ -11,13 +11,15 @@ using Wonderland_Private_Server.Code.Interface;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.GM;
+using Wonderland_Private_Server.DataManagement.DataFiles;
 
 
 namespace Wonderland_Private_Server.Code.Objects
 {
-    public class Player : Character, Fighter, Network.cSocket
+    public class Player : Character, Fighter,cSocket
     {
         readonly object mylock = new object();
+        bool blockupdt;
         Thread wrk;
 
         public int CurInstance;//test
@@ -53,7 +55,7 @@ namespace Wonderland_Private_Server.Code.Objects
         #region Player Def
         PlayerState m_state;
         TradeManager m_trade;
-        //BattleArea m_battle;
+        Battle m_battle;
         Guild m_guild;
         cRiceBall m_riceball;
         cPetList m_pets;
@@ -68,6 +70,7 @@ namespace Wonderland_Private_Server.Code.Objects
         WarpData gpsMap;
         Tent m_tent;
         #endregion
+
 
         public Maps.MapObject object_interactingwith;
         Dictionary<int, ActionCodes.AC> aclist;
@@ -104,6 +107,7 @@ namespace Wonderland_Private_Server.Code.Objects
             m_pets = new cPetList(this);
             m_tent = new Tent(this);
             m_riceball = new cRiceBall(this);
+            m_teammembers = new List<Player>();
         }
         ~Player()
         {
@@ -160,18 +164,13 @@ namespace Wonderland_Private_Server.Code.Objects
 
         #region Player
 
+        #region Player.Game
         public bool BlockSave { get; set; }
         public bool inGame { get; set; }
         public PlayerState State
         {
             get
             {
-                //if (m_battle != null)
-                //{
-                //    if (CurHP != 0)
-                //        return PlayerState.InGame_Battling_Alive;
-                //}
-
                 return m_state;
             }
             set
@@ -180,6 +179,47 @@ namespace Wonderland_Private_Server.Code.Objects
             }
         }
         public IReadOnlyList<Quest> Completed_Quest { get { return m_started_Quests.Where(c => c.progress == c.total).ToList(); } }
+        public SendType DataOut
+        {
+            get { return dataout; }
+            set
+            {
+                prevdataout = dataout; dataout = value;
+                if (prevdataout == SendType.Multi && value == SendType.Normal) Send(MultiPkt);
+                else if (value == SendType.Multi) MultiPkt = new SendPacket(false, true);
+
+            }
+        }
+        #endregion
+        #region Player.Character
+        public override uint ID
+        {
+            get
+            {
+                return (uint)((int)UserID + ((slot == 2) ? 4500000 : 0));
+            }
+        }
+        public override string CharacterName
+        {
+            get
+            {
+                return (this.GM) ?  GMStuff.Name + " " + base.CharacterName : base.CharacterName;
+            }
+            set
+            {
+                base.CharacterName = value;
+            }
+        }
+        #endregion
+        #region Player.Guild
+        public bool inGuild { get { return (m_guild == null); } }
+        public string GuildName { get { return (m_guild != null) ? m_guild.GuildName : ""; } }
+        public Guild CurGuild { get { return m_guild; } set { m_guild = value; } }
+        public byte[] GuildInsigne { get { return new byte[1]; } }
+
+        #endregion
+
+
         public inGameSettings Settings
         {
             get
@@ -201,53 +241,41 @@ namespace Wonderland_Private_Server.Code.Objects
                 return mailBox;
             }
         }
+        public int CurInstance { get; set; }
         public InventoryManager Inv { get { return m_Inv ?? null; } }
         public EquipementManager Eqs { get { return ((EquipementManager)this) ?? null; } }
         public cPetList Pets { get { return m_pets; } }
         public Tent Tent { get { return m_tent; } }
-       // public BattleArea BattleScene { get { return m_battle; } set { m_battle = value; } }
+
+        public Battle BattleScene { get { return m_battle; } set { m_battle = value; } }
         public cRiceBall RiceBall { get { return m_riceball; } }
-        public SendType DataOut
-        {
-            get { return dataout; }
-            set
-            {
-                prevdataout = dataout; dataout = value;
-                if (prevdataout == SendType.Multi && value == SendType.Normal) Send(MultiPkt);
-                else if (value == SendType.Multi) MultiPkt = new SendPacket(false, true);
-
-            }
-        }
-        public override uint ID
-        {
-            get
-            {
-                return (uint)((int)UserID + ((slot == 2) ? 4500000 : 0));
-            }
-        }
-        public override string CharacterName
-        {
-            get
-            {
-                return (this.GM) ?  GMStuff.Name + " " + base.CharacterName : base.CharacterName;
-            }
-            set
-            {
-                base.CharacterName = value;
-            }
-        }
-
+                
         #endregion
 
         #region Fighter
+        public FighterState BattleState
+        {
+            get
+            {
+                if (m_battle != null)
+                {
+                    if (CurHP != 0)
+                        return FighterState.Alive;
+                    else
+                        return FighterState.Dead;
+                }
+                return FighterState.Unknown;
+            }
+        }
+        public Skill SkillEffect { get; set; }
         public BattleSide BattlePosition { get; set; }
-        public eFighterType TypeofFighter { get; set; }
-        //public BattleAction myAction { get; set; }
+        public eFighterType TypeofFighter { get { return ( BattlePosition == BattleSide.Watching)? eFighterType.Watcher:eFighterType.player; } }
+        public BattleAction myAction { get; set; }
         public UInt16 ClickID { get { return 0; } set { } }
-        public UInt16 OwnerID { get { return 0; } set { } }
+        public UInt32 OwnerID { get { return 0; } set { } }
         public byte GridX { get; set; }
         public byte GridY { get; set; }
-        public bool ActionDone { get { return false; /*(myAction != null || DateTime.Now > rndend);*/ } }
+        public bool ActionDone { get { return (myAction != null || DateTime.Now > rndend); } }
         public DateTime RdEndTime { set { rndend = value; } }
         public Int32 MaxHP { get { return (Eqs != null) ? Eqs.FullHP : 0; } }
         public Int16 MaxSP { get { return (Eqs != null) ? (short)Eqs.FullSP : (short)0; } }
@@ -298,6 +326,8 @@ namespace Wonderland_Private_Server.Code.Objects
         #endregion
 
         #region ThreadSafe  Methods
+
+
         #region ClientSock
         void PacketProcess(RecvPacket p)
         {
@@ -486,6 +516,16 @@ namespace Wonderland_Private_Server.Code.Objects
         #endregion
 
         #region Player
+        public void Process()
+        {
+            if (blockupdt) return;
+            lock (mylock)
+            {
+                blockupdt = true;
+
+                blockupdt = false;
+            }
+        }
         public void onPlayerLogin(uint id)
         {
             if (Friends.Exists(c => c.ID == id))
@@ -757,10 +797,10 @@ namespace Wonderland_Private_Server.Code.Objects
             if (i.ItemID > 0)
             {
                 Inv[index].Clear();
-                if (Eqs.Level >= i.Data.Level)
+                if (Eqs.Level >= i.Level)
                 {
                     DataOut = SendType.Multi;
-                    var retrem = Eqs.SetEQ((byte)i.Data.EquipPos, i);
+                    var retrem = Eqs.SetEQ((byte)i.Equippped_At, i);
                     if (retrem != null && retrem.ItemID > 0)
                         Inv.AddItem(retrem, index, false);
                     Eqs.Send8_1();//send ac8

@@ -15,9 +15,7 @@ namespace Wonderland_Private_Server.Code.Enums
         InGame_InMap_Standing,
         InGame_Warping,
         InGame_Interacting,
-        InGame_Battling_Alive,
-        InGame_Battling_Dead,
-        InGame_Battling_Sealed,
+        
 
     }
     public enum SendType

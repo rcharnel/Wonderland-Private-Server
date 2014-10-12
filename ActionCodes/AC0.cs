@@ -22,7 +22,7 @@ namespace Wonderland_Private_Server.ActionCodes
             SendPacket s = new SendPacket();
             s.PackArray(new byte[] { 1, 9 });
             s.PackArray(new byte[] { 107, 000, 001, });
-            s.PackNString("WLO4EVER");
+            s.PackNString("WPS"+cGlobal.GClient.myVersion);
             c.Send(s);
             s = new SendPacket();
             s.PackArray(new byte[] { 54, 29 });

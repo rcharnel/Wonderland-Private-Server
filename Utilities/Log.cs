@@ -12,6 +12,9 @@ namespace Wonderland_Private_Server.Utilities
         SYS,
         ERR,
         NET,
+        UPDT,
+        DB,
+
     }
     public struct LogItem
     {

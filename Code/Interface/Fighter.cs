@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.Code.Objects;
+using Wonderland_Private_Server.DataManagement.DataFiles;
 
 namespace Wonderland_Private_Server.Code.Interface
 {
@@ -13,11 +14,11 @@ namespace Wonderland_Private_Server.Code.Interface
         uint ID { get; }
         BattleSide BattlePosition { get; set; }
         eFighterType TypeofFighter { get; }
-        PlayerState State { get; }
+        FighterState BattleState { get; }
         cPetList Pets { get; }
-        //BattleAction myAction { get; set; }
+        BattleAction myAction { get; set; }
         UInt16 ClickID { get; set; }
-        UInt16 OwnerID { get; set; }
+        UInt32 OwnerID { get; set; }
         byte Level { get; }
         byte GridX { get; set; }
         byte GridY { get; set; }
@@ -29,20 +30,15 @@ namespace Wonderland_Private_Server.Code.Interface
         Int16 MaxSP { get; }
         ElementType Element { get; }
         RebornJob Job { get; }
+        Skill SkillEffect { get; set; }
         bool Reborn { get; }
 
-    }
-    public interface PetFighter
-    {
-        uint ID { get; set; }
-        BattleSide BattlePosition { get; set; }
-        eFighterType TypeofFighter { get; }
-        PetFighterState State { get; }
-        DateTime RdEndTime { set; }
-        UInt16 GridX { get; set; }
-        UInt16 GridY { get; set; }
-        bool ActionDone { get; }
-        Int32 CurHP { get; set; }
-        Int32 CurSP { get; set; }
+        Int32 FullMatk { get; }
+        Int32 FullAtk { get; }
+        Int32 FullDef { get; }
+        Int32 FullMdef { get; }
+        Int32 FullSpd { get; }
+
+
     }
 }

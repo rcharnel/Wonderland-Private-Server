@@ -57,7 +57,7 @@ namespace Wonderland_Private_Server.ActionCodes
                 {
                     InvItemCell i = new InvItemCell();
                     i.CopyFrom(u);
-                    tp.Eqs.SetEQ((byte)u.Data.EquipPos, i);
+                    tp.Eqs.SetEQ((byte)u.Equippped_At, i);
                 }
                 tp.FillHP(); tp.FillSP();
                 tp.Settings.Set(3, 31);
@@ -68,7 +68,7 @@ namespace Wonderland_Private_Server.ActionCodes
                 tp.LoginMap = 60000; //ship map 10017;
                 tp.X = 602; // ship x 1042;
                 tp.Y = 455; //ship y 1075;
-                tp.Gold = 0;
+                tp.SetGold(0);
                 //tp.Started_Quests.Add(new Quest() { QID = 1 });
 
                 //tp.Info.MySkills.AddSkill(cGlobal.SkillManager.GetSkillByID(15003));

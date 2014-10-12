@@ -11,8 +11,21 @@
     <AssemblyName>Wonderland Private Server</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,21 +47,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GupdtSrv">
+    <Reference Include="DBConnector">
+      <HintPath>DBConnector\bin\Debug\DBConnector.dll</HintPath>
+    </Reference>
+    <Reference Include="GupdtSrv, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Dropbox\Dlls\GupdtSrv.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Octokit">
       <HintPath>packages\Octokit.0.4.1\lib\net45\Octokit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite">
-      <HintPath>packages\System.Data.SQLite.Core.1.0.94.0\lib\net45\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq">
-      <HintPath>packages\System.Data.SQLite.Linq.1.0.94.1\lib\net45\System.Data.SQLite.Linq.dll</HintPath>
+    <Reference Include="System.Data.SQLite, Version=1.0.93.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\System.Data.SQLite.Core.1.0.93.0\lib\net45\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml.Linq" />
@@ -65,10 +81,10 @@
     <Compile Include="ActionCodes\AC0.cs" />
     <Compile Include="ActionCodes\AC09.cs" />
     <Compile Include="ActionCodes\AC2.cs" />
+    <Compile Include="ActionCodes\AC20.cs" />
     <Compile Include="ActionCodes\AC23.cs" />
     <Compile Include="ActionCodes\AC32.cs" />
     <Compile Include="ActionCodes\AC35.cs" />
-    <Compile Include="ActionCodes\AC39.cs" />
     <Compile Include="ActionCodes\AC63.cs" />
     <Compile Include="ActionCodes\AC85.cs" />
     <Compile Include="Bots\Cupid.cs" />
@@ -147,6 +163,12 @@
       <DependentUpon>ShutDown Dialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\Log.cs" />
+    <Compile Include="Utilities\Update\GitUpdateItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Utilities\Update\GitUpdateItem.Designer.cs">
+      <DependentUpon>GitUpdateItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="Web\WebServer.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -159,11 +181,14 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="UI\ShutDown Dialog.resx">
       <DependentUpon>ShutDown Dialog.cs</DependentUpon>
     </EmbeddedResource>
-    <Fakes Include="Fakes\System.Data.SQLite.fakes" />
+    <EmbeddedResource Include="Utilities\Update\GitUpdateItem.resx">
+      <DependentUpon>GitUpdateItem.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -188,8 +213,18 @@
     <Folder Include="Maps\Islands\NorthIsland\NorthIsland60000\Portals\" />
     <Folder Include="Quests\" />
     <Folder Include="UI\WebUI\" />
+    <Folder Include="Utilities\Task\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Debug\UnRar.exe" />
+    <Content Include="bin\Debug\WloPSrvUpdater.exe" />
+    <Content Include="bin\Release\UnRar.exe" />
+    <Content Include="bin\Release\WloPSrvUpdater.exe" />
+    <EmbeddedResource Include="Resources\1383936576_refresh.png" />
+    <EmbeddedResource Include="Resources\bullet_green.png" />
+    <EmbeddedResource Include="Resources\bullet_red.png" />
+    <EmbeddedResource Include="Resources\checkmark-24-48.png" />
+    <EmbeddedResource Include="Resources\install_button.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -198,13 +233,28 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="DBConnector\DBConnector.csproj">
-      <Project>{6bbc2e05-aa32-455f-b0b2-72dba562c8d4}</Project>
-      <Name>DBConnector</Name>
-    </ProjectReference>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" />
+    </VisualStudio>
+  </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

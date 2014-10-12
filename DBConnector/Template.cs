@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.SQLite;
+using MySql.Data.MySqlClient;
+using System.IO;
 
 
 namespace DBConnector
@@ -20,24 +22,55 @@ namespace DBConnector
     {
         bool VerifyPassword(string check, string with);
     }
+
     public sealed class DBOAuth:IDBConnector
     {
 
         //Not all settings might be used depending on type of DB
         //Server Type 
-        
-        const DBType ServType = DBType.Sqlite;
+
+        readonly DBType ServType = DBType.Sqlite;
 
         //MySql/SQl Settings
-        const string User = "";
-        const string Pass = "";
-        const string DataBase = "";
-        const string Port = "";
-        const string ServerIP = "";
+        readonly string User = "";
+        readonly string Pass = "";
+        readonly string DataBase = "";
+        readonly string Port = "";
+        readonly string ServerIP = "";
         
         //SQLite Settings
         //Change to location of DB File
-        const string FileLocation = "C:\\PServerFiles\\WonderlandPServer.s3db";
+        readonly string FileLocation = "C:\\PServerFiles\\WonderlandPServer.s3db";
+
+        //Override File used in debugging 
+        readonly string OverrideFile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.database.txt";
+
+        public DBOAuth()
+        {
+            if (System.IO.File.Exists(OverrideFile))
+            {
+
+                try
+                {
+                    string line = "";
+                    using (StreamReader file = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.database.txt"))
+                        while ((line = file.ReadLine()) != null)
+                        {
+                            switch (line.Split('|')[0])
+                            {
+                                case "Type": ServType = (DBType)byte.Parse(line.Split('|')[1]); break;
+                                case "User": User = line.Split('|')[1]; break;
+                                case "Pass": Pass = line.Split('|')[1]; break;
+                                case "DB": DataBase = line.Split('|')[1]; break;
+                                case "Port": Port = line.Split('|')[1]; break;
+                                case "IP": ServerIP = line.Split('|')[1]; break;
+                                case "File": FileLocation = line.Split('|')[1]; break;
+                            }
+                        }
+                }
+                catch { }
+            }
+        }
 
         public DBType TypeofDB { get { return ServType; } }
         public bool VerifyConnection()
@@ -53,6 +86,17 @@ namespace DBConnector
                             cnn.Close();
                             return true;
                         }
+                    }break;
+                case DBType.MySQl:
+                    {
+                        try
+                        {
+                            MySqlConnection conn = new MySqlConnection(Connection_String);
+                            conn.Open();
+                            conn.Close();
+                            return true;
+                        }
+                        catch { }
                     }break;
             }
             return false;
@@ -82,6 +126,7 @@ namespace DBConnector
 
             switch (ServType)
             {
+                #region SQLITE
                 case DBType.Sqlite:
                     {
                         SQLiteConnection cnn = new SQLiteConnection(Connection_String);
@@ -101,9 +146,30 @@ namespace DBConnector
                         }
                         catch { cnn.Close(); }
                     }break;
+                #endregion
+                #region MYSQL
+                case DBType.MySQl:
+                    {
+                        MySqlConnection cnn = new MySqlConnection(Connection_String);
+                        try
+                        {
+                            cnn.Open();
+                            MySqlCommand mycommand = new MySqlCommand(query, cnn);
+                            if (parameters != null)
+                                foreach (var t in parameters)
+                                    mycommand.Parameters.AddWithValue(t.Key, t.Value);
+                            MySqlDataReader reader = mycommand.ExecuteReader();
+                            dt.Load(reader);
+                            reader.Close();
+                            cnn.Close();
+                            return dt;
+                        }
+                        catch { cnn.Close(); }
+                    }break;
+                #endregion
             }
 
-            return new DataTable();
+            return null;
         }
         public DataTable GetDataTable(string Table, string where, KeyValuePair<string, string>[] parameters = null)
         {
@@ -112,6 +178,7 @@ namespace DBConnector
 
             switch (ServType)
             {
+                #region SQLITE
                 case DBType.Sqlite:
                     {
                         SQLiteConnection cnn = new SQLiteConnection(Connection_String);
@@ -126,14 +193,31 @@ namespace DBConnector
                         reader.Close();
                         cnn.Close();
                     } break;
+                #endregion
+                #region MYSQL
+                case DBType.MySQl:
+                    {
+                        MySqlConnection cnn = new MySqlConnection(Connection_String);
+                        cnn.Open();
+                        MySqlCommand mycommand = new MySqlCommand(string.Format("select* from {0} where {1}", Table, where), cnn);
+                        if (parameters != null)
+                            foreach (var t in parameters)
+                                mycommand.Parameters.AddWithValue(t.Key, t.Value);
+                        MySqlDataReader reader = mycommand.ExecuteReader();
+                        dt.Load(reader);
+                        reader.Close();
+                        cnn.Close();
+                    } break;
+                #endregion
             }
-            return dt;
+            return null;
         }
         public int ExecuteNonQuery(string sql, KeyValuePair<string, string>[] parameters = null)
         {
             int rowsUpdated = 0;
             switch (ServType)
             {
+                #region SQLITE
                 case DBType.Sqlite:
                     {
                         SQLiteConnection cnn = new SQLiteConnection(Connection_String);
@@ -146,6 +230,20 @@ namespace DBConnector
                         rowsUpdated = mycommand.ExecuteNonQuery();
                         cnn.Close();
                     } break;
+                #endregion
+                #region MYSQL
+                case DBType.MySQl:
+                    {
+                        MySqlConnection cnn = new MySqlConnection(Connection_String);
+                        cnn.Open();
+                        MySqlCommand mycommand = new MySqlCommand(sql, cnn);
+                        if (parameters != null)
+                            foreach (var t in parameters)
+                                mycommand.Parameters.AddWithValue(t.Key, t.Value);
+                        rowsUpdated = mycommand.ExecuteNonQuery();
+                        cnn.Close();
+                    } break;
+                #endregion
             }
             return rowsUpdated;
         }

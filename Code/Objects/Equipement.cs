@@ -15,10 +15,8 @@ namespace Wonderland_Private_Server.Code.Objects
     public class EquipementManager
     {
         readonly object m_Lock = new object();
-
         protected cSocket host;
         Dictionary<byte, EquipmentCell> clothes;
-
         byte head;
         int m_currexp, m_curhp, m_cursp, gold, m_skillpoint, m_potential;
         long m_totalexp = 0;
@@ -74,6 +72,7 @@ namespace Wonderland_Private_Server.Code.Objects
             clothes = new Dictionary<byte, EquipmentCell>();
             for (byte a = 1; a < 7; a++)
                 clothes.Add(a, new EquipmentCell());
+
         }
 
         #region Definitions
@@ -140,14 +139,8 @@ namespace Wonderland_Private_Server.Code.Objects
                     return (uint)gold;
                 }
             }
-            set
-            {
-                lock (m_Lock)
-                {
-                    gold = (int)value;
-                }
-            }
         }
+        
         /// <summary>
         /// a Character's level
         /// </summary>
@@ -160,12 +153,11 @@ namespace Wonderland_Private_Server.Code.Objects
                     int level = 1;
 
                     long tmp = m_totalexp;
-                    uint exp = (uint)CalcMaxExp(BitConverter.GetBytes(Reborn)[0], level);
 
-                    while (tmp >= exp )
+                    while (tmp >= (uint)CalcMaxExp(BitConverter.GetBytes(Reborn)[0], level))
                     {
                         if (!Reborn && level + 1 > 199) break;
-                        tmp -= exp;
+                        tmp -= (uint)CalcMaxExp(BitConverter.GetBytes(Reborn)[0], level);
                         level++;
                     }
 
@@ -937,7 +929,7 @@ namespace Wonderland_Private_Server.Code.Objects
                 {
                     Dictionary<byte, uint[]> tmp = new Dictionary<byte, uint[]>();
                     for (byte a = 1; a < 7; a++)
-                        tmp.Add(a, new uint[] { clothes[a].ItemID, clothes[a].Damage, clothes[a].Ammt, (uint)clothes[a].Data.EquipPos, 0, 0, 0, 0 });
+                        tmp.Add(a, new uint[] { clothes[a].ItemID, clothes[a].Damage, clothes[a].Ammt, (uint)clothes[a].Equippped_At, 0, 0, 0, 0 });
                     return tmp;
                 }
             }
@@ -1016,6 +1008,8 @@ namespace Wonderland_Private_Server.Code.Objects
                     } break;
             }
         }
+
+        #region Gold Methods
         public void SendGold()
         {
             SendPacket p = new SendPacket();
@@ -1023,7 +1017,36 @@ namespace Wonderland_Private_Server.Code.Objects
             p.Pack32(Gold);
             host.Send(p);
         }
-        
+        public bool AddGold(int g)
+        {
+            lock (m_Lock)
+            {
+                if (gold >= 999999) return false;
+                gold += g;
+                return true;
+            }
+        }
+        public bool TakeGold(int g)
+        {
+            lock (m_Lock)
+            {
+                if (gold < g) return false;
+                
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 26, 2 });
+                s.Pack32((uint)g); //gold decrescimo
+                host.Send(s);
+                gold -= g;
+                return true;
+            }
+
+        }
+        public void SetGold(int g)
+        {
+            gold = g;
+        }
+        #endregion
+
         /// <summary>
         /// Removes a Character's Equipment
         /// </summary>
@@ -1628,11 +1651,11 @@ namespace Wonderland_Private_Server.Code.Objects
         /// <summary>
         /// Full HP Stat
         /// </summary>
-        public Int32 FullHP { get { lock (m_Lock) { return (int)(MaxHp + EquippedMaxHP); } } }
+        public virtual Int32 FullHP { get { lock (m_Lock) { return (int)(MaxHp + EquippedMaxHP); } } }
         /// <summary>
         /// Full SP Stat
         /// </summary>
-        public Int32 FullSP { get { lock (m_Lock) { return (int)(MaxSp + EquippedMaxSP); } } }
+        public virtual Int32 FullSP { get { lock (m_Lock) { return (int)(MaxSp + EquippedMaxSP); } } }
         /// <summary>
         /// Full ATK Stat
         /// </summary>
@@ -1911,7 +1934,7 @@ namespace Wonderland_Private_Server.Code.Objects
                 {
                     Dictionary<byte, uint[]> tmp = new Dictionary<byte, uint[]>();
                     for (byte a = 1; a < 7; a++)
-                        tmp.Add(a, new uint[] { clothes[a].ItemID, clothes[a].Damage, clothes[a].Ammt, (uint)clothes[a].Data.EquipPos, 0, 0, 0, 0 });
+                        tmp.Add(a, new uint[] { clothes[a].ItemID, clothes[a].Damage, clothes[a].Ammt, (uint)clothes[a].Equippped_At, 0, 0, 0, 0 });
                     return tmp;
                 }
             }
@@ -2121,6 +2144,16 @@ namespace Wonderland_Private_Server.Code.Objects
         public void FillSP()
         {
 
+        }
+
+        public void SetLevel(byte lvl)
+        {
+            int a = 1;
+            while (Level < lvl)
+            {
+                TotalExp += (uint)CalcMaxExp(BitConverter.GetBytes(Reborn)[0], a);
+                a++;
+            }
         }
 
     }

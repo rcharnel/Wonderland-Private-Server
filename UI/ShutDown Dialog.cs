@@ -33,12 +33,18 @@ namespace Wonderland_Private_Server.UI
                 int max = cGlobal.ThreadManager.Count;
                 int cnt = 0;
 
+                dispMsg = "Shutting Down Server";
+                cGlobal.WLO_World.Kill();
+                perct += 10;
                 foreach (var t in cGlobal.ThreadManager.ToList())
                 {
                     dispMsg = string.Format("Aborting Threads {0}/{1}", ++cnt, max);
                     t.Abort();
                     Thread.Sleep(1000);
                 }
+                perct += 20;
+                dispMsg = "Stopping Tcp Listener";
+                Network.ListenSocket.Kill();
 
                 perct = 100;
                 if (isupdating)
@@ -47,12 +53,12 @@ namespace Wonderland_Private_Server.UI
                     dispMsg = "Launching Updater";
                     ProcessStartInfo start = new ProcessStartInfo();
                     start.FileName = Environment.CurrentDirectory + "\\WloPSrvUpdater.exe";
-                    start.Arguments = cGlobal.GClient.Branch+ " "+cGlobal.GClient.myVersion;
+                    start.Arguments = cGlobal.GClient.Branch+ " "+cGlobal.GClient.myVersion + " " +cGlobal.GClient.UpdateInfo.TagName;
                     Process.Start(start);                    
 
                 }
                 dispMsg = "Server Shutdown Completed..";
-                Thread.Sleep(3000);
+                Thread.Sleep(1500);
 
                 this.Invoke(new Action(() => { Close(); }));
             }));

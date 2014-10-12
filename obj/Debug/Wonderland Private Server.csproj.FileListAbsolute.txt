@@ -3,14 +3,12 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\Wonder
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.pdb
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\Octokit.dll
-C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Form1.resources
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Properties.Resources.resources
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.exe
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.pdb
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\GupdtSrv.dll
-C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\GupdtSrv.pdb
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\DBConnector.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\DBConnector.pdb
@@ -18,45 +16,25 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\System
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.xml
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\x64\SQLite.Interop.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\x86\SQLite.Interop.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\MySql.Data.dll
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe.config
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Form1.resources
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Properties.Resources.resources
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojFakesResolveAssemblyReference.cache
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.exe
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.pdb
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\x64\SQLite.Interop.dll
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\x86\SQLite.Interop.dll
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.pdb
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\DBConnector.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\GupdtSrv.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Microsoft.QualityTools.Testing.Fakes.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\MySql.Data.dll
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Octokit.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.Linq.dll
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\DBConnector.pdb
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.xml
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.exe
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.pdb
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe.config
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.exe
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.pdb
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\x64\SQLite.Interop.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\x86\SQLite.Interop.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.pdb
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\DBConnector.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Microsoft.QualityTools.Testing.Fakes.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Octokit.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.Linq.dll
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\DBConnector.pdb
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.xml
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojFakesResolveAssemblyReference.cache
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Form1.resources
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Properties.Resources.resources
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.Fakes.fakesconfig
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Form1.resources
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Properties.Resources.resources
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Utilities.Update.GitUpdateItem.resources
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Utilities.Update.GitUpdateItem.resources
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\GupdtSrv.dll

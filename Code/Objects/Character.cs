@@ -24,7 +24,6 @@ namespace Wonderland_Private_Server.Code.Objects
         Map currentMap;
         ushort loginMap; // Used to designate the Map to Login too
         protected List<Mail> mailBox;
-        int guild;
 
         public Character()
         {

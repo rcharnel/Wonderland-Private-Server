@@ -8,12 +8,12 @@ using Wonderland_Private_Server.Code.Enums;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
-    public class GameSkill
+    public class Skilllist
     {
         Player y;
         List<Skill> myskills = new List<Skill>();
 
-        public GameSkill(Player y)
+        public Skilllist(Player y)
         {
             this.y = y;
         }

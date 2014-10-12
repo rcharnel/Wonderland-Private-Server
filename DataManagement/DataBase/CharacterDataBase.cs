@@ -36,15 +36,15 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         void Setup()
         {
             #region Restricted Name
-            //CharNames.Add("Tatsuya", 3322);//Jay
-            //CharNames.Add("Compass", 2);//Compass
-            //CharNames.Add("Sharky", 55);//Sharky
-            //CharNames.Add("rcharnel", 69);//rcharnel
-            //CharNames.Add("Petron", 234);//petron
-            //CharNames.Add("Nipple", 3322);//Johnathan
-            //CharNames.Add("Dragon", 54);//Dragon
-            //CharNames.Add("Maganda", 92);//Maganda
-            //CharNames.Add("Flurrih", 3132);//Flurrih
+            CharNames.Add("tatsuya", 3322);//Jay
+            CharNames.Add("compass", 3322);//Compass
+            CharNames.Add("sharky", 3322);//Sharky
+            CharNames.Add("rcharnel", 3322);//rcharnel
+            CharNames.Add("Petron", 3322);//petron
+            CharNames.Add("nipple", 3322);//Johnathan
+            CharNames.Add("dragon", 3322);//Dragon
+            CharNames.Add("maganda", 3322);//Maganda
+            CharNames.Add("flurrih", 3132);//Flurrih
             #endregion
         }
 
@@ -74,44 +74,69 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             col.Add("online", "int/NN");
 
             #endregion
-            //#region charextdata Columns
-            //Dictionary<string, string> extdtcol = new Dictionary<string, string>();
-            //extdtcol.Add("charID", "int(11) NOT NULL");
-            //extdtcol.Add("Settings", "varchar(150) DEFAULT NULL");
-            //extdtcol.Add("Friends", "text");
-            //extdtcol.Add("Guild", "varchar(100) DEFAULT NULL");
-            //extdtcol.Add("Mail", "text");
-            //extdtcol.Add("PRIMARY KEY", "PRIMARY KEY (charID)");
-            //#endregion
-            //#region chartent Columns
-            //Dictionary<string, string> chartent = new Dictionary<string, string>();
-            //chartent.Add("charID", "int(11) NOT NULL");
-            //chartent.Add("locked", "int(11)");
-            //chartent.Add("enlarged", "int(11)");
-            //chartent.Add("tenttype", "int(11)");
-            //chartent.Add("floor1Color", "int(11)");
-            //chartent.Add("floor1wallpaper", "int(11)");
-            //chartent.Add("floor2Color", "int(11)");
-            //chartent.Add("floor2wallpaperr", "int(11)");
-            //chartent.Add("PRIMARY KEY", "PRIMARY KEY (charID)");
-            //#endregion
-            //#region charquest Columns
-            //Dictionary<string, string> charquest = new Dictionary<string, string>();
-            //charquest.Add("pri_key", "int(11) NOT NULL");
-            //charquest.Add("charID", "int(11) NOT NULL");
-            //charquest.Add("quest_started", "int(11)");
-            //charquest.Add("quest_pos", "int(11)");
-            //charquest.Add("PRIMARY KEY", "PRIMARY KEY (pri_key)");
-            //#endregion
-            //#region charunlocks Columns
-            //Dictionary<string, string> charunlocks = new Dictionary<string, string>();
-            //charunlocks.Add("pri_key", "int(11) NOT NULL");
-            //charunlocks.Add("charID", "int(11) NOT NULL");
-            //charunlocks.Add("maploc", "int(11)");
-            //charunlocks.Add("clickID", "int(11)");
-            //charunlocks.Add("PRIMARY KEY", "PRIMARY KEY (pri_key)");
-            //#endregion
 
+            #region charextdata Columns
+            Dictionary<string, string> extdtcol = new Dictionary<string, string>();
+            extdtcol.Add("charID", "int/NN/PK");
+            extdtcol.Add("Settings", "text");
+            extdtcol.Add("Friends", "text");
+            extdtcol.Add("Guild", "text");
+            extdtcol.Add("Mail", "text");
+            #endregion
+
+            #region chartent Columns
+            Dictionary<string, string> chartent = new Dictionary<string, string>();
+            chartent.Add("charID", "int/NN/PK");
+            chartent.Add("locked", "int");
+            chartent.Add("enlarged", "int");
+            chartent.Add("tenttype", "int");
+            chartent.Add("floor1Color", "int");
+            chartent.Add("floor1wallpaper", "int");
+            chartent.Add("floor2Color", "int");
+            chartent.Add("floor2wallpaperr", "int");
+            #endregion
+
+            #region charquest Columns
+            Dictionary<string, string> charquest = new Dictionary<string, string>();
+            charquest.Add("pri_key", "int/NN/PK");
+            charquest.Add("charID", "int/NN");
+            charquest.Add("quest_started", "int");
+            charquest.Add("quest_pos", "int");
+            #endregion
+
+            #region charunlocks Columns
+            Dictionary<string, string> charunlocks = new Dictionary<string, string>();
+            charunlocks.Add("pri_key", "int/NN/PK");
+            charunlocks.Add("charID", "int/NN");
+            charunlocks.Add("maploc", "int");
+            charunlocks.Add("clickID", "int");
+            #endregion
+
+            #region inv
+            Dictionary<string, string> inv = new Dictionary<string, string>();
+            inv.Add("pri_key", "int/NN/PK");
+            inv.Add("invIdx", "int/NN");
+            inv.Add("charID", "int");
+            inv.Add("storID", "int");
+            inv.Add("itemID", "int");
+            inv.Add("dmg", "int");
+            inv.Add("qty", "int");
+            inv.Add("pos", "int");
+            inv.Add("socketID", "int");
+            inv.Add("bombID", "int");
+            inv.Add("sewID", "int");
+            inv.Add("forge", "int");
+            #endregion
+
+            #region stats
+            Dictionary<string, string> stats = new Dictionary<string, string>();
+            stats.Add("pri_key", "int/NN/PK");
+            stats.Add("statIdx", "int/NN");
+            stats.Add("charID", "int");
+            stats.Add("statID", "int");
+            stats.Add("statVal", "int");
+            stats.Add("potential", "int");
+            #endregion
 
             #region characters table Verification
             Utilities.LogServices.Log("Checking characters table");
@@ -192,194 +217,508 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             }
             #endregion
 
-        //    #region charactersextdata Verification
-        //Utilities.LogServices.Log("Checking charactersextdata table");
+            #region charactersextdata Verification
+            Utilities.LogServices.Log("Checking charactersextdata table");
 
-        //retry2:
-        //    cmd = new MySqlCommand("SELECT * FROM charactersextdata", conn);
-        //    try { reader = cmd.ExecuteReader(); reader.Close(); goto exist2; }
-        //    catch { }
+        retry2:
 
-        //    Utilities.LogServices.Log("Setuping up charactersextdata table");
-        //    cmstr = "create table charactersextdata (";
-        //    foreach (var t in extdtcol)
-        //    {
-        //        if (t.Key != "PRIMARY KEY")
-        //            cmstr += string.Format("{0} {1},", t.Key, t.Value);
-        //        else
-        //            cmstr += string.Format("{0},", t.Value);
-        //    }
-        //    cmstr = cmstr.Substring(0, cmstr.Length - 1);
-        //    cmstr += ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata") != null) goto exist2;
 
-        //    cmd = new MySqlCommand(cmstr, conn);
-        //    cmd.ExecuteNonQuery();
+        Utilities.LogServices.Log("Setuping up charactersextdata table");
 
-        //exist2:
-        //    //table exists verify columns               
+            nonsqlite_prikey = "";
+            cmstr = "create table " + "charactersextdata" + " (";
 
-        //    foreach (string h in extdtcol.Keys.Where(c => c != "PRIMARY KEY"))
-        //    {
-        //        cmd = new MySqlCommand("select " + h + " from charactersextdata ", conn);
-        //        try { reader = cmd.ExecuteReader(); reader.Close(); }
-        //        catch
-        //        {
+            foreach (var t in extdtcol)
+            {
+                var str = "";
+                var att = t.Value.Split('/');
 
-        //            Utilities.LogServices.Log("Reseting charactersextdata table");
-        //            cmd = new MySqlCommand("drop table if exists charactersextdata", conn);
-        //            cmd.ExecuteNonQuery();
-        //            goto retry2;
-        //        }
-        //    }
-        //    #endregion
+                switch (cGlobal.gDataBaseConnection.TypeofDB)
+                {
+                    #region Mysql
+                    case DBConnector.DBType.MySQl:
+                        {
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "text "; break;
+                                    case "int": str += "int(11) "; break;
+                                    case "NN": str += "NOT NULL "; break;
+                                    case "PK": nonsqlite_prikey = "PRIMARY KEY (" + t.Key + ")"; break;
+                                }
+                        } break;
+                    #endregion
+                    #region Sqlite
+                    case DBConnector.DBType.Sqlite:
+                        {
+                            if (att.Count(c => c == "pk") > 0 && att.Count(c => c == "NN") > 0)
+                                att = att.Where(c => c != "NN").ToArray();
 
-        //    #region chartent Verification
-        //Utilities.LogServices.Log("Checking chartent table");
-        //retry3:
-        //    cmd = new MySqlCommand("SELECT * FROM chartent", conn);
-        //    try { reader = cmd.ExecuteReader(); reader.Close(); goto exist3; }
-        //    catch { }
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "TEXT "; break;
+                                    case "int": str += "INTEGER "; break;
+                                    case "PK": str += "PRIMARY KEY "; break;
+                                }
+                        } break;
+                    #endregion
+                }
 
-        //    Utilities.LogServices.Log("Setuping up chartent table");
-        //    cmstr = "create table chartent (";
-        //    foreach (var t in extdtcol)
-        //    {
-        //        if (t.Key != "PRIMARY KEY")
-        //            cmstr += string.Format("{0} {1},", t.Key, t.Value);
-        //        else
-        //            cmstr += string.Format("{0},", t.Value);
-        //    }
-        //    cmstr = cmstr.Substring(0, cmstr.Length - 1);
-        //    cmstr += ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+                cmstr += string.Format("{0} {1},", t.Key, str);
+            }
 
-        //    cmd = new MySqlCommand(cmstr, conn);
-        //    cmd.ExecuteNonQuery();
+            if (nonsqlite_prikey != "")
+                cmstr += string.Format("{0},", nonsqlite_prikey);
 
-        //exist3:
-        //    //table exists verify columns               
+            cmstr = cmstr.Substring(0, cmstr.Length - 1);
 
-        //    foreach (string h in extdtcol.Keys.Where(c => c != "PRIMARY KEY"))
-        //    {
-        //        cmd = new MySqlCommand("select " + h + " from chartent ", conn);
-        //        try { reader = cmd.ExecuteReader(); reader.Close(); }
-        //        catch
-        //        {
+            if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.MySQl)
+                cmstr += ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            else if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.Sqlite)
+                cmstr += ");";
 
-        //            Utilities.LogServices.Log("Reseting chartent table");
-        //            cmd = new MySqlCommand("drop table if exists chartent", conn);
-        //            cmd.ExecuteNonQuery();
-        //            goto retry3;
-        //        }
-        //    }
-        //    #endregion
 
-        //    #region charquest Verification
-        //Utilities.LogServices.Log("Checking charquest table");
-        //retry4:
-        //    cmd = new MySqlCommand("SELECT * FROM charquest", conn);
-        //    try { reader = cmd.ExecuteReader(); reader.Close(); goto exist4; }
-        //    catch { }
+            cGlobal.gDataBaseConnection.ExecuteNonQuery(cmstr);
 
-        //    Utilities.LogServices.Log("Setuping up charquest table");
-        //    cmstr = "create table charquest (";
-        //    foreach (var t in extdtcol)
-        //    {
-        //        if (t.Key != "PRIMARY KEY")
-        //            cmstr += string.Format("{0} {1},", t.Key, t.Value);
-        //        else
-        //            cmstr += string.Format("{0},", t.Value);
-        //    }
-        //    cmstr = cmstr.Substring(0, cmstr.Length - 1);
-        //    cmstr += ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+        exist2:
+            //table exists verify columns  
+            //table exists verify columns  
+            foreach (string h in extdtcol.Keys)
+            {
+                if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "charactersextdata") == null)
+                {
+                    Utilities.LogServices.Log("Recreating " + "charactersextdata" + " table");
 
-        //    cmd = new MySqlCommand(cmstr, conn);
-        //    cmd.ExecuteNonQuery();
+                    cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "charactersextdata");
+                    goto retry2;
+                }
+            }
+            #endregion
 
-        //exist4:
-        //    //table exists verify columns               
+            #region chartent Verification
+            Utilities.LogServices.Log("Checking chartent table");
+        retry3:
 
-        //    foreach (string h in extdtcol.Keys.Where(c => c != "PRIMARY KEY"))
-        //    {
-        //        cmd = new MySqlCommand("select " + h + " from charquest ", conn);
-        //        try { reader = cmd.ExecuteReader(); reader.Close(); }
-        //        catch
-        //        {
+            if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + "chartent") != null) goto exist3;
 
-        //            Utilities.LogServices.Log("Reseting charquest table");
-        //            cmd = new MySqlCommand("drop table if exists charquest", conn);
-        //            cmd.ExecuteNonQuery();
-        //            goto retry4;
-        //        }
-        //    }
-        //    #endregion
+        Utilities.LogServices.Log("Setuping up chartent table");
 
-        //    #region charunlocks Verification
-        //Utilities.LogServices.Log("Checking charunlocks table");
-        //retry5:
-        //    cmd = new MySqlCommand("SELECT * FROM charunlocks", conn);
-        //    try { reader = cmd.ExecuteReader(); reader.Close(); goto exist5; }
-        //    catch { }
+            nonsqlite_prikey = "";
+            cmstr = "create table " + "chartent" + " (";
 
-        //    Utilities.LogServices.Log("Setuping up charunlocks table");
-        //    cmstr = "create table charunlocks (";
-        //    foreach (var t in extdtcol)
-        //    {
-        //        if (t.Key != "PRIMARY KEY")
-        //            cmstr += string.Format("{0} {1},", t.Key, t.Value);
-        //        else
-        //            cmstr += string.Format("{0},", t.Value);
-        //    }
-        //    cmstr = cmstr.Substring(0, cmstr.Length - 1);
-        //    cmstr += ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            foreach (var t in chartent)
+            {
+                var str = "";
+                var att = t.Value.Split('/');
 
-        //    cmd = new MySqlCommand(cmstr, conn);
-        //    cmd.ExecuteNonQuery();
+                switch (cGlobal.gDataBaseConnection.TypeofDB)
+                {
+                    #region Mysql
+                    case DBConnector.DBType.MySQl:
+                        {
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "text "; break;
+                                    case "int": str += "int(11) "; break;
+                                    case "NN": str += "NOT NULL "; break;
+                                    case "PK": nonsqlite_prikey = "PRIMARY KEY (" + t.Key + ")"; break;
+                                }
+                        } break;
+                    #endregion
+                    #region Sqlite
+                    case DBConnector.DBType.Sqlite:
+                        {
+                            if (att.Count(c => c == "pk") > 0 && att.Count(c => c == "NN") > 0)
+                                att = att.Where(c => c != "NN").ToArray();
 
-        //exist5:
-        //    //table exists verify columns               
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "TEXT "; break;
+                                    case "int": str += "INTEGER "; break;
+                                    case "PK": str += "PRIMARY KEY "; break;
+                                }
+                        } break;
+                    #endregion
+                }
 
-        //    foreach (string h in extdtcol.Keys.Where(c => c != "PRIMARY KEY"))
-        //    {
-        //        cmd = new MySqlCommand("select " + h + " from charunlocks ", conn);
-        //        try { reader = cmd.ExecuteReader(); reader.Close(); }
-        //        catch
-        //        {
+                cmstr += string.Format("{0} {1},", t.Key, str);
+            }
 
-        //            Utilities.LogServices.Log("Reseting charunlocks table");
-        //            cmd = new MySqlCommand("drop table if exists charunlocks", conn);
-        //            cmd.ExecuteNonQuery();
-        //            goto retry5;
-        //        }
-        //    }
-        //    #endregion
+            if (nonsqlite_prikey != "")
+                cmstr += string.Format("{0},", nonsqlite_prikey);
+
+            cmstr = cmstr.Substring(0, cmstr.Length - 1);
+
+            if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.MySQl)
+                cmstr += ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            else if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.Sqlite)
+                cmstr += ");";
+
+
+            cGlobal.gDataBaseConnection.ExecuteNonQuery(cmstr);
+
+        exist3:
+            //table exists verify columns  
+            //table exists verify columns  
+            foreach (string h in chartent.Keys)
+            {
+                if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "chartent") == null)
+                {
+                    Utilities.LogServices.Log("Recreating " + "chartent" + " table");
+
+                    cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "chartent");
+                    goto retry3;
+                }
+            }
+            #endregion
+
+            #region charquest Verification
+            Utilities.LogServices.Log("Checking charquest table");
+        retry4:
+
+            if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + "charquest") != null) goto exist4;
+
+        Utilities.LogServices.Log("Setuping up charquest table");
+
+            nonsqlite_prikey = "";
+            cmstr = "create table " + "charquest" + " (";
+
+            foreach (var t in charquest)
+            {
+                var str = "";
+                var att = t.Value.Split('/');
+
+                switch (cGlobal.gDataBaseConnection.TypeofDB)
+                {
+                    #region Mysql
+                    case DBConnector.DBType.MySQl:
+                        {
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "text "; break;
+                                    case "int": str += "int(11) "; break;
+                                    case "NN": str += "NOT NULL "; break;
+                                    case "PK": nonsqlite_prikey = "PRIMARY KEY (" + t.Key + ")"; break;
+                                }
+                        } break;
+                    #endregion
+                    #region Sqlite
+                    case DBConnector.DBType.Sqlite:
+                        {
+                            if (att.Count(c => c == "pk") > 0 && att.Count(c => c == "NN") > 0)
+                                att = att.Where(c => c != "NN").ToArray();
+
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "TEXT "; break;
+                                    case "int": str += "INTEGER "; break;
+                                    case "PK": str += "PRIMARY KEY "; break;
+                                }
+                        } break;
+                    #endregion
+                }
+
+                cmstr += string.Format("{0} {1},", t.Key, str);
+            }
+
+            if (nonsqlite_prikey != "")
+                cmstr += string.Format("{0},", nonsqlite_prikey);
+
+            cmstr = cmstr.Substring(0, cmstr.Length - 1);
+
+            if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.MySQl)
+                cmstr += ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            else if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.Sqlite)
+                cmstr += ");";
+
+
+            cGlobal.gDataBaseConnection.ExecuteNonQuery(cmstr);
+
+        exist4:
+            //table exists verify columns  
+            //table exists verify columns  
+            foreach (string h in charquest.Keys)
+            {
+                if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "charquest") == null)
+                {
+                    Utilities.LogServices.Log("Recreating " + "charquest" + " table");
+
+                    cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "charquest");
+                    goto retry4;
+                }
+            }
+            #endregion
+
+            #region charunlocks Verification
+            Utilities.LogServices.Log("Checking charunlocks table");
+        retry5:
+
+            if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + "charunlocks") != null) goto exist5;
+
+        Utilities.LogServices.Log("Setuping up charunlocks table");
+
+            nonsqlite_prikey = "";
+            cmstr = "create table " + "charunlocks" + " (";
+
+            foreach (var t in charunlocks)
+            {
+                var str = "";
+                var att = t.Value.Split('/');
+
+                switch (cGlobal.gDataBaseConnection.TypeofDB)
+                {
+                    #region Mysql
+                    case DBConnector.DBType.MySQl:
+                        {
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "text "; break;
+                                    case "int": str += "int(11) "; break;
+                                    case "NN": str += "NOT NULL "; break;
+                                    case "PK": nonsqlite_prikey = "PRIMARY KEY (" + t.Key + ")"; break;
+                                }
+                        } break;
+                    #endregion
+                    #region Sqlite
+                    case DBConnector.DBType.Sqlite:
+                        {
+                            if (att.Count(c => c == "pk") > 0 && att.Count(c => c == "NN") > 0)
+                                att = att.Where(c => c != "NN").ToArray();
+
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "TEXT "; break;
+                                    case "int": str += "INTEGER "; break;
+                                    case "PK": str += "PRIMARY KEY "; break;
+                                }
+                        } break;
+                    #endregion
+                }
+
+                cmstr += string.Format("{0} {1},", t.Key, str);
+            }
+
+            if (nonsqlite_prikey != "")
+                cmstr += string.Format("{0},", nonsqlite_prikey);
+
+            cmstr = cmstr.Substring(0, cmstr.Length - 1);
+
+            if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.MySQl)
+                cmstr += ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            else if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.Sqlite)
+                cmstr += ");";
+
+
+            cGlobal.gDataBaseConnection.ExecuteNonQuery(cmstr);
+
+        exist5:
+            //table exists verify columns  
+            //table exists verify columns  
+            foreach (string h in charunlocks.Keys)
+            {
+                if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "charunlocks") == null)
+                {
+                    Utilities.LogServices.Log("Recreating " + "charunlocks" + " table");
+
+                    cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "charunlocks");
+                    goto retry5;
+                }
+            }
+            #endregion
+
+            #region inv Verification
+        Utilities.LogServices.Log("Checking inventory table");
+        retry6:
+
+        if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + "inventory") != null) goto exist6;
+
+        Utilities.LogServices.Log("Setuping up inventory table");
+
+            nonsqlite_prikey = "";
+            cmstr = "create table " + "inventory" + " (";
+
+            foreach (var t in inv)
+            {
+                var str = "";
+                var att = t.Value.Split('/');
+
+                switch (cGlobal.gDataBaseConnection.TypeofDB)
+                {
+                    #region Mysql
+                    case DBConnector.DBType.MySQl:
+                        {
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "text "; break;
+                                    case "int": str += "int(11) "; break;
+                                    case "NN": str += "NOT NULL "; break;
+                                    case "PK": nonsqlite_prikey = "PRIMARY KEY (" + t.Key + ")"; break;
+                                }
+                        } break;
+                    #endregion
+                    #region Sqlite
+                    case DBConnector.DBType.Sqlite:
+                        {
+                            if (att.Count(c => c == "pk") > 0 && att.Count(c => c == "NN") > 0)
+                                att = att.Where(c => c != "NN").ToArray();
+
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "TEXT "; break;
+                                    case "int": str += "INTEGER "; break;
+                                    case "PK": str += "PRIMARY KEY "; break;
+                                }
+                        } break;
+                    #endregion
+                }
+
+                cmstr += string.Format("{0} {1},", t.Key, str);
+            }
+
+            if (nonsqlite_prikey != "")
+                cmstr += string.Format("{0},", nonsqlite_prikey);
+
+            cmstr = cmstr.Substring(0, cmstr.Length - 1);
+
+            if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.MySQl)
+                cmstr += ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            else if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.Sqlite)
+                cmstr += ");";
+
+
+            cGlobal.gDataBaseConnection.ExecuteNonQuery(cmstr);
+
+        exist6:
+            //table exists verify columns  
+            //table exists verify columns  
+            foreach (string h in inv.Keys)
+            {
+                if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "inventory") == null)
+                {
+                    Utilities.LogServices.Log("Recreating " + "inventory" + " table");
+
+                    cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "inventory");
+                    goto retry6;
+                }
+            }
+            #endregion
+
+            #region stats Verification
+        Utilities.LogServices.Log("Checking stats table");
+        retry7:
+
+        if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + "stats") != null) goto exist7;
+
+        Utilities.LogServices.Log("Setuping up stats table");
+
+            nonsqlite_prikey = "";
+            cmstr = "create table " + "stats" + " (";
+
+            foreach (var t in stats)
+            {
+                var str = "";
+                var att = t.Value.Split('/');
+
+                switch (cGlobal.gDataBaseConnection.TypeofDB)
+                {
+                    #region Mysql
+                    case DBConnector.DBType.MySQl:
+                        {
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "text "; break;
+                                    case "int": str += "int(11) "; break;
+                                    case "NN": str += "NOT NULL "; break;
+                                    case "PK": nonsqlite_prikey = "PRIMARY KEY (" + t.Key + ")"; break;
+                                }
+                        } break;
+                    #endregion
+                    #region Sqlite
+                    case DBConnector.DBType.Sqlite:
+                        {
+                            if (att.Count(c => c == "pk") > 0 && att.Count(c => c == "NN") > 0)
+                                att = att.Where(c => c != "NN").ToArray();
+
+                            foreach (var a in att)
+                                switch (a)
+                                {
+                                    case "text": str += "TEXT "; break;
+                                    case "int": str += "INTEGER "; break;
+                                    case "PK": str += "PRIMARY KEY "; break;
+                                }
+                        } break;
+                    #endregion
+                }
+
+                cmstr += string.Format("{0} {1},", t.Key, str);
+            }
+
+            if (nonsqlite_prikey != "")
+                cmstr += string.Format("{0},", nonsqlite_prikey);
+
+            cmstr = cmstr.Substring(0, cmstr.Length - 1);
+
+            if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.MySQl)
+                cmstr += ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            else if (cGlobal.gDataBaseConnection.TypeofDB == DBConnector.DBType.Sqlite)
+                cmstr += ");";
+
+
+            cGlobal.gDataBaseConnection.ExecuteNonQuery(cmstr);
+
+        exist7:
+            //table exists verify columns  
+            //table exists verify columns  
+            foreach (string h in stats.Keys)
+            {
+                if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "stats") == null)
+                {
+                    Utilities.LogServices.Log("Recreating " + "stats" + " table");
+
+                    cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "stats");
+                    goto retry7;
+                }
+            }
+            #endregion
         }
         public bool LockName(uint dbacc, string name)
         {
             if (name == null) return false;
 
             List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
-            parameters.Add(new KeyValuePair<string, string>("@myname", name));
+            parameters.Add(new KeyValuePair<string, string>("@myname", name.ToLower()));
 
             DataTable src = null;
 
-            if (!client_requested_names.Contains(name))
+            if (!client_requested_names.Contains(name.ToLower()))
             {
-                try { src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM characters where name = @myname", parameters.ToArray()); }
+                try { src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM characters where name_clean = @myname", parameters.ToArray()); }
                 catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
 
                 if (src.Rows.Count == 0)
                 {
 
-                    if (CharNames.ContainsKey(name))
+                    if (CharNames.ContainsKey(name.ToLower()))
                     {
-                        if (CharNames[name] != dbacc) return false;
+                        if (CharNames[name.ToLower()] != dbacc) return false;
                         else
                         {
-                            client_requested_names.Add(name); return true;
+                            client_requested_names.Add(name.ToLower()); return true;
                         }
                     }
                     else
-                        client_requested_names.Add(name); return true;
+                        client_requested_names.Add(name.ToLower()); return true;
                 }
                 return false;
             }
@@ -389,9 +728,10 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         public void unLockName(string name)
         {
             if (name == null) return;
-            if (client_requested_names.Contains(name))
-                client_requested_names.Remove(name);
+            if (client_requested_names.Contains(name.ToLower()))
+                client_requested_names.Remove(name.ToLower());
         }
+
         //public bool NameTaken(string name,uint target)
         //{
         //    MySqlCommand cmd = null;
@@ -493,7 +833,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
                 t.SkinColor = ushort.Parse(rows[0]["skincolor"].ToString());
                 t.ClothingColor = ushort.Parse(rows[0]["clothingcolor"].ToString());
                 t.EyeColor = ushort.Parse(rows[0]["eyecolor"].ToString());
-                t.Gold = uint.Parse(rows[0]["gold"].ToString());
+                t.SetGold(int.Parse(rows[0]["gold"].ToString()));
                 t.Element = (ElementType)byte.Parse(rows[0]["element"].ToString());
                 t.Job = (RebornJob)byte.Parse(rows[0]["job"].ToString());
             }
@@ -573,7 +913,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
                 t.SkinColor = Cache[(int)charID].SkinColor;
                 t.ClothingColor = Cache[(int)charID].ClothingColor;
                 t.EyeColor = Cache[(int)charID].EyeColor;
-                t.Gold = Cache[(int)charID].Gold;
+                t.SetGold((int)Cache[(int)charID].Gold);
                 t.Element = Cache[(int)charID].Element;
                 t.Job = Cache[(int)charID].Job;
                 return;
@@ -604,7 +944,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
                 t.SkinColor = ushort.Parse(rows[0]["skincolor"].ToString());
                 t.ClothingColor = ushort.Parse(rows[0]["clothingcolor"].ToString());
                 t.EyeColor = ushort.Parse(rows[0]["eyecolor"].ToString());
-                t.Gold = uint.Parse(rows[0]["gold"].ToString());
+                t.SetGold(int.Parse(rows[0]["gold"].ToString()));
                 t.Element = (ElementType)byte.Parse(rows[0]["element"].ToString());
                 t.Job = (RebornJob)byte.Parse(rows[0]["job"].ToString());
             }
@@ -639,7 +979,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             }
 
             //load equips
-            src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM characters where charID = '" + charID + "' AND storID =1");
+            src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM inventory where charID = '" + charID + "' AND storID =1");
 
             if (src.Rows.Count > 0)
             {
@@ -810,7 +1150,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             insert.Add("head", c.Head.ToString());
             insert.Add("body", ((byte)c.Body).ToString());
             insert.Add("nickname", c.Nickname);
-            insert.Add("location_map", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.CurrentMap.MapID.ToString() : player.PrevMap.DstMap.ToString());
+            insert.Add("location_map",(c.CurrentMap.TypeofMap == MapType.Regular) ? c.CurrentMap.MapID.ToString() : player.PrevMap.DstMap.ToString());
             insert.Add("location_x", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.X.ToString() : player.PrevMap.DstX_Axis.ToString());
             insert.Add("location_y", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.Y.ToString() : player.PrevMap.DstY_Axis.ToString());
             insert.Add("haircolor", c.HairColor.ToString());
@@ -839,7 +1179,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
                 }
                 else
                 {
-                   cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE stats SET {0} where charID = '" + charID + "'", string.Format(" statID = '{0}',statVal ='{1}',potential ='{2}'", u[0], u[1], player.Potential)));
+                   cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE stats SET {0} where charID = '" + charID + "' AND statID = '"+u[0]+"'", string.Format(" statID = '{0}',statVal ='{1}',potential ='{2}'", u[0], u[1], player.Potential)));
                 }
             }
             #endregion

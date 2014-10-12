@@ -8,7 +8,7 @@ using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Code.Enums;
 
 namespace Wonderland_Private_Server.ActionCodes
-{//
+{///////
     public class AC85 : AC
     {
         public override int ID { get { return 85; } }
@@ -32,7 +32,7 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                cGlobal.gInstance.Send81_1(ref p,1);
+                cGlobal.gInstanceSystem.Send81_1(ref p, 1);
 
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
@@ -46,10 +46,10 @@ namespace Wonderland_Private_Server.ActionCodes
                 {
 
                     case 1:
-                        cGlobal.gInstance.Send81_1(ref p,tmp);
+                        cGlobal.gInstanceSystem.Send81_1(ref p, tmp);
                         break;
                     case 2:
-                        cGlobal.gInstance.Send81_1(ref p,tmp);
+                        cGlobal.gInstanceSystem.Send81_1(ref p, tmp);
                         break;
                 }
 
@@ -68,7 +68,7 @@ namespace Wonderland_Private_Server.ActionCodes
                 //{
                 //    tt = r.Data.Skip(5).Take(cc).ToString();
                 //}
-                cGlobal.gInstance.CreaterInstance(ref p, tmp , str);
+                cGlobal.gInstanceSystem.CreaterInstance(ref p, tmp, str);
 
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
@@ -78,7 +78,7 @@ namespace Wonderland_Private_Server.ActionCodes
             int tmp = r.Unpack16(2); // get id instance selected
             try
             {
-                cGlobal.gInstance.PreJoin(p.UserID,tmp);
+                cGlobal.gInstanceSystem.PreJoin(p.UserID, tmp);
 
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
@@ -88,7 +88,7 @@ namespace Wonderland_Private_Server.ActionCodes
             int tmp = r.Unpack16(2); // get id instance selected
             try
             {
-                cGlobal.gInstance.Join(ref p, tmp);
+                cGlobal.gInstanceSystem.Join(ref p, tmp);
 
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
@@ -97,8 +97,8 @@ namespace Wonderland_Private_Server.ActionCodes
         {            
             
             try
-            {               
-                cGlobal.gInstance.ExitInstancia(ref p);
+            {
+                cGlobal.gInstanceSystem.ExitInstancia(ref p);
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
@@ -107,7 +107,7 @@ namespace Wonderland_Private_Server.ActionCodes
             try
             {
                 if(p.CurInstance != 0 )
-                cGlobal.gInstance.CheckMembers(ref p,1);
+                    cGlobal.gInstanceSystem.CheckMembers(ref p, 1);
 
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
@@ -122,7 +122,7 @@ namespace Wonderland_Private_Server.ActionCodes
                 {
                     if ((tmp >= 1) && (tmp < 4))
                     {
-                        cGlobal.gInstance.CheckMembers(ref p, tmp);
+                        cGlobal.gInstanceSystem.CheckMembers(ref p, tmp);
 
                     }
                 }

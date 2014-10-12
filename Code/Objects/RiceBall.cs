@@ -69,7 +69,7 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             try
             {
-                id = own.Inv[invCell].Data.NpcID; //will be set from i.item.npcID
+                id = own.Inv[invCell].NpcID; //will be set from i.item.npcID
                 endtime = 60;
                 Activate();
                 return true;
