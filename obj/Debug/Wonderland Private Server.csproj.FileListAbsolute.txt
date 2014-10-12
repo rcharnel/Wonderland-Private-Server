@@ -59,3 +59,4 @@ C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Priv
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Properties.Resources.resources
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.Fakes.fakesconfig
