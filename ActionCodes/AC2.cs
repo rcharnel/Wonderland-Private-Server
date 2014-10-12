@@ -103,7 +103,7 @@ namespace Wonderland_Private_Server.ActionCodes
                             {
                                 case "1":
                                     {
-                                        cGlobal.gGuild.CreateGuild(ref p, "balaiada");
+                                      //  cGlobal.gGuild.CreateGuild(ref p, "balaiada");
                                     }
                                     break;                                
                             }

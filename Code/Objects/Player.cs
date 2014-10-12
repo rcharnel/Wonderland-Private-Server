@@ -241,7 +241,6 @@ namespace Wonderland_Private_Server.Code.Objects
                 return mailBox;
             }
         }
-        public int CurInstance { get; set; }
         public InventoryManager Inv { get { return m_Inv ?? null; } }
         public EquipementManager Eqs { get { return ((EquipementManager)this) ?? null; } }
         public cPetList Pets { get { return m_pets; } }
