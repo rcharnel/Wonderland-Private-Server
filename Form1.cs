@@ -199,8 +199,8 @@ namespace Wonderland_Private_Server
                     UpdatePane.Controls.Clear();
                     var list = cGlobal.GClient.ReleasesFnd;
 
-                    foreach (var y in list.OrderByDescending(c => new Version(c.TagName)))
-                        UpdatePane.Controls.Add(new Utilities.Update.GitUpdateItem(cGlobal.GClient.myVersion, y));
+                    //foreach (var y in list.OrderByDescending(c => new Version(c.TagName)))
+                    //    UpdatePane.Controls.Add(new Utilities.Update.GitUpdateItem(cGlobal.GClient.myVersion, y));
 
                 }));
             }
