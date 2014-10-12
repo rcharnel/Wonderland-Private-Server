@@ -87,7 +87,7 @@ namespace Wonderland_Private_Server.Code.Objects
                 List<Fighter> fighters = new List<Fighter>();
                 fighters.AddRange(Side[2].Fighters_Alive); fighters.AddRange(Side[5].Fighters_Alive);
                 var fighters_with_cmds = fighters.Where(c => c.myAction != null).ToList();
-                var orderedlist = fighters_with_cmds.OrderByDescending(c => c.Eqs.FullSpd);
+                var orderedlist = fighters_with_cmds.OrderByDescending(c => c.FullSpd);
                 var trgt = orderedlist.First();//get fastest person
                 fighters_with_cmds.Remove(trgt);
                 tmp.Add(trgt);
@@ -95,7 +95,7 @@ namespace Wonderland_Private_Server.Code.Objects
 
                 for (int a = 0; a < fighters_with_cmds.Count; a++)
                 {
-                    orderedlist = fighters_with_cmds.OrderByDescending(c => c.Eqs.FullSpd);
+                    orderedlist = fighters_with_cmds.OrderByDescending(c => c.FullSpd);
                     var chk = orderedlist.First();//get fastest person
                     fighters_with_cmds.Remove(chk);
                     //if (trgt.BattlePosition == chk.BattlePosition && inSpdRange(chk, tmp) && trgt.myAction.dst == chk.myAction.dst)
@@ -263,7 +263,7 @@ namespace Wonderland_Private_Server.Code.Objects
         #region Battle processing
 
 
-        public void Calculate()
+        void Calculate()
         {
             RoundState = eBattleRoundState.CalculatingState;
             ushort skillid = 0;
@@ -724,7 +724,7 @@ namespace Wonderland_Private_Server.Code.Objects
             foreach (var k in kl)
             {
                 var y = FindFighter(k[0], k[1]);
-                if (y != null && y.BattlePosition == loc && y.State != PlayerState.InGame_Battling_Dead)
+                if (y != null && y.BattlePosition == loc && y.BattleState != FighterState.Dead)
                     tmp.Add(y);
             }
             if (tmp.Count == 0)
@@ -788,8 +788,8 @@ namespace Wonderland_Private_Server.Code.Objects
             bool add = false;
             switch (d.skill.EffectLayer)
             {
-                case EffectLayer.Physical: { add = true; tmp = GetAtkDamage((ushort)d.src.Eqs.FullAtk, d.skill.AttackPower(),(ushort)trgt.Eqs.FullDef, (float)GetElementCorrection(d.src.Element, trgt.Element)); } break;
-                case EffectLayer.Magical: { add = true; tmp = GetMatkDamage(d.src.Eqs.FullMatk, d.skill.AttackPower(), trgt.Eqs.FullMdef, (float)GetElementCorrection(d.src.Element, trgt.Element)); } break;
+                case EffectLayer.Physical: { add = true; tmp = GetAtkDamage((ushort)d.src.FullAtk, d.skill.AttackPower(),(ushort)trgt.FullDef, (float)GetElementCorrection(d.src.Element, trgt.Element)); } break;
+                case EffectLayer.Magical: { add = true; tmp = GetMatkDamage(d.src.FullMatk, d.skill.AttackPower(), trgt.FullMdef, (float)GetElementCorrection(d.src.Element, trgt.Element)); } break;
             }
 
             return new uint[] { (uint)Math.Round(tmp), BitConverter.GetBytes(add)[0] };
@@ -906,8 +906,8 @@ namespace Wonderland_Private_Server.Code.Objects
             bool ret = false;
             foreach (Fighter w in agst.Where(c => c != chk))
             {
-                if ((w.Eqs.FullSpd.CompareTo((UInt16)(chk.Eqs.FullSpd - 100)) >= 0) &&
-                        (chk.Eqs.FullSpd.CompareTo((UInt16)(w.Eqs.FullSpd - 100)) >= 0))
+                if ((w.FullSpd.CompareTo((UInt16)(chk.FullSpd - 100)) >= 0) &&
+                        (chk.FullSpd.CompareTo((UInt16)(w.FullSpd - 100)) >= 0))
                     ret = true;
             }
             return ret;
@@ -928,7 +928,7 @@ namespace Wonderland_Private_Server.Code.Objects
             battleRef = area;
         }
         public bool AllReady { get { if (fighterlist.Count(c => c.ActionDone) == fighterlist.Count)return true; else return false; } }
-        public byte[] Placement
+        byte[] Placement
         {
             get
             {
@@ -960,7 +960,7 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             get
             {
-                return fighterlist.Where(c => c.State == PlayerState.InGame_Battling_Alive).ToList();
+                return fighterlist.Where(c => c.BattleState == FighterState.Alive).ToList();
             }
         }
 
@@ -1086,11 +1086,11 @@ namespace Wonderland_Private_Server.Code.Objects
                         if (fighter.CurHP == 0)
                         {
                             defeat = true;
-                            (fighter as PetFighter).CurHP++;
+                            fighter.CurHP++;
                         }
                         else
-                            (fighter as PetFighter).CurHP = (fighter as PetFighter).CurHP;
-                        (fighter as PetFighter).CurSP = (fighter as PetFighter).CurSP;
+                            fighter.CurHP = fighter.CurHP;
+                        fighter.CurSP = fighter.CurSP;
                     }
 
                 }
@@ -1161,7 +1161,7 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             get
             {
-                return fighterlist.OrderBy(r => r.Eqs.FullSpd).ToList();
+                return fighterlist.OrderBy(r => r.FullSpd).ToList();
             }
         }
         public void Send_Attack(Fighter src, ushort skill, Fighter dst, bool miss, uint Damg)

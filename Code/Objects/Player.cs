@@ -19,6 +19,7 @@ namespace Wonderland_Private_Server.Code.Objects
     public class Player : Character, Fighter,cSocket
     {
         readonly object mylock = new object();
+        bool blockupdt;
         Thread wrk;
 
         #region Acc Def
@@ -166,14 +167,6 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             get
             {
-                if (m_battle != null)
-                {
-                    if (CurHP != 0)
-                        return PlayerState.InGame_Battling_Alive;
-                    else
-                        return PlayerState.InGame_Battling_Dead;
-                }
-
                 return m_state;
             }
             set
@@ -256,12 +249,26 @@ namespace Wonderland_Private_Server.Code.Objects
         #endregion
 
         #region Fighter
+        public FighterState BattleState
+        {
+            get
+            {
+                if (m_battle != null)
+                {
+                    if (CurHP != 0)
+                        return FighterState.Alive;
+                    else
+                        return FighterState.Dead;
+                }
+                return FighterState.Unknown;
+            }
+        }
         public Skill SkillEffect { get; set; }
         public BattleSide BattlePosition { get; set; }
         public eFighterType TypeofFighter { get { return ( BattlePosition == BattleSide.Watching)? eFighterType.Watcher:eFighterType.player; } }
         public BattleAction myAction { get; set; }
         public UInt16 ClickID { get { return 0; } set { } }
-        public UInt16 OwnerID { get { return 0; } set { } }
+        public UInt32 OwnerID { get { return 0; } set { } }
         public byte GridX { get; set; }
         public byte GridY { get; set; }
         public bool ActionDone { get { return (myAction != null || DateTime.Now > rndend); } }
@@ -315,6 +322,8 @@ namespace Wonderland_Private_Server.Code.Objects
         #endregion
 
         #region ThreadSafe  Methods
+
+
         #region ClientSock
         void PacketProcess(RecvPacket p)
         {
@@ -503,6 +512,16 @@ namespace Wonderland_Private_Server.Code.Objects
         #endregion
 
         #region Player
+        public void Process()
+        {
+            if (blockupdt) return;
+            lock (mylock)
+            {
+                blockupdt = true;
+
+                blockupdt = false;
+            }
+        }
         public void onPlayerLogin(uint id)
         {
             if (Friends.Exists(c => c.ID == id))

@@ -53,8 +53,11 @@ namespace Wonderland_Private_Server.Code.Enums
         Pet = 4,
     }
 
-    public enum PetFighterState
+    public enum FighterState
     {
-
+        Unknown,
+        Alive,
+        Dead,
+        Sealed,
     }
 }

@@ -15,19 +15,60 @@ namespace Wonderland_Private_Server.ActionCodes
         public override void ProcessPkt(ref Player r, RecvPacket p)
         {
             switch (p.B)
-            {                
-                case 1: Recv1(ref r, p); break;
+            {
+                case 1: Recv1(ref r, ref p); break;
+                case 6: Recv6(ref r, ref p); break;
+                case 9: Recv9(ref r, ref p); break;
+                case 8: Recv8(ref r, ref p); break;
                 default: Utilities.LogServices.Log("AC " + p.A + "," + p.B + " has not been coded"); break;
             }
         }
-        void Recv1(ref Player p, RecvPacket r)
+        void Recv8(ref Player p, ref RecvPacket r)
         {
-            try
+            if (!p.CurrentMap.Teleport(TeleportType.Regular, ref p, (byte)r.Unpack16(2)))
             {
-                byte NPC = r.Unpack8(2);
-                //p.CurrentMap.ProccessInteraction
+                SendPacket tmp = new SendPacket();
+                tmp.PackArray(new byte[] { 20, 8 });
+                p.Send(tmp);
             }
-            catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
+        void Recv1(ref Player p, ref RecvPacket r)
+        {
+            if (!p.CurrentMap.ProccessInteraction(r.Unpack8(2), ref p))
+            {
+                SendPacket tmp = new SendPacket();
+                tmp.PackArray(new byte[] { 20, 8 });
+                p.Send(tmp);
+            }
+        }
+        void Recv6(ref Player p, ref RecvPacket r)
+        {
+            if (!p.ContinueInteraction())
+            {
+                SendPacket tmp = new SendPacket();
+                tmp.PackArray(new byte[] { 20, 8 });
+                p.Send(tmp);
+
+                switch (p.State)
+                {
+                    case PlayerState.InGame_Warping:
+                        {
+                            tmp = new SendPacket();
+                            tmp.PackArray(new byte[] { 5, 4 });
+                            p.Send(tmp);
+                        } break;
+                    case PlayerState.InGame_Interacting:
+                        {
+                            p.object_interactingwith = null;
+                        } break;
+                }
+
+                p.State = PlayerState.InGame_InMap_Standing;
+            }
+        }
+        void Recv9(ref Player p, ref RecvPacket r)
+        {
+
         }
     }
 }

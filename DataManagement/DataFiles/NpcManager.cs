@@ -7,16 +7,19 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.IO;
 using Wonderland_Private_Server.Code.Enums;
+using Wonderland_Private_Server.Code.Interface;
+using Wonderland_Private_Server.Code.Objects;
 
 namespace Wonderland_Private_Server.DataManagement.DataFiles
 {
-    public class Npc
+    public class Npc :PetEquipementManager, Fighter
     {
-
+        public int dataptr;
+        #region Base Definition
         byte NpcNameLength;
         public string NpcName;
         public byte Type; // [代碼不太明白] (val ^ 0xC8) - 1
-        public UInt16 NpcID; // (val ^ 0x5209) - 1
+        public UInt16 NpcID { get; set; } // (val ^ 0x5209) - 1
         UInt16 ImageNum; // jma\001.jma  (val ^ 5209) - 1
         UInt16 ImageNumSmall;//(Small); // jma\007.jma (val ^ 0x5209) - 1
         UInt32 ColorCode1; // (val ^ 0x0BAEB716) - 1
@@ -27,7 +30,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         public byte Catchable; // 01=yes 02=no (val ^ 0xC8) - 1
         public byte UnknownByte2; // 未知參數[] (val ^ 0xC8) - 1
         public byte UnknownByte3; // 未知參數[] (val ^ 0xC8) - 1
-        public byte Level; //  (val ^ 0xC8) - 1
+        //public byte Level; //  (val ^ 0xC8) - 1
         public UInt32 HP; //  (val ^ 0xBAEB716) - 1
         public UInt32 SP; //  (val ^ 0xBAEB716) - 1
         public UInt16 STR; //  (val ^ 0x5209) - 1
@@ -36,7 +39,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         public UInt16 WIS; //  (val ^ 0x5209) - 1
         public UInt16 AGI; //  (val ^ 0x5209) - 1
         byte ImageNumEnlarge;//(Enlarge); //00=正常 01=放大 (val ^ 0xC8) - 1
-        public ElementType element; // 00=無 01=地 02=水 03=火 04=風 (val ^ 0xC8) - 1
+        //public ElementType element; // 00=無 01=地 02=水 03=火 04=風 (val ^ 0xC8) - 1
         public Skill SkillID1; // Pet stunt1 (val ^ 0x5209) - 1
         public Skill SkillID2; // Pet stunt2 (val ^ 0x5209) - 1
         public Skill SkillID3; // Pet stunt3 (val ^ 0x5209) - 1
@@ -82,6 +85,66 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         public UInt32 UnknownDword4; // ??? (val ^ 0xBAEB716) - 1
         public UInt32 UnknownDword5; // ??? (val ^ 0xBAEB716) - 1
         public UInt32 UnknownDword6; // ??? (val ^ 0xBAEB716) - 1
+        #endregion
+
+        #region FighterDef
+        public event BattleEvent onBattleAction;
+        DateTime rndend;
+        cPetList pets = new cPetList(null);
+        #endregion
+        #region Fighter Properties
+        public FighterState BattleState { get { return FighterState.Alive; } }
+        public uint ID { get { return (uint)NpcID; } }
+        public override int FullHP
+        {
+            get
+            {
+                return (FullHP == (int)HP) ? base.FullHP : (int)HP;
+            }
+        }
+        public override int FullSP
+        {
+            get
+            {
+                return (FullSP == (int)SP) ? base.FullSP : (int)SP;
+            }
+        }
+        public Skill SkillEffect { get; set; }
+        public BattleSide BattlePosition { get; set; }
+        public eFighterType TypeofFighter { get { return eFighterType.Npc; } }
+        public BattleAction myAction { get; set; }
+        public UInt16 ClickID { get { return 0; } set { } }
+        public UInt32 OwnerID { get { return 0; } set { } }
+        public byte GridX { get; set; }
+        public byte GridY { get; set; }
+        public bool ActionDone { get { return (myAction != null || DateTime.Now > rndend); } }
+        public DateTime RdEndTime { set { rndend = value; } }
+        public Int32 MaxHP { get { return FullHP; } }
+        public Int16 MaxSP { get { return (short)FullSP; } }
+        public override int CurHP
+        {
+            get
+            {
+                return base.CurHP;
+            }
+            set
+            {
+                base.CurHP = value;
+            }
+        }
+        public override int CurSP
+        {
+            get
+            {
+                return base.CurSP;
+            }
+            set
+            {
+                base.CurSP = value;
+            }
+        }
+        public cPetList Pets { get { return pets; } }
+        #endregion
 
         #region LoadHelpers
         private UInt16 getWord(byte[] data, int ptr)
@@ -96,8 +159,19 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         private UInt16 wordXor(UInt16 v) { return (UInt16)((v ^ 0x5209) - 1); }
         private UInt32 dwordXor(UInt32 v) { return (UInt32)((v ^ 0xBAEB716) - 1); }
         #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Npc()
+            : base()
+        {
+
+        }
         public void Load(byte[] data, int ptr)
         {
+            dataptr = ptr;
+            #region Raw Data
             byte len = data[ptr];
             NpcName = "";
             for (int n = 0; n < len; n++) { NpcName += (char)data[ptr + (20 - n)]; } ptr += 21;
@@ -112,7 +186,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             Catchable = byteXor(data[ptr]); ptr++;
             UnknownByte2 = byteXor(data[ptr]); ptr++;
             UnknownByte3 = byteXor(data[ptr]); ptr++;
-            Level = byteXor(data[ptr]); ptr++;
+            SetLevel(byteXor(data[ptr])); ptr++;
             HP = dwordXor(getDWord(data, ptr)); ptr += 4;
             SP = (ushort)dwordXor(getDWord(data, ptr)); ptr += 4;
             STR = wordXor(getWord(data, ptr)); ptr += 2;
@@ -121,7 +195,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             WIS = wordXor(getWord(data, ptr)); ptr += 2;
             AGI = wordXor(getWord(data, ptr)); ptr += 2;
             ImageNumEnlarge = byteXor(data[ptr]); ptr++;
-            element = (ElementType)byteXor(data[ptr]); ptr++;
+            Element = (ElementType)byteXor(data[ptr]); ptr++;
             SkillID1 = cGlobal.gSkillManager.Get_Skill(wordXor(getWord(data, ptr))); ptr += 2;
             SkillID2 = cGlobal.gSkillManager.Get_Skill(wordXor(getWord(data, ptr))); ptr += 2;
             SkillID3 = cGlobal.gSkillManager.Get_Skill(wordXor(getWord(data, ptr))); ptr += 2;
@@ -163,6 +237,15 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             UnknownDword4 = dwordXor(getDWord(data, ptr)); ptr += 4;
             UnknownDword5 = dwordXor(getDWord(data, ptr)); ptr += 4;
             UnknownDword6 = dwordXor(getDWord(data, ptr)); ptr += 4;
+            #endregion
+
+            #region Auto Generate FinalData
+            #endregion
+        }
+
+        public void Process()
+        {
+
         }
     }
 
@@ -170,8 +253,8 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
     {
         bool Loaded = true;
         System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-        public List<Npc> NpcList = new List<Npc>();
-
+        public Dictionary<int,int> NpcList = new Dictionary<int,int>();
+        byte[] Npcdata;
         public NpcDat()
         {
         }
@@ -184,12 +267,13 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                 NpcList.Clear();
                 if (!File.Exists(path)) return false;
                 byte[] data = File.ReadAllBytes(path);
+                Npcdata = data;
                 int max = data.Length / 148;
                 for (int n = 0; n < max; n++)
                 {
                     Npc i = new Npc();
                     i.Load(data, n * 148);
-                    NpcList.Add(i);
+                    NpcList.Add(i.NpcID,i.dataptr);
                 }
                 Utilities.LogServices.Log("Npc.Dat Loaded ( " + NpcList.Count + " Npc)");
                 return true;
@@ -198,17 +282,21 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         }
         public Npc GetNpc(UInt16 ID)
         {
-            foreach (Npc e in NpcList)
-                if (e.NpcID == ID)
-                    return e;
+            try
+            {
+                Npc tmp = new Npc();
+                tmp.Load(Npcdata, NpcList[ID]);
+                return tmp;
+            }
+            catch { }
             return null;
         }
-        public Npc GetNpc(string Name)
-        {
-            foreach (Npc e in NpcList)
-                if (e.NpcName == Name)
-                    return e;
-            return null;
-        }
+        //public Npc GetNpc(string Name)
+        //{
+        //    foreach (Npc e in NpcList)
+        //        if (e.NpcName == Name)
+        //            return e;
+        //    return null;
+        //}
     }
 }

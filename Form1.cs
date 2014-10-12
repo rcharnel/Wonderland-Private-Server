@@ -143,6 +143,8 @@ namespace Wonderland_Private_Server
             Network.ListenSocket.Initialize();
             #endregion
 
+            var test = cGlobal.GetMap(60000);
+
             do
             {
                 #region Update Section

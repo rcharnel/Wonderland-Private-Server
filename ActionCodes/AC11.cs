@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Utilities;
+using Wonderland_Private_Server.DataManagement.DataFiles;
+using Wonderland_Private_Server.Code.Interface;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -24,10 +26,10 @@ namespace Wonderland_Private_Server.ActionCodes
         }
         public void Recv_1(ref Player r, RecvPacket p)
         {
-            //switch (p.Unpack8(2))
-            //{
-            //    case 3: r.BattleScene.Leave_Fight(ref r); break;
-            //}
+            switch (p.Unpack8(2))
+            {
+                case 3: r.BattleScene.RemFighter(Code.Enums.eBattleLeaveType.RunAway, r); break;
+            }
         }
         public void Recv_2(ref Player r, RecvPacket p) //pk
         {
@@ -60,15 +62,10 @@ namespace Wonderland_Private_Server.ActionCodes
                     } break;
                 case 3: //pk againts npc
                     {
-                        //Npc target = g.gDataManager.NpcManager.GetNpcbyID((ushort)targetID);
-                        //cFighter f = new cFighter(g);
-                        //f.myBattleType = cFighter.eFighterType.Npc;
-                        //f.SetFrom(target);
-                        //f.clickID = clickID;
-                        //if (c.mapLoc != null)
-                        //{
-                        //    g.gDataManager.MapManager.GetMapByID(c.mapLoc).StartPKNpc(c, f);
-                        //}
+                        Npc target = cGlobal.gNpcManager.GetNpc((ushort)targetID);
+                        target.ClickID = clickID;
+                        if (r.CurrentMap != null)
+                            r.CurrentMap.onNpcPk(r, target);
 
                     } break;
                 case 4: //join

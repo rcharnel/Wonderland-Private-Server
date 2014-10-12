@@ -1179,7 +1179,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
                 }
                 else
                 {
-                   cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE stats SET {0} where charID = '" + charID + "'", string.Format(" statID = '{0}',statVal ='{1}',potential ='{2}'", u[0], u[1], player.Potential)));
+                   cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE stats SET {0} where charID = '" + charID + "' AND statID = '"+u[0]+"'", string.Format(" statID = '{0}',statVal ='{1}',potential ='{2}'", u[0], u[1], player.Potential)));
                 }
             }
             #endregion

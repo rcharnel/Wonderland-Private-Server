@@ -1651,11 +1651,11 @@ namespace Wonderland_Private_Server.Code.Objects
         /// <summary>
         /// Full HP Stat
         /// </summary>
-        public Int32 FullHP { get { lock (m_Lock) { return (int)(MaxHp + EquippedMaxHP); } } }
+        public virtual Int32 FullHP { get { lock (m_Lock) { return (int)(MaxHp + EquippedMaxHP); } } }
         /// <summary>
         /// Full SP Stat
         /// </summary>
-        public Int32 FullSP { get { lock (m_Lock) { return (int)(MaxSp + EquippedMaxSP); } } }
+        public virtual Int32 FullSP { get { lock (m_Lock) { return (int)(MaxSp + EquippedMaxSP); } } }
         /// <summary>
         /// Full ATK Stat
         /// </summary>
@@ -2144,6 +2144,16 @@ namespace Wonderland_Private_Server.Code.Objects
         public void FillSP()
         {
 
+        }
+
+        public void SetLevel(byte lvl)
+        {
+            int a = 1;
+            while (Level < lvl)
+            {
+                TotalExp += (uint)CalcMaxExp(BitConverter.GetBytes(Reborn)[0], a);
+                a++;
+            }
         }
 
     }

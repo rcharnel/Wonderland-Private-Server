@@ -201,13 +201,17 @@ namespace Wonderland_Private_Server.Network
 
             MapList.Clear();
         }
-        void Mapwrk()// processes connected clients
+        void Mapwrk()// processes tick
         {
             do
             {
+                foreach (var c in ConnectedPlayers.Values)
+                    foreach (var p in c.Values.ToList())
+                        p.Process();
+
                 foreach (var map in MapList.Values.ToList())
                     map.UpdateMap();
-                Thread.Sleep(1);
+                Thread.Sleep(2);
             }
             while (!killFlag);
         }
