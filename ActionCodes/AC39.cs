@@ -18,10 +18,12 @@ namespace Wonderland_Private_Server.ActionCodes
                 // case 1: Recv1(ref r, p); break;
                 case 2: Recv2(ref p, r); break;// request NEW MEMBER TO GUILD
                 case 3: Recv3(ref p, r); break; // acept resquest guild
+                case 4: Recv4(ref p, r); break; // Guild EMAIL
                 case 6: Recv6(ref p, r); break;// leave guild
                 case 7: Recv7(ref p, r); break; // Demiss member
                 case 8: Recv8(ref p, r); break; // TAB MESSAGE
                 case 9: Recv9(ref p, r); break; // edit rule
+                case 11: Recv11(ref p, r); break;//Remove HOLD THE POST OF VIC ORG
                 case 14: Recv14(ref p, r); break;//HOLD THE POST OF VICE ORGLEADER
                 case 16: Recv16(ref p, r); break;//PERMISSION
                 case 18: Recv18(ref p, r); break; // change insigna guild
@@ -32,14 +34,17 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                uint m = r.Unpack32(2); // get request member id
-                cGlobal.WLO_World.GetPlayer(m).GuildID = p.GuildID;
+                uint m = r.Unpack32(2); // get request member id               
 
-                SendPacket s = new SendPacket();
-                s.PackArray(new byte[] {39,3 });
-                s.Pack32(p.UserID);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: m);
+                if (p.CurrentMap.Players.ContainsKey(m))
+                {
+                  //  p.CurrentMap.Players[m].GuildID = p.CurGuild.GuildID;
 
+                    SendPacket s = new SendPacket();
+                    s.PackArray(new byte[] { 39, 3 });
+                    s.Pack32(p.UserID);
+                    cGlobal.WLO_World.BroadcastTo(s, directTo: m);
+                }
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
@@ -48,12 +53,21 @@ namespace Wonderland_Private_Server.ActionCodes
             try
             {
                 uint m = r.Unpack32(2); // get request member id
-                SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 39, 8 });
-                s.Pack32(p.UserID);
-                s.Pack8(1);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: m);
-                cGlobal.gGuild.GlobalGuild[p.GuildID].AddNewMemberGuild(ref p);
+                if (p.CurrentMap.Players.ContainsKey(m))
+                {                    
+                    p.CurrentMap.Players[m].CurGuild.AddNewMemberGuild(p,m);
+                }
+                
+            }
+            catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
+        void Recv4(ref Player p, RecvPacket r)
+        {
+            try
+            {
+                uint dst = r.Unpack32(3); // get member id
+                string text = r.UnpackNChar(7);
+                p.CurGuild.GuilMail(p.UserID,dst, text);
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
@@ -61,8 +75,7 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                if (cGlobal.gGuild.GlobalGuild.ContainsKey(p.GuildID))
-                { cGlobal.gGuild.GlobalGuild[p.GuildID].LeaveGuild(p.UserID); }
+                p.CurGuild.LeaveGuild(ref p);
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
@@ -71,9 +84,9 @@ namespace Wonderland_Private_Server.ActionCodes
             uint target = r.Unpack32(2);
             try
             {
-                if (cGlobal.gGuild.GlobalGuild[p.GuildID].LeaderID == p.UserID)
-                    {
-                        cGlobal.gGuild.GlobalGuild[p.GuildID].Dismiss(target, p.UserID);
+                if (p.CurGuild.Leader.ID == p.UserID)
+                {
+                    p.CurGuild.Dismiss(target, p.UserID);
                 }
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
@@ -90,15 +103,24 @@ namespace Wonderland_Private_Server.ActionCodes
         void Recv9(ref Player p, RecvPacket r)
         {
             try
-            {
-                if (cGlobal.gGuild.GlobalGuild.ContainsKey(p.GuildID))
-                {
-                    if (cGlobal.gGuild.GlobalGuild[p.GuildID].LeaderID == p.UserID)
+            {               
+                    if (p.CurGuild.Leader.ID == p.UserID)
                     {
 
-                        cGlobal.gGuild.GlobalGuild[p.GuildID].Edit_Rule(r.UnpackNChar(2));
-                    }
+                        p.CurGuild.Edit_Rule(r.UnpackNChar(2));
+                    }                
+            }
+            catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
+        void Recv11(ref Player p, RecvPacket r)
+        {
+            try
+            {
+                uint target = r.Unpack32(2);
 
+                if (p.CurGuild.Leader.ID == p.UserID)
+                {
+                    p.CurGuild.RemoveHoldThePostOfViceOrgleader(p,target);
                 }
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
@@ -109,9 +131,9 @@ namespace Wonderland_Private_Server.ActionCodes
             {
                 uint target = r.Unpack32(2);               
 
-                if (cGlobal.gGuild.GlobalGuild[p.GuildID].LeaderID == p.UserID)
+                if (p.CurGuild.Leader.ID == p.UserID)
                 {
-                    cGlobal.gGuild.GlobalGuild[p.GuildID].HoldThePostOfViceOrgleader(target,r.Unpack8(6));
+                    p.CurGuild.HoldThePostOfViceOrgleader(target, r.Unpack8(6));
                 }
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
@@ -121,16 +143,11 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                uint target = r.Unpack32(2);
-                byte a = r.Unpack8(8);
-                byte b = r.Unpack8(10);
-                byte c = r.Unpack8(12);
-                byte d = r.Unpack8(14);
-                byte e = r.Unpack8(16);
+                uint target = r.Unpack32(2);             
 
-                if (cGlobal.gGuild.GlobalGuild[p.GuildID].LeaderID == p.UserID)
+                if (p.CurGuild.Leader.ID == p.UserID) // holy leader have this permission
                 {
-                    cGlobal.gGuild.GlobalGuild[p.GuildID].ChangePermissionMember(p.UserID, target, a, b, c, d, e);
+                    p.CurGuild.ChangePermissionMember(target,r);
                 }
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
@@ -140,14 +157,9 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                if (cGlobal.gGuild.GlobalGuild.ContainsKey(p.GuildID))
+                if (p.CurGuild.Leader.ID == p.UserID) // or vices + permition.
                 {
-                    if (cGlobal.gGuild.GlobalGuild[p.GuildID].LeaderID == p.UserID)
-                    {
-
-                        cGlobal.gGuild.GlobalGuild[p.GuildID].ChangInsigneGuild(r);
-                    }
-
+                    p.CurGuild.ChangInsigneGuild(ref p,r);
                 }
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }

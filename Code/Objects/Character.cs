@@ -23,6 +23,7 @@ namespace Wonderland_Private_Server.Code.Objects
         UInt16 y;
         Map currentMap;
         ushort loginMap; // Used to designate the Map to Login too
+        byte busy;
         protected List<Mail> mailBox;
 
         public Character()
@@ -101,6 +102,11 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             get { return loginMap; }
             set { loginMap = value; }
+        }
+        public virtual byte Busy
+        {
+            get { return busy; }
+            set { busy = value; }
         }
 
 

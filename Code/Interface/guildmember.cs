@@ -64,6 +64,13 @@ namespace Wonderland_Private_Server.Code.Interface
                 return (OnlineSrc == null) ? (OfflineSrc == null) ? (ushort)0 : OfflineSrc.EyeColor : OnlineSrc.EyeColor;
             }
         }
+        public virtual byte Busy
+        {
+            get
+            {
+                return (OnlineSrc == null) ? (OfflineSrc == null) ? (byte)0 : OfflineSrc.Busy : OnlineSrc.Busy;
+            }
+        }
         /// <summary>
         /// a Character's level
         /// </summary>

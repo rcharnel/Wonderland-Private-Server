@@ -103,9 +103,14 @@ namespace Wonderland_Private_Server.ActionCodes
                             {
                                 case "1":
                                     {
-                                      //  cGlobal.gGuild.CreateGuild(ref p, "balaiada");
+                                       cGlobal.gGuildSystem.CreateNewGuild(ref p, "balaiada");
                                     }
-                                    break;                                
+                                    break;  
+                              
+                                case "2":
+                                    p.CurGuild.GuilMail(p.UserID, p.UserID, "11");
+
+                                    break;
                             }
 
                             break;

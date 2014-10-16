@@ -28,7 +28,7 @@ namespace Wonderland_Private_Server.Code.Objects
     //    public byte Floor { get; set; } //0 = 1f //1 = 2f
     //    public byte Pick { get; set; }
     //    public bool SecondFloor { get; set; }
-       
+
 
     //}
     public class ItemSale
