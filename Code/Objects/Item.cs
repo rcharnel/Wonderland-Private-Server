@@ -212,8 +212,19 @@ namespace Wonderland_Private_Server.Code.Objects
         public byte qnt;
         public byte rotate;
         public byte especial; // itens stoneKnife ,woodenSaw
-        byte[] accessory;    
+        byte[] accessory;  //testing tmp
+        public byte a1;
+        public byte a2;
+        public byte a3;
+        public byte a4;
+        public byte a5;
+        public byte a6;
+        public byte a7;
+        public byte a8;
+        public byte a9;
+        public byte a10;
         public byte ukn; // type = 10 object
+        public byte pick; // item without space
         public byte floor; // 1 = 2 floor 0 = 1 floor
 
         public TentItem()

@@ -168,6 +168,7 @@ namespace Wonderland_Private_Server.Code.Objects
             SendPacket p = new SendPacket();
 
             #region TentItems
+          
             #endregion
 
             //build queue
@@ -401,52 +402,41 @@ namespace Wonderland_Private_Server.Code.Objects
         //        }
         //    }
         //}
-        //public void Send_62_4(Player p)
-        //{
+        public void Send_62_4(Player p)
+        {
             
-        //    SendPacket s = new SendPacket();
-        //    s.PackArray(new byte[] {62,4 });
-        //    s.Pack32(p.ID);
-        //    for(byte a =0; a < ItemTent.Count; a++)
-        //    {
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[] {62,4 });
+            s.Pack32(p.ID);
+            for(byte a =0; a < ItemTent.Count; a++)
+            {
+                s.Pack16(ItemTent[a].index);                
+                s.Pack16(ItemTent[a].ItemID);
+                s.Pack32(ItemTent[a].tentX);
+                s.Pack32(ItemTent[a].tentY);                
+                s.Pack32(ItemTent[a].tentZ);
+                s.Pack8(ItemTent[a].rotate);
+                s.Pack32(ItemTent[a].especial);
+                s.Pack16(ItemTent[a].a1);
+                s.Pack16(ItemTent[a].a2);
+                s.Pack16(ItemTent[a].a3);
+                s.Pack16(ItemTent[a].a4);
+                s.Pack16(ItemTent[a].a5);
+                 s.Pack16(ItemTent[a].a6);
+                s.Pack16(ItemTent[a].a7);
+                s.Pack16(ItemTent[a].a8);
+                s.Pack16(ItemTent[a].a9);
+                s.Pack16(ItemTent[a].a10);
+                s.Pack32(ItemTent[a].ukn);
+                s.Pack32(0);
+                s.Pack8(ItemTent[a].floor);
+                s.Pack8(ItemTent[a].pick);
+                s.Pack32(0);
+                s.Pack32(0);
+            }
 
-        //        s.Pack8(ItemTent[a].pos);
-        //        s.Pack8(0);
-        //        s.Pack16(ItemTent[a].id);
-        //        s.Pack8(ItemTent[a].ax);
-        //        s.PackArray(new byte[] { 0, 0, 0 });
-        //        s.Pack8(ItemTent[a].ay);
-        //        s.PackArray(new byte[] { 0, 0, 0 });
-        //        s.Pack8(ItemTent[a].qnt);
-        //        s.PackArray(new byte[] { 0, 0, 0 });
-        //        s.Pack8(ItemTent[a].rotate); 
-        //        s.Pack8(ItemTent[a].especial); 
-        //        s.PackArray(new byte[] { 0, 0, 0 });
-        //        s.Pack8(ItemTent[a].ac0);
-        //        s.Pack8(0);
-        //        s.Pack8(ItemTent[a].ac1);
-        //        s.Pack8(0);
-        //        s.Pack8(ItemTent[a].ac2);
-        //        s.Pack8(0);
-        //        s.Pack8(ItemTent[a].ac3);
-        //        s.Pack8(0);
-        //        s.Pack8(ItemTent[a].ac4);
-        //        s.Pack8(0);
-        //        s.Pack8(ItemTent[a].ac5);
-        //        s.Pack8(0);
-        //        s.Pack8(ItemTent[a].ac6);
-        //        s.Pack8(0);
-        //        s.Pack8(ItemTent[a].ac7);
-        //        s.PackArray(new byte[] { 0, 0, 0, 0, 0 });
-        //        s.Pack8(ItemTent[a].ukn);
-        //        s.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0 });
-        //        s.Pack8(ItemTent[a].floor);
-        //        s.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-        //    }
-
-        //    p.Send(s);
-
-        //}
+            p.Send(s);
+        }
         //public void Remove_Object_Tent(byte pos)
         //{
         //    for (int a = 0; a < ItemTent.Count; a++)

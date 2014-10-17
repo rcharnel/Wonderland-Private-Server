@@ -32,15 +32,15 @@ namespace Wonderland_Private_Server.Code.Objects
                 {
                     return false;
                 }
-                else if (src.Level < 20)
+                else if (src.Level < 1)//20
                 {
                     return false;
                 }
-                else if (src.inGuild)
-                {
+                //else if (src.inGuild)
+                //{
 
-                }
-                else if (src.Gold < 10000)
+                //}
+                else if (src.Gold < 1)//100000
                 {
 
                 }
@@ -68,14 +68,7 @@ namespace Wonderland_Private_Server.Code.Objects
                         GlobalGuild.Add(cg.GuildID, cg); // add new guild here <--
 
                         onPlayerLogin(ref src,cg.GuildID);
-
-                        //depending on the conversation between npc this may not be needed
-                        //unlock player dialogs if true;
-                        s = new SendPacket();
-                        s.PackArray(new byte[] { 20, 8 });
-                        src.Send(s);
-
-
+                      
                     }
                     catch { return false; }
                     
@@ -88,16 +81,9 @@ namespace Wonderland_Private_Server.Code.Objects
         {
 
             if(GlobalGuild.ContainsKey(guildID))
-            {
-                
+            {                
                 src.CurGuild = GlobalGuild[guildID];
-
-                GlobalGuild[guildID].SendInfo(ref src);
-
-
-
-                        //give Player Reference to Guild
-                        
+                GlobalGuild[guildID].SendInfo(ref src); 
             }
         }
     }
@@ -105,7 +91,9 @@ namespace Wonderland_Private_Server.Code.Objects
 
     public class Guild
     {
-        
+
+        #region propety
+
         public UInt16 GuildID;        
         public string GuildName;
         public string Rules;
@@ -113,11 +101,12 @@ namespace Wonderland_Private_Server.Code.Objects
         public DateTime DateCreator;
 
         public GuildMember Leader;
-
+        Dictionary<int, MessageGuild> Message = new Dictionary<int, MessageGuild>();
         List<GuildMember> ViceOrg = new List<GuildMember>(4);
         List<GuildMember> Members = new List<GuildMember>(50);
         List<byte> ImgInsigne = new List<byte>();
-        public int TotalMembers { get { return (5 + Members.Count); } }
+        public int TotalMembers { get { return (4 + (Members.Count - TotalViceOrg)); } }
+        public int TotalViceOrg { get { return (ViceOrg.Count(c => c.ID > 0)); } }
 
 
         public Dictionary<uint,GuildMember>MembersOnlinne 
@@ -129,130 +118,103 @@ namespace Wonderland_Private_Server.Code.Objects
                 return tmp;
             }
         }
-
+       
 
         public Guild()
         {
 
         }
+        #endregion
 
-        public void ChangePermissionMember(uint actor, uint target,byte p1,byte p2, byte p3, byte p4, byte p5)
+        public void ChangePermissionMember(uint target,RecvPacket r)
         {
             if (Members.Count(c=>c.ID == target)> 0)
             {
 
-                //MembersDataBase[target].restriction1 = p1;
-                //MembersDataBase[target].restriction2 = p2;
-                //MembersDataBase[target].restriction3 = p3;
-                //MembersDataBase[target].restriction4 = p4;
-                //MembersDataBase[target].restriction5 = p5;
+                Members.Find(c => c.ID == target).can_Invite = Convert.ToBoolean(r.Data[8]);
+                Members.Find(c => c.ID == target).can_Modify_Rights = Convert.ToBoolean(r.Data[10]);
 
-                SendPacket s = new SendPacket();
-                s.PackArray(new byte[]{39, 24});
-                s.Pack32(target);
-                s.Pack8(1);
-                s.Pack8(1);
-                s.Pack8(p1);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: actor);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: target);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: target);
+                int b = 8;
+                for (int a = 1; a < 6; a++)
+                {
+                    SendPacket s = new SendPacket();
+                    s.PackArray(new byte[] { 39, 24 });
+                    s.Pack32(target);
+                    s.Pack8(1);// fix
+                    s.Pack8((byte)a); // 1,2,3,4,5
+                    s.Pack8((byte)r.Data[b]); //8,10,12,14,16
+                    BroadCastGuild(s, 0); // all receive                
+                    cGlobal.WLO_World.BroadcastTo(s, directTo: target); // new vice receive 2x same packet
 
-                s = new SendPacket();
-                s.PackArray(new byte[] { 39, 24 });
-                s.Pack32(target);
-                s.Pack8(1);
-                s.Pack8(2);
-                s.Pack8(p2);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: actor);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: target);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: target);
-
-                s = new SendPacket();
-                s.PackArray(new byte[] { 39, 24 });
-                s.Pack32(target);
-                s.Pack8(1);
-                s.Pack8(3);
-                s.Pack8(p3);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: actor);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: target);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: target);
-
-                s = new SendPacket();
-                s.PackArray(new byte[] { 39, 24 });
-                s.Pack32(target);
-                s.Pack8(1);
-                s.Pack8(4);
-                s.Pack8(p4);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: actor);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: target);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: target);
-
-                s = new SendPacket();
-                s.PackArray(new byte[] { 39, 24 });
-                s.Pack32(target);
-                s.Pack8(1);
-                s.Pack8(5);
-                s.Pack8(p5);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: actor);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: target);
-                cGlobal.WLO_World.BroadcastTo(s, directTo: target);
+                    b += 2;
+                }             
             }
-
         }
         public void HoldThePostOfViceOrgleader(uint target, byte type)
         {
-            //if (Members.Count(c => c.ID == target) > 0)
-            //{
-            //    switch (type)
-            //    {
-            //        case 0: if (TotalVice > 0) TotalVice--; break;
-            //        case 1: if (TotalVice < 5) TotalVice++; break;
+            if (Members.Count(c => c.ID == target) > 0)
+            {
+                var tmp = Members.Find(c => c.ID == target);
 
-            //    }
+                ViceOrg.Add(tmp);
 
-            //    SendPacket s = new SendPacket();
-            //    s.PackArray(new byte[] { 39,12});
-            //    s.Pack32(target);
-            //    BroadCastGuild(s, 0); // all receiv
-            //}
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 39, 12 });
+                s.Pack32(target);
+                BroadCastGuild(s, 0); // all receiv
+            }
         }
-        public void AddNewMemberGuild(Player src)
+        public void RemoveHoldThePostOfViceOrgleader(Player src, uint target)
+        {
+            if (Members.Count(c => c.ID == target) > 0)
+            {
+                var tmp = Members.Find(c => c.ID == target);
+
+                if (tmp != null)
+                {
+                    ViceOrg.Remove(tmp);
+
+                    SendPacket s = new SendPacket();
+                    s.PackArray(new byte[] { 39, 13 });
+                    s.Pack32(target);
+                    BroadCastGuild(s, 0); // all receiv
+                    s = new SendPacket();
+                    s.PackArray(new byte[] { 39, 15, 0 });
+                    s.Pack32(target);
+                    src.Send(s); // holy leader receiv
+                }
+            }
+        }
+        public void AddNewMemberGuild(Player src, uint Actor)
         {
             if (Members.Count(c => c.ID == src.ID) > 0) return;
             else
             {
+                // messagem new player add
                 SendPacket s = new SendPacket();
                 s.PackArray(new byte[] {39,4 });
                 s.Pack32(src.UserID);
                 s.Pack8(1);
                 src.Send(s);
+                cGlobal.WLO_World.BroadcastTo(s, Actor);
                 AddMember(src, false);
-                //Send39_2(src.UserID);
-                //Send39_21_26_27(src.UserID);
-                //GetMemberOnLinne(src.UserID);
-                GetMemberState(src.UserID);
+                SendInfo(ref src);
 
                 s = new SendPacket();
                 s.PackArray(new byte[] {39,62,1});                
                 src.Send(s);
 
-                GetGuilNickName(src.UserID);
-                GetInsigneGuild(src.UserID);
+                GetGuilNickName(src); //Send 39,9             
 
-                s = new SendPacket();
-                s.PackArray(new byte[] {39,61});
-                s.Pack32(src.UserID);
-                s.Pack8(0);
-                src.Send(s);
+                GetInsigneGuild(src); //Send 39,30                
 
-                s = new SendPacket();
-                s.PackArray(new byte[] { 39, 4 });
-                s.Pack32(src.UserID);
-                s.Pack8(1);
-                src.Send(s);
 
-                Send39_60(ref src);
+                #region packet global Except Me
+                Send39_8(src); // new member in guild cur members.
+                Send39_60(src); // send me to cur members
+                Send39_61(src); // Send my state
 
+                #endregion
                 s = new SendPacket();
                 s.PackArray(new byte[] {24,5,1,1,0});                
                 src.Send(s);
@@ -285,20 +247,22 @@ namespace Wonderland_Private_Server.Code.Objects
 
         public bool SendInfo(ref Player src)
         {
-            Send39_2(src);
-            Send39_21_26_27(src);
-            GetMemberOnLinne(src);
-            GetMemberState(src.UserID);
-            GetGuilNickName(src.UserID);
+            Send39_2(src); // get all database members 
+            //Send39_17(src);
+            Send39_21_26_27(src); 
+            GetMemberOnLinne(src); // get player logged
+            GetMemberState(src); // onlinne or busy
+            GetGuilNickName(src);           
             return true;
         }
 
+        #region Packets Loggin
         void Send39_2(Player src) // here send database member ON and OFF
         {
             SendPacket s = new SendPacket();
             s.PackArray(new byte[] { 39, 2 });
             s.PackString(GuildName);//guild name
-            s.Pack8(0); // total leaders 
+            s.Pack8((byte)TotalViceOrg); // total leaders 
             s.Pack8((byte)TotalMembers);// total player in guild +4 - number leaders
 
             #region LoadPLayers
@@ -333,7 +297,7 @@ namespace Wonderland_Private_Server.Code.Objects
                 115, 241, 148, 144, 109, 228, 064, 000 }); // 17 need fix here.data timer creator:??
             src.Send(s);
         }
-        public void Send39_17(Player src)
+        void Send39_17(Player src)
         {
             if (Members.Count(c => c.ID == src.ID) > 0)
             {
@@ -343,11 +307,12 @@ namespace Wonderland_Private_Server.Code.Objects
             }
 
         }        
-        public void Send39_21_26_27(Player src)
+        void Send39_21_26_27(Player src)
         {
             if (Members.Count(c => c.ID == src.ID) > 0)
             {
-                #region Packet 39,21  39,26 39, 27
+                #region Packet 39,17 39,21  39,26 39, 27
+
 
                 for (int a = 1; a < 8; a++)
                 {
@@ -377,64 +342,100 @@ namespace Wonderland_Private_Server.Code.Objects
                 #endregion
 
             }
-        }     
-  
+        }       
+        //39,60 holy player Logged
         public void GetMemberOnLinne(Player src)
         {
-            foreach (var pair in Members.ToList())
+            foreach (var pair in MembersOnlinne.ToList())
             {
                 SendPacket s = new SendPacket();
                 s.PackArray(new byte[] { 39, 60 });
-                s.Pack32(pair.ID);
-                s.PackString(pair.CharacterName);
-                s.Pack8(pair.Level);
-                s.Pack8((byte)pair.Job);// job
+                s.Pack32(pair.Value.ID);
+                s.PackString(pair.Value.CharacterName);
+                s.Pack8(pair.Value.Level);
+                s.Pack8((byte)pair.Value.Job);// job
 
-                if (pair.Reborn) s.Pack8(1);//reborn
+                if (pair.Value.Reborn) s.Pack8(1);//reborn
                 else s.Pack8(0);
 
-                s.Pack8((byte)pair.Element);//elemnt
-                s.Pack8((byte)pair.Body);// body
-                s.Pack8((byte)pair.Head);// head
-                s.Pack16(pair.HairColor);
-                s.Pack16(pair.SkinColor);
-                s.Pack16(pair.ClothingColor);
-                s.Pack16(pair.EyeColor);
-                s.PackString(pair.Nickname);
+                s.Pack8((byte)pair.Value.Element);//elemnt
+                s.Pack8((byte)pair.Value.Body);// body
+                s.Pack8((byte)pair.Value.Head);// head
+                s.Pack16(pair.Value.HairColor);
+                s.Pack16(pair.Value.SkinColor);
+                s.Pack16(pair.Value.ClothingColor);
+                s.Pack16(pair.Value.EyeColor);
+                s.PackString(pair.Value.Nickname);
                 src.Send(s);
             }
         }
-        //39,61 este pacote ele é foda precisa estudar mais um pouco ele manda alocado.
-        public void GetMemberState(uint src)
+        //39,61
+        public void GetMemberState(Player src)
         {
-            //foreach (var pair in MembersOnlinne)
-            //{               
-            //    SendPacket s = new SendPacket();
-            //    s.PackArray(new byte[] { 39, 61 });
-            //    s.Pack32(pair.Value.UserID);
-            //    s.Pack8(Convert.ToByte(pair.Value.Busy));// 0 = onlinne 1 = busy
-            //    MembersOnlinne[src].Send(s);              
-            //}
+           
+            // 0 = online
+            // 1 = busy
+            foreach (var pair in MembersOnlinne.ToList())
+            {
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 39, 61 });
+                s.Pack32(pair.Value.ID);
+                s.Pack8(pair.Value.Busy);                
+                src.Send(s);
+            }
         }
-        void GetInsigneGuild(uint src)
+        //39,30
+        void GetInsigneGuild(Player src)
         {            
                 SendPacket s = new SendPacket();
                 s.PackArray(new byte[] { 39, 30,2 });
                 s.PackArray(ImgInsigne.ToArray());
-                //MembersOnlinne[src].Send(s);            
+                src.Send(s);            
         }
-        public void GetGuilNickName(uint src)
+        //39,9
+        void GetGuilNickName(Player src)
         {
             SendPacket s = new SendPacket();
             s.PackArray(new byte[] { 39, 9 });
-            s.Pack32(src);
+            s.Pack32(src.UserID);
             s.Pack32(IconGuil); // UINT ICON GUILD
             s.PackString(GuildName); // name guild NICK SHOW IN MAP (acima do nick name)
-            //MembersOnlinne[src].Send(s);
-            //player in current map too receiv this packet
-            //cglobal.world.current map . send(s);/// need testes.
+            //src.Send(s);
+            src.CurrentMap.Broadcast(s);            
         }
-        void Send39_60(ref Player src)
+
+        #endregion
+
+
+        void BroadCastGuild(SendPacket spk,uint exceptID)
+        {
+            foreach (var pair in MembersOnlinne)
+            {
+                if (pair.Value.ID != exceptID)
+                {
+                    cGlobal.WLO_World.BroadcastTo(spk, directTo: pair.Value.ID);
+                }
+            }            
+        }
+
+        #region Global Packet
+        void Send39_8(Player src)
+        {
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[]{39, 8});
+            s.Pack32(src.UserID);
+            BroadCastGuild(s, src.UserID);
+        }
+        //send state
+        void Send39_61(Player src)
+        {
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[] { 39, 61 });
+            s.Pack32(src.UserID);
+            s.Pack8(0);// 0 = on  1 = busy  3 = offlinne
+            BroadCastGuild(s, src.UserID);// send all except me
+        }
+        void Send39_60(Player src)
         {
             SendPacket s = new SendPacket();
             s.PackArray(new byte[] { 39, 60 });
@@ -459,68 +460,15 @@ namespace Wonderland_Private_Server.Code.Objects
 
         }
 
-        
-        void BroadCastGuild(SendPacket spk,uint exceptID)
-        {            
-                //foreach (var pair in MembersOnlinne)
-                //{
-                //    if (pair.Value.UserID != exceptID)
-                //    {
-                //        pair.Value.Send(spk);
-                //    }
-                //}            
-        }
-        void UpdateMemberInfoDataBase(Player src)
+        #endregion
+
+        #region Methods Guild
+
+        public void ChangInsigneGuild(ref Player src, RecvPacket r)
         {
-            uint user = src.UserID;
-            //if (Members.Count(c => c.ID == src.ID) > 0)
-            //{
-            //    MembersDataBase[user].NickName = src.Nickname;
-            //    MembersDataBase[user].reborn = Convert.ToByte(src.Reborn);
-            //    MembersDataBase[user].Job = (byte)src.Job;
-            //    MembersDataBase[user].color1 = src.HairColor;
-            //    MembersDataBase[user].color2 = src.SkinColor;
-            //    MembersDataBase[user].color3 = src.ClothingColor;
-            //    MembersDataBase[user].color4 = src.EyeColor;
+            // need verify here if have permission member change guildinsigne
 
-            //}
-        }
-
-
-        void SendMeToMembersGuild(Player src)
-        {
-            foreach (var pair in MembersOnlinne)
-            {
-                if (pair.Value.ID != src.ID)
-                {
-                    SendPacket s = new SendPacket();
-                    s.PackArray(new byte[] { 39, 60 });
-                    s.Pack32(pair.Value.ID);
-                    s.PackString(pair.Value.CharacterName);
-                    s.Pack8(pair.Value.Level);
-                    s.Pack8((byte)pair.Value.Job);// job
-
-                    if (pair.Value.Reborn) s.Pack8(1);//reborn
-                    else s.Pack8(0);
-
-                    s.Pack8((byte)pair.Value.Element);//elemnt
-                    s.Pack8((byte)pair.Value.Body);// body
-                    s.Pack8((byte)pair.Value.Head);// head
-                    s.Pack16(pair.Value.HairColor);
-                    s.Pack16(pair.Value.SkinColor);
-                    s.Pack16(pair.Value.ClothingColor);
-                    s.Pack16(pair.Value.EyeColor);
-                    s.PackString(pair.Value.Nickname);
-                   src.Send(s);
-                }
-            }
-
-        }
-
-        public void ChangInsigneGuild(RecvPacket r)
-        {
             ImgInsigne.AddRange(r.Data.Skip(2).Take(r.Data.Count - 2).ToArray());
-
             SendPacket s = new SendPacket();
             s.PackArray(new byte[] { 39, 30, 1 });
             s.PackArray(ImgInsigne.ToArray());
@@ -529,6 +477,7 @@ namespace Wonderland_Private_Server.Code.Objects
 
         public void Edit_Rule(string text)
         {
+            // need verify here if have permission member change guildinsigne
             Rules = text;
             SendPacket s = new SendPacket();
             s.PackArray(new byte[] { 39, 11 });
@@ -536,52 +485,176 @@ namespace Wonderland_Private_Server.Code.Objects
             BroadCastGuild(s, 0);// all
         }
         public void Dismiss(uint target, uint actor)
-        {            
+        {    
+            var tmp = Members.Find(c => c.ID == target);
+
+            if(tmp!=null)
+            {
             SendPacket s = new SendPacket();
             s.PackArray(new byte[] { 39,6});
             s.Pack32(target);
-            BroadCastGuild(s, target);// all except the Demiss
+            BroadCastGuild(s, target);// All except target demiss
 
             s = new SendPacket();
             s.PackArray(new byte[] { 39,7, 0 });
             s.Pack32(target);
             cGlobal.WLO_World.BroadcastTo(s, directTo: actor); // actor 
-            cGlobal.WLO_World.BroadcastTo(s, directTo: target); // demiss
+            cGlobal.WLO_World.BroadcastTo(s, directTo: target); // target demiss
+                            
+            Members.Remove(tmp);
+                // here need add CURMAP MAP RECEIVE 39,9
+                // remove guild nickname player
 
-            RemoveNickNameGuild(target);
-            RemoveMember(target);
+            }
+            
         }
-        public void LeaveGuild(uint src)
+        public void LeaveGuild(ref Player src)
         {
+            uint id = src.UserID;
+            var tmp = Members.Find(c => c.ID == id);
+
             SendPacket s = new SendPacket();
             s.PackArray(new byte[] {39,7,0 });
-            s.Pack32(src);
+            s.Pack32(src.UserID);
+            src.Send(s);
 
             s = new SendPacket();
             s.PackArray(new byte[] { 39, 6 });
-            s.Pack32(src);
-            BroadCastGuild(s, src);// all except id
+            s.Pack32(src.UserID);
+            BroadCastGuild(s, src.UserID);// all except id
+          
+            s = new SendPacket();
+            s.PackArray(new byte[] { 39,9 });
+            s.Pack32(src.UserID);
+            s.PackArray(new byte[] {0,0,0,0,0 });
+            src.CurrentMap.Broadcast(s); // all local map.
 
-            //MembersOnlinne[src].Send(s);
-            RemoveNickNameGuild(src);
-            RemoveMember(src);
+            src.CurGuild.GuildID = 0;
+            Members.Remove(tmp);
         }
-        void RemoveNickNameGuild(uint src)
+        
+        #endregion
+
+        public void GuilMail(uint actor, uint dst, string text)
         {
-            // CLEAN GUILD NICK NAME
+
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 39, 9 });
-            s.Pack32(src);
-            s.PackArray(new byte[] { 0, 0, 0, 0, 0 });
-            cGlobal.WLO_World.BroadcastTo(s, directTo: src);
+            s.PackArray(new byte[] {39,5});
+            s.Pack32(actor);
+            s.Pack16(62860);// data ??
+            s.Pack16(20548); //data ??
+            s.Pack16(30000);// data time ??
+            s.Pack16(16612);// data time ??
+            s.PackNString(text);
+            // need create code to verify if player on
+            //if off store in list, to send later...
+            cGlobal.WLO_World.BroadcastTo(s, directTo: dst);
         }
-        void RemoveMember(uint src)
+
+        #region Message Guild
+
+        public void AddMessage(Player src,RecvPacket r)
         {
-            Members.Remove(Members.Single(c=>c.ID ==src));
-            //MembersOnlinne[src].GuildID = 0; // clean
-            //MembersOnlinne.Remove(src);
+            int count = r.Unpack8(2);
+            int count2 = r.Unpack8(6 + count);
+            byte[] data1 = r.Data.Skip(6).Take(count).ToArray();
+            byte[] data2 = r.Data.Skip(6 + count+count2).Take(count2).ToArray();
+
+
+            string Subject = System.Text.Encoding.Default.GetString(data1);
+            string content = System.Text.Encoding.Default.GetString(data2);
+
+            MessageGuild msg = new MessageGuild();
+            msg.Sender = src.UserName;
+            msg.Subject = Subject;
+            msg.Content = content;
+            msg.data1 = 20582;
+            msg.data2 = 29938;
+            msg.data3 = 20922;
+            msg.data4 = 16612;
+            msg.UserID = src.UserID;
+            msg.unknow = 31; // time seconds ?
+            Message.Add(Message.Count, msg);
+
+
+
+            OpenTab(src);
+        }
+
+        public void OpenTab(Player src)
+        {
+            
+            if (Message.Count > 0)
+            {
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 82, 14});
+                s.Pack32((uint)Message.Count);
+                s.Pack8(1); // current tab
+                src.Send(s);
+
+                Send82_11(src);
+            }
+            else
+            {
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 82, 13,0, 0, 0, 0, 1 });// null tab
+                src.Send(s);
+            }
 
         }
+        void Send82_11(Player src)
+        {
+
+            //orde per current
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[] { 82, 11 });
+
+            foreach(var t in Message.Values)
+            {            
+            s.Pack32((UInt32)t.Sender.Length);
+            s.PackNString(t.Sender);
+            s.Pack32((UInt32)t.Subject.Length);
+            s.PackNString(t.Subject);
+            s.Pack16(t.data1);
+            s.Pack16(t.data2);
+            s.Pack16(t.data3);
+            s.Pack16(t.data4);
+            s.Pack32(t.UserID);
+            s.Pack32((uint)t.unknow);// seconds ??           
+            }
+            src.Send(s);
+        }
+        // problem here, get message per data time.... >.>
+        public void OpenMessage(Player src, RecvPacket r)
+        {
+            if (Message.Count > 0)
+            {
+                var t = Message[0];
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 82, 12 });
+                s.Pack32((UInt32)t.Sender.Length);
+                s.PackNString(t.Sender);
+                s.Pack32((UInt32)t.Subject.Length);
+                s.PackNString(t.Subject);
+                s.Pack16(t.data1);
+                s.Pack16(t.data2);
+                s.Pack16(t.data3);
+                s.Pack16(t.data4);
+                s.Pack32((UInt32)t.Content.Length);
+                s.Pack32(t.UserID);
+                s.PackNString(t.Content);
+                src.Send(s);
+            }
+        }
+
+        public void OpenPainelWriteMessage(Player src)
+        {
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[] {82,8,2 });
+            src.Send(s);
+        }
+
+        #endregion
     }
 
 }

@@ -22,9 +22,9 @@ namespace Wonderland_Private_Server.Code.Objects
         bool blockupdt;
         Thread wrk;
 
-        public int CurInstance;//test
-        public UInt16 GuildID; //test
-        //public UInt16 BufferGuildRequest;
+       
+        public int CurInstance;//tmp
+        public UInt16 GuildID; //tmp      
 
         #region Acc Def
         uint m_dbuserid;

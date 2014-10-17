@@ -22,7 +22,7 @@ namespace Wonderland_Private_Server.ActionCodes
                 case 10: Recv10(ref r, p); break;//move item inv
                 case 11: Recv11(ref r, p); break;//item selected to wear in inv
                 case 12: Recv12(ref r, p); break; //item selected to remove
-                case 15: r.Inv.onItemUsed(p.Unpack8(2), p.Unpack8(4), p.Unpack8(3)); break;//item use
+                case 15: Recv15(ref r, p); break; // OPen tent
                 case 124: Recv124(ref r, p); break; //confirm destroy 
                 default: Utilities.LogServices.Log("AC " + p.A + "," + p.B + " has not been coded"); break;
             }
@@ -130,6 +130,18 @@ namespace Wonderland_Private_Server.ActionCodes
             try
             {
                 
+            }
+            catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
+        void Recv15(ref Player p, RecvPacket r)
+        {          
+            try
+            {               
+                    byte pos = r.Unpack8(2);
+                    if (p.Inv[pos].ItemID == 36002)
+                    {
+                        p.Tent.Open();
+                    }                
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
