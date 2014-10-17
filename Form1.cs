@@ -55,7 +55,12 @@ namespace Wonderland_Private_Server
                     }
                 }
                 #endregion
-                Thread.Sleep(1);
+                #region TaskGui
+                if (cGlobal.ApplicationTasks != null)
+                    this.BeginInvoke(new Action(() => { cGlobal.ApplicationTasks.onUpdateGuiTick(); }));
+                    
+                #endregion
+                Thread.Sleep(5);
             }
             while (true);
         }
@@ -67,7 +72,7 @@ namespace Wonderland_Private_Server
             cGlobal.SrvSettings.LoadSettings();
 
             //load Updater
-            cGlobal.GClient.Initialize(ref cGlobal.ThreadManager);
+            cGlobal.GClient = new GupdtSrv.gitClient();
             cGlobal.GClient.GitinfoUpdated += GClient_GitinfoUpdated;
             cGlobal.GClient.onError += GClient_onError;
             
@@ -87,6 +92,7 @@ namespace Wonderland_Private_Server
             #endregion
 
             #region intial check  if theres an update
+            cGlobal.GClient.CheckFor_Update();
             Thread.Sleep(2000);
             Utilities.LogServices.Log("Checking For Update...");
             if (cGlobal.GClient.UpdateFound && cGlobal.GClient.AutoUpdate)
@@ -111,9 +117,18 @@ namespace Wonderland_Private_Server
             cGlobal.gSkillManager = new DataManagement.DataFiles.SkillDataFile();
             cGlobal.gUserDataBase = new DataManagement.DataBase.UserDataBase();
             cGlobal.gNpcManager = new DataManagement.DataFiles.NpcDat();
-            
-
+            cGlobal.ApplicationTasks = new Utilities.Task.TaskManager();
             #endregion
+
+            this.Invoke(new Action(() =>
+            {
+                dataGridView1.Columns[0].DataPropertyName = "TaskName";
+                dataGridView1.Columns[1].DataPropertyName = "Interval";
+                dataGridView1.Columns[2].DataPropertyName = "LastExecution";
+                dataGridView1.Columns[3].DataPropertyName = "NextExecution";
+                dataGridView1.Columns[4].DataPropertyName = "Status";
+                dataGridView1.DataSource = cGlobal.ApplicationTasks.TaskItems;
+            }));
 
             #region DataBase Initialization
             Utilities.LogServices.Log("Verifying DataBase Authencation Setup");
@@ -136,7 +151,7 @@ namespace Wonderland_Private_Server
             cGlobal.gEveManager.LoadFile("Data\\eve.Emg");
             cGlobal.gNpcManager.LoadNpc("Data\\Npc.dat");
             #endregion
-
+             
             #region Initialize the Wonderland Server
             Utilities.LogServices.Log("Jump Starting Server...");
             cGlobal.WLO_World.Initialize();
@@ -161,6 +176,9 @@ namespace Wonderland_Private_Server
                 foreach (var t in cGlobal.ThreadManager.ToList())
                     if (!t.IsAlive)
                         cGlobal.ThreadManager.Remove(t);
+                #endregion
+                #region TaskManager
+                cGlobal.ApplicationTasks.onUpdateTick();
                 #endregion
                 Thread.Sleep(1);
             }
@@ -199,8 +217,8 @@ namespace Wonderland_Private_Server
                     UpdatePane.Controls.Clear();
                     var list = cGlobal.GClient.ReleasesFnd;
 
-                    //foreach (var y in list.OrderByDescending(c => new Version(c.TagName)))
-                    //    UpdatePane.Controls.Add(new Utilities.Update.GitUpdateItem(cGlobal.GClient.myVersion, y));
+                    foreach (var y in list.OrderByDescending(c => new Version(c.TagName)))
+                        UpdatePane.Controls.Add(new UI.GitUpdateItem(cGlobal.GClient.myVersion, y));
 
                 }));
             }
@@ -209,13 +227,14 @@ namespace Wonderland_Private_Server
         }
         #endregion
 
+        #region Form Events
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (run || blockclose)
                 e.Cancel = true;
             run = false;
         }
-
+        #region Update Section
         private void GitBranch_TextChanged(object sender, EventArgs e)
         {
             if (cGlobal.GClient != null && cGlobal.GClient.Branch != GitBranch.Text)
@@ -233,6 +252,18 @@ namespace Wonderland_Private_Server
             if (Config.Update.UpdtControl != (Config.UpdtSetting)GitUptOption.SelectedIndex)
                 Config.Update.UpdtControl = (Config.UpdtSetting)GitUptOption.SelectedIndex;
         }
+        #endregion
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || (e.ColumnIndex !=
+           dataGridView1.Columns["canceltask"].Index && e.ColumnIndex !=
+           dataGridView1.Columns["retrytask"].Index)) return;
 
+            if (e.ColumnIndex == dataGridView1.Columns["canceltask"].Index)
+                cGlobal.ApplicationTasks.TaskItems[e.RowIndex].onCancel();
+            else if (e.ColumnIndex == dataGridView1.Columns["retrytask"].Index)
+                cGlobal.ApplicationTasks.TaskItems[e.RowIndex].onRetry();
+        }
+        #endregion
     }
 }

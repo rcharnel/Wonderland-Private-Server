@@ -1,4 +1,4 @@
-﻿namespace Wonderland_Private_Server.Utilities.Update
+﻿namespace Wonderland_Private_Server.UI
 {
     partial class GitUpdateItem
     {

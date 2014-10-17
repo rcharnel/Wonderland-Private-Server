@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using Octokit;
 
-namespace Wonderland_Private_Server.Utilities.Update
+namespace Wonderland_Private_Server.UI
 {
     public partial class GitUpdateItem : UserControl
     {

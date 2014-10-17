@@ -18,6 +18,7 @@ namespace Wonderland_Private_Server
 
 
         public static Network.WorldManager WLO_World;
+        public static Utilities.Task.TaskManager ApplicationTasks;
 
         #region DataBase
         public static DBConnector.DBOAuth gDataBaseConnection = new DBConnector.DBOAuth();
