@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using System.IO;
 
 namespace Wonderland_Private_Server
 {
@@ -69,15 +70,26 @@ namespace Wonderland_Private_Server
         void MainThreadWork()
         {
             //load settings file
-            cGlobal.SrvSettings.LoadSettings();
+            Utilities.LogServices.Log("Loading Settings File");
+            if (System.IO.File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo"))
+            {
+                System.Xml.Serialization.XmlSerializer diskio = new System.Xml.Serialization.XmlSerializer(typeof(Config.Settings));
+
+                using (StreamReader file = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo"))
+                    cGlobal.SrvSettings = (Config.Settings)diskio.Deserialize(file);
+                Utilities.LogServices.Log("Settings File loaded successfully");
+            }
+            else
+                Utilities.LogServices.Log("Settings File not found");
 
             //load Updater
             cGlobal.GClient = new GupdtSrv.gitClient();
             cGlobal.GClient.GitinfoUpdated += GClient_GitinfoUpdated;
             cGlobal.GClient.onError += GClient_onError;
             
-            if (GitUptOption.SelectedIndex != (byte)Config.Update.UpdtControl)
-                        GitUptOption.SelectedIndex = (byte)Config.Update.UpdtControl;
+            //if (GitUptOption.SelectedIndex != (byte)cGlobal.SrvUpdateSetting.UpdtControl)
+            //            GitUptOption.SelectedIndex = (byte)cGlobal.SrvUpdateSetting.UpdtControl;
+
                     if (updtrefresh.Value != cGlobal.GClient.UpdtCheck)
                         updtrefresh.Value = cGlobal.GClient.UpdtCheck;
                     if (GitBranch.Text != cGlobal.GClient.Branch)
@@ -109,7 +121,6 @@ namespace Wonderland_Private_Server
             #region Initialize Objects
             Utilities.LogServices.Log("Intializing Objs");
             cGlobal.WLO_World = new Network.WorldManager();
-
             cGlobal.gCharacterDataBase = new DataManagement.DataBase.CharacterDataBase();
             cGlobal.gEveManager = new DataManagement.DataFiles.EveManager();
             cGlobal.gGameDataBase = new DataManagement.DataBase.GameDataBase();
@@ -163,14 +174,14 @@ namespace Wonderland_Private_Server
             do
             {
                 #region Update Section
-                if (cGlobal.GClient.UpdateFound && Config.Update.UpdtControl == Config.UpdtSetting.Auto)
-                {
-                    if (cGlobal.GClient.AutoUpdate_At < DateTime.Now)
-                    {
-                        updating = true;
-                        break;
-                    }
-                }
+                //if (cGlobal.GClient.UpdateFound && Config.Update.UpdtControl == Config.UpdtSetting.Auto)
+                //{
+                //    if (cGlobal.GClient.AutoUpdate_At < DateTime.Now)
+                //    {
+                //        updating = true;
+                //        break;
+                //    }
+                //}
                 #endregion
                 #region Thread Management
                 foreach (var t in cGlobal.ThreadManager.ToList())
@@ -249,8 +260,8 @@ namespace Wonderland_Private_Server
 
         private void GitUptOption_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (Config.Update.UpdtControl != (Config.UpdtSetting)GitUptOption.SelectedIndex)
-                Config.Update.UpdtControl = (Config.UpdtSetting)GitUptOption.SelectedIndex;
+            //if (Config.Update.UpdtControl != (Config.UpdtSetting)GitUptOption.SelectedIndex)
+            //    Config.Update.UpdtControl = (Config.UpdtSetting)GitUptOption.SelectedIndex;
         }
         #endregion
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GupdtSrv;
 using System.Reflection;
 using Wonderland_Private_Server.Code.Objects;
+using Wonderland_Private_Server.Config;
 
 namespace Wonderland_Private_Server
 {
@@ -38,6 +39,9 @@ namespace Wonderland_Private_Server
         public static Instance gInstanceSystem = new Instance();
         public static GuildSystem gGuildSystem = new GuildSystem();
 
+        #endregion
+
+        #region Settings
         #endregion
 
         public static ActionCodes.AC GetActionCode(int ID)

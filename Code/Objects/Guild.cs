@@ -101,7 +101,7 @@ namespace Wonderland_Private_Server.Code.Objects
         public DateTime DateCreator;
 
         public GuildMember Leader;
-        Dictionary<int, MessageGuild> Message = new Dictionary<int, MessageGuild>();
+        //Dictionary<int, MessageGuild> Message = new Dictionary<int, MessageGuild>();
         List<GuildMember> ViceOrg = new List<GuildMember>(4);
         List<GuildMember> Members = new List<GuildMember>(50);
         List<byte> ImgInsigne = new List<byte>();
@@ -564,17 +564,17 @@ namespace Wonderland_Private_Server.Code.Objects
             string Subject = System.Text.Encoding.Default.GetString(data1);
             string content = System.Text.Encoding.Default.GetString(data2);
 
-            MessageGuild msg = new MessageGuild();
-            msg.Sender = src.UserName;
-            msg.Subject = Subject;
-            msg.Content = content;
-            msg.data1 = 20582;
-            msg.data2 = 29938;
-            msg.data3 = 20922;
-            msg.data4 = 16612;
-            msg.UserID = src.UserID;
-            msg.unknow = 31; // time seconds ?
-            Message.Add(Message.Count, msg);
+            //MessageGuild msg = new MessageGuild();
+            //msg.Sender = src.UserName;
+            //msg.Subject = Subject;
+            //msg.Content = content;
+            //msg.data1 = 20582;
+            //msg.data2 = 29938;
+            //msg.data3 = 20922;
+            //msg.data4 = 16612;
+            //msg.UserID = src.UserID;
+            //msg.unknow = 31; // time seconds ?
+            //Message.Add(Message.Count, msg);
 
 
 
@@ -584,67 +584,67 @@ namespace Wonderland_Private_Server.Code.Objects
         public void OpenTab(Player src)
         {
             
-            if (Message.Count > 0)
-            {
-                SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 82, 14});
-                s.Pack32((uint)Message.Count);
-                s.Pack8(1); // current tab
-                src.Send(s);
+            //if (Message.Count > 0)
+            //{
+            //    SendPacket s = new SendPacket();
+            //    s.PackArray(new byte[] { 82, 14});
+            //    //s.Pack32((uint)Message.Count);
+            //    s.Pack8(1); // current tab
+            //    src.Send(s);
 
-                Send82_11(src);
-            }
-            else
-            {
-                SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 82, 13,0, 0, 0, 0, 1 });// null tab
-                src.Send(s);
-            }
+            //    Send82_11(src);
+            //}
+            //else
+            //{
+            //    SendPacket s = new SendPacket();
+            //    s.PackArray(new byte[] { 82, 13,0, 0, 0, 0, 1 });// null tab
+            //    src.Send(s);
+            //}
 
         }
         void Send82_11(Player src)
         {
 
             //orde per current
-            SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 82, 11 });
+            //SendPacket s = new SendPacket();
+            //s.PackArray(new byte[] { 82, 11 });
 
-            foreach(var t in Message.Values)
-            {            
-            s.Pack32((UInt32)t.Sender.Length);
-            s.PackNString(t.Sender);
-            s.Pack32((UInt32)t.Subject.Length);
-            s.PackNString(t.Subject);
-            s.Pack16(t.data1);
-            s.Pack16(t.data2);
-            s.Pack16(t.data3);
-            s.Pack16(t.data4);
-            s.Pack32(t.UserID);
-            s.Pack32((uint)t.unknow);// seconds ??           
-            }
-            src.Send(s);
+            //foreach(var t in Message.Values)
+            //{            
+            //s.Pack32((UInt32)t.Sender.Length);
+            //s.PackNString(t.Sender);
+            //s.Pack32((UInt32)t.Subject.Length);
+            //s.PackNString(t.Subject);
+            //s.Pack16(t.data1);
+            //s.Pack16(t.data2);
+            //s.Pack16(t.data3);
+            //s.Pack16(t.data4);
+            //s.Pack32(t.UserID);
+            //s.Pack32((uint)t.unknow);// seconds ??           
+            //}
+            //src.Send(s);
         }
         // problem here, get message per data time.... >.>
         public void OpenMessage(Player src, RecvPacket r)
         {
-            if (Message.Count > 0)
-            {
-                var t = Message[0];
-                SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 82, 12 });
-                s.Pack32((UInt32)t.Sender.Length);
-                s.PackNString(t.Sender);
-                s.Pack32((UInt32)t.Subject.Length);
-                s.PackNString(t.Subject);
-                s.Pack16(t.data1);
-                s.Pack16(t.data2);
-                s.Pack16(t.data3);
-                s.Pack16(t.data4);
-                s.Pack32((UInt32)t.Content.Length);
-                s.Pack32(t.UserID);
-                s.PackNString(t.Content);
-                src.Send(s);
-            }
+            //if (Message.Count > 0)
+            //{
+            //    var t = Message[0];
+            //    SendPacket s = new SendPacket();
+            //    s.PackArray(new byte[] { 82, 12 });
+            //    s.Pack32((UInt32)t.Sender.Length);
+            //    s.PackNString(t.Sender);
+            //    s.Pack32((UInt32)t.Subject.Length);
+            //    s.PackNString(t.Subject);
+            //    s.Pack16(t.data1);
+            //    s.Pack16(t.data2);
+            //    s.Pack16(t.data3);
+            //    s.Pack16(t.data4);
+            //    s.Pack32((UInt32)t.Content.Length);
+            //    s.Pack32(t.UserID);
+            //    s.PackNString(t.Content);
+            //    src.Send(s);
+            //}
         }
 
         public void OpenPainelWriteMessage(Player src)

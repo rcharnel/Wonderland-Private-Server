@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.Diagnostics;
+using System.IO;
 
 namespace Wonderland_Private_Server.UI
 {
@@ -17,7 +18,7 @@ namespace Wonderland_Private_Server.UI
         bool isupdating;
         ManualResetEvent block = new ManualResetEvent(false);
         string dispMsg = "";
-        int perct = 0;
+        int perct = 0,maxperct = 100;
 
         public ShutDown_Dialog(bool update = false)
         {
@@ -28,10 +29,22 @@ namespace Wonderland_Private_Server.UI
 
         private async void ShutDown_Dialog_Load(object sender, EventArgs e)
         {
+            dispMsg = "Preparing to Shutdown";
+
+            maxperct += cGlobal.WLO_World.Clients_Connected;
+            maxperct += cGlobal.WLO_World.Clients_inGame;
+            maxperct += cGlobal.ThreadManager.Count;
+
             Task shutdwn = new Task(new Action(() =>
             {
                 int max = cGlobal.ThreadManager.Count;
                 int cnt = 0;
+                dispMsg = "Saving Settings";
+                cGlobal.SrvSettings.SaveSettings(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo");
+
+                dispMsg = "Stopping Tcp Listener";
+                Network.ListenSocket.Kill();
+                dispMsg = "Disconnecting and saving Player info Remaining..";
 
                 dispMsg = "Shutting Down Server";
                 cGlobal.WLO_World.Kill();
@@ -41,11 +54,8 @@ namespace Wonderland_Private_Server.UI
                     dispMsg = string.Format("Aborting Threads {0}/{1}", ++cnt, max);
                     t.Abort();
                     Thread.Sleep(1000);
+                    perct++;
                 }
-                perct += 20;
-                dispMsg = "Stopping Tcp Listener";
-                Network.ListenSocket.Kill();
-
                 perct = 100;
                 if (isupdating)
                 {
@@ -69,6 +79,7 @@ namespace Wonderland_Private_Server.UI
         private void timer1_Tick(object sender, EventArgs e)
         {
             label1.Text = dispMsg;
+            progressBar1.Maximum = maxperct;
             progressBar1.Value = perct;
         }
 

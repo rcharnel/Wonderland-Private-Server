@@ -25,6 +25,9 @@ namespace DBConnector
 
     public sealed class DBOAuth:IDBConnector
     {
+        #region DataSets
+        DataSet CharDB = new DataSet();
+        #endregion
 
         //Not all settings might be used depending on type of DB
         //Server Type 
@@ -348,5 +351,7 @@ namespace DBConnector
 
             return (check == with);
         }
+
+       
     }
 }
