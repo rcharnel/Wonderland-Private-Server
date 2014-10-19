@@ -10,21 +10,24 @@ using Wonderland_Private_Server.DataManagement.DataFiles;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
+    #region class tent map
     public class Tent:Map//Map allows the server to treat this as a map however
     {
         readonly object locker = new object();
         Player owner;
-        Dictionary<byte, TentFloor> Floors = new Dictionary<byte, TentFloor>();
+        public Dictionary<byte, TentFloor> Floors = new Dictionary<byte, TentFloor>();
         Map Loc;
 
         public ushort MapX;
         public ushort MapY;
         public bool Closed;
-
+        
         ushort floorcolor = 39062, wallcolor = 39064;
         
         public Tent()
         {
+            // holy test need dataobjetct to load
+            TentFloor f = new TentFloor(1);
         }
         public Tent(Player src):base()
         {
@@ -168,7 +171,7 @@ namespace Wonderland_Private_Server.Code.Objects
             SendPacket p = new SendPacket();
 
             #region TentItems
-          
+            t.Tent.Floors[1].Send62_4(t);
             #endregion
 
             //build queue
@@ -337,187 +340,366 @@ namespace Wonderland_Private_Server.Code.Objects
 
         }
     }
+#endregion
 
     public class TentFloor
     {
+        public delegate void BuildDelegate(byte nkey);
+        public BuildDelegate BuildTimerEventHandler;
         byte floorloc;
-
-        cBuildElement CB = new cBuildElement();
-        List<TentItem> ItemTent;
+        public bool Mill; // have mill tool ? true or false
+        cCompound2Dat CB = new cCompound2Dat();
+        Dictionary<byte ,TentItem> ItemTent; // she started have 2 itens....
+        Dictionary<byte, ItemBuild> Build;
         int count { get { return ItemTent.Count; } }
+        int pount { get { return Build.Count; } }
         public TentFloor(byte ID)
         {
             floorloc = ID;
-            ItemTent = new List<TentItem>();           
+            ItemTent = new Dictionary<byte ,TentItem>();
+            Build = new Dictionary<byte, ItemBuild>();
+
+            LoadItemTent();// holy test
+        }
+        // holy test  ##################
+        public void LoadItemTent()
+        {
+            CB.Load("C:\\tmp\\Compound2.dat");
+            TentItem c = new TentItem();
+            c.index = 1;
+            c.ItemID = 38049;
+            c.tentX = 32;
+            c.tentY = 46;
+            c.tentZ = 1;
+            c.rotate = 0;
+            c.especial = 0;
+            c.a1 = 0;
+            c.a2 = 0;
+            c.a3 = 0;
+            c.a4 = 0;
+            c.a5 = 0;
+            c.a6 = 0;
+            c.a7 = 0;
+            c.a8 = 0;
+            c.a9 = 0;
+            c.a10 = 0;
+            c.ukn = 10;
+            c.floor = 0;
+            c.pick = 0;
+            ItemTent.Add(1,c);
+            c = new TentItem();
+            c.index = 2;
+            c.ItemID = 38055;
+            c.tentX = 44;
+            c.tentY = 50;
+            c.tentZ = 1;
+            c.rotate = 0;
+            c.especial = 0;
+            c.a1 = 0;
+            c.a2 = 0;
+            c.a3 = 0;
+            c.a4 = 0;
+            c.a5 = 0;
+            c.a6 = 0;
+            c.a7 = 0;
+            c.a8 = 0;
+            c.a9 = 0;
+            c.a10 = 0;
+            c.ukn = 10;
+            c.floor = 0;
+            c.pick = 0;
+            ItemTent.Add(2,c);
+            c = new TentItem();
+            c.index = 3;
+            c.ItemID = 39046;
+            c.tentX = 0;
+            c.tentY = 0;
+            c.tentZ = 0;
+            c.rotate = 0;
+            c.especial = 0;
+            c.a1 = 0;
+            c.a2 = 0;
+            c.a3 = 0;
+            c.a4 = 0;
+            c.a5 = 0;
+            c.a6 = 0;
+            c.a7 = 0;
+            c.a8 = 0;
+            c.a9 = 0;
+            c.a10 = 0;
+            c.ukn = 10;
+            c.floor = 0;
+            c.pick = 1;
+            ItemTent.Add(3, c);
+        }
+        public void Create_NewObject_Tent(Player src, RecvPacket r)
+        {
+            byte t = r.Unpack8(2);
+            ushort Index = r.Unpack16(4);
+            //byte Total = r.Unpack8(13); // total material used compound max 5
+            //ushort material1 = src.Inv[r.Unpack8(14)].ItemID; ; //  get item pos inventory
+            //byte qnt1 = r.Unpack8(15);
+
+            var formula = CB.buildList[Index]; // get  formula
+            
+            var item = cGlobal.gItemManager.GetItem(formula.resultID); // get item
+            
+            if (ItemTent.ContainsKey(t))
+            {
+                // Tool used == tool
+                if (ItemTent[t].ItemID == formula.toolID) // tool == tool
+                {
+                    if (CheckMaterial()) // have material to building? yes
+                    {
+                        byte c = (byte)(pount + 1);
+                        if (AddBuilding(c, item,formula))
+                        {
+                            StartBuild(src,c); // started building
+                        }
+                    }
+                }
+            }            
+
+        }
+        bool CheckMaterial()
+        {
+            // here need verify item in inventory
+            return true;
+        }
+        bool AddBuilding(byte nKey, cItem ci,cBuildElement c)
+        {            
+            ItemBuild i = new ItemBuild();
+            i.item = ci;
+            i.TimerTotal = c.buildTime;
+            i.CurTimer = 0;
+            i.qnt = 1;
+
+            if (Build.ContainsKey(nKey))
+            {
+                return false;
+            }
+            else
+            {
+                Build.Add(nKey, i);
+                return true;
+            }               
         }
 
-        //public void Destroyed_Item(byte pos)
-        //{
-        //    for (int a = 0; a < ItemTent.Count; a++)
-        //    {
-        //        if (ItemTent[a].pos == pos)
-        //        {
-        //            ItemTent.Remove(ItemTent[a]);
-                    
-        //        }
-
-        //    }
-        //}
-        //public void Tool_Manager(byte inv)
-        //{
-        //    ushort id = 0;
-        //    switch (id)
-        //    {
-
-        //        case 38058: Add_Tool(38058, 38049); break;
-        //    }
-        //}
-        //void Add_Tool(ushort tool,ushort item)
-        //{
-        //    CTent c = new CTent();
-        //    c.pos =(byte)(count + 1);
-        //    c.id = tool;
-        //    c.qnt = 1;
-        //    Manufacture_Tool(item, c.pos);
-        //    ItemTent.Add(c);
-        //}
-        //void Manufacture_Tool(ushort item,byte pos)
-        //{
-        //    for (int a = 0; a < ItemTent.Count; a++)
-        //    {
-        //        if (ItemTent[a].id == item)
-        //        {
-        //            if (ItemTent[a].ac0 != 0)
-        //            {
-        //                ItemTent[a].ac0 = pos;
-        //            }
-        //            else if (ItemTent[a].ac1 != 0)
-        //            {
-        //                ItemTent[a].ac1 = pos;
-        //            }
-        //            else 
-        //            {
-        //                ItemTent[a].ac2 = pos;
-        //            }
-        //        }
-        //    }
-        //}
-        public void Send_62_4(Player p)
+        void StartBuild(Player src, byte nkey)
         {
-            
+            Send64_1(src, nkey);
+            Send64_10(src);
+            Send64_1(src, nkey);
+            Send64_2(src, nkey);
+            Send64_10(src);
+            Send64_11(src);
+            //ListItemPendent[i].RunTimer();
+            BuildDone(ref src, nkey); // if item done send this.            
+        }       
+        #region Send Packet
+        public void Send62_4(Player p)
+        {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] {62,4 });
-            s.Pack32(p.ID);
-            for(byte a =0; a < ItemTent.Count; a++)
+            s.PackArray(new byte[] {62, 4});
+            s.Pack32(p.UserID);
+            #region Loop
+            foreach (var i in ItemTent.Values)
             {
-                s.Pack16(ItemTent[a].index);                
-                s.Pack16(ItemTent[a].ItemID);
-                s.Pack32(ItemTent[a].tentX);
-                s.Pack32(ItemTent[a].tentY);                
-                s.Pack32(ItemTent[a].tentZ);
-                s.Pack8(ItemTent[a].rotate);
-                s.Pack32(ItemTent[a].especial);
-                s.Pack16(ItemTent[a].a1);
-                s.Pack16(ItemTent[a].a2);
-                s.Pack16(ItemTent[a].a3);
-                s.Pack16(ItemTent[a].a4);
-                s.Pack16(ItemTent[a].a5);
-                 s.Pack16(ItemTent[a].a6);
-                s.Pack16(ItemTent[a].a7);
-                s.Pack16(ItemTent[a].a8);
-                s.Pack16(ItemTent[a].a9);
-                s.Pack16(ItemTent[a].a10);
-                s.Pack32(ItemTent[a].ukn);
+                s.Pack16(i.index);
+                s.Pack16(i.ItemID);
+                s.Pack32(i.tentX);
+                s.Pack32(i.tentY);
+                s.Pack32(i.tentZ);
+                s.Pack8(i.rotate);
+                s.Pack32(i.especial);
+                s.Pack16(i.a1);
+                s.Pack16(i.a2);
+                s.Pack16(i.a3);
+                s.Pack16(i.a4);
+                s.Pack16(i.a5);
+                s.Pack16(i.a6);
+                s.Pack16(i.a7);
+                s.Pack16(i.a8);
+                s.Pack16(i.a9);
+                s.Pack16(i.a10);
+                s.Pack32(i.ukn);
                 s.Pack32(0);
-                s.Pack8(ItemTent[a].floor);
-                s.Pack8(ItemTent[a].pick);
+                s.Pack8(i.floor);
+                s.Pack8(i.pick);
                 s.Pack32(0);
                 s.Pack32(0);
             }
-
+            #endregion
             p.Send(s);
         }
-        //public void Remove_Object_Tent(byte pos)
-        //{
-        //    for (int a = 0; a < ItemTent.Count; a++)
-        //    {
-        //        if (ItemTent[a].pos == pos)
-        //        {
-        //            ItemTent.Remove(ItemTent[a]);
-        //            //add here pack inventory
-        //        }
+        void Send64_10(Player p)
+        {
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[] {64,10,0,0,0,0,0 });            
+            p.Send(s);
+        }
+        void Send64_9(Player p)
+        {
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[] {64,9});
+            p.Send(s);
+        }
+        void Send64_11(Player p)
+        {
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[] { 64,11});
+            p.Send(s);
+        }
+        void Send64_2(Player p,byte nkey)
+        {
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[] { 64,2});
+            s.Pack8(nkey);
+            p.Send(s);
+        }
+        void Send64_1(Player p, byte nkey)
+        {
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[] { 64, 1 });
+            s.Pack8(nkey);
+            s.Pack16(Build[nkey].item.ItemID);
+            s.Pack32(0);
+            s.Pack8(1);
+            p.Send(s);            
+        }
+        
+        void Send64_4(Player p, byte nkey)
+        {
+            Build.Remove(nkey);
+            SendPacket s = new SendPacket();
+            s.PackArray(new byte[] { 64, 4 });            
+            s.Pack8(nkey);
+            p.Send(s);
 
-        //    }
+        }
+        #endregion
 
-        //}
-        //public void Add_Object_inTent(byte inv, byte ax, byte ay, byte qnt)
-        //{
-        //    ushort id = 0;///get id item in inventory [inv][]
-        //                  ///Get item in item.dat
-        //    CTent t = new CTent();
-        //    t.pos = Convert.ToByte(count + 1);
-        //    t.id = id;
-        //    t.ax = ax;
-        //    t.ay = ay;
-        //    t.qnt = qnt;
-            
+        void BuildDone(ref Player p, byte Currentkey)
+        {
+            byte c = (byte)(count + 1);
+            if (Convert_Item_To_TentItem(ref p, 1, Currentkey,c))
+            {
+                Send64_9(p);
+            }
+            else
+            {
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 62, 1 });
+                s.Pack16(c); // index list item tent
+                s.Pack16(ItemTent[c].ItemID);
+                s.Pack32(ItemTent[c].tentX); // x
+                s.Pack32(ItemTent[c].tentY); // y
+                s.Pack32(ItemTent[c].tentZ);//z
+                s.Pack8(ItemTent[c].rotate);// (i.rotate);
+                s.Pack32(ItemTent[c].especial);//i.especial);
+                s.Pack16(0);//.a1);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack32(ItemTent[c].ukn);// if tool = 10 i.ukn);
+                s.Pack32(0);
+                s.Pack8(ItemTent[c].floor);//i.floor);
+                s.Pack8(ItemTent[c].pick);
+                s.Pack32(0);
+                s.Pack32(0);
+                p.Send(s);                
+            }
 
-        //    SendPacket s = new SendPacket();
-        //    s.PackArray(new byte[] { 62, 1 });
-        //    s.Pack8(t.pos);
-        //    s.Pack8(0);
-        //    s.Pack16(t.id);
-        //    s.Pack8(t.ax);
-        //    s.PackArray(new byte[] { 0, 0, 0 });
-        //    s.Pack8(t.ay);
-        //    s.PackArray(new byte[] { 0, 0, 0 });
-        //    s.Pack8(t.qnt);
-        //    s.PackArray(new byte[] { 0, 0, 0 });
-        //    s.Pack8(t.rotate); // rotate
-        //    s.Pack8(t.especial); //
-        //    s.PackArray(new byte[] { 0, 0, 0 });
-        //    s.Pack8(t.ac0);
-        //    s.Pack8(0);
-        //    s.Pack8(t.ac1);
-        //    s.Pack8(0);
-        //    s.Pack8(t.ac2);
-        //    s.Pack8(0);
-        //    s.Pack8(t.ac3);
-        //    s.Pack8(0);
-        //    s.Pack8(t.ac4);
-        //    s.Pack8(0);
-        //    s.Pack8(t.ac5);
-        //    s.Pack8(0);
-        //    s.Pack8(t.ac6);
-        //    s.Pack8(0);
-        //    s.Pack8(t.ac7);
-        //    s.PackArray(new byte[] { 0, 0, 0, 0, 0});
-        //    s.Pack8(t.ukn);
-        //    s.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0});
-        //    s.Pack8(t.floor);
-        //    s.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0,0,0 });
+            Send64_4(p, Currentkey); // remove item list build
+        }
+        public void Rotate_Move_Object(Player src,byte pos,byte ax,byte ay, byte floor,byte rotate)
+        {  
+                if (ItemTent.ContainsKey(pos))
+                {                   
+                    ItemTent[pos].tentX= ax;
+                    ItemTent[pos].tentY = ay;
+                    ItemTent[pos].rotate = rotate;
 
-        //    ItemTent.Add(t);
+                    SendPacket s = new SendPacket();
+                    s.PackArray(new byte[] {62,3});
+                    s.Pack16(pos);
+                    s.Pack32(ax);
+                    s.Pack32(ay);
+                    s.Pack32(floor);
+                    s.Pack8(rotate);
+                    src.Send(s);
+                    //broadcast current tent here.
+                }
+            }
 
-        //}
-        //public void Rotate_Move_Object(byte pos,byte ax,byte ay,byte qnt, byte rotate)
-        //{
-        //    for (int a = 0; a < ItemTent.Count; a++)
-        //    {
-        //        if (ItemTent[a].pos == pos)
-        //        {
-        //            ItemTent[a].pos = pos;
-        //            ItemTent[a].ax = ax;
-        //            ItemTent[a].ay = ay;
-        //            ItemTent[a].qnt = qnt;
-        //            ItemTent[a].rotate = rotate;
+        bool Convert_Item_To_TentItem(ref Player src,byte CurFloor,byte curkey,byte nkey )
+        {
+            var i = Build[curkey].item;  // get item done.
+            if (Check_Especial(i.ItemID))
+            {
+                InvItemCell c = new InvItemCell();
+                c.CopyFrom(cGlobal.gItemManager.GetItem(i.ItemID));
+                c.Ammt = 1;
+                src.Inv.AddItem(c);
+
+                return true;
+            }
+            else
+            {
+                //default = auto 0;
+                TentItem b = new TentItem();
+                b.citem = i;
+                b.floor = CurFloor;                
+                b.ukn = 10;
+                //x
+                //y
+                b.tentZ = 1; //visible.
+
+                ItemTent.Add(nkey, b);
+
+                return false;
+            }
 
 
-        //        }
 
-        //    }
+        }
+        bool Check_Especial(ushort ItemID)
+        {
+            switch (ItemID)
+            {
+                case 38004: return true;//	Great Driver 
+                case 38031: return true;//	Brand Iron 
+                case 38035: return true;//	Rope Saw	
+                case 38036: return true;//	Wooden Saw
+                case 38037: return true;//	Whetstone
+                case 38040: return true;//Needle
+                case 38054: return true;//	Pliers
+                case 38058: return true;//	Stone Knife
+                    
+                default: return false;
 
-        //}
+            }
+        }
+    }
+
+
+    public class ItemBuild
+    {
+        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+
+        public cItem item;               
+        public ushort CurTimer;
+        public ushort TimerTotal;
+        public byte qnt;
+
+        
+       
     }
     
 }

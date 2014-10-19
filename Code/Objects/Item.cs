@@ -206,13 +206,15 @@ namespace Wonderland_Private_Server.Code.Objects
     public class TentItem:cItem
     {
         public byte index;
+        public cItem citem;
+        public ushort ItemID;
         public byte tentX;
         public byte tentY;
         public byte tentZ;
         public byte qnt;
         public byte rotate;
         public byte especial; // itens stoneKnife ,woodenSaw
-        byte[] accessory;  //testing tmp
+        //byte[] accessory;  //testing tmp
         public byte a1;
         public byte a2;
         public byte a3;
@@ -229,7 +231,8 @@ namespace Wonderland_Private_Server.Code.Objects
 
         public TentItem()
         {
-            accessory = new byte[10];
+           // accessory = new byte[10];
         }
+       
     }
 }
