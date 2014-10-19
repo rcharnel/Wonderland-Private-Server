@@ -32,7 +32,7 @@ namespace Wonderland_Private_Server
         public static DataManagement.DataFiles.ItemManager gItemManager;
         public static DataManagement.DataFiles.SkillDataFile gSkillManager;
         public static DataManagement.DataFiles.EveManager gEveManager;
-        public static DataManagement.DataFiles.NpcDat gNpcManager;
+        public static DataManagement.DataFiles.NpcDat gNpcManager;        
         #endregion
 
         #region Systems
