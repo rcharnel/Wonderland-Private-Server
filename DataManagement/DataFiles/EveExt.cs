@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Wonderland_Private_Server.Code.Objects;
 
 namespace Wonderland_Private_Server.DataManagement.DataFiles
 {
@@ -259,8 +260,8 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         public UInt16 clickID;
         public string Name;
         public byte unknownbyte1;
-        public UInt32 x;
-        public UInt32 y;
+        public UInt32 x;//map x location
+        public UInt32 y;//map y location
         public List<byte> unknownbytearray1 = new List<byte>();
         public List<byte> unknownbytearray2 = new List<byte>();
         public byte unknownbyte2; //usually 0
@@ -269,6 +270,11 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         public byte unknownbyte3;
         public UInt32 unknowndword3;
         public UInt32 unknowndword4;
+        public virtual bool Enter(ref Player src)
+        {
+            //portal Requirements
+            return true;
+        }
 
     }
     public class MiningAreaEntries

@@ -9,36 +9,39 @@ using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Code.Interface;
+using Wonderland_Private_Server.DataManagement.DataFiles;
 
 namespace Wonderland_Private_Server.Maps
 {
     public class Map
     {
+        MapData info;
         protected MapType MType;
         protected readonly object locker;
         protected bool GmOnly;
         protected Dictionary<byte, DroppedItem> Items_Dropped;
         protected Dictionary<uint, Player> mapPlayers;
         public Dictionary<uint, Player> Players { get { return mapPlayers; } }
-        protected Dictionary<byte, WarpData> Destinations;
-        protected Dictionary<byte, WarpPortal> Portals;
-        protected Dictionary<ushort, MapObject > MapObjects;
+        protected Dictionary<byte, WarpInfo> Destinations;
+        protected Dictionary<byte, Entry_Exit_Point_Entries> Portals;
+        protected Dictionary<byte, EventsinMapEntries> Events;
         protected Dictionary<int,Battle> Battles;
         protected Dictionary<uint,Tent> Tents;
 
-        public virtual ushort MapID { get { return 0; } }
-        public virtual string Name { get { return "None"; } }
+        public virtual ushort MapID { get { return (info != null) ? info.mapID : (ushort)0; } }
+        public virtual string Name { get { return "Unknown Name"; } }
 
         public MapType TypeofMap { get { return MType; } }
         protected bool updateready; public bool MapneedsUpdate { set { updateready = value; } }
 
-        public Map()
+        public Map(MapData mapsrc = null)
         {
-            Destinations = new Dictionary<byte, WarpData>();
+            info = mapsrc;
+            Destinations = new Dictionary<byte, WarpInfo>();
             mapPlayers = new Dictionary<uint, Player>();
             locker = new object();
-            Portals = new Dictionary<byte, WarpPortal>();
-            MapObjects = new Dictionary<ushort, MapObject>();
+            Portals = new Dictionary<byte, Entry_Exit_Point_Entries>();
+            Events = new Dictionary<byte, EventsinMapEntries>();
             Tents = new Dictionary<uint, Tent>();
             Battles = new Dictionary<int,Battle>();
             Items_Dropped = new Dictionary<byte, DroppedItem>(255);
@@ -50,19 +53,18 @@ namespace Wonderland_Private_Server.Maps
             Utilities.LogServices.Log("Initializing Map " + MapID + " " + Name);
             string loc = this.GetType().FullName.Replace(this.GetType().Name,"");
             
-            foreach( var y in Assembly.GetExecutingAssembly().GetTypes().Where(c=>c.IsClass && c.IsPublic && c.FullName.StartsWith(loc) && c.Name != this.GetType().Name))
-            {
-                //load data for this map within its hierarchy
-
-                MapObject obj = (Activator.CreateInstance(y) as MapObject);
-
-                switch(obj.Type)
-                {
-                    case MapObjType.WarpData: Destinations.Add((byte)obj.CickID, (obj as WarpData)); break;
-                    case MapObjType.WarPortal: Portals.Add((byte)obj.CickID, (obj as WarpPortal)); break;
-                }
-
-            }
+           if(info != null)
+           {
+               foreach (var r in info.Entry_Points)
+                   Portals.Add((byte)r.clickID, r);
+               Utilities.LogServices.Log(string.Format("Loaded {0} {1}",Portals.Count,"Warp Portals"));
+               foreach (var r in info.WarpLoc)
+                   Destinations.Add((byte)r.clickID, r);
+               Utilities.LogServices.Log(string.Format("Loaded {0} {1}", Destinations.Count, "Warp Destinations"));
+               foreach (var r in info.Events)
+                   Events.Add((byte)r.clickID, r);
+               Utilities.LogServices.Log(string.Format("Loaded {0} {1}", Events.Count, "Map Events"));
+           }
 
         }
 
@@ -124,17 +126,17 @@ namespace Wonderland_Private_Server.Maps
         public bool ProccessInteraction(int where, ref Player by, int? answer = null)
         {
 
-            if (MapObjects.ContainsKey((ushort)where))
-            {
-                by.DataOut = SendType.Multi;
-                SendPacket tmp = new SendPacket();
-                tmp.PackArray(new byte[] { 6, 2, 1 });
-                by.Send(tmp);
-                MapObjects[(ushort)where].Interact(ref by, answer);
-                by.DataOut = SendType.Normal;
-                return true;
-            }
-            else
+            //if (MapObjects.ContainsKey((ushort)where))
+            //{
+            //    by.DataOut = SendType.Multi;
+            //    SendPacket tmp = new SendPacket();
+            //    tmp.PackArray(new byte[] { 6, 2, 1 });
+            //    by.Send(tmp);
+            //    MapObjects[(ushort)where].Interact(ref by, answer);
+            //    by.DataOut = SendType.Normal;
+            //    return true;
+            //}
+            //else
                 return false;
         }
         public virtual void UpdateMap()
@@ -145,37 +147,6 @@ namespace Wonderland_Private_Server.Maps
 
         public virtual bool Teleport(TeleportType teletype, ref Player sender, byte portalID, WarpData warp = null)
         {
-            WarpData mapid = null;
-            if (GmOnly && !sender.GM)
-            {
-                SendPacket p = new SendPacket();
-                p = new SendPacket();
-                p.PackArray(new byte[] { 2, 3 });
-                p.Pack32(100);
-                p.PackNString("Only GMs can Enter %#");
-                sender.Send(p);
-                return false;
-            }
-            if (teletype != TeleportType.Regular || MType == MapType.Tent) goto skip;
-            WarpPortal door = null;
-
-            if (!Portals.ContainsKey(portalID)) return false;
-            door = Portals[portalID];
-
-            if (door == null || !door.Enter(ref sender)) return false;
-            mapid = Destinations[(byte)door.Dst];
-
-        skip:
-            sender.State = PlayerState.InGame_Warping;
-
-            if (mapid != null || warp != null || portalID == 1) { } else return false;
-            if (warp != null) mapid = warp;
-            else if (TypeofMap != MapType.Regular && portalID == 1)  //create warp from Prev Map
-            {
-                mapid = sender.PrevMap;
-                mapid.CickID = portalID;
-            }
-
             sender.DataOut = SendType.Multi;
             if (teletype == TeleportType.Regular)
             {
@@ -196,21 +167,101 @@ namespace Wonderland_Private_Server.Maps
             tmp.PackArray(new byte[] { 23, 132 });
             tmp.Pack32(sender.ID);
             sender.Send(tmp);
+            sender.State = PlayerState.InGame_Warping;
+            //onWarp_Out(portalID, ref sender, warp, (teletype == TeleportType.Tent));// warp out of map
 
-            onWarp_Out(portalID, ref sender, mapid,(teletype == TeleportType.Tent));// warp out of map
+            switch (teletype)
+            {
+                case TeleportType.Regular:
+                    {
+                        if (TypeofMap != MapType.Regular && portalID == 1)  //create warp from Prev Map
+                        {
+                            onWarp_Out(portalID, ref sender, sender.PrevMap, (teletype == TeleportType.Tent));// warp out of map
+                        }
+                        else
+                        {
+                            var WarpID = (int)Events[Portals[portalID].unknownbytearray1[0]].SubEntry[0].SubEntry[0].dialog2;
+                            if (WarpID == 0)
+                            {
+
+                                tmp = new SendPacket();
+                                tmp.PackArray(new byte[] { 20, 8 });
+                                sender.Send(tmp); return false;
+                            }
+                            onWarp_Out(portalID, ref sender,new WarpData(Destinations[(byte)WarpID]),(teletype == TeleportType.Tent));// warp out of map
+                            cGlobal.WLO_World.Teleport(portalID, new WarpData(Destinations[(byte)WarpID]), sender);                           
+                        }
+                    } break;
+                case TeleportType.Special:
+                    {
+                        //WarpInfo f = new WarpInfo();
+                        //f.clickID = i.id;
+                        //f.mapID = i.mapTo;
+                        //f.x = i.x;
+                        //f.y = i.y;
+                        //globals.gServer.Multipkt_Request(t);
+                        //var map = Phase1Warp(t, f, false);
+                        //globals.gServer.Queue_Request(t);
+                        //map.Phase2Warp(t);
+                        //globals.packet.cCharacter.DatatoSend.Enqueue(globals.gServer.GenerateQueuepkt(t));
+                        //globals.gServer.SendCombinepkt(t);
+                    } break;
+                case TeleportType.Quest:
+                    {
+                        //var exitpoint = mapData.Entry_Points[Entry - 1];
+                        //var WarpID = (int)mapData.Events[exitpoint.unknownbytearray1[0] - 1].SubEntry[0].SubEntry[0].dialog2;
+                        //globals.gServer.Queue_Request(t);
+
+                        //var map = Phase1Warp(t, mapData.WarpLoc[WarpID - 1]);
+                        //globals.packet.cCharacter.DatatoSend.Enqueue(globals.gServer.GenerateQueuepkt(t));
+                        //globals.gServer.Queue_Request(t);
+                        //map.Phase2Warp(t);
+                        //globals.packet.cCharacter.DatatoSend.Enqueue(globals.gServer.GenerateQueuepkt(t));
+                    } break;
+                case TeleportType.Tent:
+                    {
+                        sender.X = warp.DstX_Axis;//switch x
+                        sender.Y = warp.DstY_Axis;//switch y
+                        Tents[warp.DstMap].onWarp_In(0, ref sender, null);
+                    } break;
+                case TeleportType.Tool:/*t.inv.RemoveInv((byte)Entry, 1);*/ break;
+            }
+        //    if (GmOnly && !sender.GM)
+        //    {
+        //        SendPacket p = new SendPacket();
+        //        p = new SendPacket();
+        //        p.PackArray(new byte[] { 2, 3 });
+        //        p.Pack32(100);
+        //        p.PackNString("Only GMs can Enter %#");
+        //        sender.Send(p);
+        //        return false;
+        //    }
+        //    if (teletype != TeleportType.Regular || MType == MapType.Tent) goto skip;
+        //    Entry_Exit_Point_Entries door = null;
+
+        //    if (!Portals.ContainsKey(portalID)) return false;
+        //    door = Portals[portalID];
+
+        //    if (door == null || !door.Enter(ref sender)) return false;
+        //    var mapid = (int)info.Events[door.unknownbytearray1[0] - 1].SubEntry[0].SubEntry[0].dialog2;
+
+
+        //    //mapid = Destinations[(byte)door.Dst];
+
+        //skip:
+        //    sender.State = PlayerState.InGame_Warping;
+
+        //    
+
+        //    onWarp_Out(portalID, ref sender, mapid,(teletype == TeleportType.Tent));// warp out of map
             //save current map
-            sender.PrevMap = new WarpData();
-            sender.PrevMap.DstMap = sender.CurrentMap.MapID;
-            sender.PrevMap.DstX_Axis = sender.X;
-            sender.PrevMap.DstY_Axis = sender.Y;
+            //sender.X = mapid.DstX_Axis;//switch x
+            //sender.Y = mapid.DstY_Axis;//switch y
+            //if (teletype != TeleportType.Tent)
+            //    cGlobal.WLO_World.Teleport(portalID, mapid, sender);
+            //else
+            //    Tents[mapid.DstMap].onWarp_In(0, ref sender, null);
 
-            sender.X = mapid.DstX_Axis;//switch x
-            sender.Y = mapid.DstY_Axis;//switch y
-
-            if (teletype != TeleportType.Tent)
-                cGlobal.WLO_World.Teleport(portalID, mapid, sender);
-            else
-                Tents[mapid.DstMap].onWarp_In(0, ref sender, null);
 
             sender.DataOut = SendType.Normal;
             return true;
@@ -273,6 +324,10 @@ namespace Wonderland_Private_Server.Maps
             Player f;
             lock (locker)
             {
+                src.PrevMap = new WarpData();
+                src.PrevMap.DstMap = MapID;
+                src.PrevMap.DstX_Axis = src.X;
+                src.PrevMap.DstY_Axis = src.Y;
                 SendAc12(src,portalID, To,toTent);
                 Players.Remove(src.ID);
             }

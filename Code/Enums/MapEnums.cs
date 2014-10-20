@@ -26,5 +26,8 @@ namespace Wonderland_Private_Server.Code.Enums
         Regular,
         Special,
         Tent,
+        Tool,
+        Login,
+        Quest,
     }
 }

@@ -63,20 +63,21 @@ namespace Wonderland_Private_Server
         }
         public static Maps.Map GetMap(ushort mapid)
         {
-            foreach (var y in (from c in Assembly.GetExecutingAssembly().GetTypes()
-                               where c.IsClass && c.IsPublic && c.IsSubclassOf(typeof(Maps.Map))
-                               select c))
-            {
-                Maps.Map m = null;
+            return new Maps.Map(cGlobal.gEveManager.GetMapData(mapid));
+            //foreach (var y in (from c in Assembly.GetExecutingAssembly().GetTypes()
+            //                   where c.IsClass && c.IsPublic && c.IsSubclassOf(typeof(Maps.Map))
+            //                   select c))
+            //{
+            //    Maps.Map m = null;
 
-                try
-                {
-                    m = (Activator.CreateInstance(y) as Maps.Map);
-                    if (m.MapID == mapid) return m;
-                }
-                catch { Utilities.LogServices.Log(new Exception("failed to load Map " + (Activator.CreateInstance(y) as Maps.Map).MapID)); }
-            }
-            return null;
+            //    try
+            //    {
+            //        m = (Activator.CreateInstance(y) as Maps.Map);
+            //        if (m.MapID == mapid) return m;
+            //    }
+            //    catch { Utilities.LogServices.Log(new Exception("failed to load Map " + (Activator.CreateInstance(y) as Maps.Map).MapID)); }
+            //}
+            //return null;
         }
     }
 }
