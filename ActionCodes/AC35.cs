@@ -11,6 +11,7 @@ namespace Wonderland_Private_Server.ActionCodes
 {
     public class AC35:AC
     {
+        public override int ID { get { return 35; } }
         public override void ProcessPkt(ref Player p, RecvPacket r)
         {
             switch (r.B)

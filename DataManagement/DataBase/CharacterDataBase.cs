@@ -787,13 +787,13 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         public void DeleteCharacter(UInt32 ID)
         {
 
-            try { cGlobal.gDataBaseConnection.Delete(TableName, "where charID = '" + ID + "';");}
+            try { cGlobal.gDataBaseConnection.Delete(TableName, "charID = '" + ID + "';");}
             catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
 
-            try { cGlobal.gDataBaseConnection.Delete("stats", "where charID = '" + ID + "';"); }
+            try { cGlobal.gDataBaseConnection.Delete("stats", "charID = '" + ID + "';"); }
             catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
 
-            try { cGlobal.gDataBaseConnection.Delete("inventory", "where charID = '" + ID + "';"); }
+            try { cGlobal.gDataBaseConnection.Delete("inventory", "charID = '" + ID + "';"); }
             catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
 
             if (Cache.ContainsKey((int)ID))

@@ -177,18 +177,21 @@ namespace Wonderland_Private_Server.Network
 
                 Thread.Sleep(120);
 
-                
-            if(exptimer.Elapsed >= new TimeSpan(0,0,30))
+                try
                 {
-                    foreach (var m in MapList.Values.ToList())
-                        try
-                        {
-                            foreach (var p in m.Players.Values.ToList())
-                                p.CurExp += (int)((p.Level * new Random().Next(1, 700)) * 2.2);
-                        }
-                        catch { }
-                    exptimer.Restart();
+                    if (exptimer.Elapsed >= new TimeSpan(0, 1, 20))
+                    {
+                        foreach (var m in MapList.Values.ToList())
+                            try
+                            {
+                                foreach (var p in m.Players.Values.ToList())
+                                    p.CurExp += (int)((p.Level * new Random().Next(1, 700)) * 2.2);
+                            }
+                            catch { }
+                        exptimer.Restart();
+                    }
                 }
+                catch { }
             }
             while (!killFlag);
 

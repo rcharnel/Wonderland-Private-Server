@@ -112,7 +112,8 @@ namespace Wonderland_Private_Server.Code.Objects
             {
                 lock (m_Lock)
                 {
-                    m_totalexp = value - (Level * 6);
+                    m_totalexp = value;
+                    m_totalexp -= (Level * 6);
                 }
             }
         }
@@ -911,11 +912,11 @@ namespace Wonderland_Private_Server.Code.Objects
                     tmp.Add(new long[] { 38, SkillPoints, 0 });
                     tmp.Add(new long[] { 25, CurHP, 0 });
                     tmp.Add(new long[] { 26, CurSP, 0 });
-                    tmp.Add(new long[] { 28, baseStr, Potential });
-                    tmp.Add(new long[] { 29, baseCon, Potential });
-                    tmp.Add(new long[] { 30, baseAgi, Potential });
-                    tmp.Add(new long[] { 27, baseInt, Potential });
-                    tmp.Add(new long[] { 33, baseWis, Potential });
+                    tmp.Add(new long[] { 28, Str, Potential });
+                    tmp.Add(new long[] { 29, Con, Potential });
+                    tmp.Add(new long[] { 30, Agi, Potential });
+                    tmp.Add(new long[] { 27, Int, Potential });
+                    tmp.Add(new long[] { 33, Wis, Potential });
                     return tmp;
                 }
             }
@@ -1099,16 +1100,27 @@ namespace Wonderland_Private_Server.Code.Objects
                 Send_1(25, (uint)((CurHP > FullHP) ? FullHP : CurHP), 0);
                 Send_1(208, (uint)EquippedMaxSP, 0); //a plus to sp
                 Send_1(26, (uint)((CurSP > FullSP) ? FullSP : CurSP), 0);
+                //str
                 Send_1(210, (uint)EquippedATK, 0);
                 Send_1(41, (uint)FullAtk, 0);
+                if (levelup) Send_1(28, Str, 0);
+                //con
                 Send_1(211, (uint)EquippedDEF, 0);
                 Send_1(42, (uint)FullDef, 0);
+                if (levelup) { Send_1(205, (uint)FullHP, 0); Send_1(29, Con, 0); }
+                //spd
                 Send_1(214, (uint)EquippedSPD, 0);
                 Send_1(45, (uint)FullSpd, 0);
+                if (levelup) Send_1(30, Agi, 0);
+                //int
                 Send_1(215, (uint)EquippedMAT, 0);
                 Send_1(43, (uint)FullMatk, 0);
+                if (levelup) Send_1(27, Int, 0);
+                //wis
                 Send_1(216, (uint)EquippedMDF, 0);
                 Send_1(44, (uint)FullMdef, 0);
+                if (levelup) { Send_1(206, MaxSp, 0); Send_1(33, Wis, 0); }
+                
             }
         }
         void SendExp()

@@ -147,7 +147,7 @@ namespace Wonderland_Private_Server.ActionCodes
                                 } break;
                             case "Vanessa":
                                 {
-                                    y = new cItem[]{ cGlobal.gItemManager.GetItem(21015),
+                                    y = new cItem[]{ cGlobal.gItemManager.GetItem(21008),
                                        cGlobal.gItemManager.GetItem(24008)};
                                 } break;
                             case "Breillat":
