@@ -56,7 +56,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             //to avoid using EveManager as the ref to speed up the server
             //since we have the offest values we will go straight to it to pull certain data
             //tricky as hell i kno
-            //Load_FinalData();
+            Load_FinalData();
 
         }
         void Load_MapEntries(ref int ptr, byte[] d, uint len)
@@ -133,54 +133,51 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             Utilities.LogServices.Log("EveData has been Read successfully");
             Utilities.LogServices.Log("Map Data found -" + Maps.Count.ToString());
         }
-        //void Load_FinalData()
-        //{
-        //    Stopwatch timer = new Stopwatch();
-        //    globals.Log(cActionType.DataLoad, "Stage 3..Loading Data into Map...");
-        //    timer.Reset();
-        //    timer.Start();
-        //    //this will be the loader
-        //    //Entry n Warp for Now
-        //    int ct = 0;
-        //    foreach (MapData r in Maps)
-        //    {
-        //        ct++;
-        //        try
-        //        {                    
-        //            cMap map = new cMap(globals);
-        //            map.MapID = r.mapID;
-        //            if (r.mapID == 11016)
-        //            {
-        //            }
-        //            try
-        //            {
-        //                map.sceneinfo = globals.gDataManager.SceneManager.GetSceneByID(r.sceneID);
-        //                map.name = map.sceneinfo.Name;
-        //                map.mapData = r;
-        //            }
-        //            catch { }
-                    
-        //            //map.EntryPoints = LoadEntryEntries(r);
-        //            //map.Npclist = LoadNpcEntries(r);
-        //            //map.VacumSpots = LoadMiningEntries(r);
-        //            //map.ItemSpot = LoadItemEntries(r);
-        //            //map.WarpPointList = LoadWarpEntries(r);
-        //            //map.DataSafe.Interaction = LoadInteractiveEntries(r);
-        //            //map.EventList = LoadEventEntries(r);
-        //            //map.DataSafe.group = LoadGroupEntries(r);
-        //            //map.DataSafe.groupext = LoadgroupExtEntries(r);
-        //            //map.DataSafe.preevent = LoadpreEventEntries(r);
-        //            //map.DataSafe.battleinfo = LoadBattleEntries(r);
-        //            //map.SetItems();
-        //            globals.gDataManager.MapManager.mapList.Add(map);
-        //        }
-        //        catch (Exception e) { globals.LogError(this.ToString(), e.Message); }
-        //    }
+        void Load_FinalData()
+        {
+            Stopwatch timer = new Stopwatch();
+            Utilities.LogServices.Log("Stage 3..Loading Data for Maps...");
+            timer.Reset();
+            timer.Start();
+            //this will be the loader
+            //Entry n Warp for Now
+            int ct = 0;
+            foreach (MapData r in Maps.Values.ToList())
+            {
+                ct++;
+                try
+                {
+                    //map.MapID = r.mapID;
+                    //if (r.mapID == 11016)
+                    //{
+                    //}
+                    //try
+                    //{
+                    //    map.sceneinfo = globals.gDataManager.SceneManager.GetSceneByID(r.sceneID);
+                    //    map.name = map.sceneinfo.Name;
+                    //    map.mapData = r;
+                    //}
+                    //catch { }
 
-        //    globals.Log(Systems.cActionType.DataLoad, "Operation took-> " + timer.Elapsed.ToString());
-        //    timer.Stop();
-        //    globals.Log( Systems.cActionType.DataLoad,"Done");
-        //}
+                    Maps[r.mapID].Entry_Points = LoadEntryEntries(r);
+                    Maps[r.mapID].Npclist = LoadNpcEntries(r);
+                    Maps[r.mapID].MiningAreas = LoadMiningEntries(r);
+                    Maps[r.mapID].ItemAreas = LoadItemEntries(r);
+                    Maps[r.mapID].WarpLoc = LoadWarpEntries(r);
+                    Maps[r.mapID].InteractiveInfo = LoadInteractiveEntries(r);
+                    Maps[r.mapID].Events = LoadEventEntries(r);
+                    Maps[r.mapID].Group = LoadGroupEntries(r);
+                    Maps[r.mapID].ExtGroup = LoadgroupExtEntries(r);
+                    Maps[r.mapID].PreEvents = LoadpreEventEntries(r);
+                    Maps[r.mapID].ExtBattleInfo = LoadBattleEntries(r);
+                }
+                catch (Exception e) { Utilities.LogServices.Log(e); }
+            }
+
+            Utilities.LogServices.Log("Operation took-> " + timer.Elapsed.ToString());
+            timer.Stop();
+            Utilities.LogServices.Log("Data loaded successfully");
+        }
         public List<NpcEntries> LoadNpcEntries(MapData y)
         {
             try

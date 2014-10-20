@@ -12,9 +12,23 @@ namespace Wonderland_Private_Server.Config
         Auto,
         AutoandForce,
     }
-    public static class Update
+    public class UpdateSetting
     {
 
-        public static UpdtSetting UpdtControl;
+        public UpdtSetting UpdtControl;
+        public TimeSpan UpdtChk_Interval;
+        public TimeSpan AutoUpdt_Schedule;
+        public string GitBranch;
+
+        public string[] Data
+        {
+            get
+            {
+                return new string[]
+                {
+
+                };
+            }
+        }
     }
 }

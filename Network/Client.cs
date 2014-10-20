@@ -8,7 +8,7 @@ using Wonderland_Private_Server.Code.Objects;
 
 namespace Wonderland_Private_Server.Network
 {
-    public class Client : ConcurrentDictionary<int, Player>
+     class Client : ConcurrentDictionary<int, Player>
     {
         public void TerminateAll()
         {
