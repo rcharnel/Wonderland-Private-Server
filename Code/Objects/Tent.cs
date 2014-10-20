@@ -351,6 +351,7 @@ namespace Wonderland_Private_Server.Code.Objects
         cCompound2Dat CB = new cCompound2Dat();
         Dictionary<byte ,TentItem> ItemTent; // she started have 2 itens....
         Dictionary<byte, ItemBuild> Build;
+        Dictionary<byte, byte> Axis = new Dictionary<byte, byte>();
         int count { get { return ItemTent.Count; } }
         int pount { get { return Build.Count; } }
         public TentFloor(byte ID)
