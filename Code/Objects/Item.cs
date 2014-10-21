@@ -214,7 +214,7 @@ namespace Wonderland_Private_Server.Code.Objects
         public byte qnt;
         public byte rotate;
         public byte especial; // itens stoneKnife ,woodenSaw
-        //byte[] accessory;  //testing tmp
+        byte[] accessory;  //testing tmp
         public byte a1;
         public byte a2;
         public byte a3;
@@ -231,7 +231,7 @@ namespace Wonderland_Private_Server.Code.Objects
 
         public TentItem()
         {
-           // accessory = new byte[10];
+          accessory = new byte[10];
         }
        
     }

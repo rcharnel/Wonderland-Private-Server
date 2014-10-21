@@ -7,6 +7,7 @@ using Wonderland_Private_Server.Maps;
 using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.DataManagement.DataFiles;
+using System.Timers;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
@@ -346,8 +347,10 @@ namespace Wonderland_Private_Server.Code.Objects
     {
         public delegate void BuildDelegate(byte nkey);
         public BuildDelegate BuildTimerEventHandler;
+        System.Windows.Forms.Timer t;
         byte floorloc;
         public bool Mill; // have mill tool ? true or false
+        byte CurrentJob;
         cCompound2Dat CB = new cCompound2Dat();
         Dictionary<byte ,TentItem> ItemTent; // she started have 2 itens....
         Dictionary<byte, ItemBuild> Build;
@@ -494,9 +497,23 @@ namespace Wonderland_Private_Server.Code.Objects
             Send64_2(src, nkey);
             Send64_10(src);
             Send64_11(src);
-            //ListItemPendent[i].RunTimer();
-            BuildDone(ref src, nkey); // if item done send this.            
-        }       
+            Process(src,Build[nkey].TimerTotal);          
+            BuildDone(src, nkey); // if item done send this.            
+        }
+
+        void Process(Player src, ushort Interval)
+        {
+            t = new System.Windows.Forms.Timer();
+            t.Interval = Interval; // specify interval time as you want
+            //t.Tag = src.UserID;
+            t.Tick += new EventHandler(timer_Tick);
+            t.Start();
+        }
+        void timer_Tick(object sender, EventArgs e)
+        {
+            t.Stop();           
+            BuildDone(((Player)sender), CurrentJob);
+        }
         #region Send Packet
         public void Send62_4(Player p)
         {
@@ -580,12 +597,12 @@ namespace Wonderland_Private_Server.Code.Objects
         }
         #endregion
 
-        void BuildDone(ref Player p, byte Currentkey)
+        void BuildDone(Player src, byte Currentkey)
         {
             byte c = (byte)(count + 1);
-            if (Convert_Item_To_TentItem(ref p, 1, Currentkey,c))
+            if (Convert_Item_To_TentItem(ref src, 1, Currentkey,c))
             {
-                Send64_9(p);
+                Send64_9(src);
             }
             else
             {
@@ -614,10 +631,10 @@ namespace Wonderland_Private_Server.Code.Objects
                 s.Pack8(ItemTent[c].pick);
                 s.Pack32(0);
                 s.Pack32(0);
-                p.Send(s);                
+                src.Send(s);                
             }
 
-            Send64_4(p, Currentkey); // remove item list build
+            Send64_4(src, Currentkey); // remove item list build
         }
         public void Rotate_Move_Object(Player src,byte pos,byte ax,byte ay, byte floor,byte rotate)
         {  
@@ -658,17 +675,13 @@ namespace Wonderland_Private_Server.Code.Objects
                 b.citem = i;
                 b.floor = CurFloor;                
                 b.ukn = 10;
-                //x
-                //y
+                b.tentX = 48;///x
+                b.tentY = 46;//y
                 b.tentZ = 1; //visible.
-
                 ItemTent.Add(nkey, b);
 
                 return false;
             }
-
-
-
         }
         bool Check_Especial(ushort ItemID)
         {
@@ -687,20 +700,65 @@ namespace Wonderland_Private_Server.Code.Objects
 
             }
         }
+        public void StopBuild(Player src, byte i)
+        {
+            if (Build.ContainsKey(i))
+            {
+                // stop Build item
+                Build[i].CurTimer = 1234; // get cur timer
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] {64,3});
+                s.Pack8(i);
+                src.Send(s);
+            }
+        }
+        public void ContinueBuild(Player src, byte i)
+        {
+            if (Build.ContainsKey(i))
+            {
+                Send64_10(src);
+
+                // continue Build item                
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] {64,1});
+                s.Pack8(i);
+                s.Pack16(Build[i].item.ItemID);
+                s.Pack32(Build[i].CurTimer);
+                s.Pack8(1);
+                src.Send(s);
+                Send64_2(src, i);
+            }
+        }
     }
 
 
     public class ItemBuild
     {
-        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-
+        //public delegate void TimerTick();
+        //public event TimerTick TimerEventHandler;
         public cItem item;               
         public ushort CurTimer;
         public ushort TimerTotal;
         public byte qnt;
+       // public bool End { get { return End; } }
 
+       // System.Windows.Forms.Timer t;
+
+        //public void start()
+        //{
+        //    t = new System.Windows.Forms.Timer();
+        //    t.Interval = 15000; // specify interval time as you want
+        //    t.Tick += new EventHandler(timer_Tick);
+
+        //    t.Start();
+        //}
+        //public void timer_Tick(object sender, EventArgs e)
+        //{
+        //    t.Stop();
+        //    if (TimerEventHandler != null)
+        //        TimerEventHandler();
+        //}
         
-       
-    }
+    }    
     
 }

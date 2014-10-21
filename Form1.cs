@@ -75,9 +75,13 @@ namespace Wonderland_Private_Server
             {
                 System.Xml.Serialization.XmlSerializer diskio = new System.Xml.Serialization.XmlSerializer(typeof(Config.Settings));
 
-                using (StreamReader file = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo"))
-                    cGlobal.SrvSettings = (Config.Settings)diskio.Deserialize(file);
-                Utilities.LogServices.Log("Settings File loaded successfully");
+                try
+                {
+                    using (StreamReader file = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo"))
+                        cGlobal.SrvSettings = (Config.Settings)diskio.Deserialize(file);
+                    Utilities.LogServices.Log("Settings File loaded successfully");
+                }
+                catch { Utilities.LogServices.Log("Settings File failed to load"); }
             }
             else
                 Utilities.LogServices.Log("Settings File not found");
