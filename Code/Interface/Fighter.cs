@@ -38,7 +38,5 @@ namespace Wonderland_Private_Server.Code.Interface
         Int32 FullDef { get; }
         Int32 FullMdef { get; }
         Int32 FullSpd { get; }
-
-
     }
 }

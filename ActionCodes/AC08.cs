@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Utilities;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -23,12 +24,12 @@ namespace Wonderland_Private_Server.ActionCodes
         }
         void Recv_1(ref Player r, RecvPacket p)
         {
-            int max = p.Unpack8(3);
-            int ptr = 4;
-            for (int a = 0; a < max; a++)
-            {
-                r.AddStat(p.Unpack8(ptr), (byte)p.Unpack32(ptr + 1)); ptr += 5;
-            }
+            //int max = p.Unpack8(3);
+            //int ptr = 4;
+            //for (int a = 0; a < max; a++)
+            //{
+            //    r.AddStat(p.Unpack8(ptr), (byte)p.Unpack32(ptr + 1)); ptr += 5;
+            //}
         }
     }
 }

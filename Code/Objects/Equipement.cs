@@ -835,7 +835,7 @@ namespace Wonderland_Private_Server.Code.Objects
 
                         for (byte a = 1; a < 7; a++)
                             if (clothes[a].ItemID > 0)
-                                tmp.Pack16(clothes[a].ItemID);
+                                tmp.Pack(clothes[a].ItemID);
                     }
                     return tmp.Data.ToArray();
                 }
@@ -853,9 +853,9 @@ namespace Wonderland_Private_Server.Code.Objects
                     Packet tmp = new Packet();
                     for (byte n = 1; n < 7; n++)
                         if (clothes[n].ItemID != 0)
-                            tmp.Pack16(clothes[n].ItemID);
+                            tmp.Pack(clothes[n].ItemID);
                         else
-                            tmp.Pack16(0);
+                            tmp.Pack(0);
 
                     return tmp.Data.ToArray();
                 }
@@ -877,9 +877,9 @@ namespace Wonderland_Private_Server.Code.Objects
                         {
                             if (clothes[n].ItemID != 0)
                             {
-                                tmp.Pack16(clothes[n].ItemID);
-                                tmp.Pack8(clothes[n].Damage);
-                                tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                                tmp.Pack(clothes[n].ItemID);
+                                tmp.Pack(clothes[n].Damage);
+                                tmp.Pack(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
                             }
                         }
                     }
@@ -1014,8 +1014,8 @@ namespace Wonderland_Private_Server.Code.Objects
         public void SendGold()
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 26, 4 });
-            p.Pack32(Gold);
+            p.Pack(new byte[] { 26, 4 });
+            p.Pack(Gold);
             host.Send(p);
         }
         public bool AddGold(int g)
@@ -1034,8 +1034,8 @@ namespace Wonderland_Private_Server.Code.Objects
                 if (gold < g) return false;
                 
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 26, 2 });
-                s.Pack32((uint)g); //gold decrescimo
+                s.Pack(new byte[] { 26, 2 });
+                s.Pack((uint)g); //gold decrescimo
                 host.Send(s);
                 gold -= g;
                 return true;
@@ -1126,36 +1126,36 @@ namespace Wonderland_Private_Server.Code.Objects
         void SendExp()
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 8, 1 });
-            p.Pack8(36);
-            p.Pack8(1);
-            p.Pack64((ulong)TotalExp);
+            p.Pack(new byte[] { 8, 1 });
+            p.Pack(36);
+            p.Pack(1);
+            p.Pack((ulong)TotalExp);
             host.Send(p);
         }
         void Send_1(byte stat, UInt32 ammt, UInt32 skill)
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 8, 1 });
-            p.Pack8(stat);
-            p.Pack8(1);
-            p.Pack32(ammt);
-            p.Pack32(skill);
+            p.Pack(new byte[] { 8, 1 });
+            p.Pack(stat);
+            p.Pack(1);
+            p.Pack(ammt);
+            p.Pack(skill);
             host.Send(p);
         }
         void Send_16(byte src, byte dst) //deequipping
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 23, 16 });
-            p.Pack8(src);
-            p.Pack8(dst);
+            p.Pack(new byte[] { 23, 16 });
+            p.Pack(src);
+            p.Pack(dst);
             host.Send(p);
         }
         void Send_17(byte src, byte dst) //equipping
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 23, 17 });
-            p.Pack8(src);
-            p.Pack8(dst);
+            p.Pack(new byte[] { 23, 17 });
+            p.Pack(src);
+            p.Pack(dst);
             host.Send(p);
         }
         int CalcMaxExp(byte rebirth, int Level)
@@ -1845,7 +1845,7 @@ namespace Wonderland_Private_Server.Code.Objects
 
                         for (byte a = 1; a < 7; a++)
                             if (clothes[a].ItemID > 0)
-                                tmp.Pack16(clothes[a].ItemID);
+                                tmp.Pack(clothes[a].ItemID);
                     }
                     return tmp.Data.ToArray();
                 }
@@ -1864,14 +1864,14 @@ namespace Wonderland_Private_Server.Code.Objects
                     for (byte n = 1; n < 7; n++)
                         if (clothes[n].ItemID != 0)
                         {
-                            tmp.Pack16(clothes[n].ItemID);
-                            tmp.Pack8(0);//dmg
-                            tmp.Pack16(0);//unknown
-                            tmp.Pack16(0);//socketitem
-                            tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                            tmp.Pack(clothes[n].ItemID);
+                            tmp.Pack(0);//dmg
+                            tmp.Pack(0);//unknown
+                            tmp.Pack(0);//socketitem
+                            tmp.Pack(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
                         }
                         else
-                            tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                            tmp.Pack(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
                     return tmp.Data.ToArray();
                 }
@@ -1893,9 +1893,9 @@ namespace Wonderland_Private_Server.Code.Objects
                         {
                             if (clothes[n].ItemID != 0)
                             {
-                                tmp.Pack16(clothes[n].ItemID);
-                                tmp.Pack8(clothes[n].Damage);
-                                tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                                tmp.Pack(clothes[n].ItemID);
+                                tmp.Pack(clothes[n].Damage);
+                                tmp.Pack(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
                             }
                         }
                     }
@@ -2096,38 +2096,38 @@ namespace Wonderland_Private_Server.Code.Objects
         void SendExp()
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 8, 2, 4 });
-            p.Pack16(slot);
-            p.Pack8(36);
-            p.Pack8(1);
-            p.Pack64((ulong)TotalExp);
+            p.Pack(new byte[] { 8, 2, 4 });
+            p.Pack(slot);
+            p.Pack(36);
+            p.Pack(1);
+            p.Pack((ulong)TotalExp);
             owner.Send(p);
         }
         void Send_2(byte stat, UInt32 ammt, UInt32 skill)
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 8, 2, 4 });
-            p.Pack16(slot);
-            p.Pack8(stat);
-            p.Pack8(2);
-            p.Pack32(ammt);
-            p.Pack32(skill);
+            p.Pack(new byte[] { 8, 2, 4 });
+            p.Pack(slot);
+            p.Pack(stat);
+            p.Pack(2);
+            p.Pack(ammt);
+            p.Pack(skill);
             owner.Send(p);
         }
         void Send_16(byte src, byte dst) //deequipping
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 23, 16 });
-            p.Pack8(src);
-            p.Pack8(dst);
+            p.Pack(new byte[] { 23, 16 });
+            p.Pack(src);
+            p.Pack(dst);
             //socket.Send(p);
         }
         void Send_17(byte src, byte dst) //equipping
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 23, 17 });
-            p.Pack8(src);
-            p.Pack8(dst);
+            p.Pack(new byte[] { 23, 17 });
+            p.Pack(src);
+            p.Pack(dst);
             //socket.Send(p);
         }
         int CalcMaxExp(byte rebirth, int Level)

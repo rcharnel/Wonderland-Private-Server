@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Utilities;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -26,22 +27,22 @@ namespace Wonderland_Private_Server.ActionCodes
             if (r.BattleScene != null && r.BattleScene.RoundState == Code.Enums.eBattleRoundState.ReadyState)
             {
                 BattleAction tmp = new BattleAction();
-                tmp.src = r.BattleScene.FindFighter(p.Unpack8(2), p.Unpack8(3));
-                tmp.dst = r.BattleScene.FindFighter(p.Unpack8(4), p.Unpack8(5));
+                tmp.src = r.BattleScene.FindFighter(p.Unpack8(), p.Unpack8());
+                tmp.dst = r.BattleScene.FindFighter(p.Unpack8(), p.Unpack8());
                 tmp.skill = new DataManagement.DataFiles.Skill();
-                var c1 = cGlobal.gSkillManager.Get_Skill((ushort)p.Unpack32(6));
-                var c2 = cGlobal.gSkillManager.Get_Skill((ushort)p.Unpack32(6));
+                var c1 = cGlobal.gSkillManager.Get_Skill((ushort)p.Unpack16());
+                //var c2 = cGlobal.gSkillManager.Get_Skill((ushort)p.Unpack32(6));
                 if (c1 != null)
                 {
                     tmp.skill = new DataManagement.DataFiles.Skill(c1.GetData());
                     tmp.skill.Grade = c1.Grade;
                     //tmp.skill.Proficiency = c1.Proficiency;
                 }
-                else
-                    tmp.skill = new DataManagement.DataFiles.Skill(c2.GetData());
+                //else
+                    //tmp.skill = new DataManagement.DataFiles.Skill(c2.GetData());
 
-                tmp.unknownbyte = p.Unpack8(8);
-                tmp.unknownbyte2 = p.Unpack8(9);
+                tmp.unknownbyte = p.Unpack8();
+                tmp.unknownbyte2 = p.Unpack8();
                 r.BattleScene.PLayer_BattleAction(tmp);
             }
         }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Code.Enums;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -23,11 +24,11 @@ namespace Wonderland_Private_Server.ActionCodes
         }
         void Recv1(ref Player r, RecvPacket p)
         {
-            r.CurrentMap.onEnterTent(p.Unpack32(2), r);
+            r.CurrentMap.onEnterTent(p.Unpack32(), r);
         }
         void Recv2(ref Player r, RecvPacket p)
         {
-            r.Inv.onItemCanceled(p.Unpack8(2));
+            r.Inv.onItemCanceled(p.Unpack8());
         }
     }
 }

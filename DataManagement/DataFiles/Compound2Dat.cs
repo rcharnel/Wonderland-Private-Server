@@ -40,9 +40,10 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             else
                 Console.WriteLine("Loading Failed");
         }
-        public bool Load(string path)
+        public bool Load(string path,bool clear = true)
         {
-            buildList.Clear();
+            if (clear)
+                buildList.Clear();
             if (!File.Exists(path)) return false;
             byte[] data = File.ReadAllBytes(path);
             int max = data.Length / 65;

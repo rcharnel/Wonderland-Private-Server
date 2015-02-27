@@ -11,14 +11,14 @@ using System.IO;
 
 namespace Wonderland_Private_Server.Web
 {
-    public class WebServer
+    public class IISServer
     {
         private TcpListener myListener;
         private int port = 9580;  // Select any free port you wish 
 
         //The constructor which make the TcpListener start listening on th
         //given port. It also calls a Thread on the method StartListen(). 
-        public WebServer()
+        public IISServer()
         {
         }
 
@@ -27,13 +27,13 @@ namespace Wonderland_Private_Server.Web
             try
             {
                 //start listing on the given port
-                myListener = new TcpListener(port);
+                myListener = new TcpListener(IPAddress.Parse("127.0.0.1"),port);
                 myListener.Start();
                 Console.WriteLine("Web Server Running... Press ^C to Stop...");
 
                 //start the thread which calls the method 'StartListen'
                 //Thread th = new Thread(new ThreadStart(StartListen));
-                //th.Start();
+                //th.Init();
                 //cGlobal.ThreadManager.Add(th);
                 return true;
 

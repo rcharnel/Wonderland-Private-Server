@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Utilities;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -22,21 +23,22 @@ namespace Wonderland_Private_Server.ActionCodes
                     default: LogServices.Log(p.A + "," + p.B + " Has not been coded"); break;
                 }
         }
-        void Recv1(ref Player p, Packet g)
+        void Recv1(ref Player p, RecvPacket g)
         {
-            if (g.Data.Count > 5)
+            if (g.Size > 5)
             {
-                byte direction = g.Data[2];
-                p.X = g.Unpack16(3);
-                p.Y = g.Unpack16(5);
+                byte direction = g.Unpack8();
+                p.X = g.Unpack16();
+                p.Y = g.Unpack16();
                 //WORD unknown = p->Unpack16(7);
                 //p.Info.e = 0;
                 SendPacket tmp = new SendPacket();
-                tmp.PackArray(new byte[] { 6, 1 });
-                tmp.Pack32(p.ID);
-                tmp.Pack8(direction);
-                tmp.Pack16(p.X);
-                tmp.Pack16(p.Y);
+                tmp.Pack(new byte[] { 6, 1 });
+                tmp.Pack(p.ID);
+                tmp.Pack(direction);
+                tmp.Pack(p.X);
+                tmp.Pack(p.Y);
+                tmp.SetHeader();
                 p.CurrentMap.Broadcast(tmp, p.ID);
             }
         }

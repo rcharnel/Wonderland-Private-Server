@@ -38,8 +38,8 @@ namespace Wonderland_Private_Server.ActionCodes
             //{
             //    SendPacket t = new SendPacket();
             //    t = new SendPacket();
-            //    t.PackArray(new byte[] { 2, 3 });
-            //    t.Pack32(100);
+            //    t.Pack(new byte[] { 2, 3 });
+            //    t.Pack(100);
             //    t.PackNString("Only GMs can start PK Battles %#");
             //    r.Send(t);
             //    return;

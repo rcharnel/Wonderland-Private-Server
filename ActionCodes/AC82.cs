@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Network;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -26,7 +27,7 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                p.CurGuild.AddMessage(p, r);
+                //p.CurGuild.AddMessage(p, r);
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
@@ -42,7 +43,7 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                p.CurGuild.OpenMessage(p,r);
+                //p.CurGuild.OpenMessage(p,r);
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }

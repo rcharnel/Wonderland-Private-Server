@@ -32,14 +32,14 @@ namespace Wonderland_Private_Server.Code.Objects
                 {
                     timer.Restart();
                     SendPacket p = new SendPacket();
-                    p.PackArray(new byte[] { 5, 5 });
+                    p.Pack(new byte[] { 5, 5 });
                     p.Unpack32(own.ID);
-                    p.Pack16(id);
+                    p.Pack(id);
                     own.CurrentMap.Broadcast(p);
                     p = new SendPacket();
-                    p.PackArray(new byte[] { 23, 207 });
-                    p.Pack8(1);
-                    p.Pack8(1);
+                    p.Pack(new byte[] { 23, 207 });
+                    p.Pack(1);
+                    p.Pack(1);
                     own.Send(p);
                 }
             }
@@ -53,14 +53,14 @@ namespace Wonderland_Private_Server.Code.Objects
                     timer.Stop();
                     endtime -= timer.Elapsed.Seconds;
                     SendPacket p = new SendPacket();
-                    p.PackArray(new byte[] { 5, 5 });
+                    p.Pack(new byte[] { 5, 5 });
                     p.Unpack32(own.ID);
-                    p.Pack16(0);
+                    p.Pack(0);
                     own.CurrentMap.Broadcast(p);
                     p = new SendPacket();
-                    p.PackArray(new byte[] { 23, 207 });
-                    p.Pack8(1);
-                    p.Pack8(2);
+                    p.Pack(new byte[] { 23, 207 });
+                    p.Pack(1);
+                    p.Pack(2);
                     own.Send(p);
                 }
             }
@@ -85,9 +85,9 @@ namespace Wonderland_Private_Server.Code.Objects
         public void SendStatus()
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 23, 207 });
-            p.Pack8(2);
-            p.Pack16((ushort)(endtime - timer.Elapsed.Seconds));
+            p.Pack(new byte[] { 23, 207 });
+            p.Pack(2);
+            p.Pack((ushort)(endtime - timer.Elapsed.Seconds));
             own.Send(p);
         }
         public void Update()

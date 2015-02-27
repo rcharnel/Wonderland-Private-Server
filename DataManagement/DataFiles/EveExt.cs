@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Wonderland_Private_Server.Code.Objects;
+using Wonderland_Private_Server.Network;
 
 namespace Wonderland_Private_Server.DataManagement.DataFiles
 {
@@ -39,7 +40,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         public UInt16 unknownword;
         public SceneInfo Scene;
         public List<BattleInfoEntries> ExtBattleInfo = new List<BattleInfoEntries>();
-        public List<NpcEntries> Npclist = new List<NpcEntries>();
+        public List<MapObjectEntries> Npclist = new List<MapObjectEntries>();
         public List<Entry_Exit_Point_Entries> Entry_Points = new List<Entry_Exit_Point_Entries>();
         public List<MiningAreaEntries> MiningAreas = new List<MiningAreaEntries>();
         public List<ItemsinMapEntries> ItemAreas = new List<ItemsinMapEntries>();
@@ -55,7 +56,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
     {
         public UInt32 x;
         public UInt32 y;
-        public UInt32 z;
+        public UInt32 delay;
     }
     public class walkpattern
     {
@@ -67,7 +68,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         public UInt32 unknowndword2;
         public List<npcWalkStep> walksteps = new List<npcWalkStep>();
     }
-    public class NpcEntries
+    public class MapObjectEntries
     {
         public enum Interaction_Type
         {
@@ -77,8 +78,9 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             Buying,
             Selling,
         }
-        TimeSpan LastMove = new TimeSpan();
-        int step = 0;
+        DateTime finishwalk_anim;
+        DateTime LastBattle = new DateTime();
+        int curstep = 0;
 
         #region MapNpc Info
         public UInt16 clickId;
@@ -90,8 +92,8 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         public List<byte> unknownbytearray2 = new List<byte>();
         public byte unknownbyte2; //usually 0
         public UInt32 npcId;
-        public byte unknownbyte3;
-        public byte unknownbyte4;
+        public byte rotation;
+        public byte unknownbyte4;//mobs 4,5 (4 has random walk)
         public byte unknownbyte5;
         public List<npcWalkStep> walksteps = new List<npcWalkStep>();
         public byte unknownbyte6;
@@ -109,51 +111,75 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         public UInt16 unknownword5;
         #endregion
 
-        public bool NeedUpdate(TimeSpan time)
+        public void Update(DateTime time, List<Player> players)
         {
+            var list = players.Where(c => c.State == Code.Enums.PlayerState.InGame_InMap);
+            #region Walking
+            if (finishwalk_anim < time)
                 if (walksteps.Count > 0)
-                    if ((time - LastMove) > new TimeSpan(0, 0, 5))
-                        return true;
-                    else
-                        return false;
-                return false;
+                {
+                    try
+                    {
+                        if (curstep >= walksteps.Count) curstep = 0;
+                        
+                        var step = walksteps[curstep];
+
+                        foreach (var p in list)
+                        {
+                            SendPacket y = new SendPacket();
+                            y.Pack(new byte[] { 22, 2 });
+                            y.Pack(clickId);
+                            y.Pack((ushort)step.x);
+                            y.Pack((ushort)step.y);
+                            y.Pack(3);
+                            p.Send(y);
+                        }
+                        curstep++;
+                        
+                        finishwalk_anim = DateTime.Now.Add(new TimeSpan(0,0,1));
+                    }
+                    catch { }
+                }
+                else
+                switch(unknownbyte4)
+                {
+                    case 2:
+                    case 3:
+                    case 4:
+                        {
+                            Random rand = new Random();
+                            foreach (var p in list)
+                            {
+                                SendPacket r = new SendPacket();
+                                r.Pack(new byte[] { 22, 2 });
+                                r.Pack(clickId);
+                               if (curstep >= rand.Next(2, 5))
+                                {
+                                    r.Pack((ushort)x);
+                                    r.Pack((ushort)y);
+                                    curstep = 0;
+                                }
+                                else
+                                {
+                                   int curx = (int)x;
+                                   int cury = (int)y;
+                                   
+
+                                    r.Pack((ushort)rand.Next(curx-(curx/curstep),curx + (curx/2+curstep)));
+                                    r.Pack((ushort)rand.Next(cury-(cury/curstep),cury + (cury/2+curstep)));
+                                }
+                                r.Pack(3);
+                                p.Send(r);
+                            }
+
+                            curstep++;
+                            finishwalk_anim = DateTime.Now.Add(new TimeSpan(0, 0, 2));
+                        }break;
+                }
+            #endregion
+
+            return;
         }
-        //public void Update(List<cCharacter> t,cGlobals g)
-        //{
-        //    for (int a = 0; a < t.Count; a++)
-        //        if (!t[a].warping)
-        //            Walk(t[a], g);
-        //    LastMove = g.UpTime.Elapsed;
-        //}
-        //public void Walk(cCharacter src,cGlobals g)
-        //{
-        //    cSendPacket y = new cSendPacket(g);
-        //    if (step == walksteps.Count)
-        //    {
-        //        step = 0;
-        //        y = new cSendPacket(g);
-        //        y.Header(22, 2);
-        //        y.AddWord(this.clickId);
-        //        y.AddWord((ushort)this.x);
-        //        y.AddWord((ushort)this.y);
-        //        y.AddByte(this.unknownbyte6);
-        //        y.SetSize();
-        //        y.cCharacter = src;
-        //        y.Send();
-        //    }
-        //    //send new step
-        //    y = new cSendPacket(g);
-        //    y.Header(22, 2);
-        //    y.AddWord(this.clickId);
-        //    y.AddWord((ushort)this.walksteps[step].x);
-        //    y.AddWord((ushort)this.walksteps[step].y);
-        //    y.AddByte(3);
-        //    y.SetSize();
-        //    step++;
-        //    y.SetSize();
-        //    y.cCharacter = src;
-        //    y.Send();
-        //}
 
         //public void Interact(Interaction_Type l = Interaction_Type.none, byte answer = 0, byte slot = 0, byte ammt = 0)
         //{

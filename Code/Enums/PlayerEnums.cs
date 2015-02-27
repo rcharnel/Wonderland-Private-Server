@@ -12,7 +12,7 @@ namespace Wonderland_Private_Server.Code.Enums
         Connected_CharacterSelection,
         Connected_CharacterCreation,
         Connected_Loggingin,
-        InGame_InMap_Standing,
+        InGame_InMap,
         InGame_Warping,
         InGame_Interacting,
         

@@ -7,17 +7,20 @@ using GupdtSrv;
 using System.Reflection;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Config;
+using System.Collections.Concurrent;
 
 namespace Wonderland_Private_Server
 {
     static class cGlobal
     {
-        public static List<System.Threading.Thread> ThreadManager = new List<System.Threading.Thread>();
+        public static bool Run;
+
+
         public static Config.Settings SrvSettings = new Config.Settings();
 
         public static gitClient GClient = new gitClient();
 
-
+        public static Network.TcpServer TcpListener = new Network.TcpServer();
         public static Network.WorldManager WLO_World;
         public static Utilities.Task.TaskManager ApplicationTasks;
 
@@ -32,7 +35,8 @@ namespace Wonderland_Private_Server
         public static DataManagement.DataFiles.ItemManager gItemManager;
         public static DataManagement.DataFiles.SkillDataFile gSkillManager;
         public static DataManagement.DataFiles.EveManager gEveManager;
-        public static DataManagement.DataFiles.NpcDat gNpcManager;        
+        public static DataManagement.DataFiles.NpcDat gNpcManager;
+        public static DataManagement.DataFiles.cCompound2Dat gCompoundDat;
         #endregion
 
         #region Systems
@@ -43,6 +47,7 @@ namespace Wonderland_Private_Server
 
         #region Settings
         #endregion
+
 
         public static ActionCodes.AC GetActionCode(int ID)
         {
@@ -60,24 +65,6 @@ namespace Wonderland_Private_Server
                 catch { Utilities.LogServices.Log(new Exception("failed to load AC " + (Activator.CreateInstance(y) as ActionCodes.AC).ID)); }
             }
             return null;
-        }
-        public static Maps.Map GetMap(ushort mapid)
-        {
-            return new Maps.Map(cGlobal.gEveManager.GetMapData(mapid));
-            //foreach (var y in (from c in Assembly.GetExecutingAssembly().GetTypes()
-            //                   where c.IsClass && c.IsPublic && c.IsSubclassOf(typeof(Maps.Map))
-            //                   select c))
-            //{
-            //    Maps.Map m = null;
-
-            //    try
-            //    {
-            //        m = (Activator.CreateInstance(y) as Maps.Map);
-            //        if (m.MapID == mapid) return m;
-            //    }
-            //    catch { Utilities.LogServices.Log(new Exception("failed to load Map " + (Activator.CreateInstance(y) as Maps.Map).MapID)); }
-            //}
-            //return null;
         }
     }
 }

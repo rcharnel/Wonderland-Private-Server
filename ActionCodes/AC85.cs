@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Code.Enums;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {///////
@@ -39,7 +40,7 @@ namespace Wonderland_Private_Server.ActionCodes
         }
         void Recv2(ref Player p, RecvPacket r)
         {
-            int tmp = r.Unpack8(2);
+            int tmp = r.Unpack8();
             try
             {
                 switch (tmp)
@@ -60,22 +61,22 @@ namespace Wonderland_Private_Server.ActionCodes
         {
            // int cc = r.Unpack8(4);
             //string tt = "";
-            string str = r.UnpackNChar(5);
-            int tmp = r.Unpack16(2);
-            try
-            {
-                //if (cc > 0)
-                //{
-                //    tt = r.Data.Skip(5).Take(cc).ToString();
-                //}
-                cGlobal.gInstanceSystem.CreaterInstance(ref p, tmp, str);
+            //string str = r.UnpackNChar(5);
+            //int tmp = r.Unpack16(2);
+            //try
+            //{
+            //    //if (cc > 0)
+            //    //{
+            //    //    tt = r.Data.Skip(5).Take(cc).ToString();
+            //    //}
+            //    cGlobal.gInstanceSystem.CreaterInstance(ref p, tmp, str);
 
-            }
-            catch (Exception t) { Utilities.LogServices.Log(t); }
+            //}
+            //catch (Exception t) { Utilities.LogServices.Log(t); }
         }
         void Recv4(ref Player p, RecvPacket r)
         {
-            int tmp = r.Unpack16(2); // get id instance selected
+            int tmp = r.Unpack16(); // get id instance selected
             try
             {
                 cGlobal.gInstanceSystem.PreJoin(p.UserID, tmp);
@@ -85,7 +86,7 @@ namespace Wonderland_Private_Server.ActionCodes
         }
         void Recv5(ref Player p, RecvPacket r)
         {
-            int tmp = r.Unpack16(2); // get id instance selected
+            int tmp = r.Unpack16(); // get id instance selected
             try
             {
                 cGlobal.gInstanceSystem.Join(ref p, tmp);
@@ -114,7 +115,7 @@ namespace Wonderland_Private_Server.ActionCodes
         }
         void Recv11(ref Player p, RecvPacket r)
         {
-            byte tmp = r.Unpack8(2);
+            byte tmp = r.Unpack8();
             try
             {
                 // move tab members

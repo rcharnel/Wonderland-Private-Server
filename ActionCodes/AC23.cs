@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Code.Enums;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -39,7 +40,7 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                byte pos = r.Unpack8(2);
+                byte pos = r.Unpack8();
                 p.CurrentMap.PickUpItem(pos, ref p);
                
             }
@@ -49,9 +50,9 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                byte pos = r.Unpack8(2);
-                byte qnt = r.Unpack8(3);
-                byte ukn = r.Unpack8(4);
+                byte pos = r.Unpack8();
+                byte qnt = r.Unpack8();
+                byte ukn = r.Unpack8();
                 var item = p.Inv[pos];
 
                 if (item != null)
@@ -72,10 +73,10 @@ namespace Wonderland_Private_Server.ActionCodes
                   {
                       // test need ASK destroy
                       SendPacket s = new SendPacket();
-                      s.PackArray(new byte[] { 23, 212, 255 });
-                      s.Pack8(pos);
-                      s.Pack16(item.ItemID);
-                      s.Pack8(qnt);
+                      s.Pack(new byte[] { 23, 212, 255 });
+                      s.Pack(pos);
+                      s.Pack(item.ItemID);
+                      s.Pack(qnt);
                       p.Send(s);
 
                   }
@@ -87,9 +88,9 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                byte src = r.Data[2];
-                byte ammt = r.Data[3];
-                byte dst = r.Data[4];
+                byte src = r[2];
+                byte ammt = r[3];
+                byte dst = r[4];
 
                 if (((src > 0) && (src < 51)) && ((dst > 0) && (dst < 51)) && ((ammt > 0) && (ammt < 51)))
                     p.Inv.MoveItem(src, dst, ammt);
@@ -102,7 +103,7 @@ namespace Wonderland_Private_Server.ActionCodes
             try
             {
                 
-            byte loc = r.Data[2];
+            byte loc = r[2];
             if ((loc > 0) && (loc < 51))
             {
                 //TODO do any checks here to make sure we can wear item or in Equipment class
@@ -116,8 +117,8 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                byte loc = r.Data[2];
-                byte dst = r.Data[3];
+                byte loc = r[2];
+                byte dst = r[3];
                 if ((loc > 0) && (loc < 7) && (dst > 0) && (dst < 51))
                 {
                     p.unWearEQ(loc, dst);
@@ -137,7 +138,7 @@ namespace Wonderland_Private_Server.ActionCodes
         {          
             try
             {               
-                    byte pos = r.Unpack8(2);
+                    byte pos = r.Unpack8();
                     if (p.Inv[pos].ItemID == 36002)
                     {
                         p.Tent.Open();
@@ -150,17 +151,17 @@ namespace Wonderland_Private_Server.ActionCodes
             
             try
             {
-                byte pos = r.Unpack8(2);
-                byte qnt = r.Unpack8(3);
-                byte ukn = r.Unpack8(4); //??
+                byte pos = r.Unpack8();
+                byte qnt = r.Unpack8();
+                byte ukn = r.Unpack8(); //??
                 var item = p.Inv[pos];
                 if (item != null)
                 {
                     // test confirm destroy item
                     SendPacket s = new SendPacket();
-                    s.PackArray(new byte[] { 23,26 });                    
-                    s.Pack16(item.ItemID);
-                    s.Pack8(qnt);
+                    s.Pack(new byte[] { 23, 26 });
+                    s.Pack(item.ItemID);
+                    s.Pack(qnt);
                     p.Send(s);
                     p.Inv.RemoveItem(pos, qnt);
                 }

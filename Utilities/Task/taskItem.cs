@@ -16,12 +16,14 @@ namespace Wonderland_Private_Server.Utilities.Task
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected string taskname;
-        protected TimeSpan interval;
+        public TimeSpan interval;
+        public DateTime Createdat,EndofLife;
         protected DateTime RanAt, nextExec,guidelay;
         protected string status;
         Thread tskwrk;
         public taskItem(string name,TimeSpan time = new TimeSpan())
         {
+            Createdat = DateTime.Now;
             taskname = name;
             if (time == new TimeSpan())
                 interval = new TimeSpan(0, 0, 30);
@@ -82,8 +84,7 @@ namespace Wonderland_Private_Server.Utilities.Task
             RanAt = DateTime.Now;
             tskwrk = new Thread(new ThreadStart(TaskWrk));
             tskwrk.Name = taskname;
-            tskwrk.Start();
-            cGlobal.ThreadManager.Add(tskwrk);
+            tskwrk.Init();
         }
         public virtual void onCancel()
         {
@@ -101,8 +102,7 @@ namespace Wonderland_Private_Server.Utilities.Task
                 RanAt = DateTime.Now;
                 tskwrk = new Thread(new ThreadStart(TaskWrk));
                 tskwrk.Name = taskname;
-                tskwrk.Start();
-                cGlobal.ThreadManager.Add(tskwrk);
+                tskwrk.Init();
                 status = "Running";
             }
             else if(tskwrk != null)

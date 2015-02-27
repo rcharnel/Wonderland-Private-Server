@@ -105,8 +105,8 @@ namespace Wonderland_Private_Server.Code.Objects
                 if (value != null && host.inGame)
                 {
                     SendPacket tmp = new SendPacket();
-                    tmp.PackArray(new byte[] { 19, 1 });
-                    tmp.Pack32(value.ID);
+                    tmp.Pack(new byte[] { 19, 1 });
+                    tmp.Pack(value.ID);
                     host.Send(tmp);                    
                 }
             }
@@ -201,38 +201,38 @@ namespace Wonderland_Private_Server.Code.Objects
             {
                 SendPacket p = new SendPacket();
                  
-                p.PackArray(new byte[] { 15, 8 });
+                p.Pack(new byte[] { 15, 8 });
 
                 for (byte n = 1; n <= 4; n++)
                 {
                     if (petlist.ContainsKey(n) && petlist[n] != null)
                     {
-                        p.Pack8(n);
-                        p.Pack16(((ushort)petlist[n].ID));
-                        p.Pack32((uint)petlist[n].TotalExp);
-                        p.Pack8(petlist[n].Level);
-                        p.Pack32(100);// p.Pack32((uint)petlist[n].CurHP);
-                        p.Pack16(100);// p.Pack16((ushort)petlist[n].CurSP);
-                        p.Pack16(5);// p.Pack16(petlist[n].Int);
-                        p.Pack16(5);//p.Pack16(petlist[n].Str);
-                        p.Pack16(5);//p.Pack16(petlist[n].Con);
-                        p.Pack16(5);//p.Pack16(petlist[n].Agi);
-                        p.Pack16(5);//p.Pack16(petlist[n].Wis);
-                        p.Pack8(0);
-                        p.Pack8(petlist[n].Amity);
-                        p.Pack16(1);
-                        p.Pack8(0);
+                        p.Pack(n);
+                        p.Pack(((ushort)petlist[n].ID));
+                        p.Pack((uint)petlist[n].TotalExp);
+                        p.Pack(petlist[n].Level);
+                        p.Pack(100);// p.Pack((uint)petlist[n].CurHP);
+                        p.Pack(100);// p.Pack((ushort)petlist[n].CurSP);
+                        p.Pack(5);// p.Pack(petlist[n].Int);
+                        p.Pack(5);//p.Pack(petlist[n].Str);
+                        p.Pack(5);//p.Pack(petlist[n].Con);
+                        p.Pack(5);//p.Pack(petlist[n].Agi);
+                        p.Pack(5);//p.Pack(petlist[n].Wis);
+                        p.Pack(0);
+                        p.Pack(petlist[n].Amity);
+                        p.Pack(1);
+                        p.Pack(0);
                        
-                        p.Pack8(petlist[n].Skill1.Grade);
-                        p.Pack32(petlist[n].Skill1.Exp);
-                        p.Pack8(petlist[n].Skill2.Grade);
-                        p.Pack32(petlist[n].Skill2.Exp);
-                        p.Pack8((petlist[n].Reborn) ? petlist[n].Skill3.Grade : (byte)0);
-                        p.Pack32((petlist[n].Reborn) ? petlist[n].Skill3.Exp : (byte)0);
-                        p.PackArray(petlist[n].FullEqData);
-                        p.Pack16(0);
-                        p.Pack8(0);//reborn?
-                        p.Pack8(0);//potential
+                        p.Pack(petlist[n].Skill1.Grade);
+                        p.Pack(petlist[n].Skill1.Exp);
+                        p.Pack(petlist[n].Skill2.Grade);
+                        p.Pack(petlist[n].Skill2.Exp);
+                        p.Pack((petlist[n].Reborn) ? petlist[n].Skill3.Grade : (byte)0);
+                        p.Pack((petlist[n].Reborn) ? petlist[n].Skill3.Exp : (byte)0);
+                        p.Pack(petlist[n].FullEqData);
+                        p.Pack(0);
+                        p.Pack(0);//reborn?
+                        p.Pack(0);//potential
                     }
                 }
                 if (p.Data.Count > 7)
@@ -261,21 +261,21 @@ namespace Wonderland_Private_Server.Code.Objects
             if (!load)
             {
                 SendPacket pkt = new SendPacket();
-                pkt.PackArray(new byte[] { 15, 1 });
-                pkt.Pack32(host.ID);
-                pkt.Pack32(pet.NpcID);
-                pkt.Pack8(2);//testing if level
-                pkt.Pack32((uint)tmp.TotalExp);
-                pkt.Pack8(tmp.Skill1.Grade);
-                pkt.Pack32(tmp.Skill1.Exp);
-                pkt.Pack8(tmp.Skill2.Grade);
-                pkt.Pack32(tmp.Skill2.Exp);
-                pkt.Pack8(tmp.Skill3.Grade);
-                pkt.Pack32(tmp.Skill3.Exp);
-                pkt.Pack8(tmp.Amity);
-                pkt.Pack16(0);
-                pkt.Pack16(0);
-                pkt.Pack8(0);
+                pkt.Pack(new byte[] { 15, 1 });
+                pkt.Pack(host.ID);
+                pkt.Pack(pet.NpcID);
+                pkt.Pack(2);//testing if level
+                pkt.Pack((uint)tmp.TotalExp);
+                pkt.Pack(tmp.Skill1.Grade);
+                pkt.Pack(tmp.Skill1.Exp);
+                pkt.Pack(tmp.Skill2.Grade);
+                pkt.Pack(tmp.Skill2.Exp);
+                pkt.Pack(tmp.Skill3.Grade);
+                pkt.Pack(tmp.Skill3.Exp);
+                pkt.Pack(tmp.Amity);
+                pkt.Pack(0);
+                pkt.Pack(0);
+                pkt.Pack(0);
                 host.Send(pkt);
 
                 if (BattlePet != null)
@@ -291,9 +291,9 @@ namespace Wonderland_Private_Server.Code.Objects
                 if (petlist.Remove(slot))
                 {
                     SendPacket tmp = new SendPacket();
-                    tmp.PackArray(new byte[] { 15, 2 });
-                    tmp.Pack32(host.ID);
-                    tmp.Pack8(slot);
+                    tmp.Pack(new byte[] { 15, 2 });
+                    tmp.Pack(host.ID);
+                    tmp.Pack(slot);
                     host.Send(tmp);
                 }
             }
@@ -310,13 +310,13 @@ namespace Wonderland_Private_Server.Code.Objects
                 if (host.CurrentMap != null)
                 {
                     SendPacket tmp = new SendPacket();
-                    tmp.PackArray(new byte[] { 15, 4 });
-                    tmp.Pack32(host.ID);
-                    tmp.Pack32(BattlePet.ID);
-                    tmp.Pack8(0);
-                    tmp.Pack8(1);
-                    tmp.PackString(BattlePet.Name);
-                    tmp.Pack16(0);//weapon
+                    tmp.Pack(new byte[] { 15, 4 });
+                    tmp.Pack(host.ID);
+                    tmp.Pack(BattlePet.ID);
+                    tmp.Pack(0);
+                    tmp.Pack(1);
+                    tmp.Pack(BattlePet.Name);
+                    tmp.Pack(0);//weapon
                     host.CurrentMap.Broadcast(tmp, host.ID);
                 }
             }
@@ -324,11 +324,11 @@ namespace Wonderland_Private_Server.Code.Objects
         public void Rest_Pet()
         {           
             SendPacket tmp = new SendPacket();
-            tmp.PackArray(new byte[] { 19, 2 });
+            tmp.Pack(new byte[] { 19, 2 });
             host.Send(tmp);
             tmp = new SendPacket();
-            tmp.PackArray(new byte[] { 19, 7 });
-            tmp.Pack32(host.ID);
+            tmp.Pack(new byte[] { 19, 7 });
+            tmp.Pack(host.ID);
             host.CurrentMap.Broadcast(tmp, host.ID);
             BattlePet = null;
         }
@@ -340,15 +340,15 @@ namespace Wonderland_Private_Server.Code.Objects
                 {
                     SendPacket tmp = new SendPacket();
                     tmp = new SendPacket();
-                    tmp.PackArray(new byte[] { 19, 7 });
-                    tmp.Pack32(host.ID);
+                    tmp.Pack(new byte[] { 19, 7 });
+                    tmp.Pack(host.ID);
                     host.CurrentMap.Broadcast(tmp, host.ID); RidePet = BattlePet; BattlePet = null;
                 }
                 SendPacket f = new SendPacket();
-                f.PackArray(new byte[] { 15, 16 });
-                f.Pack8((byte)slot);
-                f.Pack32(host.ID);
-                f.Pack32(petlist[slot].ID);
+                f.Pack(new byte[] { 15, 16 });
+                f.Pack((byte)slot);
+                f.Pack(host.ID);
+                f.Pack(petlist[slot].ID);
                 host.CurrentMap.Broadcast(f);
                 host.Send8_1();
             }
@@ -358,8 +358,8 @@ namespace Wonderland_Private_Server.Code.Objects
             if (RidePet != null)
             {
                 SendPacket f = new SendPacket();
-                f.PackArray(new byte[] { 15, 17 });
-                f.Pack32(host.ID);
+                f.Pack(new byte[] { 15, 17 });
+                f.Pack(host.ID);
                 host.CurrentMap.Broadcast(f);
                 host.Send8_1();
                 RidePet = null;

@@ -129,9 +129,9 @@ namespace Wonderland_Private_Server.Code.Objects
                     if (senddata)
                     {
                         SendPacket p = new SendPacket();
-                        p.PackArray(new byte[] { 23, 9 });
-                        p.Pack8(at);
-                        p.Pack8(ammt);
+                        p.Pack(new byte[] { 23, 9 });
+                        p.Pack(at);
+                        p.Pack(ammt);
                         host.Send(p);
                     }
                     return remItem;
@@ -159,8 +159,8 @@ namespace Wonderland_Private_Server.Code.Objects
                     if (at != 0) a = at;
 
                     SendPacket tmp = new SendPacket();
-                    tmp.PackArray(new byte[] { 23, 6 });
-                    tmp.Pack16(item.ItemID);
+                    tmp.Pack(new byte[] { 23, 6 });
+                    tmp.Pack(item.ItemID);
 
                     byte ammt = 0;
 
@@ -200,14 +200,14 @@ namespace Wonderland_Private_Server.Code.Objects
                     if (ammt > 0 && sendData)
                     {
                         addammt -= ammt;
-                        tmp.Pack8(ammt);
-                        tmp.Pack32(0);
-                        tmp.Pack32(0);
-                        tmp.Pack32(0);
-                        tmp.Pack32(0);
-                        tmp.Pack32(0);
-                        tmp.Pack32(0);
-                        tmp.Pack16(0);
+                        tmp.Pack(ammt);
+                        tmp.Pack(0);
+                        tmp.Pack(0);
+                        tmp.Pack(0);
+                        tmp.Pack(0);
+                        tmp.Pack(0);
+                        tmp.Pack(0);
+                        tmp.Pack(0);
                         host.Send(tmp);
                     }
                 if (totalammt == item.Ammt || at != 0)
@@ -229,8 +229,8 @@ namespace Wonderland_Private_Server.Code.Objects
                 if (Items[from].ItemID == 0 || from == to) return;
 
                 SendPacket tmp = new SendPacket();
-                tmp.PackArray(new byte[] { 23, 10 });
-                tmp.Pack8(from);
+                tmp.Pack(new byte[] { 23, 10 });
+                tmp.Pack(from);
 
                 var item = RemoveItem(from, ammt, false);
 
@@ -239,8 +239,8 @@ namespace Wonderland_Private_Server.Code.Objects
                     byte wasplaced = (byte)AddItem(item, to, false);
                     if (wasplaced > 0)
                     {
-                        tmp.Pack8(wasplaced);
-                        tmp.Pack8(to);
+                        tmp.Pack(wasplaced);
+                        tmp.Pack(to);
                         host.Send(tmp);
                     }
                 }
@@ -284,11 +284,11 @@ namespace Wonderland_Private_Server.Code.Objects
                         for (byte a = 1; a < Items.Count; a++)
                             if (Items[a].ItemID != 0)
                             {
-                                tmp.Pack8(a);
-                                tmp.Pack16(Items[a].ItemID);
-                                tmp.Pack8(Items[a].Ammt);
-                                tmp.Pack8(Items[a].Damage);
-                                tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                                tmp.Pack(a);
+                                tmp.Pack(Items[a].ItemID);
+                                tmp.Pack(Items[a].Ammt);
+                                tmp.Pack(Items[a].Damage);
+                                tmp.Pack(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
                             }
                     }
                     return tmp.Data.ToArray();
@@ -328,12 +328,12 @@ namespace Wonderland_Private_Server.Code.Objects
                             //}
                             Items[slot].Ammt -= 1;
                             SendPacket p = new SendPacket();
-                            p.PackArray(new byte[] { 23, 9 });
-                            p.Pack8(slot);
-                            p.Pack8(ammt);
+                            p.Pack(new byte[] { 23, 9 });
+                            p.Pack(slot);
+                            p.Pack(ammt);
                            host.Send(p);
                            p = new SendPacket();
-                           p.PackArray(new byte[] { 23, 15 });
+                           p.Pack(new byte[] { 23, 15 });
                            host.Send(p);
                             host.DataOut = SendType.Normal;
                         } break;
@@ -372,5 +372,14 @@ namespace Wonderland_Private_Server.Code.Objects
             matrixloc[1] = (byte)(t);
             return matrixloc;
         }//wlo specific
+    }
+
+    public class TentInventoryManager : InventoryManager
+    {
+
+        public TentInventoryManager(Player src):base(src)
+        {
+
+        }
     }
 }

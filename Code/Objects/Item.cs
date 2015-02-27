@@ -32,6 +32,7 @@ namespace Wonderland_Private_Server.Code.Objects
         /// an Item's Data
         /// </summary>
         protected ItemData Data { get { return data ?? new ItemData(); } }
+        public string Name { get { return Data.Name;} }
         public UInt16 ItemID { get { return (Data != null) ? Data.ItemID : (ushort)0; } }        
         public int InvHeight { get {return (Data != null) ? Data.InvHeight : (ushort)0; } }
         public int InvWidth { get { return (Data != null) ? Data.InvWidth : (ushort)0; } }
@@ -206,15 +207,13 @@ namespace Wonderland_Private_Server.Code.Objects
     public class TentItem:cItem
     {
         public byte index;
-        public cItem citem;
-        public ushort ItemID;
-        public byte tentX;
-        public byte tentY;
-        public byte tentZ;
-        public byte qnt;
+
+        public ushort tentX;
+        public ushort tentY;
+        public ushort tentZ;
         public byte rotate;
         public byte especial; // itens stoneKnife ,woodenSaw
-        byte[] accessory;  //testing tmp
+        byte[] accessory = new byte[10];  //testing tmp
         public byte a1;
         public byte a2;
         public byte a3;
@@ -231,7 +230,6 @@ namespace Wonderland_Private_Server.Code.Objects
 
         public TentItem()
         {
-          accessory = new byte[10];
         }
        
     }

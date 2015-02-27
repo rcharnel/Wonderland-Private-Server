@@ -12,7 +12,7 @@ using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.GM;
 using Wonderland_Private_Server.DataManagement.DataFiles;
-
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
@@ -20,7 +20,6 @@ namespace Wonderland_Private_Server.Code.Objects
     {
         readonly object mylock = new object();
         bool blockupdt;
-        Thread wrk;
 
        
         public int CurInstance;//tmp
@@ -38,10 +37,9 @@ namespace Wonderland_Private_Server.Code.Objects
         Queue<SendPacket> DatatoSend;
         SendPacket QueuePkt, MultiPkt;
         SendType dataout, prevdataout;
-        Socket socket;
+        WloClient socket;
         int m_nTimer;
-        IPAddress ip;
-        int port;
+        string addr;
         bool killFlag;
         int holdSize;
         byte[] holdData;
@@ -75,22 +73,14 @@ namespace Wonderland_Private_Server.Code.Objects
         public Maps.MapObject object_interactingwith;
         Dictionary<int, ActionCodes.AC> aclist;
 
-        public Player(ref Socket sock)
+        public Player(ref Wlo.Core.WloClient sock)
         {
-            wrk = new Thread(new ThreadStart(Recv_Send));
             mylock = new object();
             buffer = new byte[2048];
-            this.host = this;
+            //this.host = this;
             this.socket = sock;
-            this.socket.Blocking = true;
-            socket.LingerState = new LingerOption(false, 0);
-            //socket.ReceiveTimeout = 5000;
-            socket.SendTimeout = 5000;
             m_nTimer = Environment.TickCount;
-            ip = ((IPEndPoint)sock.RemoteEndPoint).Address;
-            port = ((IPEndPoint)sock.RemoteEndPoint).Port;
-            wrk.Start();
-            cGlobal.ThreadManager.Add(wrk);
+            addr = sock.SockAddress();
             aclist = new Dictionary<int, ActionCodes.AC>();
             base.Clear();
             BlockSave = true;
@@ -108,17 +98,17 @@ namespace Wonderland_Private_Server.Code.Objects
             m_tent = new Tent(this);
             m_riceball = new cRiceBall(this);
             m_teammembers = new List<Player>();
+            
         }
         ~Player()
         {
-            wrk.Abort();
         }
 
         #region ThreadSafe  Properties
 
         #region ClientSocket
-        public IPAddress ClientIP { get { return ip; } }
-        public int ClientPort { get { return port; } }
+        public IPAddress ClientIP { get { return IPAddress.Parse(addr.Split(':')[0]); } }
+        public int ClientPort { get { return int.Parse(addr.Split(':')[1]); } }
         public bool isAlive
         {
             get
@@ -133,6 +123,7 @@ namespace Wonderland_Private_Server.Code.Objects
                 return new TimeSpan(0, 0, 0, 0, Environment.TickCount - m_nTimer);
             }
         }
+        public WloClient Socket { get { return socket; } }
         #endregion
 
         #region Account
@@ -186,7 +177,7 @@ namespace Wonderland_Private_Server.Code.Objects
             {
                 prevdataout = dataout; dataout = value;
                 if (prevdataout == SendType.Multi && value == SendType.Normal) Send(MultiPkt);
-                else if (value == SendType.Multi) MultiPkt = new SendPacket(false, true);
+                else if (value == SendType.Multi) MultiPkt = new SendPacket(false);
 
             }
         }
@@ -312,11 +303,11 @@ namespace Wonderland_Private_Server.Code.Objects
             get
             {
                 SendPacket f = new SendPacket();
-                f.PackArray(new byte[] { 13, 6 });
-                f.Pack32(ID);
-                f.Pack8((byte)m_teammembers.Count(c => c.ID != ID));
+                f.Pack(new byte[] { 13, 6 });
+                f.Pack(ID);
+                f.Pack((byte)m_teammembers.Count(c => c.ID != ID));
                 foreach (Player y in m_teammembers.Where(c => c.ID != ID))
-                    f.Pack32(y.ID);
+                    f.Pack(y.ID);
                 return f;
             }
         }
@@ -350,103 +341,14 @@ namespace Wonderland_Private_Server.Code.Objects
         }
         public void QueueStart()
         {
-            QueuePkt = new SendPacket(false, true);
+            QueuePkt = new SendPacket(false);
         }
         public void QueueEnd()
         {
             DatatoSend.Enqueue(QueuePkt);
             QueuePkt = null;
         }
-        void Recv_Send()
-        {
-            do
-            {
-                #region Read
-                try
-                {
-                    int nRef = -1;
-                    nRef = socket.Receive(buffer, 0, 2048, SocketFlags.None);
-                    if (nRef == 0) break;
-                    m_nTimer = Environment.TickCount;
-                    byte[] tmp2 = buffer.Take(nRef).ToArray();
-                    byte[] data;
-                    int len = tmp2.Length;
-                    int origLen = len;
 
-                    Encode(ref tmp2);
-                    //check for leftover data
-                    if (holdSize > 0)
-                    {
-                        len += holdSize;
-                        data = new byte[len];
-                        holdData.CopyTo(data, 0);
-                        tmp2.CopyTo(data, holdSize);
-                        holdSize = 0;
-                        holdData = null;
-                    }
-                    else
-                    {
-                        data = new byte[len]; tmp2.CopyTo(data, 0);
-                    }
-
-                    int at = 0;
-
-                    while (at < (len - 4))
-                    {
-                        if ((data[at] == 244) && (data[at + 1] == 68))
-                        {
-                            int size = data[at + 2] + (data[at + 3] << 8);
-                            if ((size + 4) > (len - at)) //not all packet present, so store remainder
-                            {
-                                holdSize = len - at;
-                                holdData = new byte[holdSize];
-                                Array.Copy(data, at, holdData, 0, holdSize);
-                                at = len;
-                            }
-                            else //full packet should be in this block
-                            {
-                                RecvPacket tmp = new RecvPacket();
-                                tmp.PackArray(data.Skip(4).ToArray(), size);
-                                PacketProcess(tmp);
-                                at += size + 4;
-                            }
-                        }
-                        else
-                            at++;
-                    }
-
-                    if (at < len) //we have leftover data too small to be a header, put on hold
-                    {
-                        holdSize = len - at;
-                        holdData = new byte[holdSize];
-                        Array.Copy(data, at, holdData, 0, holdSize);
-                        at = len;
-                    }
-
-                    len = 0;
-                }
-                catch (ObjectDisposedException t) { Disconnect(); }
-                catch (SocketException ex)
-                {
-                    if (ex.ErrorCode == 10057)
-                        Disconnect();
-                    else if (ex.ErrorCode != (int)SocketError.WouldBlock)
-                    {
-                       Utilities.LogServices.Log(ex);
-                        Disconnect();
-                    }
-                }
-                catch (Exception r)
-                {
-                     Utilities.LogServices.Log(r);
-                }
-
-                #endregion
-                Thread.Sleep(135);
-            }
-            while (!killFlag);
-            killFlag = true;
-        }
         public void Send(SendPacket pkt, bool queue = false)//TODO finished for multi packs
         {
             if (pkt == null) return;
@@ -455,28 +357,19 @@ namespace Wonderland_Private_Server.Code.Objects
             {
                 SendPacket o = pkt;
                 if (QueuePkt != null)
-                    QueuePkt.PackArray(pkt.Data.ToArray());
+                    QueuePkt.Pack(pkt.Buffer.ToArray());
                 else if (queue)
                     DatatoSend.Enqueue(pkt);
                 else
                 {
                     switch (DataOut)
                     {
-                        case SendType.Multi: MultiPkt.PackArray(o.Data.ToArray()); break;
+                        case SendType.Multi: MultiPkt.Pack(o.Buffer.ToArray()); break;
                         case SendType.Normal:
                             {
                                 //Utilities.LogServices.Log(UserName, pkt.Data.ToArray());
-                                killFlag = pkt.DisconnectAfter();
-                                var data = pkt.Data.ToArray();
-                                int offset = 0;
-                                Encode(ref data);
-                                int nret = 0;
-                            retry:
-                                if (nret < data.Length)
-                                {
-                                    nret = (UInt16)socket.Send(data.Skip(offset).ToArray(), SocketFlags.None);
-                                    offset += nret; goto retry;
-                                }
+                                killFlag = pkt.KillConnection;
+                                socket.SendPacket(pkt);
                             } break;
                     }
                 }
@@ -491,15 +384,7 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             if (killFlag) return;
             killFlag = true;
-            socket.Shutdown(SocketShutdown.Both);
-            socket.Close();
-        }
-        void Encode(ref byte[] data)
-        {
-            for (int n = 0; n < data.Length; n++)
-            {
-                data[n] = (byte)(173 ^ data[n]);
-            }
+            socket.Disconnect();
         }
         #endregion
 
@@ -530,9 +415,9 @@ namespace Wonderland_Private_Server.Code.Objects
             if (Friends.Exists(c => c.ID == id))
             {
                 SendPacket p = new SendPacket();
-                p.PackArray(new byte[] { 14, 9 });
-                p.Pack32(id);
-                p.Pack8(0);
+                p.Pack(new byte[] { 14, 9 });
+                p.Pack(id);
+                p.Pack(0);
                 Send(p);
             }
             for (int a = 0; a < MailBox.Count; a++)
@@ -562,86 +447,87 @@ namespace Wonderland_Private_Server.Code.Objects
         public void Send_3_Me()
         {
             SendPacket p = new SendPacket();
-            p.Pack8(3);
-            p.Pack32(ID);
-            p.Pack8((byte)Eqs.Body);
-            p.Pack16(LoginMap);
-            p.Pack16(X);
-            p.Pack16(Y);
-            p.Pack8(0); p.Pack8(Eqs.Head); p.Pack8(0);
-            p.Pack16(HairColor);
-            p.Pack16(SkinColor);
-            p.Pack16(ClothingColor);
-            p.Pack16(EyeColor);
-            p.Pack8(Eqs.WornCount);//clothesAmmt); // ammt of clothes
-            p.PackArray(Eqs.Worn_Equips);
-            p.Pack32(0);
-            p.PackString(CharacterName);
-            p.PackString(Nickname);
-            p.Pack32(0);
+            p.Pack(3);
+            p.Pack(ID);
+            p.Pack((byte)Eqs.Body);
+            p.Pack(LoginMap);
+            p.Pack(X);
+            p.Pack(Y);
+            p.Pack(0); p.Pack(Eqs.Head); p.Pack(0);
+            p.Pack(HairColor);
+            p.Pack(SkinColor);
+            p.Pack(ClothingColor);
+            p.Pack(EyeColor);
+            p.Pack(Eqs.WornCount);//clothesAmmt); // ammt of clothes
+            p.Pack(Eqs.Worn_Equips);
+            p.Pack(0);
+            p.Pack(CharacterName);
+            p.Pack(Nickname);
+            p.Pack(0);
             Send(p);
         }
         public SendPacket _3Data()
         {
             SendPacket p = new SendPacket();
-            p.Pack8(3);
-            p.Pack32(ID);
-            p.Pack8((byte)Eqs.Body);
-            p.Pack8((byte)Eqs.Element);
-            p.Pack8((byte)Eqs.Level);
-            p.Pack16(CurrentMap.MapID);
-            p.Pack16(X);
-            p.Pack16(Y);
-            p.Pack8(0); p.Pack8(Eqs.Head); p.Pack8(0);
-            p.Pack16(HairColor);
-            p.Pack16(SkinColor);
-            p.Pack16(ClothingColor);
-            p.Pack16(EyeColor);
-            p.Pack8(Eqs.WornCount);//clothesAmmt); // ammt of clothes
-            p.PackArray(Eqs.Worn_Equips);
-            p.Pack32(0); p.Pack8(0);
-            p.PackBoolean(Eqs.Reborn);
-            p.Pack8((byte)Eqs.Job);
-            p.PackString(CharacterName);
-            p.PackString(Nickname);
-            p.Pack8(255);
+            p.Pack(3);
+            p.Pack(ID);
+            p.Pack((byte)Eqs.Body);
+            p.Pack((byte)Eqs.Element);
+            p.Pack((byte)Eqs.Level);
+            p.Pack(CurrentMap.MapID);
+            p.Pack(X);
+            p.Pack(Y);
+            p.Pack(0); p.Pack(Eqs.Head); p.Pack(0);
+            p.Pack(HairColor);
+            p.Pack(SkinColor);
+            p.Pack(ClothingColor);
+            p.Pack(EyeColor);
+            p.Pack(Eqs.WornCount);//clothesAmmt); // ammt of clothes
+            p.Pack(Eqs.Worn_Equips);
+            p.Pack(0); p.Pack(0);
+            p.Pack(Eqs.Reborn);
+            p.Pack((byte)Eqs.Job);
+            p.Pack(CharacterName);
+            p.Pack(Nickname);
+            p.Pack(255);
             return p;
         }
+
         public void Send_5_3() //logging in player info
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 5, 3 });
-            p.Pack8((byte)Eqs.Element);
-            p.Pack32((uint)CurHP);
-            p.Pack16((ushort)CurSP);
-            p.Pack16(Eqs.Str); //base str
-            p.Pack16(Eqs.Con); //base con
-            p.Pack16(Eqs.Int); //base int
-            p.Pack16(Eqs.Wis); //base wis
-            p.Pack16(Eqs.Agi); //base agi
-            p.Pack8((byte)Eqs.Level); //lvl
-            p.Pack64((ulong)Eqs.TotalExp); //exp ???
-            p.Pack32((uint)Eqs.FullHP); //max hp
-            p.Pack16((ushort)Eqs.FullSP); //max sp
+            p.Pack(new byte[] { 5, 3 });
+            p.Pack((byte)Eqs.Element);
+            p.Pack((uint)CurHP);
+            p.Pack((ushort)CurSP);
+            p.Pack(Eqs.Str); //base str
+            p.Pack(Eqs.Con); //base con
+            p.Pack(Eqs.Int); //base int
+            p.Pack(Eqs.Wis); //base wis
+            p.Pack(Eqs.Agi); //base agi
+            p.Pack((byte)Eqs.Level); //lvl
+            p.Pack((ulong)Eqs.TotalExp); //exp ???
+            p.Pack((uint)Eqs.FullHP); //max hp
+            p.Pack((ushort)Eqs.FullSP); //max sp
 
             //-------------- 7 DWords
-            p.Pack32(0);
-            p.Pack32(0);
-            p.Pack32(0);
-            p.Pack32(0);
-            p.Pack32(0);
-            p.Pack32(0);
-            p.Pack32(0);
+            p.Pack(0);
+            p.Pack(0);
+            p.Pack(0);
+            p.Pack(0);
+            p.Pack(0);
+            p.Pack(0);
+            p.Pack(0);
 
             //--------------- Skills
-            p.Pack16(0/*(ushort)MySkills.Count*/);
+            p.Pack(0/*(ushort)MySkills.Count*/);
             //if (MySkills.Count > 0)
-            //    p.PackArray(MySkills.GetSkillData());
-            //p.Pack16(1); //ammt of skills
-            //p.Pack16(188); p.Pack16(1); p.Pack16(0); p.Pack8(0); //skill data
+            //    p.Pack(MySkills.GetSkillData());
+            //p.Pack(1); //ammt of skills
+            //p.Pack(188); p.Pack(1); p.Pack(0); p.Pack(0); //skill data
             //--------------- table with rebirth and job
-            p.Pack16(0); p.Pack16(0);
-            p.Pack8(BitConverter.GetBytes(Eqs.Reborn)[0]); p.Pack8((byte)Eqs.Job); p.Pack8((byte)Eqs.Potential);
+            p.Pack(0); p.Pack(0);
+            p.Pack(BitConverter.GetBytes(Eqs.Reborn)[0]); p.Pack((byte)Eqs.Job); p.Pack((byte)Eqs.Potential);
 
             Send(p);
         }
@@ -652,25 +538,25 @@ namespace Wonderland_Private_Server.Code.Objects
         public void SendFriendList()
         {
             SendPacket y = new SendPacket();
-            y.PackArray(new byte[] { 14, 5 });
-            y.PackArray(new byte[]{100, 0, 0, 0, 6, 71, 77, 164, 164, 164, 223, 200, 0,      
+            y.Pack(new byte[] { 14, 5 });
+            y.Pack(new byte[]{100, 0, 0, 0, 6, 71, 77, 164, 164, 164, 223, 200, 0,      
         0, 0, 0, 0, 28, 175, 125, 26, 28, 175, 125, 26, 0, 0});
             foreach (Character h in Friends)
             {
-                y.Pack32(h.ID);
-                y.PackString(h.CharacterName);
-                y.Pack8((byte)h.Level);
-                y.Pack8(BitConverter.GetBytes(h.Reborn)[0]);
-                y.Pack8((byte)h.Job);
-                y.Pack8((byte)h.Element);
-                y.Pack8((byte)h.Body);
-                y.Pack8(h.Head);
-                y.Pack16(h.HairColor);
-                y.Pack16(h.SkinColor);
-                y.Pack16(h.ClothingColor);
-                y.Pack16(h.EyeColor);
-                y.PackString(h.Nickname);
-                y.Pack8(0);
+                y.Pack(h.ID);
+                y.Pack(h.CharacterName);
+                y.Pack((byte)h.Level);
+                y.Pack(BitConverter.GetBytes(h.Reborn)[0]);
+                y.Pack((byte)h.Job);
+                y.Pack((byte)h.Element);
+                y.Pack((byte)h.Body);
+                y.Pack(h.Head);
+                y.Pack(h.HairColor);
+                y.Pack(h.SkinColor);
+                y.Pack(h.ClothingColor);
+                y.Pack(h.EyeColor);
+                y.Pack(h.Nickname);
+                y.Pack(0);
             }
             Send(y);
         }
@@ -680,14 +566,14 @@ namespace Wonderland_Private_Server.Code.Objects
             if (!m_friends.Exists(c => c.ID == t.ID))
                 m_friends.Add(t);
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 14, 9 });
-            s.Pack32(t.ID);
-            s.Pack8(0);
+            s.Pack(new byte[] { 14, 9 });
+            s.Pack(t.ID);
+            s.Pack(0);
             Send(s);
             s = new SendPacket();
-            s.PackArray(new byte[] { 14, 7 });
-            s.Pack32(t.ID);
-            s.PackString("Test");
+            s.Pack(new byte[] { 14, 7 });
+            s.Pack(t.ID);
+            s.Pack("Test");
             Send(s);
         }
         public void DelFriend(uint t)
@@ -695,8 +581,8 @@ namespace Wonderland_Private_Server.Code.Objects
             if (m_friends.Exists(c => c.ID == t))
                 m_friends.Remove(m_friends.Single(c => c.ID == t));
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 14, 4 });
-            s.Pack32(t);
+            s.Pack(new byte[] { 14, 4 });
+            s.Pack(t);
             Send(s);
         }
         public bool LoadFriends(string str)
@@ -755,11 +641,11 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             base.RecvMailfrom(t, msg, Date);
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 14, 1 });
-            p.Pack32(t.ID);
-            p.PackArray(((Date == 0) ? BitConverter.GetBytes(DateTime.Now.ToOADate()) : BitConverter.GetBytes(Date)));
+            p.Pack(new byte[] { 14, 1 });
+            p.Pack(t.ID);
+            p.Pack(((Date == 0) ? BitConverter.GetBytes(DateTime.Now.ToOADate()) : BitConverter.GetBytes(Date)));
             for (int n = 0; n < msg.Length; n++)
-                p.Pack8((byte)msg[n]);
+                p.Pack((byte)msg[n]);
             Send(p);
         }
         public string GetMailboxFlags()
@@ -804,14 +690,14 @@ namespace Wonderland_Private_Server.Code.Objects
                         Inv.AddItem(retrem, index, false);
                     Eqs.Send8_1();//send ac8
                     SendPacket tmp = new SendPacket();
-                    tmp.PackArray(new byte[] { 5, 2 });
-                    tmp.Pack32(ID);
-                    tmp.Pack16(i.ItemID);
+                    tmp.Pack(new byte[] { 5, 2 });
+                    tmp.Pack(ID);
+                    tmp.Pack(i.ItemID);
                     CurrentMap.Broadcast(tmp, ID);
                     tmp = new SendPacket();
-                    tmp.PackArray(new byte[] { 23, 17 });
-                    tmp.Pack8(index);
-                    tmp.Pack8(index);
+                    tmp.Pack(new byte[] { 23, 17 });
+                    tmp.Pack(index);
+                    tmp.Pack(index);
                     Send(tmp);
                     ret = true;
                     DataOut = SendType.Normal;
@@ -838,15 +724,15 @@ namespace Wonderland_Private_Server.Code.Objects
                     Eqs.RemoveEQ(src);
                     DataOut = SendType.Multi;
                     SendPacket p = new SendPacket();
-                    p.PackArray(new byte[] { 23, 16 });
-                    p.Pack8(src);
-                    p.Pack8(dst);
+                    p.Pack(new byte[] { 23, 16 });
+                    p.Pack(src);
+                    p.Pack(dst);
                     Send(p);
                     Eqs.Send8_1();
                     p = new SendPacket();
-                    p.PackArray(new byte[] { 5, 1 });
-                    p.Pack32(ID);
-                    p.Pack16(i.ItemID);
+                    p.Pack(new byte[] { 5, 1 });
+                    p.Pack(ID);
+                    p.Pack(i.ItemID);
                     CurrentMap.Broadcast(p, ID);
                     ret = true;
                     DataOut = SendType.Normal;
@@ -869,12 +755,12 @@ namespace Wonderland_Private_Server.Code.Objects
         //{
         //    SendPacket f = new SendPacket();
         //    f.Header(13, 15);
-        //    f.Pack8(3);
-        //    f.Pack32(own.CharacterTemplateID);
+        //    f.Pack(3);
+        //    f.Pack(own.CharacterTemplateID);
         //    foreach (Player u in myTeamMembers.ToArray())
         //        if (u.character.MyTeam.PartyLeader)
         //        {
-        //            f.Pack32(u.CharacterTemplateID);
+        //            f.Pack(u.CharacterTemplateID);
         //        }
         //    f.SetSize();
         //    leader = true;
@@ -899,7 +785,7 @@ namespace Wonderland_Private_Server.Code.Objects
         //    Send_5(183);
         //    SendPacket p = new SendPacket();
         //    p.Header(13, 4);
-        //    p.Pack32(own.CharacterTemplateID);
+        //    p.Pack(own.CharacterTemplateID);
         //    p.SetSize();
         //    own.currentMap.Broadcast(p);
         //    leader = false;

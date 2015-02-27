@@ -8,6 +8,9 @@ using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.DataManagement.DataFiles;
 using System.Timers;
+using System.Threading;
+using System.Collections.Concurrent;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
@@ -18,6 +21,8 @@ namespace Wonderland_Private_Server.Code.Objects
         Player owner;
         public Dictionary<byte, TentFloor> Floors = new Dictionary<byte, TentFloor>();
         Map Loc;
+
+        TentInventoryManager Warehouse;
 
         public ushort MapX;
         public ushort MapY;
@@ -32,10 +37,13 @@ namespace Wonderland_Private_Server.Code.Objects
         }
         public Tent(Player src):base()
         {
+            Warehouse = new TentInventoryManager(src);
             Closed = true;
             MType = MapType.Tent;
             owner = src;
             Floors.Add(1, new TentFloor(1));//lets do floor one for now
+
+            LoadTentData();
         }
         public override ushort MapID
         {
@@ -51,19 +59,10 @@ namespace Wonderland_Private_Server.Code.Objects
                 return owner.CharacterName + "'s Home";
             }
         }
-
         
-        override protected  void LoadData()
+        void LoadTentData()
         {
             //pre setup tent with base
-        }
-        public void Save()
-        {
-            // save info
-        }
-        public void Load()
-        {
-            //add other info
         }
 
         public void Open()
@@ -74,99 +73,52 @@ namespace Wonderland_Private_Server.Code.Objects
             Loc = owner.CurrentMap;
             Loc.onTentOpened(this);
             SendPacket opentent = new SendPacket();
-            opentent.PackArray(new byte[] { 62, 59 });
-            opentent.Pack8(2);
+            opentent.Pack(new byte[] { 62, 59 });
+            opentent.Pack(2);
             owner.Send(opentent);
             Closed = false;
         }
         public void Close()
         {
-            if (Closed) return;
-            Loc.onTentClosing(this);
-            WarpData warp = new WarpData();
-            warp.DstMap = Loc.MapID;
-            warp.DstX_Axis = MapX;
-            warp.DstY_Axis = MapY;
-            //warp Players  out
-            foreach(var f in Floors)
-            {
+            //if (Closed) return;
+            //Loc.onTentClosing(this);
+            //WarpData warp = new WarpData();
+            //warp.DstMap = Loc.MapID;
+            //warp.DstX_Axis = MapX;
+            //warp.DstY_Axis = MapY;
+            ////warp Players  out
+            //foreach(var f in Floors)
+            //{
 
-                foreach (var p in mapPlayers.Values.ToList())
-                {
-                    p.DataOut = SendType.Multi;
-                    SendPacket warpConf = new SendPacket();
-                    warpConf.PackArray(new byte[] { 20, 7 });
-                    SendPacket tmp = new SendPacket();
-                    tmp.PackArray(new byte[] { 23, 32 });
-                    tmp.Pack32(p.ID);
-                    p.Send(tmp);
-                    tmp = new SendPacket();
-                    tmp.PackArray(new byte[] { 23, 112 });
-                    tmp.Pack32(p.ID);
-                    p.Send(tmp);
-                    tmp = new SendPacket();
-                    tmp.PackArray(new byte[] { 23, 132 });
-                    tmp.Pack32(p.ID);
-                    p.Send(tmp);
-                    onWarp_Out(f.Key, p, warp);// warp out of map
-                    p.X = warp.DstX_Axis;//switch x
-                    p.Y = warp.DstY_Axis;//switch y
-                    //cGlobal.WLO_World.Teleport(f.Key, warp, p);
-                    p.DataOut = SendType.Normal;
+            //    for(int a = 0; a< Players.Values.Count;a++)
+            //    {
+            //        Players.Values.ToList()[a].DataOut = SendType.Multi;
+            //        SendPacket warpConf = new SendPacket();
+            //        warpConf.Pack(new byte[] { 20, 7 });
+            //        SendPacket tmp = new SendPacket();
+            //        tmp.Pack(new byte[] { 23, 32 });
+            //        tmp.Pack(Players.Values.ToList()[a].ID);
+            //        Players.Values.ToList()[a].Send(tmp);
+            //        tmp = new SendPacket();
+            //        tmp.Pack(new byte[] { 23, 112 });
+            //        tmp.Pack(p.ID);
+            //        Players.Values.ToList()[a].Send(tmp);
+            //        tmp = new SendPacket();
+            //        tmp.Pack(new byte[] { 23, 132 });
+            //        tmp.Pack(p.ID);
+            //        Players.Values.ToList()[a].Send(tmp);
+
+            //        onWarp_Out(f.Key, ref  Players.Values.ToList()[a], warp, false);// warp out of map
+            //        p.X = warp.DstX_Axis;//switch x
+            //        p.Y = warp.DstY_Axis;//switch y
+            //        cGlobal.WLO_World.onTelePort(f.Key, warp, ref p);
+            //        p.DataOut = SendType.Normal;
                     
-                }
-            }
-            Closed = true;
+            //    }
+            //}
+            //Closed = true;
         }
 
-        public override void onWarp_In(byte portalID, ref Player src, WarpData from)
-        {
-            lock (locker)
-            {
-                for (int a = 0; a < Players.Count; a++)
-                {
-                    if (mapPlayers.Values.ToList()[a].ID == src.ID) return;
-                } 
-
-                src.CurrentMap = this;
-                mapPlayers.Add(src.ID, src);
-
-                for (int a = 0; a < Players.Count; a++)
-                {
-                    if (mapPlayers.Values.ToList()[a] != src)
-                    {
-                        //send to them
-                        SendPacket p = new SendPacket();
-                        p.PackArray(new byte[] { 5, 0 });
-                        p.Pack32(src.ID);
-                        p.PackArray(src.Eqs.Worn_Equips);
-                        mapPlayers.Values.ToList()[a].Send(p);
-                        p = new SendPacket();
-                        p.PackArray(new byte[] { 10, 3 });
-                        p.Pack32(src.ID);
-                        p.Pack8(255);
-                        mapPlayers.Values.ToList()[a].Send(p);//maybe guild info???
-
-                        //send to me
-                        p = new SendPacket();
-                        p.PackArray(new byte[] { 7 });
-                        p.Pack32(mapPlayers.Values.ToList()[a].ID);
-                        p.Pack16(MapID);
-                        p.Pack16(mapPlayers.Values.ToList()[a].X);
-                        p.Pack16(mapPlayers.Values.ToList()[a].Y);
-                        src.Send(p);
-                        p = new SendPacket();
-                        p.PackArray(new byte[] { 5, 0 });
-                        p.Pack32(mapPlayers.Values.ToList()[a].ID);
-                        p.PackArray(mapPlayers.Values.ToList()[a].Eqs.Worn_Equips);
-                        src.Send(p);
-                    }
-                }
-                src.QueueStart();
-                SendMapInfo(src);
-                src.QueueEnd();
-            }
-        }
         protected override void SendMapInfo(Player t)
         {
             SendPacket p = new SendPacket();
@@ -183,21 +135,21 @@ namespace Wonderland_Private_Server.Code.Objects
 
             //floor
             p = new SendPacket();
-            p.PackArray(new byte[] { 62, 14 });
-            p.Pack16(floorcolor);
+            p.Pack(new byte[] { 62, 14 });
+            p.Pack(floorcolor);
             t.Send(p);
 
             //wallpaper
             p = new SendPacket();
-            p.PackArray(new byte[] { 62, 15 });
-            p.Pack16(wallcolor);
+            p.Pack(new byte[] { 62, 15 });
+            p.Pack(wallcolor);
             t.Send(p);
 
             //65,11 ???
 
             p = new SendPacket();
-            p.PackArray(new byte[] { 65, 7 });
-            p.Pack16(0);
+            p.Pack(new byte[] { 65, 7 });
+            p.Pack(0);
             t.Send(p);
 
             //extended Tent Item Info
@@ -206,29 +158,29 @@ namespace Wonderland_Private_Server.Code.Objects
             //ParkingGarage Info
 
             p = new SendPacket();
-            p.PackArray(new byte[] { 23, 138 });
+            p.Pack(new byte[] { 23, 138 });
             t.Send(p);
 
-            for (int a = 0; a < Players.Count; a++)
+            foreach( var r in Players.Values)
             {
                 p = new SendPacket();
-                p.PackArray(new byte[] { 23, 122 });
-                p.Pack32(mapPlayers.Values.ToList()[a].ID);
+                p.Pack(new byte[] { 23, 122 });
+                p.Pack(r.ID);
                 t.Send(p);
-                if (mapPlayers.Values.ToList()[a].ID != t.ID)
+                if (r.ID != t.ID)
                 {
                     p = new SendPacket();
-                    p.PackArray(new byte[] { 10, 3 });
-                    p.Pack32(mapPlayers.Values.ToList()[a].ID);
-                    p.Pack8(255);
+                    p.Pack(new byte[] { 10, 3 });
+                    p.Pack(r.ID);
+                    p.Pack(255);
                     t.Send(p);
                     #region Emotes used on Map
-                    if (mapPlayers.Values.ToList()[a].Emote > 0)
+                    if (r.Emote > 0)
                     {
                         p = new SendPacket();
-                        p.PackArray(new byte[] { 32, 2 });
-                        p.Pack32(mapPlayers.Values.ToList()[a].ID);
-                        p.Pack8(mapPlayers.Values.ToList()[a].Emote);
+                        p.Pack(new byte[] { 32, 2 });
+                        p.Pack(r.ID);
+                        p.Pack(r.Emote);
                         t.Send(p);
                     }
                     #endregion
@@ -237,25 +189,25 @@ namespace Wonderland_Private_Server.Code.Objects
                     if (t.Pets.BattlePet != null)//to them
                     {
                         SendPacket tmp = new SendPacket();
-                        tmp.PackArray(new byte[] { 15, 4 });
-                        tmp.Pack32(t.ID);
-                        tmp.Pack32(t.Pets.BattlePet.ID);
-                        tmp.Pack8(0);
-                        tmp.Pack8(1);
-                        tmp.PackString(t.Pets.BattlePet.Name);
-                        tmp.Pack16(0);//weapon
-                        mapPlayers.Values.ToList()[a].Send(tmp);
+                        tmp.Pack(new byte[] { 15, 4 });
+                        tmp.Pack(t.ID);
+                        tmp.Pack(t.Pets.BattlePet.ID);
+                        tmp.Pack(0);
+                        tmp.Pack(1);
+                        tmp.Pack(t.Pets.BattlePet.Name);
+                        tmp.Pack(0);//weapon
+                        r.Send(tmp);
                     }
-                    if (mapPlayers.Values.ToList()[a].Pets.BattlePet != null)//to me
+                    if (r.Pets.BattlePet != null)//to me
                     {
                         SendPacket tmp = new SendPacket();
-                        tmp.PackArray(new byte[] { 15, 4 });
-                        tmp.Pack32(mapPlayers.Values.ToList()[a].ID);
-                        tmp.Pack32(mapPlayers.Values.ToList()[a].Pets.BattlePet.ID);
-                        tmp.Pack8(0);
-                        tmp.Pack8(1);
-                        tmp.PackString(mapPlayers.Values.ToList()[a].Pets.BattlePet.Name);
-                        tmp.Pack16(0);//weapon
+                        tmp.Pack(new byte[] { 15, 4 });
+                        tmp.Pack(r.ID);
+                        tmp.Pack(r.Pets.BattlePet.ID);
+                        tmp.Pack(0);
+                        tmp.Pack(1);
+                        tmp.Pack(r.Pets.BattlePet.Name);
+                        tmp.Pack(0);//weapon
                         t.Send(tmp);
                     }
 
@@ -286,73 +238,81 @@ namespace Wonderland_Private_Server.Code.Objects
                     //if (plist[a].CharacterState == PlayerState.inBattle)
                     //{
                     //    SendPacket qp = new SendPacket(t);
-                    //    qp.PackArray(new byte[]{(11, 4);
-                    //    qp.Pack8(2);
-                    //    qp.Pack32(plist[a].CharacterID);
-                    //    qp.Pack16(0);
-                    //    qp.Pack8(0);
+                    //    qp.Pack(new byte[]{(11, 4);
+                    //    qp.Pack(2);
+                    //    qp.Pack(plist[a].CharacterID);
+                    //    qp.Pack(0);
+                    //    qp.Pack(0);
                     //    qp.Send();
                     //}
                     //Send_32_2(t);
                     //23_76                    
                 }
                 p = new SendPacket();
-                p.PackArray(new byte[] { 23, 76 });
-                p.Pack32(mapPlayers.Values.ToList()[a].ID);
+                p.Pack(new byte[] { 23, 76 });
+                p.Pack(r.ID);
                 t.Send(p);
             }
             //39_9
             //SendPacket gh = new SendPacket(g);
-            //gh.PackArray(new byte[] { 244, 68, 5, 0, 22, 6, 1, 0, 1, 244, 68, 5, 0, 22, 6, 21, 0, 1, 244, 68, 5, 0, 22, 6, 22, 0, 1, 244, 68, 5, 0, 22, 6, 23, 0, 1, 244, 68, 5, 0, 22, 6, 24, 0, 1, });
+            //gh.Pack(new byte[] { 244, 68, 5, 0, 22, 6, 1, 0, 1, 244, 68, 5, 0, 22, 6, 21, 0, 1, 244, 68, 5, 0, 22, 6, 22, 0, 1, 244, 68, 5, 0, 22, 6, 23, 0, 1, 244, 68, 5, 0, 22, 6, 24, 0, 1, });
             // cServer.Send(gh, t);
             /*tmp = new SendPacket(g);
-            tmp.PackArray(new byte[]{(6, 2);
-            tmp.Pack8(1);
+            tmp.Pack(new byte[]{(6, 2);
+            tmp.Pack(1);
             tmp.SetSize();
             tmp.Player = t;
             tmp.Send();
             for (int a = 0; a < 1; a++)
             {
                 gh = new SendPacket(g);
-                gh.PackArray(new byte[] { 244, 68, 2, 0, 20, 11, 244, 68, 2, 0, 20, 10 });
+                gh.Pack(new byte[] { 244, 68, 2, 0, 20, 11, 244, 68, 2, 0, 20, 10 });
                 t.DatatoSend.Enqueue(gh);
             }
             for (int a = 0; a < 1; a++)
             {
                 gh = new SendPacket(g);
-                gh.PackArray(new byte[] { 244, 68, 2, 0, 20, 10 });
+                gh.Pack(new byte[] { 244, 68, 2, 0, 20, 10 });
                 t.DatatoSend.Enqueue(gh);
             }*/
             p = new SendPacket();
-            p.PackArray(new byte[] { 23, 102 });
+            p.Pack(new byte[] { 23, 102 });
             t.Send(p);
             //p = new SendPacket();
-            //p.PackArray(new byte[] { 20, 8 });
+            //p.Pack(new byte[] { 20, 8 });
             //t.Send(p);
             //t.CharacterState = PlayerState.inMap;
         }
-        public void onWarp_Out(byte portalID, Player src, WarpData To)
-        {
-          mapPlayers.Remove(src.ID);
-        }
 
-        public void UpdateMap()
+        public override void UpdateMap()
         {
+             do
+            {
 
+                Thread.Sleep(100);
+            }
+             while (true);
         }
     }
 #endregion
 
     public class TentFloor
     {
+        byte floorloc;
+        ConcurrentDictionary<byte ,TentItem> ItemTent; // she started have 2 itens....
+
+
+
         public delegate void BuildDelegate(byte nkey);
         public BuildDelegate BuildTimerEventHandler;
+
         System.Windows.Forms.Timer t;
-        byte floorloc;
+
+        
         public bool Mill; // have mill tool ? true or false
         byte CurrentJob;
-        cCompound2Dat CB = new cCompound2Dat();
-        Dictionary<byte ,TentItem> ItemTent; // she started have 2 itens....
+
+        
         Dictionary<byte, ItemBuild> Build;
         Dictionary<byte, byte> Axis = new Dictionary<byte, byte>();
         int count { get { return ItemTent.Count; } }
@@ -360,109 +320,70 @@ namespace Wonderland_Private_Server.Code.Objects
         public TentFloor(byte ID)
         {
             floorloc = ID;
-            ItemTent = new Dictionary<byte ,TentItem>();
+            ItemTent = new ConcurrentDictionary<byte, TentItem>();
             Build = new Dictionary<byte, ItemBuild>();
 
             LoadItemTent();// holy test
+
+            //New Character Setup
+            if(ItemTent.Count == 0)
+            {
+
+            }
+            if(ItemTent.Values.Count(c=>c.ItemID == 38049) == 0)
+            {
+                TentItem tmp = new TentItem();
+                tmp.CopyFrom(cGlobal.gItemManager.GetItem(38049));
+                tmp.tentX = 32;
+                tmp.tentY = 46;
+                tmp.tentZ = 1;
+                tmp.ukn = 10;
+                ItemTent.TryAdd(1, tmp);
+                
+            }
+            if (ItemTent.Values.Count(c => c.ItemID == 38055) == 0)
+            {
+                TentItem tmp = new TentItem();
+                tmp.CopyFrom(cGlobal.gItemManager.GetItem(38055));
+                tmp.tentX = 44;
+                tmp.tentY = 50;
+                tmp.tentZ = 1;
+                tmp.ukn = 10;
+                ItemTent.TryAdd(2, tmp);
+            }
         }
+
         // holy test  ##################
         public void LoadItemTent()
         {
-            CB.Load("C:\\tmp\\Compound2.dat");
-            TentItem c = new TentItem();
-            c.index = 1;
-            c.ItemID = 38049;
-            c.tentX = 32;
-            c.tentY = 46;
-            c.tentZ = 1;
-            c.rotate = 0;
-            c.especial = 0;
-            c.a1 = 0;
-            c.a2 = 0;
-            c.a3 = 0;
-            c.a4 = 0;
-            c.a5 = 0;
-            c.a6 = 0;
-            c.a7 = 0;
-            c.a8 = 0;
-            c.a9 = 0;
-            c.a10 = 0;
-            c.ukn = 10;
-            c.floor = 0;
-            c.pick = 0;
-            ItemTent.Add(1,c);
-            c = new TentItem();
-            c.index = 2;
-            c.ItemID = 38055;
-            c.tentX = 44;
-            c.tentY = 50;
-            c.tentZ = 1;
-            c.rotate = 0;
-            c.especial = 0;
-            c.a1 = 0;
-            c.a2 = 0;
-            c.a3 = 0;
-            c.a4 = 0;
-            c.a5 = 0;
-            c.a6 = 0;
-            c.a7 = 0;
-            c.a8 = 0;
-            c.a9 = 0;
-            c.a10 = 0;
-            c.ukn = 10;
-            c.floor = 0;
-            c.pick = 0;
-            ItemTent.Add(2,c);
-            c = new TentItem();
-            c.index = 3;
-            c.ItemID = 39046;
-            c.tentX = 0;
-            c.tentY = 0;
-            c.tentZ = 0;
-            c.rotate = 0;
-            c.especial = 0;
-            c.a1 = 0;
-            c.a2 = 0;
-            c.a3 = 0;
-            c.a4 = 0;
-            c.a5 = 0;
-            c.a6 = 0;
-            c.a7 = 0;
-            c.a8 = 0;
-            c.a9 = 0;
-            c.a10 = 0;
-            c.ukn = 10;
-            c.floor = 0;
-            c.pick = 1;
-            ItemTent.Add(3, c);
         }
         public void Create_NewObject_Tent(Player src, RecvPacket r)
         {
-            byte t = r.Unpack8(2);
-            ushort Index = r.Unpack16(4);
+            //byte t = r.Unpack8(2);
+            //ushort Index = r.Unpack16(4);
             //byte Total = r.Unpack8(13); // total material used compound max 5
             //ushort material1 = src.Inv[r.Unpack8(14)].ItemID; ; //  get item pos inventory
             //byte qnt1 = r.Unpack8(15);
 
-            var formula = CB.buildList[Index]; // get  formula
+            //var formula = cGlobal.gCompoundDat.buildList[Index]; // get  formula
             
-            var item = cGlobal.gItemManager.GetItem(formula.resultID); // get item
+            //var item = cGlobal.gItemManager.GetItem(formula.resultID); // get item
             
-            if (ItemTent.ContainsKey(t))
-            {
-                // Tool used == tool
-                if (ItemTent[t].ItemID == formula.toolID) // tool == tool
-                {
-                    if (CheckMaterial()) // have material to building? yes
-                    {
-                        byte c = (byte)(pount + 1);
-                        if (AddBuilding(c, item,formula))
-                        {
-                            StartBuild(src,c); // started building
-                        }
-                    }
-                }
-            }            
+            //if (ItemTent.ContainsKey(t))
+            //{
+            //    // Tool used == tool
+            //    if (ItemTent[t].ItemID == formula.toolID) // tool == tool
+            //    {
+            //        if (CheckMaterial()) // have material to building? yes
+            //        {
+            //            byte c = (byte)(pount + 1);
+            //            if (AddBuilding(c, item,formula))
+            //            {
+            //                StartBuild(src,c); // started building
+            //            }
+            //        }
+            //    }
+            //}            
 
         }
         bool CheckMaterial()
@@ -518,34 +439,34 @@ namespace Wonderland_Private_Server.Code.Objects
         public void Send62_4(Player p)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] {62, 4});
-            s.Pack32(p.UserID);
+            s.Pack(new byte[] {62, 4});
+            s.Pack(p.UserID);
             #region Loop
             foreach (var i in ItemTent.Values)
             {
-                s.Pack16(i.index);
-                s.Pack16(i.ItemID);
-                s.Pack32(i.tentX);
-                s.Pack32(i.tentY);
-                s.Pack32(i.tentZ);
-                s.Pack8(i.rotate);
-                s.Pack32(i.especial);
-                s.Pack16(i.a1);
-                s.Pack16(i.a2);
-                s.Pack16(i.a3);
-                s.Pack16(i.a4);
-                s.Pack16(i.a5);
-                s.Pack16(i.a6);
-                s.Pack16(i.a7);
-                s.Pack16(i.a8);
-                s.Pack16(i.a9);
-                s.Pack16(i.a10);
-                s.Pack32(i.ukn);
-                s.Pack32(0);
-                s.Pack8(i.floor);
-                s.Pack8(i.pick);
-                s.Pack32(0);
-                s.Pack32(0);
+                s.Pack(i.index);
+                s.Pack(i.ItemID);
+                s.Pack(i.tentX);
+                s.Pack(i.tentY);
+                s.Pack(i.tentZ);
+                s.Pack(i.rotate);
+                s.Pack(i.especial);
+                s.Pack(i.a1);
+                s.Pack(i.a2);
+                s.Pack(i.a3);
+                s.Pack(i.a4);
+                s.Pack(i.a5);
+                s.Pack(i.a6);
+                s.Pack(i.a7);
+                s.Pack(i.a8);
+                s.Pack(i.a9);
+                s.Pack(i.a10);
+                s.Pack(i.ukn);
+                s.Pack(0);
+                s.Pack(floorloc);
+                s.Pack(i.pick);
+                s.Pack(0);
+                s.Pack(0);
             }
             #endregion
             p.Send(s);
@@ -553,36 +474,36 @@ namespace Wonderland_Private_Server.Code.Objects
         void Send64_10(Player p)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] {64,10,0,0,0,0,0 });            
+            s.Pack(new byte[] {64,10,0,0,0,0,0 });            
             p.Send(s);
         }
         void Send64_9(Player p)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] {64,9});
+            s.Pack(new byte[] {64,9});
             p.Send(s);
         }
         void Send64_11(Player p)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 64,11});
+            s.Pack(new byte[] { 64,11});
             p.Send(s);
         }
         void Send64_2(Player p,byte nkey)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 64,2});
-            s.Pack8(nkey);
+            s.Pack(new byte[] { 64,2});
+            s.Pack(nkey);
             p.Send(s);
         }
         void Send64_1(Player p, byte nkey)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 64, 1 });
-            s.Pack8(nkey);
-            s.Pack16(Build[nkey].item.ItemID);
-            s.Pack32(0);
-            s.Pack8(1);
+            s.Pack(new byte[] { 64, 1 });
+            s.Pack(nkey);
+            s.Pack(Build[nkey].item.ItemID);
+            s.Pack(0);
+            s.Pack(1);
             p.Send(s);            
         }
         
@@ -590,8 +511,8 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             Build.Remove(nkey);
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 64, 4 });            
-            s.Pack8(nkey);
+            s.Pack(new byte[] { 64, 4 });            
+            s.Pack(nkey);
             p.Send(s);
 
         }
@@ -607,30 +528,30 @@ namespace Wonderland_Private_Server.Code.Objects
             else
             {
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 62, 1 });
-                s.Pack16(c); // index list item tent
-                s.Pack16(ItemTent[c].ItemID);
-                s.Pack32(ItemTent[c].tentX); // x
-                s.Pack32(ItemTent[c].tentY); // y
-                s.Pack32(ItemTent[c].tentZ);//z
-                s.Pack8(ItemTent[c].rotate);// (i.rotate);
-                s.Pack32(ItemTent[c].especial);//i.especial);
-                s.Pack16(0);//.a1);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack32(ItemTent[c].ukn);// if tool = 10 i.ukn);
-                s.Pack32(0);
-                s.Pack8(ItemTent[c].floor);//i.floor);
-                s.Pack8(ItemTent[c].pick);
-                s.Pack32(0);
-                s.Pack32(0);
+                s.Pack(new byte[] { 62, 1 });
+                s.Pack(c); // index list item tent
+                s.Pack(ItemTent[c].ItemID);
+                s.Pack(ItemTent[c].tentX); // x
+                s.Pack(ItemTent[c].tentY); // y
+                s.Pack(ItemTent[c].tentZ);//z
+                s.Pack(ItemTent[c].rotate);// (i.rotate);
+                s.Pack(ItemTent[c].especial);//i.especial);
+                s.Pack(0);//.a1);
+                s.Pack(0);
+                s.Pack(0);
+                s.Pack(0);
+                s.Pack(0);
+                s.Pack(0);
+                s.Pack(0);
+                s.Pack(0);
+                s.Pack(0);
+                s.Pack(0);
+                s.Pack(ItemTent[c].ukn);// if tool = 10 i.ukn);
+                s.Pack(0);
+                s.Pack(ItemTent[c].floor);//i.floor);
+                s.Pack(ItemTent[c].pick);
+                s.Pack(0);
+                s.Pack(0);
                 src.Send(s);                
             }
 
@@ -645,12 +566,12 @@ namespace Wonderland_Private_Server.Code.Objects
                     ItemTent[pos].rotate = rotate;
 
                     SendPacket s = new SendPacket();
-                    s.PackArray(new byte[] {62,3});
-                    s.Pack16(pos);
-                    s.Pack32(ax);
-                    s.Pack32(ay);
-                    s.Pack32(floor);
-                    s.Pack8(rotate);
+                    s.Pack(new byte[] {62,3});
+                    s.Pack(pos);
+                    s.Pack(ax);
+                    s.Pack(ay);
+                    s.Pack(floor);
+                    s.Pack(rotate);
                     src.Send(s);
                     //broadcast current tent here.
                 }
@@ -670,15 +591,15 @@ namespace Wonderland_Private_Server.Code.Objects
             }
             else
             {
-                //default = auto 0;
-                TentItem b = new TentItem();
-                b.citem = i;
-                b.floor = CurFloor;                
-                b.ukn = 10;
-                b.tentX = 48;///x
-                b.tentY = 46;//y
-                b.tentZ = 1; //visible.
-                ItemTent.Add(nkey, b);
+                ////default = auto 0;
+                //TentItem b = new TentItem();
+                //b.citem = i;
+                //b.floor = CurFloor;                
+                //b.ukn = 10;
+                //b.tentX = 48;///x
+                //b.tentY = 46;//y
+                //b.tentZ = 1; //visible.
+                //ItemTent.Add(nkey, b);
 
                 return false;
             }
@@ -707,8 +628,8 @@ namespace Wonderland_Private_Server.Code.Objects
                 // stop Build item
                 Build[i].CurTimer = 1234; // get cur timer
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] {64,3});
-                s.Pack8(i);
+                s.Pack(new byte[] {64,3});
+                s.Pack(i);
                 src.Send(s);
             }
         }
@@ -720,11 +641,11 @@ namespace Wonderland_Private_Server.Code.Objects
 
                 // continue Build item                
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] {64,1});
-                s.Pack8(i);
-                s.Pack16(Build[i].item.ItemID);
-                s.Pack32(Build[i].CurTimer);
-                s.Pack8(1);
+                s.Pack(new byte[] {64,1});
+                s.Pack(i);
+                s.Pack(Build[i].item.ItemID);
+                s.Pack(Build[i].CurTimer);
+                s.Pack(1);
                 src.Send(s);
                 Send64_2(src, i);
             }
@@ -750,7 +671,7 @@ namespace Wonderland_Private_Server.Code.Objects
         //    t.Interval = 15000; // specify interval time as you want
         //    t.Tick += new EventHandler(timer_Tick);
 
-        //    t.Start();
+        //    t.Init();
         //}
         //public void timer_Tick(object sender, EventArgs e)
         //{

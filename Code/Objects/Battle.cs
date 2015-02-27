@@ -182,9 +182,9 @@ namespace Wonderland_Private_Server.Code.Objects
             if (Side[(byte)BattleSide.Attacking].BattleActionRecieved(data) || Side[(byte)BattleSide.Defending].BattleActionRecieved(data))
             {
                 SendPacket p = new SendPacket();
-                p.PackArray(new byte[]{53, 5});
-                p.Pack8(data.src.GridX);
-                p.Pack8(data.src.GridY);
+                p.Pack(new byte[]{53, 5});
+                p.Pack(data.src.GridX);
+                p.Pack(data.src.GridY);
 
                 foreach (Player gr in Side[(byte)BattleSide.Attacking].fighterlist.Where(c => c is Player))
                     gr.Send(p);
@@ -199,8 +199,8 @@ namespace Wonderland_Private_Server.Code.Objects
         //    {
         //        SendPacket p = new SendPacket();
         //        p.Header(53, 5);
-        //        p.Pack8(data.src.GridX);
-        //        p.Pack8(data.src.GridY);
+        //        p.Pack(data.src.GridX);
+        //        p.Pack(data.src.GridY);
         //        p.SetSize();
         //        foreach (Player gr in Rightside.fighterlist.Where(c => c is Player))
         //        {
@@ -225,8 +225,8 @@ namespace Wonderland_Private_Server.Code.Objects
                     Send_11_250(Background,Side[2].fighterlist, fighter);
                     Send_11_5(fighter);
                     SendPacket p = new SendPacket();
-                    p.PackArray(new byte[] { 11, 10 });
-                    p.Pack8(1);
+                    p.Pack(new byte[] { 11, 10 });
+                    p.Pack(1);
                     fighter.Send(p);
                 }
             }
@@ -239,8 +239,8 @@ namespace Wonderland_Private_Server.Code.Objects
                     Send_11_250(Background,Side[5].fighterlist, fighter);
                     Send_11_5(fighter);
                     SendPacket p = new SendPacket();
-                    p.PackArray(new byte[] { 11, 10 });
-                    p.Pack8(1);
+                    p.Pack(new byte[] { 11, 10 });
+                    p.Pack(1);
                     fighter.Send(p);
                 }
             }
@@ -288,14 +288,14 @@ namespace Wonderland_Private_Server.Code.Objects
 
                 List<uint[]> targets = new List<uint[]>();
                 if (re.Count > 1)
-                    moveData.Pack16(28);
+                    moveData.Pack(28);
                 else if (re.Count == 1)
                 {
-                    moveData.Pack16((byte)Atktype(q.skill.EffectLayer));
-                    moveData.Pack8(q.src.GridX); moveData.Pack8(q.src.GridY);
-                    moveData.Pack16(skillid);
-                    moveData.Pack8(0); //affect by poison? switch to 1
-                    moveData.Pack8((byte)re.Count);
+                    moveData.Pack((byte)Atktype(q.skill.EffectLayer));
+                    moveData.Pack(q.src.GridX); moveData.Pack(q.src.GridY);
+                    moveData.Pack(skillid);
+                    moveData.Pack(0); //affect by poison? switch to 1
+                    moveData.Pack((byte)re.Count);
                     foreach (var y in re)
                     {
                         if (SucessRate(q))
@@ -316,14 +316,14 @@ namespace Wonderland_Private_Server.Code.Objects
                         }
                         var et = GetState(miss, q.skill, y);
 
-                        moveData.Pack8(y.GridX);
-                        moveData.Pack8(y.GridY);
-                        moveData.Pack8(et[0]);
-                        moveData.Pack8(et[1]);
-                        moveData.Pack8(et[2]);
-                        moveData.Pack8(et[3]);//miss
-                        moveData.Pack32(dmg[0]);
-                        moveData.Pack16((ushort)dmg[1]);
+                        moveData.Pack(y.GridX);
+                        moveData.Pack(y.GridY);
+                        moveData.Pack(et[0]);
+                        moveData.Pack(et[1]);
+                        moveData.Pack(et[2]);
+                        moveData.Pack(et[3]);//miss
+                        moveData.Pack(dmg[0]);
+                        moveData.Pack((ushort)dmg[1]);
                     }
 
                     ppl_involved.Add(q.src);
@@ -369,8 +369,8 @@ namespace Wonderland_Private_Server.Code.Objects
                 //Send_11_250_BattlePost((f as Player));
 
                 SendPacket p = new SendPacket();
-                p.PackArray(new byte[] { 11, 10 });
-                p.Pack8(1);
+                p.Pack(new byte[] { 11, 10 });
+                p.Pack(1);
                 (f as Player).Send(p);
             }
             //Send_11_4n5_InBattle(f, AllFighters);
@@ -385,8 +385,8 @@ namespace Wonderland_Private_Server.Code.Objects
             (f as Player).DataOut = SendType.Multi;
             //Send_11_250_BattlePost((f as Player));
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 11, 10 });
-            p.Pack8(1);
+            p.Pack(new byte[] { 11, 10 });
+            p.Pack(1);
             (f as Player).Send(p);
             (f as Player).DataOut = SendType.Normal;
         }
@@ -568,17 +568,17 @@ namespace Wonderland_Private_Server.Code.Objects
                 foreach (Fighter f in flist)
                 {
                     SendPacket p = new SendPacket();
-                    p.PackArray(new byte[] { 11, 5 });
-                    p.Pack8((byte)f.BattlePosition);//p.Pack8(3); 
-                    p.Pack8((byte)f.TypeofFighter);
-                    p.Pack32(f.ID);
-                    p.Pack16(f.ClickID); p.Pack32(f.OwnerID);
-                    p.Pack8(f.GridX); p.Pack8(f.GridY);
-                    p.Pack32((uint)f.MaxHP); p.Pack16((ushort)f.MaxSP);
-                    p.Pack32((uint)f.CurHP); p.Pack16((ushort)f.CurSP);
-                    p.Pack8((byte)f.Level);
-                    p.Pack8((byte)f.Element);
-                    p.Pack8(Convert.ToByte(f.Reborn)); p.Pack8((byte)f.Job);
+                    p.Pack(new byte[] { 11, 5 });
+                    p.Pack((byte)f.BattlePosition);//p.Pack(3); 
+                    p.Pack((byte)f.TypeofFighter);
+                    p.Pack(f.ID);
+                    p.Pack(f.ClickID); p.Pack(f.OwnerID);
+                    p.Pack(f.GridX); p.Pack(f.GridY);
+                    p.Pack((uint)f.MaxHP); p.Pack((ushort)f.MaxSP);
+                    p.Pack((uint)f.CurHP); p.Pack((ushort)f.CurSP);
+                    p.Pack((byte)f.Level);
+                    p.Pack((byte)f.Element);
+                    p.Pack(Convert.ToByte(f.Reborn)); p.Pack((byte)f.Job);
                     target.Send(p);
                 }
 
@@ -626,19 +626,19 @@ namespace Wonderland_Private_Server.Code.Objects
             if (flist.Count > 0)
             {
                 SendPacket p = new SendPacket();
-                p.PackArray(new byte[]{11, 250});
-                p.Pack16(background);
+                p.Pack(new byte[]{11, 250});
+                p.Pack(background);
                 foreach (Fighter f in flist)
                 {
-                    p.Pack8((byte)f.BattlePosition);
-                    p.Pack8((byte)f.TypeofFighter);
-                    p.Pack32(f.ID);
-                    p.Pack16(f.ClickID); p.Pack32(f.OwnerID);
-                    p.Pack8(f.GridX); p.Pack8(f.GridY);
-                    p.Pack32((uint)f.MaxHP); p.Pack16((ushort)f.MaxSP);
-                    p.Pack32((uint)f.CurHP); p.Pack16((ushort)f.CurSP);
-                    p.Pack8((byte)f.Level);
-                    p.Pack8((byte)f.Element); p.PackBoolean(f.Reborn); p.Pack8((byte)f.Job);
+                    p.Pack((byte)f.BattlePosition);
+                    p.Pack((byte)f.TypeofFighter);
+                    p.Pack(f.ID);
+                    p.Pack(f.ClickID); p.Pack(f.OwnerID);
+                    p.Pack(f.GridX); p.Pack(f.GridY);
+                    p.Pack((uint)f.MaxHP); p.Pack((ushort)f.MaxSP);
+                    p.Pack((uint)f.CurHP); p.Pack((ushort)f.CurSP);
+                    p.Pack((byte)f.Level);
+                    p.Pack((byte)f.Element); p.Pack(f.Reborn); p.Pack((byte)f.Job);
                 }
                 target.Send(p);
             }
@@ -652,38 +652,38 @@ namespace Wonderland_Private_Server.Code.Objects
         //    tmp.AddRange(Leftside.fighterlist.Where(c => c != watcher));
         //    SendPacket ot = new SendPacket();
         //    ot.Header(11, 250);
-        //    ot.Pack16(this.Background);
+        //    ot.Pack(this.Background);
         //    for (int a = 0; a < tmp.Count; a++)
         //    {
         //        if (tmp[a].TypeofFighter == eFighterType.player || tmp[a].TypeofFighter == eFighterType.Watcher)
         //        {
         //            if (tmp[a].BattlePosition == BattleSide.Watching)
-        //                ot.Pack8(4);
+        //                ot.Pack(4);
         //            else
         //                if (tmp[a].StartedBattle)
-        //                    ot.Pack8(2);
+        //                    ot.Pack(2);
         //                else if (tmp[a] == watcher)
         //                    switch (tmp[a].BattlePosition)
         //                    {
-        //                        case BattleSide.left: ot.Pack8(2); break;
-        //                        case BattleSide.right: ot.Pack8(5); break;
+        //                        case BattleSide.left: ot.Pack(2); break;
+        //                        case BattleSide.right: ot.Pack(5); break;
         //                    }
         //                else
-        //                    ot.Pack8(100);
-        //            ot.Pack8((byte)tmp[a].TypeofFighter);
-        //            ot.Pack32(tmp[a].ID);
-        //            ot.Pack16(tmp[a].clickID); ot.Pack32(tmp[a].ownerID);
+        //                    ot.Pack(100);
+        //            ot.Pack((byte)tmp[a].TypeofFighter);
+        //            ot.Pack(tmp[a].ID);
+        //            ot.Pack(tmp[a].clickID); ot.Pack(tmp[a].ownerID);
         //            if (tmp[a].Position == BattleSide.watch)
         //            {
-        //                ot.Pack8(255); ot.Pack8(255);
+        //                ot.Pack(255); ot.Pack(255);
         //            }
         //            else
-        //            { ot.Pack8(tmp[a].GridX); ot.Pack8(tmp[a].GridY); }
-        //            ot.Pack32(tmp[a].Stats.MaxHP); ot.Pack16((ushort)tmp[a].Stats.MaxSP);
-        //            ot.Pack32(tmp[a].CurHP); ot.Pack16((ushort)tmp[a].CurSP);
-        //            ot.Pack8((byte)tmp[a].Stats.Level);
-        //            ot.Pack8((byte)tmp[a].Stats.element);
-        //            ot.Pack8(BitConverter.GetBytes(tmp[a].Stats.Reborn)[0]); ot.Pack8((byte)tmp[a].Stats.job);
+        //            { ot.Pack(tmp[a].GridX); ot.Pack(tmp[a].GridY); }
+        //            ot.Pack(tmp[a].Stats.MaxHP); ot.Pack((ushort)tmp[a].Stats.MaxSP);
+        //            ot.Pack(tmp[a].CurHP); ot.Pack((ushort)tmp[a].CurSP);
+        //            ot.Pack((byte)tmp[a].Stats.Level);
+        //            ot.Pack((byte)tmp[a].Stats.element);
+        //            ot.Pack(BitConverter.GetBytes(tmp[a].Stats.Reborn)[0]); ot.Pack((byte)tmp[a].Stats.job);
         //        }
         //    }
         //    ot.SetSize();
@@ -693,10 +693,10 @@ namespace Wonderland_Private_Server.Code.Objects
         //{
         //    SendPacket p = new SendPacket(target);
         //    p.Header(11, 4);
-        //    p.Pack8(bval1);
-        //    p.Pack32(id);
-        //    p.Pack16(wval);
-        //    p.Pack8(bval2);
+        //    p.Pack(bval1);
+        //    p.Pack(id);
+        //    p.Pack(wval);
+        //    p.Pack(bval2);
         //    p.SetSize();
         //    p.Send();
         //}
@@ -705,16 +705,16 @@ namespace Wonderland_Private_Server.Code.Objects
         //{
         //    SendPacket p = new SendPacket(target);
         //    p.Header(11, 5);
-        //    p.Pack8((byte)f.Position);//p.Pack8(3); 
-        //    p.Pack8((byte)f.TypeofFighter);
-        //    p.Pack32(f.Fighter_ID);
-        //    p.Pack16(f.clickID); p.Pack32(f.ownerID);
-        //    p.Pack8(f.GridX); p.Pack8(f.GridY);
-        //    p.Pack32(f.Stats.MaxHP); p.Pack16((ushort)f.Stats.MaxSP);
-        //    p.Pack32(f.CurHP); p.Pack16((ushort)f.CurSP);
-        //    p.Pack8((byte)f.Stats.Level);
-        //    p.Pack8((byte)f.Stats.element);
-        //    p.Pack8(BitConverter.GetBytes(f.Stats.Reborn)[0]); p.Pack8((byte)f.Stats.job);
+        //    p.Pack((byte)f.Position);//p.Pack(3); 
+        //    p.Pack((byte)f.TypeofFighter);
+        //    p.Pack(f.Fighter_ID);
+        //    p.Pack(f.clickID); p.Pack(f.ownerID);
+        //    p.Pack(f.GridX); p.Pack(f.GridY);
+        //    p.Pack(f.Stats.MaxHP); p.Pack((ushort)f.Stats.MaxSP);
+        //    p.Pack(f.CurHP); p.Pack((ushort)f.CurSP);
+        //    p.Pack((byte)f.Stats.Level);
+        //    p.Pack((byte)f.Stats.element);
+        //    p.Pack(BitConverter.GetBytes(f.Stats.Reborn)[0]); p.Pack((byte)f.Stats.job);
         //    p.SetSize();
         //    p.Send();
         //}
@@ -1003,7 +1003,7 @@ namespace Wonderland_Private_Server.Code.Objects
                             } break;
                     }
                     SendPacket p = new SendPacket();
-                    p.PackArray(new byte[] { 52, 1 });
+                    p.Pack(new byte[] { 52, 1 });
                     (f as Player).Send(p);
                     (f as Player).DataOut = SendType.Normal;
                 }
@@ -1028,11 +1028,11 @@ namespace Wonderland_Private_Server.Code.Objects
         public void Send51_1(Fighter t, byte skill, ushort amt, Player target)
         {
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 51, 1 });
-            p.Pack8((byte)t.GridX); p.Pack8((byte)t.GridY);
-            p.Pack8(skill);
-            p.Pack16(amt);
-            p.Pack16(0);
+            p.Pack(new byte[] { 51, 1 });
+            p.Pack((byte)t.GridX); p.Pack((byte)t.GridY);
+            p.Pack(skill);
+            p.Pack(amt);
+            p.Pack(0);
             target.Send(p);
         }
         public void Add(eBattleType h, Fighter fighter)
@@ -1074,8 +1074,8 @@ namespace Wonderland_Private_Server.Code.Objects
                 {
 
                     SendPacket p = new SendPacket();
-                    p.PackArray(new byte[] { 11, 1 });
-                    p.Pack8((byte)fighter.GridX); p.Pack8((byte)fighter.GridY);
+                    p.Pack(new byte[] { 11, 1 });
+                    p.Pack((byte)fighter.GridX); p.Pack((byte)fighter.GridY);
 
                     //foreach (Fighter u in src.AllFighters)
                     //    if (u is Player)
@@ -1100,9 +1100,9 @@ namespace Wonderland_Private_Server.Code.Objects
                     //SendPacket t = new SendPacket();
                     //t.Header(11, 12);
                     //if ((fighter as Player).StartedBattle)
-                    //    t.Pack8(1);
+                    //    t.Pack(1);
                     //else
-                    //    t.Pack8(2);
+                    //    t.Pack(2);
                     //g.SendPacket((fighter as Player).playerinfo, t);
                     //if ((fighter as Player).CurHP != 0)
                     //    (fighter as Player).CurHP = fighter.CurHP;
@@ -1112,7 +1112,7 @@ namespace Wonderland_Private_Server.Code.Objects
                     //    (fighter as Player).CurHP += 1;
                     //}
                     //(fighter as Player).CurSP = (fighter as Player).CurSP;
-                    //t.Pack32(0);
+                    //t.Pack(0);
                     //(fighter as Player).Send(t);
 
                     //switch (exit)//Rewards proccessed on leave
@@ -1130,14 +1130,14 @@ namespace Wonderland_Private_Server.Code.Objects
                     //        } break;
                     //}
                     SendPacket p = new SendPacket();
-                    p.PackArray(new byte[] { 11, 0 });
-                    p.Pack32(fighter.ID);
-                    p.Pack16(0);
+                    p.Pack(new byte[] { 11, 0 });
+                    p.Pack(fighter.ID);
+                    p.Pack(0);
                     (fighter as Player).CurrentMap.Broadcast(p);
                     p = new SendPacket();
-                    p.PackArray(new byte[] { 11, 1 });
-                    p.Pack8((byte)fighter.GridX); p.Pack8((byte)fighter.GridY);
-                    p.Pack8(0);
+                    p.Pack(new byte[] { 11, 1 });
+                    p.Pack((byte)fighter.GridX); p.Pack((byte)fighter.GridY);
+                    p.Pack(0);
                     (fighter as Player).Send(p);
                 }
                 fighterlist.Remove(fighter);
@@ -1172,27 +1172,27 @@ namespace Wonderland_Private_Server.Code.Objects
                 {
                     (rt as Player).DataOut = SendType.Multi;
                     SendPacket p = new SendPacket();
-                    p.PackArray(new byte[]{50, 6});
-                    p.Pack8((byte)src.GridX); p.Pack8((byte)src.GridY);
-                    p.Pack8(0);
+                    p.Pack(new byte[]{50, 6});
+                    p.Pack((byte)src.GridX); p.Pack((byte)src.GridY);
+                    p.Pack(0);
                    (rt as Player).Send(p);
                     p = new SendPacket();
-                    p.PackArray(new byte[]{50, 1});
-                    p.Pack16(17);
-                    p.Pack8((byte)src.GridX); p.Pack8((byte)src.GridY);
-                    p.Pack16(skill);
-                    p.Pack8(0); p.Pack8(1);
-                    p.Pack8((byte)dst.GridX); p.Pack8((byte)dst.GridY);
-                    p.Pack8(1);
-                    p.Pack8(0);
-                    p.Pack8(1);
+                    p.Pack(new byte[]{50, 1});
+                    p.Pack(17);
+                    p.Pack((byte)src.GridX); p.Pack((byte)src.GridY);
+                    p.Pack(skill);
+                    p.Pack(0); p.Pack(1);
+                    p.Pack((byte)dst.GridX); p.Pack((byte)dst.GridY);
+                    p.Pack(1);
+                    p.Pack(0);
+                    p.Pack(1);
                     if (!miss)
-                        p.Pack8(25);
+                        p.Pack(25);
                     else
-                        p.Pack8(0);
+                        p.Pack(0);
                     //Second part is damage calculation
-                    p.Pack32(Damg);
-                    p.Pack8(1);
+                    p.Pack(Damg);
+                    p.Pack(1);
                    (rt as Player).Send(p);
                     (rt as Player).DataOut = SendType.Normal;
                 }
@@ -1201,8 +1201,8 @@ namespace Wonderland_Private_Server.Code.Objects
         public void Send_Attack(List<Fighter> r, byte[] data)
         {
             SendPacket w = new SendPacket();
-            w.PackArray(new byte[] { 50, 1 });
-            w.PackArray(data);
+            w.Pack(new byte[] { 50, 1 });
+            w.Pack(data);
 
             foreach (Fighter rt in fighterlist.ToList())
             {
@@ -1212,9 +1212,9 @@ namespace Wonderland_Private_Server.Code.Objects
                     foreach (var s in r)
                     {
                         SendPacket p = new SendPacket();
-                        p.PackArray(new byte[] { 50, 6 });
-                        p.Pack8((byte)s.GridX); p.Pack8((byte)s.GridY);
-                        p.Pack8(0);
+                        p.Pack(new byte[] { 50, 6 });
+                        p.Pack((byte)s.GridX); p.Pack((byte)s.GridY);
+                        p.Pack(0);
                         (rt as Player).Send(p);
                     }
                     (rt as Player).Send(w);

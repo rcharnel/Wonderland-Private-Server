@@ -7,6 +7,7 @@ using System.Data;
 using System.Data.SQLite;
 using MySql.Data.MySqlClient;
 using System.IO;
+using Phoenix.Core;
 
 
 namespace DBConnector
@@ -119,7 +120,6 @@ namespace DBConnector
                 else
                     return "";
             }
-
         }
 
         public DataTable GetDataTable(string query,KeyValuePair<string,string>[] parameters = null)
@@ -238,13 +238,23 @@ namespace DBConnector
                 case DBType.MySQl:
                     {
                         MySqlConnection cnn = new MySqlConnection(Connection_String);
-                        cnn.Open();
-                        MySqlCommand mycommand = new MySqlCommand(sql, cnn);
-                        if (parameters != null)
-                            foreach (var t in parameters)
-                                mycommand.Parameters.AddWithValue(t.Key, t.Value);
-                        rowsUpdated = mycommand.ExecuteNonQuery();
-                        cnn.Close();
+                        try
+                        {
+                            cnn.Open();
+                            MySqlCommand mycommand = new MySqlCommand(sql, cnn);
+                            if (parameters != null)
+                                foreach (var t in parameters)
+                                    mycommand.Parameters.AddWithValue(t.Key, t.Value);
+                            rowsUpdated = mycommand.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                           
+                        }
+                        finally
+                        {
+                            cnn.Close();
+                        }
                     } break;
                 #endregion
             }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Utilities;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -30,14 +31,15 @@ namespace Wonderland_Private_Server.ActionCodes
         }
         void Recv3(ref Player p, RecvPacket r)
         {
-            try {
-                byte pos = r.Unpack8(2);
-                byte ax = r.Unpack8(4);
-                byte ay = r.Unpack8(8);
-                byte floor = r.Unpack8(12);
-                byte rotate = r.Unpack8(16);                
-                p.Tent.Floors[1].Rotate_Move_Object(p, pos,ax,ay,floor,rotate); }
-                
+            try
+            {
+                //byte pos = r.Unpack8(2);
+                //byte ax = r.Unpack8(4);
+                //byte ay = r.Unpack8(8);
+                //byte floor = r.Unpack8(12);
+                //byte rotate = r.Unpack8(16);                
+                //p.Tent.Floors[1].Rotate_Move_Object(p, pos,ax,ay,floor,rotate); }
+            }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
     }

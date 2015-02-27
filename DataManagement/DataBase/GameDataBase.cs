@@ -78,25 +78,25 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             
             if (src.Rows.Count > 0)
             {
-                foreach (string m in src.Rows[0]["Mail"].ToString().Split('&'))
-                {
-                    if (m == "none") break;
-                    Mail tmp = new Mail();
-                    tmp.Load(m);
-                    var re = cGlobal.WLO_World.GetPlayer(tmp.targetid);
-                    if (tmp.type == "Send")
-                    {
-                        if (!tmp.isSent && re != null)
-                        {
-                            c.MailBox.Add(tmp);
-                            re.RecvMailfrom(c, tmp.message, tmp.when);
-                        }
-                        else
-                            c.MailBox.Add(tmp);
-                    }
-                    else
-                        c.MailBox.Add(tmp);
-                }
+                //foreach (string m in src.Rows[0]["Mail"].ToString().Split('&'))
+                //{
+                //    if (m == "none") break;
+                //    Mail tmp = new Mail();
+                //    tmp.Load(m);
+                //    var re = cGlobal.WLO_World.GetPlayer(tmp.targetid);
+                //    if (tmp.type == "Send")
+                //    {
+                //        if (!tmp.isSent && re != null)
+                //        {
+                //            c.MailBox.Add(tmp);
+                //            re.RecvMailfrom(c, tmp.message, tmp.when);
+                //        }
+                //        else
+                //            c.MailBox.Add(tmp);
+                //    }
+                //    else
+                //        c.MailBox.Add(tmp);
+                //}
             }
             #endregion
 
@@ -124,6 +124,16 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         {
             return 140;
         }
+
+        public void SetupMap(ref Maps.Map src)
+        {
+
+        }
+        public void WriteTent(Tent src)
+        {
+
+        }
+        
         //public bool WriteStorage(ref Player src, Storagetype writetype, List<long[]> Data)
         //{
         //    if (src == null || src.ID == 0) return false;

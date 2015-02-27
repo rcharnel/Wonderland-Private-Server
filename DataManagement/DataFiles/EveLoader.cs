@@ -58,6 +58,41 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             //tricky as hell i kno
             Load_FinalData();
 
+            List<KeyValuePair<byte,string>> str = new List<KeyValuePair<byte,string>>();
+            List<KeyValuePair<byte, string>> str2 = new List<KeyValuePair<byte, string>>();
+            List<byte> src = new List<byte>();
+            List<byte> src2 = new List<byte>();
+
+            foreach (var m in Maps.Values)
+            {
+                    foreach (var o in m.Npclist)
+                    {
+                        if (!src.Contains(o.unknownbyte4))
+                            src.Add(o.unknownbyte4);
+                        if (!src2.Contains(o.unknownbyte5))
+                            src2.Add(o.unknownbyte5);
+                        var npc = cGlobal.gNpcManager.GetNpc((ushort)o.npcId);
+                        var item = cGlobal.gItemManager.GetItem((ushort)o.npcId);
+                        str.Add(new KeyValuePair<byte, string>(o.unknownbyte4, string.Format("Name {0} ID {1} Map {2} Has Walk {3} HasExt Walk {4}",(npc != null)?npc.NpcName:(item != null)?item.Name:"Unknown", o.npcId,m.mapID,(o.walksteps.Count > 0),(o.walkpatterns.Count>0))));
+                        str2.Add(new KeyValuePair<byte, string>(o.unknownbyte5, string.Format("Name {0} ID {1} Map {2} Has Walk {3} HasExt Walk {4}", (npc != null) ? npc.NpcName : (item != null) ? item.Name : "Unknown", o.npcId, m.mapID, (o.walksteps.Count > 0), (o.walkpatterns.Count > 0))));
+                    }
+            }
+            
+            foreach (var r in src)
+            {
+                var file = File.CreateText(r + ".txt");
+                foreach(var t in str.Where(c=>c.Key == r))
+                    file.WriteLine(t.Value);
+                file.Close();
+            }
+            foreach (var r in src2)
+            {
+                var file = File.CreateText("U"+r + ".txt");
+                foreach (var t in str.Where(c => c.Key == r))
+                    file.WriteLine(t.Value);
+                file.Close();
+            }
+
         }
         void Load_MapEntries(ref int ptr, byte[] d, uint len)
         {
@@ -178,17 +213,17 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             timer.Stop();
             Utilities.LogServices.Log("Data loaded successfully");
         }
-        public List<NpcEntries> LoadNpcEntries(MapData y)
+        public List<MapObjectEntries> LoadNpcEntries(MapData y)
         {
             try
             {
                 byte[] d = eveData;
                 var ptr = (int)y.offsetlist.NPC + (int)y.dataptr;
-                List<NpcEntries> map = new List<NpcEntries>();
+                List<MapObjectEntries> map = new List<MapObjectEntries>();
                 UInt16 elen = GetWord(d, ptr); ptr += 2;
                 for (int a = 0; a < elen; a++)
                 {
-                    NpcEntries tmp = new NpcEntries();                   
+                    MapObjectEntries tmp = new MapObjectEntries();                   
                     tmp.clickId = GetWord(d, ptr); ptr += 2;
                     tmp.Name = "";
                     for (int ap = 1; ap < d[ptr] + 1; ap++)
@@ -208,7 +243,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                     }
                     tmp.unknownbyte2 = d[ptr]; ptr++;
                     tmp.npcId = GetDWord(d, ptr); ptr += 4;
-                    tmp.unknownbyte3 = d[ptr]; ptr++;
+                    tmp.rotation = d[ptr]; ptr++;
                     tmp.unknownbyte4 = d[ptr]; ptr++;
                     tmp.unknownbyte5 = d[ptr]; ptr++;
                     blen = d[ptr]; ptr++;
@@ -217,7 +252,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                         npcWalkStep r = new npcWalkStep();
                         r.x = GetDWord(d, ptr); ptr += 4;
                         r.y = GetDWord(d, ptr); ptr += 4;
-                        r.z = GetDWord(d, ptr); ptr += 4;
+                        r.delay = GetDWord(d, ptr); ptr += 4;
                         tmp.walksteps.Add(r);
                     }
                     tmp.unknownbyte6 = d[ptr]; ptr++;

@@ -29,5 +29,6 @@ namespace Wonderland_Private_Server.Code.Enums
         Tool,
         Login,
         Quest,
+        CmD,
     }
 }

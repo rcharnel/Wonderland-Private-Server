@@ -34,10 +34,10 @@ namespace Wonderland_Private_Server.Code.Objects
             get
             {
                 SendPacket p = new SendPacket(false,true);
-                p.Pack8(PkSetting);
-                p.Pack8(ViewSetting);
-                p.Pack8(TradeSetting);
-                p.Pack8((byte)(GetChannelCode() + 96));
+                p.Pack(PkSetting);
+                p.Pack(ViewSetting);
+                p.Pack(TradeSetting);
+                p.Pack((byte)(GetChannelCode() + 96));
                 return p.Data.ToArray();
             }
         }

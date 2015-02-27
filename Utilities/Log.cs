@@ -14,6 +14,8 @@ namespace Wonderland_Private_Server.Utilities
         NET,
         UPDT,
         DB,
+        THRD,
+        TASK,
 
     }
     public struct LogItem

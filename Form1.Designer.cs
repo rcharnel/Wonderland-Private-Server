@@ -32,6 +32,25 @@
             this.GitBranch = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.tabControl3 = new System.Windows.Forms.TabControl();
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.thrd_label = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.Tasks = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Interval = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.LastExection = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NextExecution = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.taskstatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.canceltask = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.retrytask = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.tabPage9 = new System.Windows.Forms.TabPage();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -44,37 +63,36 @@
             this.UpdatePane = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.updtrefresh = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.GitUptOption = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.tabPage9 = new System.Windows.Forms.TabPage();
-            this.tabPage8 = new System.Windows.Forms.TabPage();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.retrytask = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.canceltask = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.taskstatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NextExecution = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.LastExection = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Interval = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Tasks = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.tabPage7 = new System.Windows.Forms.TabPage();
-            this.tabControl3 = new System.Windows.Forms.TabControl();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.autoUpdt_Hr = new System.Windows.Forms.NumericUpDown();
+            this.autoUpdt_Min = new System.Windows.Forms.NumericUpDown();
+            this.label15 = new System.Windows.Forms.Label();
+            this.autoUpdt_label = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage6.SuspendLayout();
+            this.tabControl3.SuspendLayout();
+            this.tabPage7.SuspendLayout();
+            this.tabPage8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabPage1.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage3.SuspendLayout();
@@ -83,14 +101,14 @@
             this.tabPage2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.updtrefresh)).BeginInit();
-            this.tabPage8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.tabControl3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updtrefresh)).BeginInit();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Hr)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Min)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -131,6 +149,186 @@
             this.tabPage6.TabIndex = 2;
             this.tabPage6.Text = "System";
             this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // tabControl3
+            // 
+            this.tabControl3.Controls.Add(this.tabPage7);
+            this.tabControl3.Controls.Add(this.tabPage8);
+            this.tabControl3.Controls.Add(this.tabPage9);
+            this.tabControl3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl3.Location = new System.Drawing.Point(3, 3);
+            this.tabControl3.Name = "tabControl3";
+            this.tabControl3.SelectedIndex = 0;
+            this.tabControl3.Size = new System.Drawing.Size(741, 385);
+            this.tabControl3.TabIndex = 0;
+            // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.thrd_label);
+            this.tabPage7.Controls.Add(this.label11);
+            this.tabPage7.Controls.Add(this.label10);
+            this.tabPage7.Controls.Add(this.label9);
+            this.tabPage7.Controls.Add(this.label8);
+            this.tabPage7.Controls.Add(this.label7);
+            this.tabPage7.Controls.Add(this.groupBox4);
+            this.tabPage7.Location = new System.Drawing.Point(4, 22);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage7.Size = new System.Drawing.Size(733, 359);
+            this.tabPage7.TabIndex = 0;
+            this.tabPage7.Text = "Status";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // thrd_label
+            // 
+            this.thrd_label.AutoSize = true;
+            this.thrd_label.Location = new System.Drawing.Point(8, 129);
+            this.thrd_label.Name = "thrd_label";
+            this.thrd_label.Size = new System.Drawing.Size(46, 13);
+            this.thrd_label.TabIndex = 6;
+            this.thrd_label.Text = "Threads";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(8, 60);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(61, 13);
+            this.label11.TabIndex = 5;
+            this.label11.Text = "Players Idle";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(8, 105);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(53, 13);
+            this.label10.TabIndex = 4;
+            this.label10.Text = "Maps Idle";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(8, 82);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(72, 13);
+            this.label9.TabIndex = 3;
+            this.label9.Text = "Maps Loaded";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(8, 38);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(74, 13);
+            this.label8.TabIndex = 2;
+            this.label8.Text = "Players Online";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Motorwerk", 26F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(6, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(596, 27);
+            this.label7.TabIndex = 1;
+            this.label7.Text = "Wonderland Online Private Server";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Location = new System.Drawing.Point(616, 4);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(116, 231);
+            this.groupBox4.TabIndex = 0;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "DataFiles";
+            // 
+            // tabPage8
+            // 
+            this.tabPage8.Controls.Add(this.dataGridView1);
+            this.tabPage8.Location = new System.Drawing.Point(4, 22);
+            this.tabPage8.Name = "tabPage8";
+            this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage8.Size = new System.Drawing.Size(733, 359);
+            this.tabPage8.TabIndex = 1;
+            this.tabPage8.Text = "Tasks";
+            this.tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AllowUserToResizeColumns = false;
+            this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Tasks,
+            this.Interval,
+            this.LastExection,
+            this.NextExecution,
+            this.taskstatus,
+            this.canceltask,
+            this.retrytask});
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.dataGridView1.GridColor = System.Drawing.SystemColors.Control;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowHeadersVisible = false;
+            this.dataGridView1.Size = new System.Drawing.Size(727, 353);
+            this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
+            // 
+            // Tasks
+            // 
+            this.Tasks.HeaderText = "Tasks";
+            this.Tasks.Name = "Tasks";
+            // 
+            // Interval
+            // 
+            this.Interval.HeaderText = "Interval";
+            this.Interval.Name = "Interval";
+            // 
+            // LastExection
+            // 
+            this.LastExection.HeaderText = "Last Exection";
+            this.LastExection.Name = "LastExection";
+            // 
+            // NextExecution
+            // 
+            this.NextExecution.HeaderText = "Next Execution";
+            this.NextExecution.Name = "NextExecution";
+            // 
+            // taskstatus
+            // 
+            this.taskstatus.HeaderText = "Status";
+            this.taskstatus.Name = "taskstatus";
+            // 
+            // canceltask
+            // 
+            this.canceltask.HeaderText = "Cancel Task";
+            this.canceltask.Name = "canceltask";
+            this.canceltask.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.canceltask.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.canceltask.Text = "";
+            this.canceltask.UseColumnTextForButtonValue = true;
+            // 
+            // retrytask
+            // 
+            this.retrytask.HeaderText = "Retry Task";
+            this.retrytask.Name = "retrytask";
+            this.retrytask.Text = "retry";
+            // 
+            // tabPage9
+            // 
+            this.tabPage9.Location = new System.Drawing.Point(4, 22);
+            this.tabPage9.Name = "tabPage9";
+            this.tabPage9.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage9.Size = new System.Drawing.Size(733, 359);
+            this.tabPage9.TabIndex = 2;
+            this.tabPage9.Text = "Users";
+            this.tabPage9.UseVisualStyleBackColor = true;
             // 
             // tabPage1
             // 
@@ -241,6 +439,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.groupBox5);
             this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Controls.Add(this.label4);
@@ -250,7 +449,7 @@
             this.groupBox1.Controls.Add(this.GitUptOption);
             this.groupBox1.Location = new System.Drawing.Point(6, 26);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(230, 320);
+            this.groupBox1.Size = new System.Drawing.Size(230, 355);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Update Options";
@@ -262,26 +461,108 @@
             this.groupBox3.Controls.Add(this.checkBox2);
             this.groupBox3.Controls.Add(this.numericUpDown1);
             this.groupBox3.Controls.Add(this.checkBox1);
-            this.groupBox3.Location = new System.Drawing.Point(-2, 69);
+            this.groupBox3.Location = new System.Drawing.Point(0, 154);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(230, 100);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Force if";
             // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(12, 35);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(162, 17);
+            this.checkBox3.TabIndex = 5;
+            this.checkBox3.Text = "If minor version has changed";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDown2
+            // 
+            this.numericUpDown2.Location = new System.Drawing.Point(171, 53);
+            this.numericUpDown2.Name = "numericUpDown2";
+            this.numericUpDown2.Size = new System.Drawing.Size(53, 20);
+            this.numericUpDown2.TabIndex = 4;
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(12, 54);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(145, 17);
+            this.checkBox2.TabIndex = 3;
+            this.checkBox2.Text = "If patch version is greater";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(171, 75);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(53, 20);
+            this.numericUpDown1.TabIndex = 2;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(12, 76);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(140, 17);
+            this.checkBox1.TabIndex = 0;
+            this.checkBox1.Text = "If build version is greater";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.numericUpDown3);
-            this.groupBox2.Controls.Add(this.dateTimePicker1);
             this.groupBox2.Controls.Add(this.comboBox1);
-            this.groupBox2.Location = new System.Drawing.Point(0, 172);
+            this.groupBox2.Location = new System.Drawing.Point(0, 255);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(230, 100);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "If Players  are Online";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(176, 51);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(43, 13);
+            this.label6.TabIndex = 4;
+            this.label6.Text = "minutes";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 51);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(48, 13);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "Delay by";
+            // 
+            // numericUpDown3
+            // 
+            this.numericUpDown3.Location = new System.Drawing.Point(63, 49);
+            this.numericUpDown3.Name = "numericUpDown3";
+            this.numericUpDown3.Size = new System.Drawing.Size(109, 20);
+            this.numericUpDown3.TabIndex = 2;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Warn Players and Delay",
+            "Warn Players and Schedule for later",
+            "Ignore Update",
+            "Force Update"});
+            this.comboBox1.Location = new System.Drawing.Point(5, 19);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(225, 21);
+            this.comboBox1.TabIndex = 0;
             // 
             // label4
             // 
@@ -342,204 +623,82 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Branch";
             // 
-            // tabPage9
+            // groupBox5
             // 
-            this.tabPage9.Location = new System.Drawing.Point(4, 22);
-            this.tabPage9.Name = "tabPage9";
-            this.tabPage9.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage9.Size = new System.Drawing.Size(733, 359);
-            this.tabPage9.TabIndex = 2;
-            this.tabPage9.Text = "Users";
-            this.tabPage9.UseVisualStyleBackColor = true;
+            this.groupBox5.Controls.Add(this.autoUpdt_label);
+            this.groupBox5.Controls.Add(this.label15);
+            this.groupBox5.Controls.Add(this.autoUpdt_Min);
+            this.groupBox5.Controls.Add(this.autoUpdt_Hr);
+            this.groupBox5.Controls.Add(this.label14);
+            this.groupBox5.Controls.Add(this.label13);
+            this.groupBox5.Controls.Add(this.label12);
+            this.groupBox5.Location = new System.Drawing.Point(5, 71);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(219, 77);
+            this.groupBox5.TabIndex = 7;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Auto Update";
             // 
-            // tabPage8
+            // label12
             // 
-            this.tabPage8.Controls.Add(this.dataGridView1);
-            this.tabPage8.Location = new System.Drawing.Point(4, 22);
-            this.tabPage8.Name = "tabPage8";
-            this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage8.Size = new System.Drawing.Size(733, 359);
-            this.tabPage8.TabIndex = 1;
-            this.tabPage8.Text = "Tasks";
-            this.tabPage8.UseVisualStyleBackColor = true;
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(4, 16);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(29, 13);
+            this.label12.TabIndex = 0;
+            this.label12.Text = "After";
             // 
-            // dataGridView1
+            // label13
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToResizeColumns = false;
-            this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Tasks,
-            this.Interval,
-            this.LastExection,
-            this.NextExecution,
-            this.taskstatus,
-            this.canceltask,
-            this.retrytask});
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridView1.GridColor = System.Drawing.SystemColors.Control;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(727, 353);
-            this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(97, 16);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(18, 13);
+            this.label13.TabIndex = 1;
+            this.label13.Text = "Hr";
             // 
-            // retrytask
+            // label14
             // 
-            this.retrytask.HeaderText = "Retry Task";
-            this.retrytask.Name = "retrytask";
-            this.retrytask.Text = "retry";
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(178, 16);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(24, 13);
+            this.label14.TabIndex = 2;
+            this.label14.Text = "Min";
             // 
-            // canceltask
+            // autoUpdt_Hr
             // 
-            this.canceltask.HeaderText = "Cancel Task";
-            this.canceltask.Name = "canceltask";
-            this.canceltask.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.canceltask.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.canceltask.Text = "";
-            this.canceltask.UseColumnTextForButtonValue = true;
+            this.autoUpdt_Hr.Location = new System.Drawing.Point(39, 14);
+            this.autoUpdt_Hr.Name = "autoUpdt_Hr";
+            this.autoUpdt_Hr.Size = new System.Drawing.Size(55, 20);
+            this.autoUpdt_Hr.TabIndex = 3;
+            this.autoUpdt_Hr.ValueChanged += new System.EventHandler(this.autoUpdt_Hr_ValueChanged);
             // 
-            // taskstatus
+            // autoUpdt_Min
             // 
-            this.taskstatus.HeaderText = "Status";
-            this.taskstatus.Name = "taskstatus";
+            this.autoUpdt_Min.Location = new System.Drawing.Point(121, 14);
+            this.autoUpdt_Min.Name = "autoUpdt_Min";
+            this.autoUpdt_Min.Size = new System.Drawing.Size(57, 20);
+            this.autoUpdt_Min.TabIndex = 4;
+            this.autoUpdt_Min.ValueChanged += new System.EventHandler(this.autoUpdt_Min_ValueChanged);
             // 
-            // NextExecution
+            // label15
             // 
-            this.NextExecution.HeaderText = "Next Execution";
-            this.NextExecution.Name = "NextExecution";
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(4, 37);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(86, 13);
+            this.label15.TabIndex = 5;
+            this.label15.Text = "Est Update Time";
             // 
-            // LastExection
+            // autoUpdt_label
             // 
-            this.LastExection.HeaderText = "Last Exection";
-            this.LastExection.Name = "LastExection";
-            // 
-            // Interval
-            // 
-            this.Interval.HeaderText = "Interval";
-            this.Interval.Name = "Interval";
-            // 
-            // Tasks
-            // 
-            this.Tasks.HeaderText = "Tasks";
-            this.Tasks.Name = "Tasks";
-            // 
-            // tabPage7
-            // 
-            this.tabPage7.Location = new System.Drawing.Point(4, 22);
-            this.tabPage7.Name = "tabPage7";
-            this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage7.Size = new System.Drawing.Size(733, 359);
-            this.tabPage7.TabIndex = 0;
-            this.tabPage7.Text = "Status";
-            this.tabPage7.UseVisualStyleBackColor = true;
-            // 
-            // tabControl3
-            // 
-            this.tabControl3.Controls.Add(this.tabPage7);
-            this.tabControl3.Controls.Add(this.tabPage8);
-            this.tabControl3.Controls.Add(this.tabPage9);
-            this.tabControl3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl3.Location = new System.Drawing.Point(3, 3);
-            this.tabControl3.Name = "tabControl3";
-            this.tabControl3.SelectedIndex = 0;
-            this.tabControl3.Size = new System.Drawing.Size(741, 385);
-            this.tabControl3.TabIndex = 0;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(12, 76);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(140, 17);
-            this.checkBox1.TabIndex = 0;
-            this.checkBox1.Text = "If build version is greater";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // numericUpDown1
-            // 
-            this.numericUpDown1.Location = new System.Drawing.Point(171, 75);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(53, 20);
-            this.numericUpDown1.TabIndex = 2;
-            // 
-            // numericUpDown2
-            // 
-            this.numericUpDown2.Location = new System.Drawing.Point(171, 53);
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(53, 20);
-            this.numericUpDown2.TabIndex = 4;
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(12, 54);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(145, 17);
-            this.checkBox2.TabIndex = 3;
-            this.checkBox2.Text = "If patch version is greater";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // checkBox3
-            // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(12, 35);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(162, 17);
-            this.checkBox3.TabIndex = 5;
-            this.checkBox3.Text = "If minor version has changed";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Warn Players and Delay",
-            "Warn Players and Schedule for later",
-            "Ignore Update",
-            "Force Update"});
-            this.comboBox1.Location = new System.Drawing.Point(5, 19);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(225, 21);
-            this.comboBox1.TabIndex = 0;
-            // 
-            // dateTimePicker1
-            // 
-            this.dateTimePicker1.Location = new System.Drawing.Point(5, 74);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(223, 20);
-            this.dateTimePicker1.TabIndex = 1;
-            // 
-            // numericUpDown3
-            // 
-            this.numericUpDown3.Location = new System.Drawing.Point(63, 49);
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(109, 20);
-            this.numericUpDown3.TabIndex = 2;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 51);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(48, 13);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "Delay by";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(176, 51);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(43, 13);
-            this.label6.TabIndex = 4;
-            this.label6.Text = "minutes";
+            this.autoUpdt_label.AutoSize = true;
+            this.autoUpdt_label.Location = new System.Drawing.Point(6, 59);
+            this.autoUpdt_label.Name = "autoUpdt_label";
+            this.autoUpdt_label.Size = new System.Drawing.Size(41, 13);
+            this.autoUpdt_label.TabIndex = 6;
+            this.autoUpdt_label.Text = "label16";
             // 
             // Form1
             // 
@@ -555,6 +714,11 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage6.ResumeLayout(false);
+            this.tabControl3.ResumeLayout(false);
+            this.tabPage7.ResumeLayout(false);
+            this.tabPage7.PerformLayout();
+            this.tabPage8.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.tabPage1.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
@@ -566,15 +730,16 @@
             this.groupBox1.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.updtrefresh)).EndInit();
-            this.tabPage8.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.tabControl3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.updtrefresh)).EndInit();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Hr)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Min)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -625,8 +790,22 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown numericUpDown3;
-        private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Label thrd_label;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Label autoUpdt_label;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.NumericUpDown autoUpdt_Min;
+        private System.Windows.Forms.NumericUpDown autoUpdt_Hr;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label12;
     }
 }
 

@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Code.Enums;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
-    public class AC2 : AC
+    public class AC02 : AC
     {
         public override int ID { get { return 2; } }
         public override void ProcessPkt(ref Player r, RecvPacket p)
@@ -39,11 +40,12 @@ namespace Wonderland_Private_Server.ActionCodes
                 {
                     switch (words[0])
                     {
-                        #region item add
+                        #region item 
                         case ":item":                            
                             {
                                 switch (words[1])
                                 {
+#region add
                                     case "add":
                                         {
                                             byte ammt = 1;
@@ -91,11 +93,26 @@ namespace Wonderland_Private_Server.ActionCodes
                                             }
 
                                         } break;
+#endregion
 
                                 } break;
 
-                            }
+                            }break;
 #endregion
+                        #region warp
+                        case ":warp":
+                            {
+                                try
+                                {
+                                    WarpData tmp = new WarpData();
+                                    tmp.DstMap = ushort.Parse(words[1]);
+                                    tmp.DstX_Axis = ushort.Parse(words[2]);
+                                    tmp.DstY_Axis = ushort.Parse(words[3]);
+                                    p.CurrentMap.Teleport(TeleportType.CmD, ref p, (byte)0, tmp);
+                                }
+                                catch { }
+                            }break;
+                        #endregion
 
                         #region CommandLine Develops
                         case "cmd":
@@ -119,8 +136,8 @@ namespace Wonderland_Private_Server.ActionCodes
 
                         default :
                             SendPacket s = new SendPacket();
-                            s.PackArray(new byte[]{2,2});
-                            s.Pack32(p.ID);
+                            s.Pack(new byte[]{2,2});
+                            s.Pack(p.ID);
                             s.PackNString(str);
                             p.CurrentMap.Broadcast(s, p.UserID);
                             break;

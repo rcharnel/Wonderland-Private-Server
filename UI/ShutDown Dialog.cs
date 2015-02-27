@@ -31,40 +31,39 @@ namespace Wonderland_Private_Server.UI
         {
             dispMsg = "Preparing to Shutdown";
 
-            maxperct += cGlobal.WLO_World.Clients_Connected;
-            maxperct += cGlobal.WLO_World.Clients_inGame;
-            maxperct += cGlobal.ThreadManager.Count;
+            //maxperct += cGlobal.WLO_WorldClients_Connected;
+            //maxperct += cGlobal.WLO_World.Clients_inGame;
+
 
             Task shutdwn = new Task(new Action(() =>
             {
-                int max = cGlobal.ThreadManager.Count;
                 int cnt = 0;
                 dispMsg = "Saving Settings";
                 cGlobal.SrvSettings.SaveSettings(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo");
 
                 dispMsg = "Stopping Tcp Listener";
-                Network.ListenSocket.Kill();
+                cGlobal.TcpListener.Kill();
                 dispMsg = "Disconnecting and saving Player info Remaining..";
 
                 dispMsg = "Shutting Down Server";
                 cGlobal.WLO_World.Kill();
                 perct += 10;
-                foreach (var t in cGlobal.ThreadManager.ToList())
-                {
-                    dispMsg = string.Format("Aborting Threads {0}/{1}", ++cnt, max);
-                    t.Abort();
-                    Thread.Sleep(1000);
-                    perct++;
-                }
+                //foreach (var t in cGlobal.ThreadManager.Values.ToList())
+                //{
+                //    dispMsg = string.Format("Aborting Threads {0}/{1}", ++cnt, max);
+                //    t.Abort();
+                //    Thread.Sleep(1000);
+                //    perct++;
+                //}
                 perct = 100;
                 if (isupdating)
                 {
-                    dispMsg = "Preparing for update";
-                    dispMsg = "Launching Updater";
-                    ProcessStartInfo start = new ProcessStartInfo();
-                    start.FileName = Environment.CurrentDirectory + "\\WloPSrvUpdater.exe";
-                    start.Arguments = cGlobal.GClient.Branch+ " "+cGlobal.GClient.myVersion + " " +cGlobal.GClient.UpdateInfo.TagName;
-                    Process.Start(start);                    
+                    //dispMsg = "Preparing for update";
+                    //dispMsg = "Launching Updater";
+                    //ProcessStartInfo start = new ProcessStartInfo();
+                    //start.FileName = Environment.CurrentDirectory + "\\WloPSrvUpdater.exe";
+                    //start.Arguments = cGlobal.GClient.Branch+ " "+cGlobal.GClient.myVersion + " " +cGlobal.GClientUpdateInfo.TagName;
+                    //Process.Start(start);                    
 
                 }
                 dispMsg = "Server Shutdown Completed..";

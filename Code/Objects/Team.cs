@@ -22,12 +22,12 @@ namespace Wonderland_Private_Server.Code.Objects
     //    {
     //        SendPacket f = new SendPacket();
     //        f.Header(13, 15);
-    //        f.Pack8(3);
-    //        f.Pack32(own.CharacterTemplateID);
+    //        f.Pack(3);
+    //        f.Pack(own.CharacterTemplateID);
     //        foreach (Player u in myTeamMembers.ToArray())
     //            if (u.character.MyTeam.PartyLeader)
     //            {
-    //                f.Pack32(u.CharacterTemplateID);
+    //                f.Pack(u.CharacterTemplateID);
     //            }
     //        f.SetSize();
     //        leader = true;
@@ -52,7 +52,7 @@ namespace Wonderland_Private_Server.Code.Objects
     //        Send_5(183);
     //        SendPacket p = new SendPacket();
     //        p.Header(13, 4);
-    //        p.Pack32(own.CharacterTemplateID);
+    //        p.Pack(own.CharacterTemplateID);
     //        p.SetSize();
     //        own.currentMap.Broadcast(p);
     //        leader = false;
@@ -81,15 +81,15 @@ namespace Wonderland_Private_Server.Code.Objects
     //        }
     //        else
     //            p.Header(13, 10);
-    //        p.Pack8(value);
-    //        p.Pack32(own.CharacterTemplateID);
+    //        p.Pack(value);
+    //        p.Pack(own.CharacterTemplateID);
     //        p.SetSize();
     //        globals.SendPacket(t, p);
     //        t.character.MyTeam.Add(globals.FindPlayerby_CharacterTemplateID(own.CharacterTemplateID));
     //        p = new SendPacket();
     //        p.Header(13, 5);
-    //        p.Pack32(own.CharacterTemplateID);
-    //        p.Pack32(t.CharacterTemplateID);
+    //        p.Pack(own.CharacterTemplateID);
+    //        p.Pack(t.CharacterTemplateID);
     //        p.SetSize();
     //        own.currentMap.Broadcast(p);
     //        own.Send_8_3(t);
@@ -108,7 +108,7 @@ namespace Wonderland_Private_Server.Code.Objects
 
     //        SendPacket p = new SendPacket();
     //        p.Header(13, 1);
-    //        p.Pack32(own.CharacterTemplateID);
+    //        p.Pack(own.CharacterTemplateID);
     //        p.SetSize();
     //        globals.SendPacket(t, p);
     //    }
@@ -116,7 +116,7 @@ namespace Wonderland_Private_Server.Code.Objects
     //    {
     //        SendPacket f = new SendPacket();
     //        f.Header(13, 9);
-    //        f.Pack32(own.CharacterTemplateID);
+    //        f.Pack(own.CharacterTemplateID);
     //        f.SetSize();
     //        globals.SendPacket(t, f);
     //    }
@@ -125,8 +125,8 @@ namespace Wonderland_Private_Server.Code.Objects
     //        SendPacket f = new SendPacket();
 
     //        f.Header(13, 15);
-    //        f.Pack8(value);
-    //        f.Pack32(own.CharacterTemplateID);
+    //        f.Pack(value);
+    //        f.Pack(own.CharacterTemplateID);
     //        f.SetSize();
     //        globals.SendPacket(to, f);
     //    }
@@ -140,8 +140,8 @@ namespace Wonderland_Private_Server.Code.Objects
     //    {
     //        SendPacket p = new SendPacket();
     //        p.Header(25, 5);
-    //        p.Pack8(value);
-    //        p.Pack16(0);
+    //        p.Pack(value);
+    //        p.Pack(0);
     //        p.SetSize();
     //        globals.SendPacket(globals.FindPlayerby_CharacterTemplateID(own.CharacterTemplateID), p);
     //    }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Code.Enums;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -25,11 +26,11 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                p.Emote = r.Unpack8(2);
+                p.Emote = r.Unpack8();
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 32, 1 });
-                    s.Pack32(p.UserID);
-                s.Pack8(r.Unpack8(2));
+                s.Pack(new byte[] { 32, 1 });
+                    s.Pack(p.UserID);
+                s.Pack(r.Unpack8());
                 p.CurrentMap.Broadcast(s, p.ID);
 
             }
@@ -39,11 +40,11 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                p.Emote = r.Unpack8(2);
+                p.Emote = r.Unpack8();
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 32, 2 });
-                s.Pack32(p.UserID);
-                s.Pack8(r.Unpack8(2));
+                s.Pack(new byte[] { 32, 2 });
+                s.Pack(p.UserID);
+                s.Pack(r.Unpack8());
                 p.CurrentMap.Broadcast(s, p.ID);
             }
             catch (Exception t) { Utilities.LogServices.Log(t); }

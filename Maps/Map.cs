@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Reflection;
+using System.Threading;
 using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Code.Interface;
 using Wonderland_Private_Server.DataManagement.DataFiles;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.Maps
 {
@@ -19,33 +21,44 @@ namespace Wonderland_Private_Server.Maps
         protected MapType MType;
         protected readonly object locker;
         protected bool GmOnly;
-        protected Dictionary<byte, DroppedItem> Items_Dropped;
-        protected Dictionary<uint, Player> mapPlayers;
-        public Dictionary<uint, Player> Players { get { return mapPlayers; } }
+        public bool Kill;
+
+        public System.Diagnostics.Stopwatch IdleTimer = new System.Diagnostics.Stopwatch();
+
+        public ConcurrentDictionary<uint, Player> Players;
+
+        #region MapData Def
         protected Dictionary<byte, WarpInfo> Destinations;
         protected Dictionary<byte, Entry_Exit_Point_Entries> Portals;
         protected Dictionary<byte, EventsinMapEntries> Events;
-        protected Dictionary<int,Battle> Battles;
-        protected Dictionary<uint,Tent> Tents;
+        protected Dictionary<byte, MapObjectEntries> MapObjects;
+        #endregion
+
+        protected ConcurrentDictionary<byte, DroppedItem> Items_Dropped;
+        protected ConcurrentDictionary<int, Battle> Battles;
+        protected ConcurrentDictionary<uint, Tent> Tents;
 
         public virtual ushort MapID { get { return (info != null) ? info.mapID : (ushort)0; } }
         public virtual string Name { get { return "Unknown Name"; } }
-
         public MapType TypeofMap { get { return MType; } }
-        protected bool updateready; public bool MapneedsUpdate { set { updateready = value; } }
 
         public Map(MapData mapsrc = null)
         {
             info = mapsrc;
             Destinations = new Dictionary<byte, WarpInfo>();
-            mapPlayers = new Dictionary<uint, Player>();
+            Players = new ConcurrentDictionary<uint,Player>();
             locker = new object();
             Portals = new Dictionary<byte, Entry_Exit_Point_Entries>();
             Events = new Dictionary<byte, EventsinMapEntries>();
-            Tents = new Dictionary<uint, Tent>();
-            Battles = new Dictionary<int,Battle>();
-            Items_Dropped = new Dictionary<byte, DroppedItem>(255);
+            MapObjects = new Dictionary<byte, MapObjectEntries>();
+            Tents = new ConcurrentDictionary<uint, Tent>();
+            Battles = new ConcurrentDictionary<int, Battle>();
+            Items_Dropped = new ConcurrentDictionary<byte, DroppedItem>(10,255);
             LoadData();
+
+            Thread tmp = new Thread(new ThreadStart(UpdateMap));
+            tmp.Name = (MType == MapType.Regular)? MapID.ToString():"Tent "+new Random().Next(24578) + " Thread";
+            tmp.Init();
         }
 
         protected virtual void LoadData()
@@ -58,79 +71,57 @@ namespace Wonderland_Private_Server.Maps
                foreach (var r in info.Entry_Points)
                    Portals.Add((byte)r.clickID, r);
                Utilities.LogServices.Log(string.Format("Loaded {0} {1}",Portals.Count,"Warp Portals"));
+
                foreach (var r in info.WarpLoc)
                    Destinations.Add((byte)r.clickID, r);
                Utilities.LogServices.Log(string.Format("Loaded {0} {1}", Destinations.Count, "Warp Destinations"));
+
                foreach (var r in info.Events)
                    Events.Add((byte)r.clickID, r);
                Utilities.LogServices.Log(string.Format("Loaded {0} {1}", Events.Count, "Map Events"));
+
+               foreach (var r in info.Npclist)
+                  MapObjects.Add((byte)r.clickId, r);
+               Utilities.LogServices.Log(string.Format("Loaded {0} {1}", Events.Count, "Map Objects"));
            }
 
-        }
-
-        public virtual void onLogin(ref Player player)
+        }        
+        
+        public virtual void UpdateMap()
         {
-            for (int a = 0; a < Players.Count; a++)
+            do
             {
-                if (mapPlayers.Values.ToList()[a].ID == player.ID) return;
-            }
-            player.CurrentMap = this;
-            player.inGame = true;
-            for (int a = 0; a < Players.Count; a++)
-            {
-                //send to them
-                Broadcast(player._3Data(), player.ID);
-                SendPacket p = new SendPacket();
-                p.PackArray(new byte[] { 5, 0 });
-                p.Pack32(player.ID);
-                p.PackArray(player.Eqs.Worn_Equips);
-                Broadcast(p, player.ID);
-                p = new SendPacket();
-                p.PackArray(new byte[] { 10, 3 });
-                p.Pack32(player.ID);
-                p.Pack8(255);
-                Broadcast(p, mapPlayers.Values.ToList()[a].ID);//maybe guild info???
-                p = new SendPacket();
-                p.PackArray(new byte[] { 5, 8 });
-                p.Pack32(player.ID);
-                p.Pack8(0);
-                Broadcast(p, mapPlayers.Values.ToList()[a].ID);
+                if (Players.Count == 0 && !IdleTimer.IsRunning)
+                    IdleTimer.Restart();
+                else if (Players.Count > 0 && IdleTimer.IsRunning)
+                    IdleTimer.Stop();
 
-                //send to me
-                p = new SendPacket();
-                p.Pack8(7);
-                p.Pack32(mapPlayers.Values.ToList()[a].ID);
-                p.Pack16(MapID);
-                p.Pack16(mapPlayers.Values.ToList()[a].X);
-                p.Pack16(mapPlayers.Values.ToList()[a].Y);
-                player.Send(p);
-                p = new SendPacket();
-                p.PackArray(new byte[] { 5, 0 });
-                p.Pack32(mapPlayers.Values.ToList()[a].ID);
-                p.PackArray(mapPlayers.Values.ToList()[a].Eqs.Worn_Equips);
-                player.Send(p);
-            }
-            mapPlayers.Add(player.ID, player);
-            SendMapInfo(player);
-        }
-        public virtual void onLogout(ref Player player)
-        {
-            if (Players.ContainsKey(player.ID))
-            {
-               if(Tents.ContainsKey(player.ID))
-                   Tents[player.ID].Close();
+                foreach(var p in Players.Values)
+                    if (!p.isAlive)
+                    {
+                        Player tmp;
+                        Players.TryRemove(p.ID, out tmp);
+                        Utilities.LogServices.Log("Player "+tmp.CharacterName+" removed from Map due to client disconnection");
+                    }
 
-                Players.Remove(player.ID);
+                foreach (var battl in Battles.Values)
+                    battl.Process();
+
+                foreach (var obj in MapObjects.Values)
+                    obj.Update(DateTime.Now, Players.Values.ToList());
+                Thread.Sleep(100);
             }
+            while (!Kill);
         }
+
         public bool ProccessInteraction(int where, ref Player by, int? answer = null)
         {
-
+            Npc h = cGlobal.gNpcManager.GetNpc(17000);
             //if (MapObjects.ContainsKey((ushort)where))
             //{
             //    by.DataOut = SendType.Multi;
             //    SendPacket tmp = new SendPacket();
-            //    tmp.PackArray(new byte[] { 6, 2, 1 });
+            //    tmp.Pack(new byte[] { 6, 2, 1 });
             //    by.Send(tmp);
             //    MapObjects[(ushort)where].Interact(ref by, answer);
             //    by.DataOut = SendType.Normal;
@@ -139,39 +130,35 @@ namespace Wonderland_Private_Server.Maps
             //else
                 return false;
         }
-        public virtual void UpdateMap()
-        {
-            foreach (var battl in Battles.Values.ToList())
-                battl.Process();
-        }
-
+       
         public virtual bool Teleport(TeleportType teletype, ref Player sender, byte portalID, WarpData warp = null)
         {
             sender.DataOut = SendType.Multi;
-            if (teletype == TeleportType.Regular)
+            if (teletype == TeleportType.Regular || teletype == TeleportType.CmD)
             {
                 SendPacket warpConf = new SendPacket();
-                warpConf.PackArray(new byte[] { 20, 7 });
+                warpConf.Pack(new byte[] { 20, 7 });
                 sender.Send(warpConf);
             }
 
             SendPacket tmp = new SendPacket();
-            tmp.PackArray(new byte[] { 23, 32 });
-            tmp.Pack32(sender.ID);
+            tmp.Pack(new byte[] { 23, 32 });
+            tmp.Pack(sender.ID);
             sender.Send(tmp);
             tmp = new SendPacket();
-            tmp.PackArray(new byte[] { 23, 112 });
-            tmp.Pack32(sender.ID);
+            tmp.Pack(new byte[] { 23, 112 });
+            tmp.Pack(sender.ID);
             sender.Send(tmp);
             tmp = new SendPacket();
-            tmp.PackArray(new byte[] { 23, 132 });
-            tmp.Pack32(sender.ID);
+            tmp.Pack(new byte[] { 23, 132 });
+            tmp.Pack(sender.ID);
             sender.Send(tmp);
             sender.State = PlayerState.InGame_Warping;
             //onWarp_Out(portalID, ref sender, warp, (teletype == TeleportType.Tent));// warp out of map
 
             switch (teletype)
             {
+                #region Regular Warp
                 case TeleportType.Regular:
                     {
                         if (TypeofMap != MapType.Regular && portalID == 1)  //create warp from Prev Map
@@ -185,13 +172,14 @@ namespace Wonderland_Private_Server.Maps
                             {
 
                                 tmp = new SendPacket();
-                                tmp.PackArray(new byte[] { 20, 8 });
+                                tmp.Pack(new byte[] { 20, 8 });
                                 sender.Send(tmp); return false;
                             }
                             onWarp_Out(portalID, ref sender,new WarpData(Destinations[(byte)WarpID]),(teletype == TeleportType.Tent));// warp out of map
-                            cGlobal.WLO_World.Teleport(portalID, new WarpData(Destinations[(byte)WarpID]), sender);                           
+                            cGlobal.WLO_World.onTelePort(portalID, new WarpData(Destinations[(byte)WarpID]), ref sender);                           
                         }
                     } break;
+                #endregion
                 case TeleportType.Special:
                     {
                         //WarpInfo f = new WarpInfo();
@@ -218,95 +206,115 @@ namespace Wonderland_Private_Server.Maps
                         //map.Phase2Warp(t);
                         //globals.packet.cCharacter.DatatoSend.Enqueue(globals.gServer.GenerateQueuepkt(t));
                     } break;
+                #region Tent Warp
                 case TeleportType.Tent:
                     {
+                        onWarp_Out(portalID, ref sender, warp, (teletype == TeleportType.Tent));// warp out of map
                         sender.X = warp.DstX_Axis;//switch x
                         sender.Y = warp.DstY_Axis;//switch y
                         Tents[warp.DstMap].onWarp_In(0, ref sender, null);
                     } break;
+                #endregion
                 case TeleportType.Tool:/*t.inv.RemoveInv((byte)Entry, 1);*/ break;
+                #region Cmd Warp
+                case TeleportType.CmD:
+                    {
+                        onWarp_Out(portalID, ref sender, warp, (teletype == TeleportType.Tent));// warp out of map
+                        sender.X = warp.DstX_Axis;//switch x
+                        sender.Y = warp.DstY_Axis;//switch y
+                        cGlobal.WLO_World.onTelePort(portalID, warp,ref sender);       
+                    }break;
+                #endregion
+                case TeleportType.Login: onLogin(ref sender); break;
             }
-        //    if (GmOnly && !sender.GM)
-        //    {
-        //        SendPacket p = new SendPacket();
-        //        p = new SendPacket();
-        //        p.PackArray(new byte[] { 2, 3 });
-        //        p.Pack32(100);
-        //        p.PackNString("Only GMs can Enter %#");
-        //        sender.Send(p);
-        //        return false;
-        //    }
-        //    if (teletype != TeleportType.Regular || MType == MapType.Tent) goto skip;
-        //    Entry_Exit_Point_Entries door = null;
-
-        //    if (!Portals.ContainsKey(portalID)) return false;
-        //    door = Portals[portalID];
-
-        //    if (door == null || !door.Enter(ref sender)) return false;
-        //    var mapid = (int)info.Events[door.unknownbytearray1[0] - 1].SubEntry[0].SubEntry[0].dialog2;
-
-
-        //    //mapid = Destinations[(byte)door.Dst];
-
-        //skip:
-        //    sender.State = PlayerState.InGame_Warping;
-
-        //    
-
-        //    onWarp_Out(portalID, ref sender, mapid,(teletype == TeleportType.Tent));// warp out of map
-            //save current map
-            //sender.X = mapid.DstX_Axis;//switch x
-            //sender.Y = mapid.DstY_Axis;//switch y
-            //if (teletype != TeleportType.Tent)
-            //    cGlobal.WLO_World.Teleport(portalID, mapid, sender);
-            //else
-            //    Tents[mapid.DstMap].onWarp_In(0, ref sender, null);
-
-
             sender.DataOut = SendType.Normal;
             return true;
         }
 
+        void onLogin(ref Player player)
+        {
+            player.CurrentMap = this;
+            player.inGame = true;
+            foreach (var r in Players.Values)
+            {
+                //send to them
+                Broadcast(player._3Data(), player.ID);
+                SendPacket p = new SendPacket();
+                p.Pack(new byte[] { 5, 0 });
+                p.Pack(player.ID);
+                p.Pack(player.Eqs.Worn_Equips);
+                Broadcast(p, player.ID);
+                p = new SendPacket();
+                p.Pack(new byte[] { 10, 3 });
+                p.Pack(player.ID);
+                p.Pack(255);
+                Broadcast(p, r.ID);//maybe guild info???
+                p = new SendPacket();
+                p.Pack(new byte[] { 5, 8 });
+                p.Pack(player.ID);
+                p.Pack(0);
+                Broadcast(p, r.ID);
+
+                //send to me
+                p = new SendPacket();
+                p.Pack(7);
+                p.Pack(r.ID);
+                p.Pack(MapID);
+                p.Pack(r.X);
+                p.Pack(r.Y);
+                player.Send(p);
+                p = new SendPacket();
+                p.Pack(new byte[] { 5, 0 });
+                p.Pack(r.ID);
+                p.Pack(r.Eqs.Worn_Equips);
+                player.Send(p);
+            }
+            if (Players.ContainsKey(player.ID))
+                Players.TryUpdate(player.ID, player, Players[player.ID]);
+            else
+                Players.TryAdd(player.ID, player);
+            SendMapInfo(player);
+        }
         public virtual void onWarp_In(byte portalID,ref Player src, WarpData from)
         {
             lock (locker)
             {
-                for (int a = 0; a < Players.Count; a++)
-                {
-                    if (mapPlayers.Values.ToList()[a].ID == src.ID) return;
-                }
                 src.CurrentMap = this;
-                Players.Add(src.ID,src);
+                if (Players.ContainsKey(src.ID))
+                    Players.TryUpdate(src.ID, src, Players[src.ID]);
+                else
+                    Players.TryAdd(src.ID, src);
+
                 SendAc12(src,portalID, from);
 
-                for (int a = 0; a < Players.Count; a++)
+                foreach( var r in Players.Values)
                 {
-                    if (mapPlayers.Values.ToList()[a] != src)
+                    if (r != src)
                     {
                     //send to them
                     SendPacket p = new SendPacket();
-                    p.PackArray(new byte[] { 5, 0 });
-                    p.Pack32(src.ID);
-                    p.PackArray(src.Eqs.Worn_Equips);
-                    mapPlayers.Values.ToList()[a].Send(p);
+                    p.Pack(new byte[] { 5, 0 });
+                    p.Pack(src.ID);
+                    p.Pack(src.Eqs.Worn_Equips);
+                    r.Send(p);
                     p = new SendPacket();
-                    p.PackArray(new byte[] { 10, 3 });
-                    p.Pack32(src.ID);
-                    p.Pack8(255);
-                    mapPlayers.Values.ToList()[a].Send(p);//maybe guild info???
+                    p.Pack(new byte[] { 10, 3 });
+                    p.Pack(src.ID);
+                    p.Pack(255);
+                    r.Send(p);//maybe guild info???
 
                     //send to me
                     p = new SendPacket();
-                    p.PackArray(new byte[] { 7 });
-                    p.Pack32(mapPlayers.Values.ToList()[a].ID);
-                    p.Pack16(MapID);
-                    p.Pack16(mapPlayers.Values.ToList()[a].X);
-                    p.Pack16(mapPlayers.Values.ToList()[a].Y);
+                    p.Pack(new byte[] { 7 });
+                    p.Pack(r.ID);
+                    p.Pack(MapID);
+                    p.Pack(r.X);
+                    p.Pack(r.Y);
                     src.Send(p);
                     p = new SendPacket();
-                    p.PackArray(new byte[] { 5, 0 });
-                    p.Pack32(mapPlayers.Values.ToList()[a].ID);
-                    p.PackArray(mapPlayers.Values.ToList()[a].Eqs.Worn_Equips);
+                    p.Pack(new byte[] { 5, 0 });
+                    p.Pack(r.ID);
+                    p.Pack(r.Eqs.Worn_Equips);
                     src.Send(p);
                     }
                 }
@@ -321,7 +329,6 @@ namespace Wonderland_Private_Server.Maps
         }
         protected virtual void onWarp_Out(byte portalID,ref Player src, WarpData To,bool toTent)
         {
-            Player f;
             lock (locker)
             {
                 src.PrevMap = new WarpData();
@@ -329,7 +336,7 @@ namespace Wonderland_Private_Server.Maps
                 src.PrevMap.DstX_Axis = src.X;
                 src.PrevMap.DstY_Axis = src.Y;
                 SendAc12(src,portalID, To,toTent);
-                Players.Remove(src.ID);
+                Players.TryRemove(src.ID, out src);
             }
         }
 
@@ -339,23 +346,23 @@ namespace Wonderland_Private_Server.Maps
             if (!Tents.ContainsKey(Tentsrc.MapID))
             {
                 SendPacket opentent = new SendPacket();
-                opentent.PackArray(new byte[] { 65, 1 });
-                opentent.Pack32(Tentsrc.MapID);
-                opentent.Pack16(36002);
-                opentent.Pack32(Tentsrc.MapX);
-                opentent.Pack32(Tentsrc.MapY);
-                opentent.Pack16(0);
+                opentent.Pack(new byte[] { 65, 1 });
+                opentent.Pack(Tentsrc.MapID);
+                opentent.Pack(36002);
+                opentent.Pack(Tentsrc.MapX);
+                opentent.Pack(Tentsrc.MapY);
+                opentent.Pack(0);
                 Broadcast(opentent);
-                Tents.Add(Tentsrc.MapID,Tentsrc);
+                Tents.TryAdd(Tentsrc.MapID,Tentsrc);
             }
         }
         public void onTentClosing(Tent tent)
         {
             SendPacket opentent = new SendPacket();
-            opentent.PackArray(new byte[] {65, 4});
-            opentent.Pack32(tent.MapID);
+            opentent.Pack(new byte[] {65, 4});
+            opentent.Pack(tent.MapID);
             Broadcast(opentent);
-            Tents.Remove(tent.MapID);
+            Tents.TryRemove(tent.MapID,out tent);
         }
         public void onEnterTent(UInt32 ID, Player p)
         {
@@ -369,17 +376,18 @@ namespace Wonderland_Private_Server.Maps
         void SendOpenTents(Player p)
         {
             SendPacket tmp = new SendPacket();
-            tmp.PackArray(new byte[] { 65, 3 });
+            tmp.Pack(new byte[] { 65, 3 });
             foreach (Tent r in Tents.Values)
             {
-                tmp.Pack32(r.MapID);
-                tmp.Pack16(36002);
-                tmp.Pack32(r.MapX);
-                tmp.Pack32(r.MapY);
-                tmp.Pack8(0);
-                tmp.Pack8(0);
+                tmp.Pack(r.MapID);
+                tmp.Pack(36002);
+                tmp.Pack(r.MapX);
+                tmp.Pack(r.MapY);
+                tmp.Pack(0);
+                tmp.Pack(0);
             }
-            p.Send(tmp);
+            if (tmp.Buffer.Count() > 6)
+                p.Send(tmp);
         }
 
         #endregion
@@ -422,7 +430,7 @@ namespace Wonderland_Private_Server.Maps
             battle.StartBattle();
             battle.BattleState = eBattleState.Active;
             battle.StartRound();
-            Battles.Add(a,battle);
+            Battles.TryAdd(a,battle);
         }
         public void onMob_Ambush(Player starter, Fighter enemy)
         {
@@ -465,7 +473,7 @@ namespace Wonderland_Private_Server.Maps
             battle.StartBattle();
             battle.BattleState = eBattleState.Active;
             battle.StartRound();
-            Battles.Add(a, battle);
+            Battles.TryAdd(a, battle);
         }
 
 
@@ -509,17 +517,17 @@ namespace Wonderland_Private_Server.Maps
                         } a++;
                     }
 
-                    Items_Dropped.Add((byte)(a + 1), gi);
+                    Items_Dropped.TryAdd((byte)(a + 1), gi);
 
                     foreach (Player c in Players.Values)
                     {
                         SendPacket p = new SendPacket();
-                        p.PackArray(new byte[] { 23, 3 });
-                        p.Pack16(item.ItemID);
-                        p.Pack16(gi.X);
-                        p.Pack16(gi.Y);
-                        p.Pack32(0);
-                        p.PackBoolean(c == src);//true = 1
+                        p.Pack(new byte[] { 23, 3 });
+                        p.Pack(item.ItemID);
+                        p.Pack(gi.X);
+                        p.Pack(gi.Y);
+                        p.Pack(0);
+                        p.Pack(c == src);//true = 1
                         c.Send(p);
                     }
                 }
@@ -553,7 +561,7 @@ namespace Wonderland_Private_Server.Maps
                 //        o.dropin = DateTime.Now.AddMinutes(2);
                 //    }
                 //}
-                foreach (Player c in mapPlayers.Values)
+                foreach (Player c in Players.Values)
                 {
                     if (c.ID == src.ID)
                         RemGItem(itemLoc, c, true);
@@ -570,23 +578,24 @@ namespace Wonderland_Private_Server.Maps
             //    target.CharacterState == PlayerState.CharacterSelection || target.CharacterState == PlayerState.Creating ||
             //    target.CharacterState == PlayerState.LoginWindow || target.CharacterState == PlayerState.Disconnected) return;
             SendPacket p = new SendPacket();
-            p.PackArray(new byte[] { 23, 2 });
-            p.Pack16(itemIndex);
+            p.Pack(new byte[] { 23, 2 });
+            p.Pack(itemIndex);
             if (animate)
-                p.Pack8(1);
+                p.Pack(1);
             target.Send(p);
-            Items_Dropped.Remove((byte)itemIndex);
+            DroppedItem f;
+            Items_Dropped.TryRemove((byte)itemIndex,out f);
         }
         #endregion
         protected virtual void SendMapInfo(Player t)
         {
             SendPacket p = new SendPacket();
             p = new SendPacket();
-            p.PackArray(new byte[] { 23, 138 });
+            p.Pack(new byte[] { 23, 138 });
             t.Send(p);
             /* p = new SendPacket();
-             p.PackArray(new byte[]{(6, 2);
-             p.Pack32(1);
+             p.Pack(new byte[]{(6, 2);
+             p.Pack(1);
              p.SetSize();
              g.SendPacket(t, p);*/
             #region Send Npc
@@ -596,21 +605,21 @@ namespace Wonderland_Private_Server.Maps
             {
                 int unk = 0;
                 p = new SendPacket();
-                p.PackArray(new byte[] { 23, 4 });
+                p.Pack(new byte[] { 23, 4 });
                 for (byte a = 0; a < Items_Dropped.ToList().Count; a++)
                 {
                     if (Items_Dropped[a].NonExpirable)
                     {
-                        p.Pack8(3);
-                        p.Pack8(1);
+                        p.Pack(3);
+                        p.Pack(1);
                         unk = Items_Dropped[a].Control;
                     }
 
-                    p.Pack16((ushort)a);
-                    p.Pack32((ushort)Items_Dropped[a].ItemID);
-                    p.Pack16((ushort)Items_Dropped[a].X);
-                    p.Pack16((ushort)Items_Dropped[a].Y);
-                    p.Pack32((uint)unk);
+                    p.Pack((ushort)a);
+                    p.Pack((ushort)Items_Dropped[a].ItemID);
+                    p.Pack((ushort)Items_Dropped[a].X);
+                    p.Pack((ushort)Items_Dropped[a].Y);
+                    p.Pack((uint)unk);
                 }
                 t.Send(p);
             }
@@ -618,53 +627,54 @@ namespace Wonderland_Private_Server.Maps
             //SendNpcs(t);
             //SendItems(t);
 
-            for (int a = 0; a < Players.Count; a++)
+            foreach(var r in Players.Values)
             {
                 p = new SendPacket();
-                p.PackArray(new byte[] { 23, 122 });
-                p.Pack32(mapPlayers.Values.ToList()[a].ID);
+                p.Pack(new byte[] { 23, 122 });
+                p.Pack(r.ID);
                 t.Send(p);
-                if (mapPlayers.Values.ToList()[a].ID != t.ID)
+
+                if (r.ID != t.ID)
                 {
                     p = new SendPacket();
-                    p.PackArray(new byte[] { 10, 3 });
-                    p.Pack32(mapPlayers.Values.ToList()[a].ID);
-                    p.Pack8(255);
+                    p.Pack(new byte[] { 10, 3 });
+                    p.Pack(r.ID);
+                    p.Pack(255);
                     t.Send(p);
-#region Emotes used on Map
-                    if (mapPlayers.Values.ToList()[a].Emote > 0)
+                    #region Emotes used on Map
+                    if (r.Emote > 0)
                     {
                         p = new SendPacket();
-                        p.PackArray(new byte[] { 32, 2 });
-                        p.Pack32(mapPlayers.Values.ToList()[a].ID);
-                        p.Pack8(mapPlayers.Values.ToList()[a].Emote);
+                        p.Pack(new byte[] { 32, 2 });
+                        p.Pack(r.ID);
+                        p.Pack(r.Emote);
                         t.Send(p);
                     }
-#endregion
+                    #endregion
 
                     #region Pets in Map
-                     if(t.Pets.BattlePet != null)//to them
-                     {
-                         SendPacket tmp = new SendPacket();
-                         tmp.PackArray(new byte[] { 15, 4 });
-                         tmp.Pack32(t.ID);
-                         tmp.Pack32(t.Pets.BattlePet.ID);
-                         tmp.Pack8(0);
-                         tmp.Pack8(1);
-                         tmp.PackString(t.Pets.BattlePet.Name);
-                         tmp.Pack16(0);//weapon
-                         mapPlayers.Values.ToList()[a].Send(tmp);
-                     }
-                    if(mapPlayers.Values.ToList()[a].Pets.BattlePet != null)//to me
+                    if (t.Pets.BattlePet != null)//to them
                     {
                         SendPacket tmp = new SendPacket();
-                        tmp.PackArray(new byte[] { 15, 4 });
-                        tmp.Pack32(mapPlayers.Values.ToList()[a].ID);
-                        tmp.Pack32(mapPlayers.Values.ToList()[a].Pets.BattlePet.ID);
-                        tmp.Pack8(0);
-                        tmp.Pack8(1);
-                        tmp.PackString(mapPlayers.Values.ToList()[a].Pets.BattlePet.Name);
-                        tmp.Pack16(0);//weapon
+                        tmp.Pack(new byte[] { 15, 4 });
+                        tmp.Pack(t.ID);
+                        tmp.Pack(t.Pets.BattlePet.ID);
+                        tmp.Pack(0);
+                        tmp.Pack(1);
+                        tmp.Pack(t.Pets.BattlePet.Name);
+                        tmp.Pack(0);//weapon
+                        r.Send(tmp);
+                    }
+                    if (r.Pets.BattlePet != null)//to me
+                    {
+                        SendPacket tmp = new SendPacket();
+                        tmp.Pack(new byte[] { 15, 4 });
+                        tmp.Pack(r.ID);
+                        tmp.Pack(r.Pets.BattlePet.ID);
+                        tmp.Pack(0);
+                        tmp.Pack(1);
+                        tmp.Pack(r.Pets.BattlePet.Name);
+                        tmp.Pack(0);//weapon
                         t.Send(tmp);
                     }
 
@@ -695,79 +705,79 @@ namespace Wonderland_Private_Server.Maps
                     //if (plist[a].CharacterState == PlayerState.inBattle)
                     //{
                     //    SendPacket qp = new SendPacket(t);
-                    //    qp.PackArray(new byte[]{(11, 4);
-                    //    qp.Pack8(2);
-                    //    qp.Pack32(plist[a].CharacterID);
-                    //    qp.Pack16(0);
-                    //    qp.Pack8(0);
+                    //    qp.Pack(new byte[]{(11, 4);
+                    //    qp.Pack(2);
+                    //    qp.Pack(plist[a].CharacterID);
+                    //    qp.Pack(0);
+                    //    qp.Pack(0);
                     //    qp.Send();
                     //}
                     //Send_32_2(t);
                     //23_76                    
                 }
                 p = new SendPacket();
-                p.PackArray(new byte[] { 23, 76 });
-                p.Pack32(mapPlayers.Values.ToList()[a].ID);
+                p.Pack(new byte[] { 23, 76 });
+                p.Pack(r.ID);
                 t.Send(p);
             }
             //39_9
             //SendPacket gh = new SendPacket(g);
-            //gh.PackArray(new byte[] { 244, 68, 5, 0, 22, 6, 1, 0, 1, 244, 68, 5, 0, 22, 6, 21, 0, 1, 244, 68, 5, 0, 22, 6, 22, 0, 1, 244, 68, 5, 0, 22, 6, 23, 0, 1, 244, 68, 5, 0, 22, 6, 24, 0, 1, });
+            //gh.Pack(new byte[] { 244, 68, 5, 0, 22, 6, 1, 0, 1, 244, 68, 5, 0, 22, 6, 21, 0, 1, 244, 68, 5, 0, 22, 6, 22, 0, 1, 244, 68, 5, 0, 22, 6, 23, 0, 1, 244, 68, 5, 0, 22, 6, 24, 0, 1, });
             // cServer.Send(gh, t);
             /*tmp = new SendPacket(g);
-            tmp.PackArray(new byte[]{(6, 2);
-            tmp.Pack8(1);
+            tmp.Pack(new byte[]{(6, 2);
+            tmp.Pack(1);
             tmp.SetSize();
             tmp.Player = t;
             tmp.Send();
             for (int a = 0; a < 1; a++)
             {
                 gh = new SendPacket(g);
-                gh.PackArray(new byte[] { 244, 68, 2, 0, 20, 11, 244, 68, 2, 0, 20, 10 });
+                gh.Pack(new byte[] { 244, 68, 2, 0, 20, 11, 244, 68, 2, 0, 20, 10 });
                 t.DatatoSend.Enqueue(gh);
             }
             for (int a = 0; a < 1; a++)
             {
                 gh = new SendPacket(g);
-                gh.PackArray(new byte[] { 244, 68, 2, 0, 20, 10 });
+                gh.Pack(new byte[] { 244, 68, 2, 0, 20, 10 });
                 t.DatatoSend.Enqueue(gh);
             }*/
             p = new SendPacket();
-            p.PackArray(new byte[] { 23, 102 });
+            p.Pack(new byte[] { 23, 102 });
             t.Send(p);
             p = new SendPacket();
-            p.PackArray(new byte[] { 20, 8 });
+            p.Pack(new byte[] { 20, 8 });
             t.Send(p);
             //t.CharacterState = PlayerState.inMap;
         }
 
         public void Broadcast(SendPacket tmp)
         {
-            mapPlayers.Values.ToList().ForEach(c => c.Send(tmp));
+            Players.Values.ToList().ForEach(c => c.Send(tmp));
         }
         public void Broadcast(SendPacket tmp, uint ignore)
         {
-            mapPlayers.Values.Where(c => c.ID != ignore).ToList().ForEach(c => c.Send(tmp));
+            Players.Values.Where(c => c.ID != ignore).ToList().ForEach(c => c.Send(tmp));
         }
 
         #region Quick Data Send
         void SendAc12(Player target, byte portalID, WarpData To,bool toTent = false)
         {
             SendPacket sp = new SendPacket();
-            sp.PackArray(new byte[] { 12 });
-            sp.Pack32(target.ID);
-            sp.Pack16((toTent) ? (ushort)63507 : To.DstMap);
-            sp.Pack16(To.DstX_Axis);
-            sp.Pack16(To.DstY_Axis);
-            sp.Pack16(portalID);
-            sp.Pack8(0);
+            sp.Pack(new byte[] { 12 });
+            sp.Pack(target.ID);
+            sp.Pack((toTent) ? (ushort)63507 : To.DstMap);
+            sp.Pack(To.DstX_Axis);
+            sp.Pack(To.DstY_Axis);
+            sp.Pack(portalID);
+            sp.Pack(0);
             if(toTent)
             {
-                sp.Pack16(1);
-                sp.Pack8(1);
-                sp.Pack8(1);
+                sp.Pack(1);
+                sp.Pack(1);
+                sp.Pack(1);
             }
-            mapPlayers.Values.ToList().ForEach(new Action<Player>(c => c.Send(sp)));
+            //mapPlayers.Values.ToList().ForEach(new Action<Player>(c => c.Send(sp)));
         }
         #endregion
     }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Utilities;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -22,7 +23,7 @@ namespace Wonderland_Private_Server.ActionCodes
         }
         void Recv_1(ref Player p, RecvPacket r)
         {
-            p.Settings.Set(r.Data[1], r.Data[2]);
+            p.Settings.Set(r[1], r[2]);
         }
     }
 }

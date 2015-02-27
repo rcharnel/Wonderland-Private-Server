@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Code.Interface;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
@@ -60,7 +61,7 @@ namespace Wonderland_Private_Server.Code.Objects
                         cg.Rules = "";
                         
                         SendPacket s = new SendPacket();
-                        s.PackArray(new byte[] { 39, 1, 0 }); // clean Tab guild
+                        s.Pack(new byte[] { 39, 1, 0 }); // clean Tab guild
                         src.Send(s);
 
                         cg.AddMember(src,true);
@@ -131,18 +132,18 @@ namespace Wonderland_Private_Server.Code.Objects
             if (Members.Count(c=>c.ID == target)> 0)
             {
 
-                Members.Find(c => c.ID == target).can_Invite = Convert.ToBoolean(r.Data[8]);
-                Members.Find(c => c.ID == target).can_Modify_Rights = Convert.ToBoolean(r.Data[10]);
+                Members.Find(c => c.ID == target).can_Invite = Convert.ToBoolean(r[8]);
+                Members.Find(c => c.ID == target).can_Modify_Rights = Convert.ToBoolean(r[10]);
 
                 int b = 8;
                 for (int a = 1; a < 6; a++)
                 {
                     SendPacket s = new SendPacket();
-                    s.PackArray(new byte[] { 39, 24 });
-                    s.Pack32(target);
-                    s.Pack8(1);// fix
-                    s.Pack8((byte)a); // 1,2,3,4,5
-                    s.Pack8((byte)r.Data[b]); //8,10,12,14,16
+                    s.Pack(new byte[] { 39, 24 });
+                    s.Pack(target);
+                    s.Pack(1);// fix
+                    s.Pack((byte)a); // 1,2,3,4,5
+                    s.Pack((byte)r[b]); //8,10,12,14,16
                     BroadCastGuild(s, 0); // all receive                
                     cGlobal.WLO_World.BroadcastTo(s, directTo: target); // new vice receive 2x same packet
 
@@ -159,8 +160,8 @@ namespace Wonderland_Private_Server.Code.Objects
                 ViceOrg.Add(tmp);
 
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 39, 12 });
-                s.Pack32(target);
+                s.Pack(new byte[] { 39, 12 });
+                s.Pack(target);
                 BroadCastGuild(s, 0); // all receiv
             }
         }
@@ -175,12 +176,12 @@ namespace Wonderland_Private_Server.Code.Objects
                     ViceOrg.Remove(tmp);
 
                     SendPacket s = new SendPacket();
-                    s.PackArray(new byte[] { 39, 13 });
-                    s.Pack32(target);
+                    s.Pack(new byte[] { 39, 13 });
+                    s.Pack(target);
                     BroadCastGuild(s, 0); // all receiv
                     s = new SendPacket();
-                    s.PackArray(new byte[] { 39, 15, 0 });
-                    s.Pack32(target);
+                    s.Pack(new byte[] { 39, 15, 0 });
+                    s.Pack(target);
                     src.Send(s); // holy leader receiv
                 }
             }
@@ -192,16 +193,16 @@ namespace Wonderland_Private_Server.Code.Objects
             {
                 // messagem new player add
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] {39,4 });
-                s.Pack32(src.UserID);
-                s.Pack8(1);
+                s.Pack(new byte[] {39,4 });
+                s.Pack(src.UserID);
+                s.Pack(1);
                 src.Send(s);
                 cGlobal.WLO_World.BroadcastTo(s, Actor);
                 AddMember(src, false);
                 SendInfo(ref src);
 
                 s = new SendPacket();
-                s.PackArray(new byte[] {39,62,1});                
+                s.Pack(new byte[] {39,62,1});                
                 src.Send(s);
 
                 GetGuilNickName(src); //Send 39,9             
@@ -216,7 +217,7 @@ namespace Wonderland_Private_Server.Code.Objects
 
                 #endregion
                 s = new SendPacket();
-                s.PackArray(new byte[] {24,5,1,1,0});                
+                s.Pack(new byte[] {24,5,1,1,0});                
                 src.Send(s);
             }
         }
@@ -260,40 +261,40 @@ namespace Wonderland_Private_Server.Code.Objects
         void Send39_2(Player src) // here send database member ON and OFF
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 39, 2 });
-            s.PackString(GuildName);//guild name
-            s.Pack8((byte)TotalViceOrg); // total leaders 
-            s.Pack8((byte)TotalMembers);// total player in guild +4 - number leaders
+            s.Pack(new byte[] { 39, 2 });
+            s.Pack(GuildName);//guild name
+            s.Pack((byte)TotalViceOrg); // total leaders 
+            s.Pack((byte)TotalMembers);// total player in guild +4 - number leaders
 
             #region LoadPLayers
             foreach (var pair in Members.ToList())
             {
-                s.Pack32(pair.ID);
-                s.PackString(pair.CharacterName);
-                s.Pack8(pair.Level);
-                s.Pack8((byte)pair.Job);
-                s.PackBoolean(pair.Reborn);
-                s.Pack8((byte)pair.Element);
-                s.Pack8((byte)pair.Body);
-                s.Pack8(pair.Head);
-                s.Pack16(pair.HairColor);
-                s.Pack16(pair.SkinColor);
-                s.Pack16(pair.ClothingColor);
-                s.Pack16(pair.EyeColor);
-                s.PackString(pair.Nickname);
-                s.Pack32(0);
-                s.PackBoolean(pair.can_DisBand_Guild);
-                s.PackBoolean(pair.can_Invite);
-                s.PackBoolean(pair.can_Modify_Rules);
-                s.PackBoolean(pair.can_Modify_Rights);
-                s.PackBoolean(pair.can_Modify_Badge);
-                s.Pack32(0);
-                s.Pack8(0);
+                s.Pack(pair.ID);
+                s.Pack(pair.CharacterName);
+                s.Pack(pair.Level);
+                s.Pack((byte)pair.Job);
+                s.Pack(pair.Reborn);
+                s.Pack((byte)pair.Element);
+                s.Pack((byte)pair.Body);
+                s.Pack(pair.Head);
+                s.Pack(pair.HairColor);
+                s.Pack(pair.SkinColor);
+                s.Pack(pair.ClothingColor);
+                s.Pack(pair.EyeColor);
+                s.Pack(pair.Nickname);
+                s.Pack(0);
+                s.Pack(pair.can_DisBand_Guild);
+                s.Pack(pair.can_Invite);
+                s.Pack(pair.can_Modify_Rules);
+                s.Pack(pair.can_Modify_Rights);
+                s.Pack(pair.can_Modify_Badge);
+                s.Pack(0);
+                s.Pack(0);
             }
             #endregion
 
-            s.PackString(Rules); // rules! defalt = 0
-            s.PackArray(new byte[] {000, 000, 000, 000, 000, 000, 000, 000, 157,
+            s.Pack(Rules); // rules! defalt = 0
+            s.Pack(new byte[] {000, 000, 000, 000, 000, 000, 000, 000, 157,
                 115, 241, 148, 144, 109, 228, 064, 000 }); // 17 need fix here.data timer creator:??
             src.Send(s);
         }
@@ -302,7 +303,7 @@ namespace Wonderland_Private_Server.Code.Objects
             if (Members.Count(c => c.ID == src.ID) > 0)
             {
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 39, 17 });                
+                s.Pack(new byte[] { 39, 17 });                
                 src.Send(s);
             }
 
@@ -317,25 +318,25 @@ namespace Wonderland_Private_Server.Code.Objects
                 for (int a = 1; a < 8; a++)
                 {
                     SendPacket s = new SendPacket();
-                    s.PackArray(new byte[] { 39, 21 });
-                    s.Pack8((byte)a);
-                    s.Pack32(0);
+                    s.Pack(new byte[] { 39, 21 });
+                    s.Pack((byte)a);
+                    s.Pack(0);
                     src.Send(s);
                 }
                 for (int a = 1; a < 5; a++)
                 {
                     SendPacket s = new SendPacket();
-                    s.PackArray(new byte[] { 39, 26 });
-                    s.Pack8((byte)a);
-                    s.Pack32(0);
+                    s.Pack(new byte[] { 39, 26 });
+                    s.Pack((byte)a);
+                    s.Pack(0);
                     src.Send(s);
                 }
                 for (int a = 1; a < 8; a++)
                 {
                     SendPacket s = new SendPacket();
-                    s.PackArray(new byte[] { 39, 27 });
-                    s.Pack8((byte)a);
-                    s.Pack32(0);
+                    s.Pack(new byte[] { 39, 27 });
+                    s.Pack((byte)a);
+                    s.Pack(0);
                     src.Send(s);
                 }
 
@@ -349,23 +350,23 @@ namespace Wonderland_Private_Server.Code.Objects
             foreach (var pair in MembersOnlinne.ToList())
             {
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 39, 60 });
-                s.Pack32(pair.Value.ID);
-                s.PackString(pair.Value.CharacterName);
-                s.Pack8(pair.Value.Level);
-                s.Pack8((byte)pair.Value.Job);// job
+                s.Pack(new byte[] { 39, 60 });
+                s.Pack(pair.Value.ID);
+                s.Pack(pair.Value.CharacterName);
+                s.Pack(pair.Value.Level);
+                s.Pack((byte)pair.Value.Job);// job
 
-                if (pair.Value.Reborn) s.Pack8(1);//reborn
-                else s.Pack8(0);
+                if (pair.Value.Reborn) s.Pack(1);//reborn
+                else s.Pack(0);
 
-                s.Pack8((byte)pair.Value.Element);//elemnt
-                s.Pack8((byte)pair.Value.Body);// body
-                s.Pack8((byte)pair.Value.Head);// head
-                s.Pack16(pair.Value.HairColor);
-                s.Pack16(pair.Value.SkinColor);
-                s.Pack16(pair.Value.ClothingColor);
-                s.Pack16(pair.Value.EyeColor);
-                s.PackString(pair.Value.Nickname);
+                s.Pack((byte)pair.Value.Element);//elemnt
+                s.Pack((byte)pair.Value.Body);// body
+                s.Pack((byte)pair.Value.Head);// head
+                s.Pack(pair.Value.HairColor);
+                s.Pack(pair.Value.SkinColor);
+                s.Pack(pair.Value.ClothingColor);
+                s.Pack(pair.Value.EyeColor);
+                s.Pack(pair.Value.Nickname);
                 src.Send(s);
             }
         }
@@ -378,9 +379,9 @@ namespace Wonderland_Private_Server.Code.Objects
             foreach (var pair in MembersOnlinne.ToList())
             {
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 39, 61 });
-                s.Pack32(pair.Value.ID);
-                s.Pack8(pair.Value.Busy);                
+                s.Pack(new byte[] { 39, 61 });
+                s.Pack(pair.Value.ID);
+                s.Pack(pair.Value.Busy);                
                 src.Send(s);
             }
         }
@@ -388,18 +389,18 @@ namespace Wonderland_Private_Server.Code.Objects
         void GetInsigneGuild(Player src)
         {            
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 39, 30,2 });
-                s.PackArray(ImgInsigne.ToArray());
+                s.Pack(new byte[] { 39, 30,2 });
+                s.Pack(ImgInsigne.ToArray());
                 src.Send(s);            
         }
         //39,9
         void GetGuilNickName(Player src)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 39, 9 });
-            s.Pack32(src.UserID);
-            s.Pack32(IconGuil); // UINT ICON GUILD
-            s.PackString(GuildName); // name guild NICK SHOW IN MAP (acima do nick name)
+            s.Pack(new byte[] { 39, 9 });
+            s.Pack(src.UserID);
+            s.Pack(IconGuil); // UINT ICON GUILD
+            s.Pack(GuildName); // name guild NICK SHOW IN MAP (acima do nick name)
             //src.Send(s);
             src.CurrentMap.Broadcast(s);            
         }
@@ -422,39 +423,39 @@ namespace Wonderland_Private_Server.Code.Objects
         void Send39_8(Player src)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[]{39, 8});
-            s.Pack32(src.UserID);
+            s.Pack(new byte[]{39, 8});
+            s.Pack(src.UserID);
             BroadCastGuild(s, src.UserID);
         }
         //send state
         void Send39_61(Player src)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 39, 61 });
-            s.Pack32(src.UserID);
-            s.Pack8(0);// 0 = on  1 = busy  3 = offlinne
+            s.Pack(new byte[] { 39, 61 });
+            s.Pack(src.UserID);
+            s.Pack(0);// 0 = on  1 = busy  3 = offlinne
             BroadCastGuild(s, src.UserID);// send all except me
         }
         void Send39_60(Player src)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 39, 60 });
-            s.Pack32(src.UserID);
-            s.PackString(src.CharacterName);
-            s.Pack8(src.Level);
-            s.Pack8((byte)src.Job);// job
+            s.Pack(new byte[] { 39, 60 });
+            s.Pack(src.UserID);
+            s.Pack(src.CharacterName);
+            s.Pack(src.Level);
+            s.Pack((byte)src.Job);// job
 
-            if (src.Reborn) s.Pack8(1);//reborn
-            else s.Pack8(0);
+            if (src.Reborn) s.Pack(1);//reborn
+            else s.Pack(0);
 
-            s.Pack8((byte)src.Element);//elemnt
-            s.Pack8((byte)src.Body);// body
-            s.Pack8((byte)src.Head);// head
-            s.Pack16(src.HairColor);
-            s.Pack16(src.SkinColor);
-            s.Pack16(src.ClothingColor);
-            s.Pack16(src.EyeColor);
-            s.PackString(src.Nickname);
+            s.Pack((byte)src.Element);//elemnt
+            s.Pack((byte)src.Body);// body
+            s.Pack((byte)src.Head);// head
+            s.Pack(src.HairColor);
+            s.Pack(src.SkinColor);
+            s.Pack(src.ClothingColor);
+            s.Pack(src.EyeColor);
+            s.Pack(src.Nickname);
 
             BroadCastGuild(s, src.UserID);
 
@@ -468,11 +469,11 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             // need verify here if have permission member change guildinsigne
 
-            ImgInsigne.AddRange(r.Data.Skip(2).Take(r.Data.Count - 2).ToArray());
-            SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 39, 30, 1 });
-            s.PackArray(ImgInsigne.ToArray());
-            BroadCastGuild(s, 0);// all
+            //ImgInsigne.AddRange(r.Data.Skip(2).Take(r.Data.Count - 2).ToArray());
+            //SendPacket s = new SendPacket();
+            //s.Pack(new byte[] { 39, 30, 1 });
+            //s.Pack(ImgInsigne.ToArray());
+            //BroadCastGuild(s, 0);// all
         }
 
         public void Edit_Rule(string text)
@@ -480,8 +481,8 @@ namespace Wonderland_Private_Server.Code.Objects
             // need verify here if have permission member change guildinsigne
             Rules = text;
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 39, 11 });
-            s.PackNString(text);
+            s.Pack(new byte[] { 39, 11 });
+            s.Pack(text,false);
             BroadCastGuild(s, 0);// all
         }
         public void Dismiss(uint target, uint actor)
@@ -491,13 +492,13 @@ namespace Wonderland_Private_Server.Code.Objects
             if(tmp!=null)
             {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 39,6});
-            s.Pack32(target);
+            s.Pack(new byte[] { 39,6});
+            s.Pack(target);
             BroadCastGuild(s, target);// All except target demiss
 
             s = new SendPacket();
-            s.PackArray(new byte[] { 39,7, 0 });
-            s.Pack32(target);
+            s.Pack(new byte[] { 39,7, 0 });
+            s.Pack(target);
             cGlobal.WLO_World.BroadcastTo(s, directTo: actor); // actor 
             cGlobal.WLO_World.BroadcastTo(s, directTo: target); // target demiss
                             
@@ -514,19 +515,19 @@ namespace Wonderland_Private_Server.Code.Objects
             var tmp = Members.Find(c => c.ID == id);
 
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] {39,7,0 });
-            s.Pack32(src.UserID);
+            s.Pack(new byte[] {39,7,0 });
+            s.Pack(src.UserID);
             src.Send(s);
 
             s = new SendPacket();
-            s.PackArray(new byte[] { 39, 6 });
-            s.Pack32(src.UserID);
+            s.Pack(new byte[] { 39, 6 });
+            s.Pack(src.UserID);
             BroadCastGuild(s, src.UserID);// all except id
           
             s = new SendPacket();
-            s.PackArray(new byte[] { 39,9 });
-            s.Pack32(src.UserID);
-            s.PackArray(new byte[] {0,0,0,0,0 });
+            s.Pack(new byte[] { 39,9 });
+            s.Pack(src.UserID);
+            s.Pack(new byte[] {0,0,0,0,0 });
             src.CurrentMap.Broadcast(s); // all local map.
 
             src.CurGuild.GuildID = 0;
@@ -538,31 +539,31 @@ namespace Wonderland_Private_Server.Code.Objects
         public void GuilMail(uint actor, uint dst, string text)
         {
 
-            SendPacket s = new SendPacket();
-            s.PackArray(new byte[] {39,5});
-            s.Pack32(actor);
-            s.Pack16(62860);// data ??
-            s.Pack16(20548); //data ??
-            s.Pack16(30000);// data time ??
-            s.Pack16(16612);// data time ??
-            s.PackNString(text);
+            //SendPacket s = new SendPacket();
+            //s.Pack(new byte[] {39,5});
+            //s.Pack(actor);
+            //s.Pack(62860);// data ??
+            //s.Pack(20548); //data ??
+            //s.Pack(30000);// data time ??
+            //s.Pack(16612);// data time ??
+            //s.PackNString(text);
             // need create code to verify if player on
             //if off store in list, to send later...
-            cGlobal.WLO_World.BroadcastTo(s, directTo: dst);
+            //cGlobal.WLO_World.BroadcastTo(s, directTo: dst);
         }
 
         #region Message Guild
 
         public void AddMessage(Player src,RecvPacket r)
         {
-            int count = r.Unpack8(2);
-            int count2 = r.Unpack8(6 + count);
-            byte[] data1 = r.Data.Skip(6).Take(count).ToArray();
-            byte[] data2 = r.Data.Skip(6 + count+count2).Take(count2).ToArray();
+            //int count = r.Unpack8(2);
+            //int count2 = r.Unpack8(6 + count);
+            //byte[] data1 = r.Data.Skip(6).Take(count).ToArray();
+            //byte[] data2 = r.Data.Skip(6 + count+count2).Take(count2).ToArray();
 
 
-            string Subject = System.Text.Encoding.Default.GetString(data1);
-            string content = System.Text.Encoding.Default.GetString(data2);
+            //string Subject = System.Text.Encoding.Default.GetString(data1);
+            //string content = System.Text.Encoding.Default.GetString(data2);
 
             //MessageGuild msg = new MessageGuild();
             //msg.Sender = src.UserName;
@@ -587,9 +588,9 @@ namespace Wonderland_Private_Server.Code.Objects
             //if (Message.Count > 0)
             //{
             //    SendPacket s = new SendPacket();
-            //    s.PackArray(new byte[] { 82, 14});
-            //    //s.Pack32((uint)Message.Count);
-            //    s.Pack8(1); // current tab
+            //    s.Pack(new byte[] { 82, 14});
+            //    //s.Pack((uint)Message.Count);
+            //    s.Pack(1); // current tab
             //    src.Send(s);
 
             //    Send82_11(src);
@@ -597,7 +598,7 @@ namespace Wonderland_Private_Server.Code.Objects
             //else
             //{
             //    SendPacket s = new SendPacket();
-            //    s.PackArray(new byte[] { 82, 13,0, 0, 0, 0, 1 });// null tab
+            //    s.Pack(new byte[] { 82, 13,0, 0, 0, 0, 1 });// null tab
             //    src.Send(s);
             //}
 
@@ -607,20 +608,20 @@ namespace Wonderland_Private_Server.Code.Objects
 
             //orde per current
             //SendPacket s = new SendPacket();
-            //s.PackArray(new byte[] { 82, 11 });
+            //s.Pack(new byte[] { 82, 11 });
 
             //foreach(var t in Message.Values)
             //{            
-            //s.Pack32((UInt32)t.Sender.Length);
+            //s.Pack((UInt32)t.Sender.Length);
             //s.PackNString(t.Sender);
-            //s.Pack32((UInt32)t.Subject.Length);
+            //s.Pack((UInt32)t.Subject.Length);
             //s.PackNString(t.Subject);
-            //s.Pack16(t.data1);
-            //s.Pack16(t.data2);
-            //s.Pack16(t.data3);
-            //s.Pack16(t.data4);
-            //s.Pack32(t.UserID);
-            //s.Pack32((uint)t.unknow);// seconds ??           
+            //s.Pack(t.data1);
+            //s.Pack(t.data2);
+            //s.Pack(t.data3);
+            //s.Pack(t.data4);
+            //s.Pack(t.UserID);
+            //s.Pack((uint)t.unknow);// seconds ??           
             //}
             //src.Send(s);
         }
@@ -631,17 +632,17 @@ namespace Wonderland_Private_Server.Code.Objects
             //{
             //    var t = Message[0];
             //    SendPacket s = new SendPacket();
-            //    s.PackArray(new byte[] { 82, 12 });
-            //    s.Pack32((UInt32)t.Sender.Length);
+            //    s.Pack(new byte[] { 82, 12 });
+            //    s.Pack((UInt32)t.Sender.Length);
             //    s.PackNString(t.Sender);
-            //    s.Pack32((UInt32)t.Subject.Length);
+            //    s.Pack((UInt32)t.Subject.Length);
             //    s.PackNString(t.Subject);
-            //    s.Pack16(t.data1);
-            //    s.Pack16(t.data2);
-            //    s.Pack16(t.data3);
-            //    s.Pack16(t.data4);
-            //    s.Pack32((UInt32)t.Content.Length);
-            //    s.Pack32(t.UserID);
+            //    s.Pack(t.data1);
+            //    s.Pack(t.data2);
+            //    s.Pack(t.data3);
+            //    s.Pack(t.data4);
+            //    s.Pack((UInt32)t.Content.Length);
+            //    s.Pack(t.UserID);
             //    s.PackNString(t.Content);
             //    src.Send(s);
             //}
@@ -650,7 +651,7 @@ namespace Wonderland_Private_Server.Code.Objects
         public void OpenPainelWriteMessage(Player src)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] {82,8,2 });
+            s.Pack(new byte[] {82,8,2 });
             src.Send(s);
         }
 

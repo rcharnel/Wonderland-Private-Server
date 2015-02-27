@@ -40,7 +40,7 @@ namespace Wonderland_Private_Server.Code.Objects
             //    Owner.CharacterTemplateState = CharacterTemplate.PlayerState.inMap;
             //    SendPacket closetrade = new SendPacket();
             //    closetrade.Header(25, 2);
-            //    closetrade.Pack8(3);
+            //    closetrade.Pack(3);
             //    g.SendPacket(g.FindPlayerby_CharacterTemplateID(Owner.CharacterTemplateID), closetrade);
             //    Trading_with.character.cTrader.CancelTrade();
             //    Trading_with = null;
@@ -76,10 +76,10 @@ namespace Wonderland_Private_Server.Code.Objects
             //foreach (cInvItem h in Items)
             //{
             //    Tradecfm.AddWord(h.ID);
-            //    Tradecfm.Pack8(h.ammt);
-            //    Tradecfm.Pack8(h.damage);
+            //    Tradecfm.Pack(h.ammt);
+            //    Tradecfm.Pack(h.damage);
             //    for (int a = 0; a < 24; a++)
-            //        Tradecfm.Pack8(0);
+            //        Tradecfm.Pack(0);
             //}
             //Tradecfm.SetSize();
             //g.SendPacket(g.FindPlayerby_CharacterTemplateID(Owner.CharacterTemplateID), Tradecfm);
@@ -116,7 +116,7 @@ namespace Wonderland_Private_Server.Code.Objects
 
             //SendPacket endtrade = new SendPacket();
             //endtrade.Header(25, 2);
-            //endtrade.Pack8(4);
+            //endtrade.Pack(4);
             //endtrade.SetSize();
             //g.SendPacket(g.FindPlayerby_CharacterTemplateID(Owner.CharacterTemplateID), endtrade);
         }

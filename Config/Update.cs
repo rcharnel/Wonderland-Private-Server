@@ -19,16 +19,5 @@ namespace Wonderland_Private_Server.Config
         public TimeSpan UpdtChk_Interval;
         public TimeSpan AutoUpdt_Schedule;
         public string GitBranch;
-
-        public string[] Data
-        {
-            get
-            {
-                return new string[]
-                {
-
-                };
-            }
-        }
     }
 }

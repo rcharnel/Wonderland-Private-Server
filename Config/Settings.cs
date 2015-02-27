@@ -22,40 +22,12 @@ namespace Wonderland_Private_Server.Config
     {
         readonly System.Xml.Serialization.XmlSerializer diskio;
         readonly object m_Lock = new object();
+        public UpdateSetting Update;
         
         public Settings()
         {
             diskio = new XmlSerializer(this.GetType());
-        }
-        public bool LoadSettings()
-        {
-            try
-            {
-                string line = ""; string ver = "";
-                //using (StreamReader file = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo"))
-                //    this = (Settings)diskio.Deserialize(file);
-                //    while ((line = file.ReadLine()) != null)
-                //    {
-                //        switch (line)
-                //        {
-                //            case "[Version]":
-                //                {
-                //                    ver = file.ReadLine();
-                //                    if (ver != "V9") return false;
-                //                } break;
-                //            case "[Settings]":
-                //                {
-                //                    if (ver == "") return false;
-                //                    Config.Clear();
-                //                    while ((line = file.ReadLine()) != ";")
-                //                        Config.Add(line.Split('|')[0], line.Split('|')[1]);
-                //                } break;
-                //        }
-                //    }
-                return true;
-            }
-            catch (Exception ex) {  Utilities.LogServices.Log(ex.Message); }
-            return false;
+            Update = new UpdateSetting();
         }
         public void SaveSettings(string location)
         {
@@ -64,21 +36,6 @@ namespace Wonderland_Private_Server.Config
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\");
             using (StreamWriter file = new StreamWriter(location))
                 diskio.Serialize(file, this);
-            //{
-            //    file.WriteLine("WLO Private Server Settings");
-            //    file.WriteLine("[Version]");
-            //    file.WriteLine("V8");
-            //    file.WriteLine(";");
-            //    file.WriteLine(";");
-            //    file.WriteLine(";");
-            //    file.WriteLine(";");
-            //    file.WriteLine("[Settings]");
-            //    foreach (var y in )
-            //    {
-
-            //    }
-            //    file.WriteLine(";");
-            //}
         }
     }
 }
