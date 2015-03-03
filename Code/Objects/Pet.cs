@@ -7,6 +7,7 @@ using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.DataManagement.DataFiles;
 using Wonderland_Private_Server.Code.Interface;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
@@ -235,7 +236,7 @@ namespace Wonderland_Private_Server.Code.Objects
                         p.Pack(0);//potential
                     }
                 }
-                if (p.Data.Count > 7)
+                if (p.Buffer.Count() > 7)
                     return p;
                 else
                     return null;

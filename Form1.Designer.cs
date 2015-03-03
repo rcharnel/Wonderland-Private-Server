@@ -40,7 +40,6 @@
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tabPage8 = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Tasks = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -62,6 +61,14 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.UpdatePane = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.autoUpdt_label = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.autoUpdt_Min = new System.Windows.Forms.NumericUpDown();
+            this.autoUpdt_Hr = new System.Windows.Forms.NumericUpDown();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
@@ -79,14 +86,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.GitUptOption = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.autoUpdt_Hr = new System.Windows.Forms.NumericUpDown();
-            this.autoUpdt_Min = new System.Windows.Forms.NumericUpDown();
-            this.label15 = new System.Windows.Forms.Label();
-            this.autoUpdt_label = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage6.SuspendLayout();
             this.tabControl3.SuspendLayout();
@@ -100,15 +99,15 @@
             this.tabPage5.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Min)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Hr)).BeginInit();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.updtrefresh)).BeginInit();
-            this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Hr)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Min)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -170,7 +169,6 @@
             this.tabPage7.Controls.Add(this.label9);
             this.tabPage7.Controls.Add(this.label8);
             this.tabPage7.Controls.Add(this.label7);
-            this.tabPage7.Controls.Add(this.groupBox4);
             this.tabPage7.Location = new System.Drawing.Point(4, 22);
             this.tabPage7.Name = "tabPage7";
             this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
@@ -233,15 +231,6 @@
             this.label7.Size = new System.Drawing.Size(596, 27);
             this.label7.TabIndex = 1;
             this.label7.Text = "Wonderland Online Private Server";
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Location = new System.Drawing.Point(616, 4);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(116, 231);
-            this.groupBox4.TabIndex = 0;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "DataFiles";
             // 
             // tabPage8
             // 
@@ -454,6 +443,83 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Update Options";
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.autoUpdt_label);
+            this.groupBox5.Controls.Add(this.label15);
+            this.groupBox5.Controls.Add(this.autoUpdt_Min);
+            this.groupBox5.Controls.Add(this.autoUpdt_Hr);
+            this.groupBox5.Controls.Add(this.label14);
+            this.groupBox5.Controls.Add(this.label13);
+            this.groupBox5.Controls.Add(this.label12);
+            this.groupBox5.Location = new System.Drawing.Point(5, 71);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(219, 77);
+            this.groupBox5.TabIndex = 7;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Auto Update";
+            // 
+            // autoUpdt_label
+            // 
+            this.autoUpdt_label.AutoSize = true;
+            this.autoUpdt_label.Location = new System.Drawing.Point(6, 59);
+            this.autoUpdt_label.Name = "autoUpdt_label";
+            this.autoUpdt_label.Size = new System.Drawing.Size(41, 13);
+            this.autoUpdt_label.TabIndex = 6;
+            this.autoUpdt_label.Text = "label16";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(4, 37);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(86, 13);
+            this.label15.TabIndex = 5;
+            this.label15.Text = "Est Update Time";
+            // 
+            // autoUpdt_Min
+            // 
+            this.autoUpdt_Min.Location = new System.Drawing.Point(121, 14);
+            this.autoUpdt_Min.Name = "autoUpdt_Min";
+            this.autoUpdt_Min.Size = new System.Drawing.Size(57, 20);
+            this.autoUpdt_Min.TabIndex = 4;
+            this.autoUpdt_Min.ValueChanged += new System.EventHandler(this.autoUpdt_Min_ValueChanged);
+            // 
+            // autoUpdt_Hr
+            // 
+            this.autoUpdt_Hr.Location = new System.Drawing.Point(39, 14);
+            this.autoUpdt_Hr.Name = "autoUpdt_Hr";
+            this.autoUpdt_Hr.Size = new System.Drawing.Size(55, 20);
+            this.autoUpdt_Hr.TabIndex = 3;
+            this.autoUpdt_Hr.ValueChanged += new System.EventHandler(this.autoUpdt_Hr_ValueChanged);
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(178, 16);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(24, 13);
+            this.label14.TabIndex = 2;
+            this.label14.Text = "Min";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(97, 16);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(18, 13);
+            this.label13.TabIndex = 1;
+            this.label13.Text = "Hr";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(4, 16);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(29, 13);
+            this.label12.TabIndex = 0;
+            this.label12.Text = "After";
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.checkBox3);
@@ -623,83 +689,6 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Branch";
             // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.autoUpdt_label);
-            this.groupBox5.Controls.Add(this.label15);
-            this.groupBox5.Controls.Add(this.autoUpdt_Min);
-            this.groupBox5.Controls.Add(this.autoUpdt_Hr);
-            this.groupBox5.Controls.Add(this.label14);
-            this.groupBox5.Controls.Add(this.label13);
-            this.groupBox5.Controls.Add(this.label12);
-            this.groupBox5.Location = new System.Drawing.Point(5, 71);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(219, 77);
-            this.groupBox5.TabIndex = 7;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Auto Update";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(4, 16);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(29, 13);
-            this.label12.TabIndex = 0;
-            this.label12.Text = "After";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(97, 16);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(18, 13);
-            this.label13.TabIndex = 1;
-            this.label13.Text = "Hr";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(178, 16);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(24, 13);
-            this.label14.TabIndex = 2;
-            this.label14.Text = "Min";
-            // 
-            // autoUpdt_Hr
-            // 
-            this.autoUpdt_Hr.Location = new System.Drawing.Point(39, 14);
-            this.autoUpdt_Hr.Name = "autoUpdt_Hr";
-            this.autoUpdt_Hr.Size = new System.Drawing.Size(55, 20);
-            this.autoUpdt_Hr.TabIndex = 3;
-            this.autoUpdt_Hr.ValueChanged += new System.EventHandler(this.autoUpdt_Hr_ValueChanged);
-            // 
-            // autoUpdt_Min
-            // 
-            this.autoUpdt_Min.Location = new System.Drawing.Point(121, 14);
-            this.autoUpdt_Min.Name = "autoUpdt_Min";
-            this.autoUpdt_Min.Size = new System.Drawing.Size(57, 20);
-            this.autoUpdt_Min.TabIndex = 4;
-            this.autoUpdt_Min.ValueChanged += new System.EventHandler(this.autoUpdt_Min_ValueChanged);
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(4, 37);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(86, 13);
-            this.label15.TabIndex = 5;
-            this.label15.Text = "Est Update Time";
-            // 
-            // autoUpdt_label
-            // 
-            this.autoUpdt_label.AutoSize = true;
-            this.autoUpdt_label.Location = new System.Drawing.Point(6, 59);
-            this.autoUpdt_label.Name = "autoUpdt_label";
-            this.autoUpdt_label.Size = new System.Drawing.Size(41, 13);
-            this.autoUpdt_label.TabIndex = 6;
-            this.autoUpdt_label.Text = "label16";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -709,7 +698,7 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Wonderland Online Private Server";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
@@ -728,6 +717,10 @@
             this.tabPage2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Min)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Hr)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
@@ -736,10 +729,6 @@
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.updtrefresh)).EndInit();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Hr)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.autoUpdt_Min)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -795,7 +784,6 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Label thrd_label;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.GroupBox groupBox5;

@@ -8,6 +8,7 @@ using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.Utilities;
 using Wonderland_Private_Server.DataManagement.DataFiles;
 using Wonderland_Private_Server.Code.Interface;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -26,7 +27,7 @@ namespace Wonderland_Private_Server.ActionCodes
         }
         public void Recv_1(ref Player r, RecvPacket p)
         {
-            switch (p.Unpack8(2))
+            switch (p.Unpack8())
             {
                 case 3: r.BattleScene.RemFighter(Code.Enums.eBattleLeaveType.RunAway, r); break;
             }
@@ -45,9 +46,9 @@ namespace Wonderland_Private_Server.ActionCodes
             //    return;
             //}
 
-            byte pkType = p.Unpack8(2); //pk type
-            UInt32 targetID = p.Unpack32(3); //id of player that was attacked
-            UInt16 clickID = p.Unpack16(7); //npc, or pc's index (not sure if used on pc pks)
+            byte pkType = p.Unpack8(); //pk type
+            UInt32 targetID = p.Unpack32(); //id of player that was attacked
+            UInt16 clickID = p.Unpack16(); //npc, or pc's index (not sure if used on pc pks)
 
             switch (pkType)
             {

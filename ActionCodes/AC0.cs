@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Wonderland_Private_Server.Network;
+using Wlo.Core;
 
 namespace Wonderland_Private_Server.ActionCodes
 {
@@ -17,12 +18,12 @@ namespace Wonderland_Private_Server.ActionCodes
             }
         }
 
-        public override void ProcessPkt(ref Code.Objects.Player c, Network.RecvPacket p)
+        public override void ProcessPkt(ref Code.Objects.Player c, RecvPacket p)
         {
             SendPacket s = new SendPacket();
             s.Pack(new byte[] { 1, 9 });
             s.Pack(new byte[] { 107, 000, 001, });
-            s.PackNString("WPS"+cGlobal.GClient.myVersion);
+            s.Pack("WPS"+cGlobal.GClient.myVersion,false);
             c.Send(s);
             s = new SendPacket();
             s.Pack(new byte[] { 54, 29 });

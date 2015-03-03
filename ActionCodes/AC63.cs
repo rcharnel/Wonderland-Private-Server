@@ -42,7 +42,7 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             try
             {
-                byte charNum = e.Unpack8(2);
+                byte charNum = e.Unpack8();
 
                 if ((charNum < 1) || (charNum > 2))//by userid
                 {
@@ -90,37 +90,37 @@ namespace Wonderland_Private_Server.ActionCodes
                 //sending username and password
                 int at = 2;
 
-                string name = r.UnpackChar(at); at += name.Length + 1;
-                string password = r.UnpackChar(at); at += password.Length + 1;
-                name = name.ToLower();
+                //string name = r.UnpackChar(at); at += name.Length + 1;
+                //string password = r.UnpackChar(at); at += password.Length + 1;
+                //name = name.ToLower();
 
-                string[] userdata = new string[1];//data of user
+                //string[] userdata = new string[1];//data of user
 
-                UInt16 version = r.Unpack16(at); at += 2;
-                byte lcLen = r.Data[at]; at++;
-                byte key = r.Data[at]; at++;
-                char[] lCode = new char[20];
-                Array.Copy(r.Data.ToArray(), at, lCode, 0, lcLen);
-                for (int n = 0; n < lcLen; n++)
-                    lCode[n] = (char)((byte)lCode[n] ^ (byte)key);
+                //UInt16 version = r.Unpack16();
+                //byte lcLen = r.Unpack8();
+                //byte key = r.Unpack8();
+                //char[] lCode = new char[20];
+                //Array.Copy(r.Data.ToArray(), at, lCode, 0, lcLen);
+                //for (int n = 0; n < lcLen; n++)
+                //    lCode[n] = (char)((byte)lCode[n] ^ (byte)key);
 
-                if ((name.Length < 4) || (name.Length > 14))
-                {
-                    loginState = 1;
-                }
-                else if ((password.Length < 4) || (password.Length > 14))
-                {
-                    loginState = 1;
-                }
+                //if ((name.Length < 4) || (name.Length > 14))
+                //{
+                //    loginState = 1;
+                //}
+                //else if ((password.Length < 4) || (password.Length > 14))
+                //{
+                //    loginState = 1;
+                //}
 
-                else if (version < 1096)
-                { //bad aloign version
-                    loginState = 3;
-                }
-                else if ((lcLen < 2) || (lcLen > 15))
-                { //bad login code length
-                    loginState = 4;
-                }
+                //else if (version < 1096)
+                //{ //bad aloign version
+                //    loginState = 3;
+                //}
+                //else if ((lcLen < 2) || (lcLen > 15))
+                //{ //bad login code length
+                //    loginState = 4;
+                //}
 
                 //at this point we have no use, and only an empty cCharacter object
                 //check to see if we are still in the clear for loggin ing
@@ -159,8 +159,8 @@ namespace Wonderland_Private_Server.ActionCodes
                             loginState = 1;
                     #endregion
                 }
-                if (userdata != null)
-                    if (userdata.Length != 6)
+                //if (userdata != null)
+                //    if (userdata.Length != 6)
                         loginState = 1;
                     //else if (userdata.Length == 6 && userdata[4].ToString() == "0" && myhost.GameWorld.ServerStatus == ServerMode.TestMode)
                     //    loginState = 6;
