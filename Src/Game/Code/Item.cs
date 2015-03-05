@@ -3,90 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wonderland_Private_Server.DataManagement.DataFiles;
-using Wonderland_Private_Server.Code.Enums;
+using DataFiles;
 
-namespace Wonderland_Private_Server.Code.Objects
+namespace Game.Code
 {
-    public class cItem
-    {
-        ItemData data; 
-        public byte Ammt;
-        public byte Damage;
-        public byte ParentSlot;
-        public bool locked;
 
-        public cItem()
-        {
-            Clear();
-        }
-        public cItem(ItemData src):base()
-        {
-            data = src;
-        }
-
-        #region Properties
-
-        public eItemType Type { get { return Data.itemType; } }
-        /// <summary>
-        /// an Item's Data
-        /// </summary>
-        protected ItemData Data { get { return data ?? new ItemData(); } }
-        public string Name { get { return Data.Name;} }
-        public UInt16 ItemID { get { return (Data != null) ? Data.ItemID : (ushort)0; } }        
-        public int InvHeight { get {return (Data != null) ? Data.InvHeight : (ushort)0; } }
-        public int InvWidth { get { return (Data != null) ? Data.InvWidth : (ushort)0; } }
-        public ushort Control { get { return Data.Control; } }
-        public eWearSlot Equippped_At { get { return Data.EquipPos; } }
-        public byte Level { get { return Data.Level; } }
-        public ushort NpcID { get { return Data.NpcID; } }
-
-        /// <summary>
-        /// Determines if an Item can be dropped or it must be destroyed
-        /// </summary>
-        public bool Dropable
-        {
-            get
-            {
-                ushort[] nodrop = new ushort[] { };
-
-                return ((Data.able_to_drop) && (Data.NpcID == 0) && !nodrop.Contains(Data.Control));
-            }
-        }
-        /// <summary>
-        /// Determines if the Item is Stackable
-        /// </summary>
-        public bool Stackable { get { return (Data != null) ? Data.able_to_stack : false; } }
-        public bool Tradeable { get { return false; } }
-        public bool Repairable { get { return false; } }
-
-        #endregion
-
-
-        public void Clear()
-        {
-            data = new ItemData();
-            Ammt = 0;
-            Damage = 0;
-            ParentSlot = 0;
-            locked = false;
-        }
-
-        public void CopyFrom(cItem i)
-        {
-            if (i != null)
-            {
-                data = i.Data;
-                Ammt = i.Ammt;
-                Damage = i.Damage;
-                ParentSlot = i.ParentSlot;
-                locked = i.locked;
-            }
-        }
-    }
-
-
-    public class EquipmentCell : cItem
+    public class EquipmentCell : Item
     {
         public EquipmentCell()
         {
@@ -189,11 +111,12 @@ namespace Wonderland_Private_Server.Code.Objects
     }
 
 
-    public class InvItemCell : cItem
+    public class InvItem : Item
     {
         public int SpaceLeft { get { if (Stackable) return 50 - Ammt; else return 0; } }
     }
-    public class DroppedItem : cItem
+
+    public class DroppedItem : Item
     {
         public bool NonExpirable;
         bool Expired;
@@ -204,7 +127,7 @@ namespace Wonderland_Private_Server.Code.Objects
         public UInt16 Y = 0; 
     }
 
-    public class TentItem:cItem
+    public class TentItem:Item
     {
         public byte index;
 

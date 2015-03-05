@@ -14,7 +14,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
     public sealed class CharacterDataBase
     {
         const string DBServer = "CharacterDataBase";
-        DBConnector.DBOAuth DBAssist;
+        //DBConnector.DBOAuth DBAssist;
 
         List<string> client_requested_names = new List<string>();
 
@@ -30,7 +30,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         Dictionary<string, uint> CharNames = new Dictionary<string, uint>();
         public CharacterDataBase()
         {
-            DBAssist = new DBConnector.DBOAuth();
+            //DBAssist = new DBConnector.DBOAuth();
         }
 
         void Setup()

@@ -25,7 +25,7 @@ namespace Wonderland_Private_Server
         public static Utilities.Task.TaskManager ApplicationTasks;
 
         #region DataBase
-        public static DBConnector.DBOAuth gDataBaseConnection = new DBConnector.DBOAuth();
+        //public static DBConnector.DBOAuth gDataBaseConnection = new DBConnector.DBOAuth();
         public static DataManagement.DataBase.CharacterDataBase gCharacterDataBase;
         public static DataManagement.DataBase.UserDataBase gUserDataBase;
         public static DataManagement.DataBase.GameDataBase gGameDataBase;

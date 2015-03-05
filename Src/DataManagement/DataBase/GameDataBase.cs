@@ -13,11 +13,11 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
     class GameDataBase
     {
         const string DBServer = "GameDataBase";
-        DBConnector.DBOAuth DBAssist;
+        //DBConnector.DBOAuth DBAssist;
 
         public GameDataBase()
         {
-            DBAssist = new DBConnector.DBOAuth();
+            //DBAssist = new DBConnector.DBOAuth();
         }
         public bool Can_Connect { get { return (DBAssist == null) ? false : DBAssist.VerifyConnection(); } }
         public void VerifySetup()

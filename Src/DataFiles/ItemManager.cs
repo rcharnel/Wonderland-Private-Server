@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Wonderland_Private_Server.Code.Objects;
-using Wonderland_Private_Server.Code.Enums;
 
-namespace Wonderland_Private_Server.DataManagement.DataFiles
+namespace DataFiles
 {
     public class ItemData
     {
@@ -134,15 +132,15 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                     case 10: return true;
                     case 15: return false;
                     case 17:
-                    case 20: 
-                    case 21: 
-                    case 23: 
-                    case 24: 
-                    case 25: 
-                    case 26: 
-                    case 28: 
-                    case 30: 
-                    case 31: 
+                    case 20:
+                    case 21:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 28:
+                    case 30:
+                    case 31:
                     case 32:
                     case 34:
                     case 35:
@@ -226,7 +224,163 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             UnknownDWord3 = dwordXor(getDWord(data, ptr)); ptr += 4;
             UnknownDWord4 = dwordXor(getDWord(data, ptr)); ptr += 4;
             UnknownDWord5 = dwordXor(getDWord(data, ptr)); ptr += 4;
-            UnknownDWord6 = dwordXor(getDWord(data, ptr)); ptr += 4;            
+            UnknownDWord6 = dwordXor(getDWord(data, ptr)); ptr += 4;
+        }
+    }
+
+    public class Item : Phoenix.Core.Controls.IUpdatableControl
+    {
+        ItemData data;
+        byte ammt;
+        byte damage;
+        byte parentSlot;
+        bool locked;
+
+        public Item()
+        {
+            Clear();
+        }
+        public Item(ItemData i)
+        {
+            Clear();
+            CopyFrom(i);
+        }
+
+
+        #region Properties
+
+        public byte Ammt { get { return ammt; } set { SetField<byte>(ref ammt, value); } }
+        public byte Damage { get { return damage; } set { SetField<byte>(ref damage, value); } }
+        public byte Parent { get { return parentSlot; } set { SetField<byte>(ref parentSlot, value); } }
+        public bool isLocked { get { return locked; } set { SetField<bool>(ref locked, value); } }
+
+
+        public eItemType Type { get { return (eItemType)Data.itemType; } }
+        /// <summary>
+        /// an Item's Data
+        /// </summary>
+        protected ItemData Data { get { return data ?? new ItemData(); } }
+        public string Name { get { return Data.Name; } }
+        public UInt16 ItemID { get { return (Data != null) ? Data.ItemID : (ushort)0; } }
+        public int Height { get { return (Data != null) ? Data.InvHeight : (ushort)0; } }
+        public int Width { get { return (Data != null) ? Data.InvWidth : (ushort)0; } }
+        public ushort Control { get { return Data.Control; } }
+        public eWearSlot Wear_At { get { return (eWearSlot)Data.EquipPos; } }
+        public byte Level { get { return Data.Level; } }
+        public ushort NpcID { get { return Data.NpcID; } }
+
+        /// <summary>
+        /// Determines if an Item can be dropped or it must be destroyed
+        /// </summary>
+        public bool Dropable
+        {
+            get
+            {
+                switch ((byte)Type)
+                {
+                    case 23:
+                    case 3:
+                    case 31:
+                    case 32:
+                    case 1:
+                    case 10:
+                    case 12:
+                    case 14:
+                    case 15:
+                    case 5:
+                    case 6:
+                    case 8:
+                    case 9:
+                    case 4:
+                    case 37:
+                    case 36:
+                    case 35:
+                    case 34:
+                    case 33:
+                    case 2:
+                    case 13: return true;
+                    default: return false;
+                }
+            }
+        }
+        /// <summary>
+        /// Determines if the Item is Stackable
+        /// </summary>
+        public bool Stackable
+        {
+            get
+            {
+                switch ((byte)Type)
+                {
+                    case 10: return true;
+                    case 15: return false;
+                    case 17:
+                    case 20:
+                    case 21:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 28:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 40:
+                    case 41:
+                    case 51:
+                    case 52:
+                    case 54:
+                    case 33: return true;
+                    default: return false;
+                }
+            }
+        }
+        public bool Tradeable
+        {
+            get
+            {
+                switch ((byte)Type)
+                {
+                    case 29: return false;
+                    case 28: return true;
+                    default: return false;
+                }
+            }
+        }
+        public bool Repairable { get { return false; } }
+
+        #endregion
+
+        /// <summary>
+        /// Clears the Values from this Item object
+        /// </summary>
+        public void Clear()
+        {
+            data = null;
+            ammt = 0;
+            damage = 0;
+            parentSlot = 0;
+            locked = false;
+        }
+        /// <summary>
+        /// Copys values from another Item object
+        /// </summary>
+        /// <param name="i"></param>
+        public void CopyFrom(Item i)
+        {
+            if (i != null)
+            {
+                data = i.Data;
+                ammt = i.Ammt;
+                damage = i.Damage;
+                parentSlot = i.Parent;
+                locked = i.isLocked;
+            }
         }
     }
 
@@ -235,14 +389,14 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
     {
         readonly object mylock;
 
-        Dictionary<ushort, cItem> itemList = new Dictionary<ushort, cItem>();
+        Dictionary<ushort, Item> itemList = new Dictionary<ushort, Item>();
 
         public ItemManager()
         {
             mylock = new object();
         }
 
-        public cItem GetItem(ushort id)
+        public Item GetItem(ushort id)
         {
             lock (mylock)
             {
@@ -261,27 +415,27 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                 {
                     itemList.Clear();
                     if (!File.Exists(path)) return false;
-                    Utilities.LogServices.Log("Loading Item.Dat");
+                    DebugSystem.Write("Loading Item.Dat");
                     byte[] data = File.ReadAllBytes(path);
                     int max = data.Length / 457;
                     int at = 0;
                     for (int n = 0; n < max; n++)
                     {
-                        ItemData f = new ItemData();                        
+                        ItemData f = new ItemData();
                         f.mydata = new byte[457];
                         Array.Copy(data, at, f.mydata, 0, 457);
                         f.Load();
-                        cItem i = new cItem(f);
+                        Item i = new Item(f);
                         i.Ammt = 1;
                         itemList.Add(i.ItemID, i);
                         at += 457;
                     }
-                    Utilities.LogServices.Log("Item.Dat Loaded ( " + itemList.Count + " Items)");
+                    DebugSystem.Write("Item.Dat Loaded ( " + itemList.Count + " Items)");
                     return true;
                 }
-                catch (Exception ex) { Utilities.LogServices.Log(ex); }
+                catch (Exception ex) { DebugSystem.Write(new ExceptionData(ex)); }
                 itemList.Clear();
-                Utilities.LogServices.Log("Item.dat not Loaded");
+                DebugSystem.Write("Item.dat not Loaded");
                 return false;
             }
         }

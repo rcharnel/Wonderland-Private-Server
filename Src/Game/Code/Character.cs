@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Wonderland_Private_Server.Maps;
 using Wonderland_Private_Server.Code.Enums;
 
-namespace Wonderland_Private_Server.Code.Objects
+namespace Game.Code
 {
     public class Character : EquipementManager
     {

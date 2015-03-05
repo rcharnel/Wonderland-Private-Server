@@ -14,9 +14,51 @@ using Wonderland_Private_Server.GM;
 using Wonderland_Private_Server.DataManagement.DataFiles;
 using Wlo.Core;
 
-namespace Wonderland_Private_Server.Code.Objects
+
+namespace Game
 {
-    public class Player : Character, Fighter,cSocket
+    /// <summary>
+    /// Flags that tell what a player is doing
+    /// </summary>
+    public enum PlayerFlag
+    {
+        Creating_Character,
+        Logging_into_Map,
+        Warping,
+        InGame,
+        InMap,
+        InTent,
+    }
+
+    public class PlayerFlagManager
+    {
+        List<PlayerFlag> m_Flags;
+
+        public PlayerFlagManager()
+        {
+            m_Flags = new List<PlayerFlag>();
+        }
+
+        public void Add(params PlayerFlag[] flag)
+        {
+            foreach (var f in flag)
+                if (!m_Flags.Contains(f))
+                    m_Flags.Add(f);
+        }
+        public void Remove(params PlayerFlag[] flag)
+        {
+            foreach (var f in flag)
+                if (m_Flags.Contains(f))
+                    m_Flags.Remove(f);
+        }
+        public bool HasFlag(PlayerFlag flag)
+        {
+            return m_Flags.Contains(flag);
+        }
+    }
+
+
+    public class Player : Game.Code.Character, Fighter,cSocket
     {
         readonly object mylock = new object();
         bool blockupdt;
