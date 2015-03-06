@@ -16,14 +16,14 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         }
         public bool LoadFile(string filename)
         {
-            Utilities.LogServices.Log("Loading Eve.EMG.....");
+            DebugSystem.Write("Loading Eve.EMG.....");
             Maps.Clear();
             if (!File.Exists(filename)) return false;
             byte[] data = File.ReadAllBytes(filename);
             eveData = data;
             try { ReadData(data); }
-            catch (Exception e) { Utilities.LogServices.Log(e); return false; }
-            Utilities.LogServices.Log("done loading Eve");
+            catch (Exception e) { DebugSystem.Write(e); return false; }
+            DebugSystem.Write("done loading Eve");
             return true;
         }
         public UInt16 GetSceneIDbyMapID(UInt16 id)
@@ -96,7 +96,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
         }
         void Load_MapEntries(ref int ptr, byte[] d, uint len)
         {
-            Utilities.LogServices.Log("Stage 1\r\nReading Map Entries.....");
+            DebugSystem.Write("Stage 1\r\nReading Map Entries.....");
             //used to load MapEntries
             //File.Delete("LogOutput.txt");
             for (int a = 0; a < len; a++)
@@ -108,11 +108,11 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                 tmp.datalen = GetWord(d, ptr); ptr += 2;
                 Maps.Add(tmp.mapID,tmp);
             }
-            Utilities.LogServices.Log("Finished Reading Maps");
+            DebugSystem.Write("Finished Reading Maps");
         }
         void Load_ScenceData(ref int ptr2, byte[] d, uint len)
         {
-            Utilities.LogServices.Log("Stage2\r\nReading Scene Data Category Offset Entries.....");
+            DebugSystem.Write("Stage2\r\nReading Scene Data Category Offset Entries.....");
             //used to load Scence Data Entries
 
             foreach (MapData scen in Maps.Values)
@@ -150,13 +150,13 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                 }
                 if (ptr < scen.datalen + scen.dataptr)
                 {
-                    Utilities.LogServices.Log("Map" + scen.mapID.ToString() + " data mistmach... counted length-"
+                    DebugSystem.Write("Map" + scen.mapID.ToString() + " data mistmach... counted length-"
                     + count.ToString() + " lower than req" + scen.datalen);
                     ptr2 += scen.datalen;
                 }
                 else if (count > scen.datalen)
                 {
-                    Utilities.LogServices.Log("Map" + scen.mapID.ToString() + " data mistmach... counted length-"
+                    DebugSystem.Write("Map" + scen.mapID.ToString() + " data mistmach... counted length-"
                     + count.ToString() + " greater than req" + scen.datalen);
                     ptr2 += scen.datalen;
                 }
@@ -165,13 +165,13 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                     break;
                 #endregion
             }
-            Utilities.LogServices.Log("EveData has been Read successfully");
-            Utilities.LogServices.Log("Map Data found -" + Maps.Count.ToString());
+            DebugSystem.Write("EveData has been Read successfully");
+            DebugSystem.Write("Map Data found -" + Maps.Count.ToString());
         }
         void Load_FinalData()
         {
             Stopwatch timer = new Stopwatch();
-            Utilities.LogServices.Log("Stage 3..Loading Data for Maps...");
+            DebugSystem.Write("Stage 3..Loading Data for Maps...");
             timer.Reset();
             timer.Start();
             //this will be the loader
@@ -206,12 +206,12 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                     Maps[r.mapID].PreEvents = LoadpreEventEntries(r);
                     Maps[r.mapID].ExtBattleInfo = LoadBattleEntries(r);
                 }
-                catch (Exception e) { Utilities.LogServices.Log(e); }
+                catch (Exception e) { DebugSystem.Write(e); }
             }
 
-            Utilities.LogServices.Log("Operation took-> " + timer.Elapsed.ToString());
+            DebugSystem.Write("Operation took-> " + timer.Elapsed.ToString());
             timer.Stop();
-            Utilities.LogServices.Log("Data loaded successfully");
+            DebugSystem.Write("Data loaded successfully");
         }
         public List<MapObjectEntries> LoadNpcEntries(MapData y)
         {

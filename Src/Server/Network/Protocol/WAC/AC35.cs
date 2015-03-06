@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Phoenix.Core.Networking;
-using PhoenixGameServer.Game;
-using Phoenix.Core;
-using PhoenixGameServer;
+using Wlo.Core;
+using Game;
 
-namespace PhoenixGameServer.Network.WAC
+namespace Server.Network.WAC
 {
     public class AC35 : WLOAC
     {
         public override int ID { get { return 35; } }
 
-        public override void Process(Player p, Packet r)
+        public override void Process(Player p, SendPacket r)
         {
             switch (r.Unpack8())
             {
@@ -23,7 +21,7 @@ namespace PhoenixGameServer.Network.WAC
             }
         }
 
-        async void Recv2(Player p, Packet e)
+        async void Recv2(Player p, SendPacket e)
         {
             byte slot = e.Unpack8();
             e.m_nUnpackIndex = 18;
@@ -44,15 +42,15 @@ namespace PhoenixGameServer.Network.WAC
                     new DbParam("usercipher", p.UserAcc.Cipher));
 
 
-                tmp.Add(Packet.ConvertfromFormat<Packet>("bbbw", 24, 5, 53, 0));
-                tmp.Add(Packet.ConvertfromFormat<Packet>("bbbw", 24, 5, 52, 0));
-                tmp.Add(Packet.ConvertfromFormat<Packet>("bbbw", 24, 5, 54, 0));
-                tmp.Add(Packet.ConvertfromFormat<Packet>("bbbw", 24, 5, 183, 0));
-                tmp.Add(Packet.ConvertfromFormat<Packet>("bb", 20, 8));
-                tmp.Add(Packet.ConvertfromFormat<Packet>("bbbb", 35, 2, 1, slot));
+                tmp.Add(SendPacket.FromFormat("bbbw", 24, 5, 53, 0));
+                tmp.Add(SendPacket.FromFormat("bbbw", 24, 5, 52, 0));
+                tmp.Add(SendPacket.FromFormat("bbbw", 24, 5, 54, 0));
+                tmp.Add(SendPacket.FromFormat("bbbw", 24, 5, 183, 0));
+                tmp.Add(SendPacket.FromFormat("bb", 20, 8));
+                tmp.Add(SendPacket.FromFormat("bbbb", 35, 2, 1, slot));
             }
             else
-                tmp.Add(Packet.ConvertfromFormat<Packet>("bbbb", 35, 2, 3, slot));
+                tmp.Add(SendPacket.FromFormat("bbbb", 35, 2, 3, slot));
 
             p.SendPacket( tmp.End());
         }

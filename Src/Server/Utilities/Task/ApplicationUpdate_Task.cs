@@ -18,11 +18,11 @@ namespace Wonderland_Private_Server.Utilities.Task
             {
                 if (cGlobal.GClient != null)
                 {
-                    Utilities.LogServices.Log("Checking for Update", LogType.UPDT);
+                    DebugSystem.Write("Checking for Update", LogType.UPDT);
                     cGlobal.GClient.CheckFor_Update();
                 }
             }
-            catch (Exception y) { Utilities.LogServices.Log(y); status = "Failed"; }
+            catch (Exception y) { DebugSystem.Write(y); status = "Failed"; }
         }
 
     }
@@ -42,7 +42,7 @@ namespace Wonderland_Private_Server.Utilities.Task
                 {
                 }
             }
-            catch (Exception y) { Utilities.LogServices.Log(y); status = "Failed"; }
+            catch (Exception y) { DebugSystem.Write(y); status = "Failed"; }
         }
     }
 
@@ -59,7 +59,7 @@ namespace Wonderland_Private_Server.Utilities.Task
             {
                 
             }
-            catch (Exception y) { Utilities.LogServices.Log(y); status = "Failed"; }
+            catch (Exception y) { DebugSystem.Write(y); status = "Failed"; }
         }
     }
 }

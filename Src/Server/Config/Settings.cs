@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.Xml;
 
-namespace Wonderland_Private_Server.Config
+namespace Server.Config
 {
 
     [Serializable]
@@ -22,6 +22,7 @@ namespace Wonderland_Private_Server.Config
     {
         readonly System.Xml.Serialization.XmlSerializer diskio;
         readonly object m_Lock = new object();
+
         public UpdateSetting Update;
         
         public Settings()
@@ -29,9 +30,11 @@ namespace Wonderland_Private_Server.Config
             diskio = new XmlSerializer(this.GetType());
             Update = new UpdateSetting();
         }
+
+
         public void SaveSettings(string location)
         {
-            Utilities.LogServices.Log("Saving Settings");
+            DebugSystem.Write("Saving Settings");
             if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\"))
                 Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\");
             using (StreamWriter file = new StreamWriter(location))

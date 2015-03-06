@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PhoenixGameServer.Game;
 using Phoenix.Core.Networking;
 using DataFiles;
+using Game;
+using Wlo.Core;
 
-namespace PhoenixGameServer.Network.WAC
+namespace Server.Network.WAC
 {
     public class AC02:WLOAC
     {
         public override int ID { get { return 2; } }
 
-        public override void Process(Player p, Packet r)
+        public override void Process(Player p, SendPacket r)
         {
             switch (r.Unpack8())
             {
@@ -24,10 +25,10 @@ namespace PhoenixGameServer.Network.WAC
             }
         }
 
-        void Recv1(ref Player p, Packet r)
+        void Recv1(ref Player p, SendPacket r)
         {
         }
-        void Recv2(Player p, Packet r)
+        void Recv2(Player p, SendPacket r)
         {
 
             string str = r.UnpackStringN();
@@ -138,7 +139,7 @@ namespace PhoenixGameServer.Network.WAC
                         #region Default
 
                         default:
-                            Packet s = new Packet();
+                            SendPacket s = new SendPacket();
                             s.Pack8(2);
                             s.Pack8(2);
                             s.Pack32(p.CharID);
@@ -152,7 +153,7 @@ namespace PhoenixGameServer.Network.WAC
             }
             catch
             {
-                Packet s = new Packet();
+                SendPacket s = new SendPacket();
                 s.Pack8(2);
                 s.Pack8(2);
                 s.Pack32(p.CharID);
@@ -163,12 +164,12 @@ namespace PhoenixGameServer.Network.WAC
 
         }
 
-        public void Recv_3(Player p, Packet r) //whisper
+        public void Recv_3(Player p, SendPacket r) //whisper
         {
             uint targetID = r.Unpack32();
             string text = r.UnpackStringN();
 
-            Packet to = new Packet();
+            SendPacket to = new SendPacket();
             to.Pack8(2);
             to.Pack8(3);
             to.Pack32(p.CharID);

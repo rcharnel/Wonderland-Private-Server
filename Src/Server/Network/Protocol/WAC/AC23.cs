@@ -5,14 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Phoenix.Core.Networking;
 using PhoenixGameServer.Game;
+using Wlo.Core;
+using Game;
 
-namespace PhoenixGameServer.Network.WAC
+namespace Server.Network.WAC
 {
     public class AC23:WLOAC
     {
         public override int ID { get { return 23; } }
 
-        public override void Process(Player p, Packet r)
+        public override void Process(Player p, SendPacket r)
         {
             switch (r.Unpack8())
             {
@@ -23,13 +25,13 @@ namespace PhoenixGameServer.Network.WAC
             }
         }
 
-        void Recv2(Player p, Packet r)
+        void Recv2(Player p, SendPacket r)
         {
                 byte pos = r.Unpack8();
             if(p.CurMap is GameMap)
                 (p.CurMap as GameMap).onItemPickup(p, pos);
         }
-        void Recv3(Player p, Packet r)
+        void Recv3(Player p, SendPacket r)
         {
             byte pos = r.Unpack8();
             byte qnt = r.Unpack8();
@@ -43,7 +45,7 @@ namespace PhoenixGameServer.Network.WAC
                 if (p.Inv[pos].Dropable && p.CurMap is GameMap)
                     (p.CurMap as GameMap).onItemDrop(p, pos, qnt);
                 else//ask to destroy
-                    p.SendPacket(Packet.ConvertfromFormat<Packet>("bbbbWb", 23, 212, 255, pos, p.Inv[pos].ItemID, qnt));
+                    p.SendPacket(SendPacket.FromFormat("bbbbWb", 23, 212, 255, pos, p.Inv[pos].ItemID, qnt));
             }
         }
     }

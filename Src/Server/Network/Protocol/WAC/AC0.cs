@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Phoenix.Core.Networking;
-using PhoenixGameServer.Game;
+using Game;
+using Wlo.Core;
 
-namespace PhoenixGameServer.Network.WAC
+namespace Server.Network.WAC
 {
     public class AC0:WLOAC 
     {
 
-        public override void Process( Player client, Phoenix.Core.Networking.Packet r)
+        public override void Process( Player client, Phoenix.Core.Networking.SendPacket r)
         {
             PacketBuilder s = new PacketBuilder();
             s.Begin();

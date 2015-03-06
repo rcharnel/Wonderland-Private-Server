@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PhoenixGameServer.Game;
-using Phoenix.Core.Networking;
+using Wlo.Core;
+using Game;
 
-namespace PhoenixGameServer.Network.WAC
+namespace Server.Network.WAC
 {
     public class AC06 : WLOAC
     {
         public override int ID { get { return 06; } }
 
-        public override void Process(Player p, Packet r)
+        public override void Process(Player p, SendPacket r)
         {
             switch (r.Unpack8())
             {
@@ -22,13 +22,13 @@ namespace PhoenixGameServer.Network.WAC
                 default: base.Process(p, r); break;
             }
         }
-        void Recv1(Player p, Packet g)
+        void Recv1(Player p, SendPacket g)
         {
             byte direction = g.Unpack8();
             p.CurX = g.Unpack16();
             p.CurY = g.Unpack16();
             ushort unknown = g.Unpack16();
-            Packet tmp = new Packet();
+            SendPacket tmp = new SendPacket();
             tmp.Pack8(6);
             tmp.Pack8(1);
             tmp.Pack32(p.CharID);

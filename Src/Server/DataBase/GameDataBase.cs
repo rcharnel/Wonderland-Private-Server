@@ -46,7 +46,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
                         case 0:
                             if (id != 0)
                             {
-                                var data = new InvItemCell();
+                                var data = new InvItem();
                                 data.CopyFrom(cGlobal.gItemManager.GetItem(id));
                                 data.Ammt = byte.Parse(src.Rows[i]["qty"].ToString());
                                 data.Damage = byte.Parse(src.Rows[i]["dmg"].ToString());
@@ -125,11 +125,11 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             return 140;
         }
 
-        public void SetupMap(ref Maps.Map src)
+        public void SetupMap(ref Game.Maps.GameMap src)
         {
 
         }
-        public void WriteTent(Tent src)
+        public void WriteTent(Game.Code.PlayerRelated.Tent src)
         {
 
         }
@@ -146,7 +146,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         //    MySqlConnection conn = GenerateConn();
 
         //    try { conn.Open(); }
-        //    catch (MySqlException f) { Utilities.LogServices.Log(f); return false; }
+        //    catch (MySqlException f) { DebugSystem.Write(f); return false; }
 
         //    foreach (var r in Data)
         //    {
@@ -155,9 +155,9 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         //        try
         //        {
         //            reader = cmd.ExecuteReader();
-        //            Utilities.LogServices.Log(DBServer + cmd.CommandText + " Successful");
+        //            DebugSystem.Write(DBServer + cmd.CommandText + " Successful");
         //        }
-        //        catch (MySqlException ex) { Utilities.LogServices.Log(ex); }
+        //        catch (MySqlException ex) { DebugSystem.Write(ex); }
 
         //        if (reader.HasRows)
         //        {
@@ -167,9 +167,9 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         //            try
         //            {
         //                cmd.ExecuteNonQuery();
-        //                Utilities.LogServices.Log(DBServer + cmd.CommandText + " Successful");
+        //                DebugSystem.Write(DBServer + cmd.CommandText + " Successful");
         //            }
-        //            catch (MySqlException ex) { Utilities.LogServices.Log(ex); return false; }
+        //            catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
         //        }
         //        else
         //        {
@@ -179,9 +179,9 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         //            try
         //            {
         //                cmd.ExecuteNonQuery();
-        //                Utilities.LogServices.Log(DBServer + cmd.CommandText + " Successful");
+        //                DebugSystem.Write(DBServer + cmd.CommandText + " Successful");
         //            }
-        //            catch (MySqlException ex) { Utilities.LogServices.Log(ex); return false; }
+        //            catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
         //        }
 
         //    }

@@ -385,7 +385,7 @@ namespace DataFiles
     }
 
 
-    public class ItemManager
+    public class ItemManager:IDataManager
     {
         readonly object mylock;
 

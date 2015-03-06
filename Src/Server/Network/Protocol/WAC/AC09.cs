@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Phoenix.Core.Networking;
-using PhoenixGameServer.Game;
-using Phoenix.Core;
+using Wlo.Core;
+using Game;
 
-namespace PhoenixGameServer.Network.WAC
+namespace Server.Network.WAC
 {
     public class AC09 : WLOAC
     {
@@ -18,7 +17,7 @@ namespace PhoenixGameServer.Network.WAC
                 return 9;
             }
         }
-        public override void Process( Game.Player src, Phoenix.Core.Networking.Packet r)
+        public override void Process( Game.Player src, SendPacket r)
         {
             switch (r.Unpack8())
             {
@@ -27,7 +26,7 @@ namespace PhoenixGameServer.Network.WAC
             }
         }
 
-        async void Recv1(Player tp, Packet e)
+        async void Recv1(Player tp, SendPacket e)
         {
             tp.CharID = (uint)((tp.Slot == 1) ? tp.UserID : tp.UserID + 4500000);
             tp.Body = (BodyStyle)e.Unpack16();
@@ -87,13 +86,13 @@ namespace PhoenixGameServer.Network.WAC
         }
     
 
-        async void Recv2( Player tp, Packet e)
+        async void Recv2( Player tp, SendPacket e)
         {
             string name = e.UnpackStringN();
             bool resp = false;
             if (!(resp = !((name.Length >= 4) && (name.Length <= 14) && await cGlobal.gGameDataBase.RequestName(ref tp, name))))
                 tp.CharName = name;
-            tp.SendPacket(Packet.ConvertfromFormat<Packet>("bbb", 9, 3, resp));
+            tp.SendPacket(SendPacket.FromFormat("bbb", 9, 3, resp));
         }
     }
 }

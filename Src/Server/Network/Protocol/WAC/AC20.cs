@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Phoenix.Core.Networking;
 
-namespace PhoenixGameServer.Network.WAC
+namespace Server.Network.WAC
 {
     public class AC20 : WLOAC
     {
         public override int ID { get { return 20; } }
 
-        public override void Process(Game.Player r, Phoenix.Core.Networking.Packet p)
+        public override void Process(Game.Player r, Phoenix.Core.Networking.SendPacket p)
         {
             switch (p.Unpack8())
             {
@@ -22,7 +22,7 @@ namespace PhoenixGameServer.Network.WAC
                 default: base.Process(r, p); break;
             }
         }
-        void Recv8(Game.Player src, Phoenix.Core.Networking.Packet r)
+        void Recv8(Game.Player src, Phoenix.Core.Networking.SendPacket r)
         {
             //if (!p.CurrentMap.Teleport(TeleportType.Regular, ref p, (byte)r.Unpack16(2)))
             //{
@@ -31,23 +31,23 @@ namespace PhoenixGameServer.Network.WAC
             //    p.Send(tmp);
             //}
         }
-        void Recv1(Game.Player src, Phoenix.Core.Networking.Packet r)
+        void Recv1(Game.Player src, Phoenix.Core.Networking.SendPacket r)
         {
             //if (!p.CurrentMap.ProccessInteraction(r.Unpack8(2), ref p))
             //{
-            src.SendPacket(Packet.ConvertfromFormat<Packet>("bb", 20, 8));
+            src.SendPacket(SendPacket.FromFormat("bb", 20, 8));
             //}
         }
-        void Recv6(Game.Player src, Phoenix.Core.Networking.Packet r)
+        void Recv6(Game.Player src, Phoenix.Core.Networking.SendPacket r)
         {
             if (!src.ContinueInteraction())
             {
-                src.SendPacket(Packet.ConvertfromFormat<Packet>("bb", 20, 8));
+                src.SendPacket(SendPacket.FromFormat("bb", 20, 8));
 
                 if (src.Flags.HasFlag(Game.PlayerFlag.Warping))
                 {
                     src.Flags.Remove(Game.PlayerFlag.Warping);
-                    src.SendPacket(Packet.ConvertfromFormat<Packet>("bb", 5, 4));
+                    src.SendPacket(SendPacket.FromFormat("bb", 5, 4));
                 }
                 //case PlayerState.InGame_Interacting:
                 //    {
@@ -56,7 +56,7 @@ namespace PhoenixGameServer.Network.WAC
             }
             src.Flags.Add(Game.PlayerFlag.InMap);
         }
-        void Recv9(Game.Player src, Phoenix.Core.Networking.Packet r)
+        void Recv9(Game.Player src, Phoenix.Core.Networking.SendPacket r)
         {
 
         }

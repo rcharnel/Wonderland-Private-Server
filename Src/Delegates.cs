@@ -9,7 +9,7 @@ using Wonderland_Private_Server.Code.Interface;
 
 namespace Wonderland_Private_Server
 {
-    public delegate void onWorldEvent(Player src, WorldEventType args);
+    //public delegate void onWorldEvent(Player src, WorldEventType args);
 
 
     public delegate void BattleEvent(Fighter src,BattleAction cmd);

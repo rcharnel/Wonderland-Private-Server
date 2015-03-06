@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PhoenixGameServer.Game;
-using Phoenix.Core.Networking;
+using Wlo.Core;
+using Game;
 
-namespace PhoenixGameServer.Network.WAC
+namespace Server.Network.WAC
 {
     public class AC14 : WLOAC
     {
         public override int ID { get { return 14; } }
 
-        public override void Process(Player p, Packet r)
+        public override void Process(Player p, SendPacket r)
         {
             switch (r.Unpack8())
             {
@@ -24,7 +24,7 @@ namespace PhoenixGameServer.Network.WAC
             }
         }
 
-        public void Recv1(Player p, Packet r)//someone sent mail
+        public void Recv1(Player p, SendPacket r)//someone sent mail
         {
             switch (r.Unpack8())
             {
@@ -36,11 +36,11 @@ namespace PhoenixGameServer.Network.WAC
                     } break;
             }
         }
-        public void Recv2(Player p, Packet r)//request to add friend
+        public void Recv2(Player p, SendPacket r)//request to add friend
         {
-            cGlobal.GameServer.DoAction(r.Unpack32(), new Action<Player>(c => c.SendPacket(Packet.ConvertfromFormat<Packet>("bbd", 14, 2, p.CharID))));
+            cGlobal.GameServer.DoAction(r.Unpack32(), new Action<Player>(c => c.SendPacket(SendPacket.FromFormat("bbd", 14, 2, p.CharID))));
         }
-        public void Recv3(Player p, Packet r)//they accept/didnt answer/refuse
+        public void Recv3(Player p, SendPacket r)//they accept/didnt answer/refuse
         {
             uint to = r.Unpack32();
             byte act = r.Unpack8();
@@ -53,15 +53,15 @@ namespace PhoenixGameServer.Network.WAC
                         {
                             cGlobal.GameServer.DoAction(to, new Action<Player>(c =>
                             {
-                                c.SendPacket(Packet.ConvertfromFormat<Packet>("bbdb", 14, 3, p.CharID, act));
-                                p.SendPacket(Packet.ConvertfromFormat<Packet>("bbdb", 14, 3, c.CharID, act));
+                                c.SendPacket(SendPacket.FromFormat("bbdb", 14, 3, p.CharID, act));
+                                p.SendPacket(SendPacket.FromFormat("bbdb", 14, 3, c.CharID, act));
                             }));
                         }
                     } break;
             }
 
         }
-        public void Recv4(Player p, Packet r)//request to delete
+        public void Recv4(Player p, SendPacket r)//request to delete
         {
 
             cGlobal.GameServer.DoAction(r.Unpack32(), new Action<Player>(c =>

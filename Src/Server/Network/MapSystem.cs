@@ -54,7 +54,7 @@ namespace Wonderland_Private_Server.Network
             }
             
             MapList[map.DstMap].onWarp_In(portalID, ref target, map);
-            Utilities.LogServices.Log("Loaded Map (" + MapList[map.DstMap].MapID.ToString() + ") " + MapList[map.DstMap].Name);
+            DebugSystem.Write("Loaded Map (" + MapList[map.DstMap].MapID.ToString() + ") " + MapList[map.DstMap].Name);
             return true;
         }
 

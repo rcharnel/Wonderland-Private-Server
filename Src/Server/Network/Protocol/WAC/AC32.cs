@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PhoenixGameServer.Game;
-using Phoenix.Core.Networking;
-using DataFiles;
+using Wlo.Core;
+using Game;
 
-namespace PhoenixGameServer.Network.WAC
+namespace Server.Network.WAC
 {
     public class AC32:WLOAC
     {
         public override int ID { get { return 32; } }
 
-        public override void Process(Player p, Packet r)
+        public override void Process(Player p, SendPacket r)
         {
             switch (r.Unpack8())
             {
@@ -23,16 +22,16 @@ namespace PhoenixGameServer.Network.WAC
             }
         }
 
-        void Recv1(Player p, Packet r)
+        void Recv1(Player p, SendPacket r)
         {
             p.Emote = r.Unpack8();
-            p.CurMap.Broadcast(Packet.ConvertfromFormat<Packet>("bbdb", 32, 1, p.CharID, p.Emote), "Ex", p.CharID);
+            p.CurMap.Broadcast(SendPacket.FromFormat("bbdb", 32, 1, p.CharID, p.Emote), "Ex", p.CharID);
 
         }
-        void Recv2(Player p, Packet r)
+        void Recv2(Player p, SendPacket r)
         {
             p.Emote = r.Unpack8();
-            p.CurMap.Broadcast(Packet.ConvertfromFormat<Packet>("bbdb", 32, 2, p.CharID, p.Emote), "Ex", p.CharID);
+            p.CurMap.Broadcast(SendPacket.FromFormat("bbdb", 32, 2, p.CharID, p.Emote), "Ex", p.CharID);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wonderland_Private_Server.Code.Enums
+namespace Game
 {
     public enum RebornJob : byte
     {
@@ -18,7 +18,7 @@ namespace Wonderland_Private_Server.Code.Enums
         NissRB,
 
     }
-    public enum ElementType
+    public enum Affinity
     {
         Normal = 0,
         Earth = 1,

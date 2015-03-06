@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wonderland_Private_Server.Code.Enums;
-using Wonderland_Private_Server.Code.Objects;
-using Wonderland_Private_Server.DataManagement.DataFiles;
+using Game;
 
 namespace Wonderland_Private_Server.Code.Interface
 {
@@ -15,8 +13,8 @@ namespace Wonderland_Private_Server.Code.Interface
         BattleSide BattlePosition { get; set; }
         eFighterType TypeofFighter { get; }
         FighterState BattleState { get; }
-        cPetList Pets { get; }
-        BattleAction myAction { get; set; }
+        Game.Code.PetRelated.PetList Pets { get; }
+        //BattleAction myAction { get; set; }
         UInt16 ClickID { get; set; }
         UInt32 OwnerID { get; set; }
         byte Level { get; }
@@ -28,9 +26,9 @@ namespace Wonderland_Private_Server.Code.Interface
         DateTime RdEndTime { set; }
         Int32 MaxHP { get; }
         Int16 MaxSP { get; }
-        ElementType Element { get; }
+        Affinity Element { get; }
         RebornJob Job { get; }
-        Skill SkillEffect { get; set; }
+        //Skill SkillEffect { get; set; }
         bool Reborn { get; }
 
         Int32 FullMatk { get; }

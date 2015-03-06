@@ -139,7 +139,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
 
         public bool LoadScenes(string file)
         {
-           Utilities.LogServices.Log("loading Scence data.....");
+           DebugSystem.Write("loading Scence data.....");
             try
             {
                 using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
@@ -224,13 +224,13 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                     fs.Close();
                     fs.Dispose();
                 }
-                Utilities.LogServices.Log("done");
+                DebugSystem.Write("done");
                 return true;
             }
             catch (Exception e)
             {
-                Utilities.LogServices.Log("failed");
-                Utilities.LogServices.Log(e);
+                DebugSystem.Write("failed");
+                DebugSystem.Write(e);
                 return false;
             }
         }
@@ -279,7 +279,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
             }
             catch { }
 
-            if (!bFound) { Utilities.LogServices.Log(new Exception( "Scene => " + SceneID.ToString() + " could not be found.")); }
+            if (!bFound) { DebugSystem.Write(new Exception( "Scene => " + SceneID.ToString() + " could not be found.")); }
 
             return RetVal;
         }
@@ -301,7 +301,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                     }
                 }
             }
-            if (!bFound) { Utilities.LogServices.Log(new Exception("Scene => " + SceneName + " could not be found.")); }
+            if (!bFound) { DebugSystem.Write(new Exception("Scene => " + SceneName + " could not be found.")); }
 
             return RetVal;
         }

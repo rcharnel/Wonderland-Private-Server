@@ -16,7 +16,7 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             switch (p.B)
             {
-                default: Utilities.LogServices.Log("Action Code " + p.A + "," + p.B + "has not been coded"); break;
+                default: DebugSystem.Write("Action Code " + p.A + "," + p.B + "has not been coded"); break;
             }
         }
     }

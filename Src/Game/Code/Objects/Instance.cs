@@ -124,7 +124,7 @@ namespace Wonderland_Private_Server.Code.Objects
             s.Pack(ci.Text); // DESCRITION INSTANCE
             s.Pack(1);
             s.Pack(0); // count + NAME GUILD
-            cGlobal.WLO_World.BroadcastTo(s); // Packet global
+            cGlobal.WLO_World.BroadcastTo(s); // SendPacket global
 
            s = new SendPacket();
             s.Pack(new byte[] { 85,5,1,1 });

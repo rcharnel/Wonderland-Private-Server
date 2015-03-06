@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wonderland_Private_Server.Code.Enums
+namespace Game
 {
     public enum BodyStyle
     {
@@ -13,7 +13,6 @@ namespace Wonderland_Private_Server.Code.Enums
         Small_Female,
         Big_Male,
         Big_Female,
-        Niss,
     }
 
     public enum HairStyle_SmallM

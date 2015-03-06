@@ -321,7 +321,7 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
 
         public bool LoadSkills(string file)
         {
-            Utilities.LogServices.Log("Loading Skill.Dat");
+            DebugSystem.Write("Loading Skill.Dat");
                 using (Stream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
                 {
                     try
@@ -396,9 +396,9 @@ namespace Wonderland_Private_Server.DataManagement.DataFiles
                             m_List.Add(tmpskill);
                         }
                         fs.Close();
-                        Utilities.LogServices.Log("Skill.Dat Loaded ( " + m_List.Count + " Skill)");
+                        DebugSystem.Write("Skill.Dat Loaded ( " + m_List.Count + " Skill)");
                     }
-                    catch (Exception ex) { Utilities.LogServices.Log(ex); }
+                    catch (Exception ex) { DebugSystem.Write(ex); }
                 }
                 return true;
         }

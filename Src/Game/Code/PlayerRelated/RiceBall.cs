@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using Wonderland_Private_Server.Network;
 using Wlo.Core;
+using Game;
 
-namespace Wonderland_Private_Server.Code.Objects
+namespace Game.Code.PlayerRelated
 {
-    public class cRiceBall
+    public class RiceBall
     {
         System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
         Player own;
@@ -18,7 +19,7 @@ namespace Wonderland_Private_Server.Code.Objects
 
         public ushort Npc { get { return id; } }
         public bool isActive { get { return (isAi) ? true : timer.IsRunning; } }
-        public cRiceBall(Player ty)
+        public RiceBall(Player ty)
         {
             own = ty;
             id = 0;
@@ -32,16 +33,8 @@ namespace Wonderland_Private_Server.Code.Objects
                 if (!CheckForStop() || isAi)
                 {
                     timer.Restart();
-                    SendPacket p = new SendPacket();
-                    p.Pack(new byte[] { 5, 5 });
-                    p.Unpack32(own.ID);
-                    p.Pack(id);
-                    own.CurrentMap.Broadcast(p);
-                    p = new SendPacket();
-                    p.Pack(new byte[] { 23, 207 });
-                    p.Pack(1);
-                    p.Pack(1);
-                    own.Send(p);
+                    own.CurMap.Broadcast(SendPacket.FromFormat("bbdw", 5, 5, own.CharID, id));
+                    own.SendPacket(SendPacket.FromFormat("bbbb", 23, 207, 1, 1));
                 }
             }
         }
@@ -49,20 +42,12 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             if (id > 0)
             {
-                if (!CheckForStop()|| isAi)
+                if (!CheckForStop() || isAi)
                 {
                     timer.Stop();
                     endtime -= timer.Elapsed.Seconds;
-                    SendPacket p = new SendPacket();
-                    p.Pack(new byte[] { 5, 5 });
-                    p.Unpack32(own.ID);
-                    p.Pack(0);
-                    own.CurrentMap.Broadcast(p);
-                    p = new SendPacket();
-                    p.Pack(new byte[] { 23, 207 });
-                    p.Pack(1);
-                    p.Pack(2);
-                    own.Send(p);
+                    own.CurMap.Broadcast(SendPacket.FromFormat("bbdw", 5, 5, own.CharID, 0));
+                    own.SendPacket(SendPacket.FromFormat("bbbb", 23, 207, 1, 2));
                 }
             }
         }
@@ -70,9 +55,9 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             try
             {
-                id = own.Inv[invCell].NpcID; //will be set from i.item.npcID
-                endtime = 60;
-                Activate();
+                //id = own.Inv[invCell].NpcID; //will be set from i.item.npcID
+                //endtime = 60;
+                //Activate();
                 return true;
             }
             catch { return false; }
@@ -85,15 +70,15 @@ namespace Wonderland_Private_Server.Code.Objects
         }
         public void SendStatus()
         {
-            SendPacket p = new SendPacket();
-            p.Pack(new byte[] { 23, 207 });
-            p.Pack(2);
-            p.Pack((ushort)(endtime - timer.Elapsed.Seconds));
-            own.Send(p);
+            //SendPacket p = new SendPacket();
+            //p.PackArray(new byte[] { 23, 207 });
+            //p.Pack8(2);
+            //p.Pack16((ushort)(endtime - timer.Elapsed.Seconds));
+            //own.Send(p);
         }
         public void Update()
         {
-            if(isActive && CheckForStop())
+            if (isActive && CheckForStop())
             {
                 Deactivate();
                 id = 0;

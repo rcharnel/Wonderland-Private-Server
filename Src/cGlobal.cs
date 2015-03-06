@@ -4,40 +4,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GupdtSrv;
+using DataFiles;
 using System.Reflection;
 using Wonderland_Private_Server.Code.Objects;
 using Wonderland_Private_Server.Config;
 using System.Collections.Concurrent;
 
-namespace Wonderland_Private_Server
+namespace System
 {
     static class cGlobal
     {
+        static readonly object mlock = new object();
+
         public static bool Run;
 
+        public static Dictionary<string, IDataManager> DatFile = new Dictionary<string, IDataManager>();
 
-        public static Config.Settings SrvSettings = new Config.Settings();
+        public static Server.Config.Settings SrvSettings;
 
-        public static gitClient GClient = new gitClient();
+        public static gitClient GClient;
+        public static Server.WloWorldNode WLO_World;
+        public static Game.Maps.MapManager gMapManager;
 
-        public static Network.TcpServer TcpListener = new Network.TcpServer();
-        public static Network.WorldManager WLO_World;
-        public static Utilities.Task.TaskManager ApplicationTasks;
+        //public static Utilities.Task.TaskManager ApplicationTasks;
 
-        #region DataBase
-        //public static DBConnector.DBOAuth gDataBaseConnection = new DBConnector.DBOAuth();
-        public static DataManagement.DataBase.CharacterDataBase gCharacterDataBase;
-        public static DataManagement.DataBase.UserDataBase gUserDataBase;
-        public static DataManagement.DataBase.GameDataBase gGameDataBase;
-        #endregion
-
-        #region DataFiles
-        public static DataManagement.DataFiles.ItemManager gItemManager;
-        public static DataManagement.DataFiles.SkillDataFile gSkillManager;
-        public static DataManagement.DataFiles.EveManager gEveManager;
-        public static DataManagement.DataFiles.NpcDat gNpcManager;
-        public static DataManagement.DataFiles.cCompound2Dat gCompoundDat;
-        #endregion
+        //public static Server.DataBase.CharacterDataBase gCharacterDataBase;
+        public static UserDataBase gUserDataBase;
+        //public static DataBase.GameDataBase gGameDataBase;
 
         #region Systems
         public static Instance gInstanceSystem = new Instance();
@@ -49,22 +42,39 @@ namespace Wonderland_Private_Server
         #endregion
 
 
-        public static ActionCodes.AC GetActionCode(int ID)
+        static Dictionary<int, Server.Network.WAC.WLOAC> AcList = new Dictionary<int, Server.Network.WAC.WLOAC>(100);
+
+        public static Server.Network.WAC.WLOAC GetAction(int ID)
         {
-            foreach (var y in (from c in Assembly.GetExecutingAssembly().GetTypes()
-                               where c.IsClass && c.IsPublic && c.IsSubclassOf(typeof(ActionCodes.AC))
-                               select c))
+
+            try
             {
-                ActionCodes.AC m = null;
-                string var = y.Namespace;
-                try
-                {
-                    m = (Activator.CreateInstance(y) as ActionCodes.AC);
-                    if (m.ID == ID) return m;
-                }
-                catch { Utilities.LogServices.Log(new Exception("failed to load AC " + (Activator.CreateInstance(y) as ActionCodes.AC).ID)); }
+                return AcList[ID];
             }
-            return null;
+            catch (Exception e) { DebugSystem.Write(new ExceptionData(e)); }
+
+            lock (mlock)
+            {
+                Server.Network.WAC.WLOAC resp = null;
+                if (resp == null)
+                {
+                    foreach (var y in (from c in Assembly.GetEntryAssembly().GetTypes()
+                                       where c.IsClass && !c.IsAbstract && c.IsPublic && c.IsSubclassOf(typeof(Server.Network.WAC.WLOAC))
+                                       select c))
+                    {
+                        Server.Network.WAC.WLOAC m = null;
+                        try
+                        {
+                            m = (Activator.CreateInstance(y) as Server.Network.WAC.WLOAC);
+
+                            AcList.Add(m.ID, m);
+                            return m;
+                        }
+                        catch { DebugSystem.Write(new ExceptionData(ExceptionSeverity.Warning, "failed to load AC " + m.ID)); m = null; }
+                    }
+                }
+                return resp;
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ using Wlo.Core;
 namespace Wonderland_Private_Server.Network
 {
     /// <summary>
-    /// Handles the Recv and Packet Proccesing of all clients
+    /// Handles the Recv and SendPacket Proccesing of all clients
     /// </summary>
     public class WorldManager:MapSystem
     {
@@ -194,7 +194,7 @@ namespace Wonderland_Private_Server.Network
         //                {
         //                    Players.TryRemove(c.ID, out j);
 
-        //                    Utilities.LogServices.Log(String.Format("Client {0} timed out at Login.", j.ClientIP + ":" + j.ClientPort));
+        //                    DebugSystem.Write(String.Format("Client {0} timed out at Login.", j.ClientIP + ":" + j.ClientPort));
         //                    SendPacket sp = new SendPacket(true);// PSENDPACKET PackSend = new SENDPACKET;
         //                    sp.Pack(new byte[] { 1, 7 });//PackSend->Header(63,2);
         //                    j.Send(sp);
@@ -208,7 +208,7 @@ namespace Wonderland_Private_Server.Network
         //                    onPlayerDisconnected(ref j);
         //                }
         //            }
-        //            catch (Exception ex) { Utilities.LogServices.Log(ex); }
+        //            catch (Exception ex) { DebugSystem.Write(ex); }
         //        }
         //        #endregion
 
@@ -403,9 +403,9 @@ namespace Wonderland_Private_Server.Network
                 BroadcastTo(bye, src.ID, true);
                 //save data
                 if (cGlobal.gCharacterDataBase.WritePlayer(src.ID, src))
-                    Utilities.LogServices.Log(src.UserName + " Info has been Fully Saved");
+                    DebugSystem.Write(src.UserName + " Info has been Fully Saved");
 
-                Utilities.LogServices.Log(String.Format("Client {0} {1} Disconnected.", src.ClientIP + ":" + src.ClientPort, src.UserName));
+                DebugSystem.Write(String.Format("Client {0} {1} Disconnected.", src.ClientIP + ":" + src.ClientPort, src.UserName));
             }
         }
 

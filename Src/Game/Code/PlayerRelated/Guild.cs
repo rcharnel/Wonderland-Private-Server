@@ -312,7 +312,7 @@ namespace Wonderland_Private_Server.Code.Objects
         {
             if (Members.Count(c => c.ID == src.ID) > 0)
             {
-                #region Packet 39,17 39,21  39,26 39, 27
+                #region SendPacket 39,17 39,21  39,26 39, 27
 
 
                 for (int a = 1; a < 8; a++)
@@ -419,7 +419,7 @@ namespace Wonderland_Private_Server.Code.Objects
             }            
         }
 
-        #region Global Packet
+        #region Global SendPacket
         void Send39_8(Player src)
         {
             SendPacket s = new SendPacket();

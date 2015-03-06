@@ -19,25 +19,19 @@ namespace Wonderland_Private_Server
 
         public Form1()
         {
-            #region Initialize Objects
-            DebugSystem.Initialize(null);
-            DebugSystem.onNewLog += DebugSystem_onNewLog;
-            Utilities.LogServices.Log("Intializing Objs");
-            cGlobal.GClient = new GupdtSrv.gitClient();
-            cGlobal.GClient.GitinfoUpdated += GClient_GitinfoUpdated;
-            cGlobal.GClient.onError += GClient_onError;
-            cGlobal.GClient.infopipe += GClient_infopipe;
-            cGlobal.GClient.onNewUpdate += GClient_onNewUpdate;            
-            cGlobal.WLO_World = new Network.WorldManager();
-            cGlobal.gCharacterDataBase = new DataManagement.DataBase.CharacterDataBase();
-            cGlobal.gEveManager = new DataManagement.DataFiles.EveManager();
-            cGlobal.gGameDataBase = new DataManagement.DataBase.GameDataBase();
-            cGlobal.gItemManager = new DataManagement.DataFiles.ItemManager();
-            cGlobal.gSkillManager = new DataManagement.DataFiles.SkillDataFile();
-            cGlobal.gCompoundDat = new DataManagement.DataFiles.cCompound2Dat();
-            cGlobal.gUserDataBase = new DataManagement.DataBase.UserDataBase();
-            cGlobal.gNpcManager = new DataManagement.DataFiles.NpcDat();
-            cGlobal.ApplicationTasks = new Utilities.Task.TaskManager();
+            DebugSystem.Initialize();
+            #region Initialize Objects           
+                    
+            //cGlobal.WLO_World = new Server.WloWorldNode();
+            //cGlobal.gCharacterDataBase = new DataManagement.DataBase.CharacterDataBase();
+            //cGlobal.gEveManager = new DataManagement.DataFiles.EveManager();
+            //cGlobal.gGameDataBase = new DataManagement.DataBase.GameDataBase();
+            //cGlobal.gItemManager = new DataManagement.DataFiles.ItemManager();
+            //cGlobal.gSkillManager = new DataManagement.DataFiles.SkillDataFile();
+            //cGlobal.gCompoundDat = new DataManagement.DataFiles.cCompound2Dat();
+            //cGlobal.gUserDataBase = new UserDataBase();
+            //cGlobal.gNpcManager = new DataManagement.DataFiles.NpcDat();
+            //cGlobal.ApplicationTasks = new Utilities.Task.TaskManager();
             #endregion
             InitializeComponent();
         }
@@ -74,30 +68,9 @@ namespace Wonderland_Private_Server
             do
             {
                 #region LogGUI
-                if (Utilities.LogServices.LogHistory.Count > 0)
-                {
-                    Utilities.LogItem j;
-
-                    //if (Utilities.LogServices.LogHistory.TryDequeue(out j))
-                    //{
-                    //    try
-                    //    {
-                    //        this.Invoke(new Action(() =>
-                    //        {
-                    //            switch (j.eventtype)
-                    //            {
-                    //                case Utilities.LogType.SYS: SystemLog.AppendText(j.happenat.ToShortTimeString() + " | " + j.eventtype + " | " + j.message + "\r\n=============================\r\n"); break;
-                    //                case Utilities.LogType.NET: NetWorkLog.AppendText(j.happenat.ToShortTimeString() + " | " + j.eventtype + " | " + j.message + "r\n===========================\r\n"); break;
-                    //                case Utilities.LogType.ERR: errorLog.AppendText(j.happenat.ToShortTimeString() + " | " + j.where + " | " + j.message + "\r\n============================\r\n"); break;
-                    //                case Utilities.LogType.DB: errorLog.AppendText(j.happenat.ToShortTimeString() + " | " + j.eventtype + " | " + j.message + "\r\n============================\r\n"); break;
-                    //                case Utilities.LogType.THRD: SystemLog.AppendText(j.happenat.ToShortTimeString() + " | " + j.eventtype + " | " + j.message + "\r\n============================\r\n"); break;
-                    //                case Utilities.LogType.UPDT: SystemLog.AppendText(j.happenat.ToShortTimeString() + " | " + j.eventtype + " | " + j.message + "\r\n============================\r\n"); break;
-                    //            }
-                    //        }));
-                    //    }
-                    //    catch { }
-                    //}
-                }
+                string s = null;
+                if (!string.IsNullOrEmpty((s = DebugSystem.PullLogItem())))
+                    SystemLog.AppendText(s);
                 #endregion
                 #region TaskGui
 
@@ -140,24 +113,33 @@ namespace Wonderland_Private_Server
 
         void MainThreadWork()
         {
+
             cGlobal.Run = true;
+            DebugSystem.Write("Intializing Please Wait.....");             
+            cGlobal.SrvSettings = new Server.Config.Settings();
+            cGlobal.GClient = new GupdtSrv.gitClient();
+            cGlobal.GClient.GitinfoUpdated += GClient_GitinfoUpdated;
+            cGlobal.GClient.onError += GClient_onError;
+            cGlobal.GClient.infopipe += GClient_infopipe;
+            cGlobal.GClient.onNewUpdate += GClient_onNewUpdate; 
 
             #region load settings file
-            Utilities.LogServices.Log("Loading Settings File");
+            
+            DebugSystem.Write("Loading Settings File");
             if (System.IO.File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo"))
             {
-                System.Xml.Serialization.XmlSerializer diskio = new System.Xml.Serialization.XmlSerializer(typeof(Config.Settings));
+                System.Xml.Serialization.XmlSerializer diskio = new System.Xml.Serialization.XmlSerializer(typeof(Server.Config.Settings));
 
                 try
                 {
                     using (StreamReader file = new StreamReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo"))
-                        cGlobal.SrvSettings = (Config.Settings)diskio.Deserialize(file);
-                    Utilities.LogServices.Log("Settings File loaded successfully");
+                        cGlobal.SrvSettings = (Server.Config.Settings)diskio.Deserialize(file);
+                    DebugSystem.Write("Settings File loaded successfully");
                 }
-                catch { Utilities.LogServices.Log("Settings File failed to load"); }
+                catch { DebugSystem.Write("Settings File failed to load"); }
             }
             else
-                Utilities.LogServices.Log("Settings File not found");
+                DebugSystem.Write("Settings File not found");
 
             if (GitBranch.Text != cGlobal.SrvSettings.Update.GitBranch)
             {
@@ -169,12 +151,10 @@ namespace Wonderland_Private_Server
                 GitUptOption.SelectedIndex = (byte)cGlobal.SrvSettings.Update.UpdtControl;
 
             #endregion
-            //load Updater
             
 
-
             #region Intialize Base Threads
-            Utilities.LogServices.Log("Intializing Gui Thread");
+            DebugSystem.Write("Intializing Gui Thread");
             Thread tmp2 = new Thread(new ThreadStart(GuiThread));
             tmp2.Name = "Gui Thread";
             tmp2.Init();
@@ -182,11 +162,11 @@ namespace Wonderland_Private_Server
             #endregion
 
             #region intial check  if theres an update from github
-            Utilities.LogServices.Log("Checking For Update...", Utilities.LogType.UPDT);
+            DebugSystem.Write("Checking For Update on Git...");
             cGlobal.GClient.CheckFor_Update();
             Thread.Sleep(2000);
 
-            if (cGlobal.SrvSettings.Update.UpdtControl != Config.UpdtSetting.Never && cGlobal.ApplicationTasks.TaskItems.Count(c => c.TaskName == "Updating Application") > 0)
+            if (cGlobal.SrvSettings.Update.UpdtControl != Server.Config.UpdtSetting.Never && cGlobal.ApplicationTasks.TaskItems.Count(c => c.TaskName == "Updating Application") > 0)
                 goto ShutDwn;
             #endregion
 
@@ -205,17 +185,23 @@ namespace Wonderland_Private_Server
             #endregion
 
             #region DataBase Initialization
-            Utilities.LogServices.Log("Verifying DataBase Authencation Setup");
-            if (cGlobal.gDataBaseConnection.VerifyConnection())
+            
+
+
+            DebugSystem.Write("Verifying DataBase Authencation Setup");
+            if (cGlobal.gUserDataBase.TestConnection())
             {
-                Utilities.LogServices.Log("Connection Successful");
-                Utilities.LogServices.Log("Verifying DataBase Tables");
-            cGlobal.gUserDataBase.VerifySetup();
-            cGlobal.gCharacterDataBase.VerifySetup();
-            cGlobal.gGameDataBase.VerifySetup();
+                DebugSystem.Write("Connection Successful");
+                DebugSystem.Write("Verifying DataBase Tables");
+                cGlobal.gUserDataBase.VerifySetup();
+                cGlobal.gCharacterDataBase.VerifySetup();
+                cGlobal.gGameDataBase.VerifySetup();
             }
             else
-                Utilities.LogServices.Log("Connection not successful");
+            {
+                DebugSystem.Write("Connection not successful\r\n unable to start server");
+                return;
+            }
 
            
 
@@ -233,7 +219,7 @@ namespace Wonderland_Private_Server
             #endregion
 
             #region Initialize the Wonderland Server
-            Utilities.LogServices.Log("Jump Starting Server...");
+            DebugSystem.Write("Jump Starting Server...");
             cGlobal.WLO_World.Initialize();
             Thread.Sleep(2);
             cGlobal.TcpListener.Initialize();
@@ -249,7 +235,7 @@ namespace Wonderland_Private_Server
                 //    foreach (var t in ThreadManager. cGlobal.ThreadManager)
                 //        if (!t.Value.IsAlive)
                 //            if (cGlobal.ThreadManager.TryRemove(t.Key, out r))
-                //                Utilities.LogServices.Log(t.Value.Name + " has been Terminated", Utilities.LogType.THRD);
+                //                DebugSystem.Write(t.Value.Name + " has been Terminated", Utilities.LogType.THRD);
                 //}
                 //catch { }
                 #endregion
@@ -278,21 +264,18 @@ namespace Wonderland_Private_Server
 
         }
 
-        
-
-        
 
         #region Git Client Events
         void GClient_onNewUpdate(object sender, Octokit.Release e)
         {
-            switch ((Config.UpdtSetting)GitUptOption.SelectedIndex)
+            switch ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex)
             {
-                case Config.UpdtSetting.Auto:
+                case Server.Config.UpdtSetting.Auto:
                     {
                         DateTime tomorrow = new DateTime(DateTime.Now.Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day, 1, 0, 0);
                         cGlobal.ApplicationTasks.CreateTask("Updating Application", tomorrow - DateTime.Now);
                     } break;
-                case Config.UpdtSetting.AutoandForce:
+                case Server.Config.UpdtSetting.AutoandForce:
                     {
 
                     } break;
@@ -301,11 +284,11 @@ namespace Wonderland_Private_Server
         }
         void GClient_infopipe(object sender, string e)
         {
-            Utilities.LogServices.Log(e, Utilities.LogType.UPDT);
+            DebugSystem.Write("GitUpdate: " + e);
         }
         void GClient_onError(object sender, Exception e)
         {
-            Utilities.LogServices.Log(e);
+            DebugSystem.Write(new ExceptionData(e));
         }
 
         void GClient_GitinfoUpdated(object sender, EventArgs e)
@@ -357,12 +340,12 @@ namespace Wonderland_Private_Server
         }
         private void GitUptOption_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cGlobal.SrvSettings.Update.UpdtControl != (Config.UpdtSetting)GitUptOption.SelectedIndex)
-                cGlobal.SrvSettings.Update.UpdtControl = (Config.UpdtSetting)GitUptOption.SelectedIndex;
+            if (cGlobal.SrvSettings.Update.UpdtControl != (Server.Config.UpdtSetting)GitUptOption.SelectedIndex)
+                cGlobal.SrvSettings.Update.UpdtControl = (Server.Config.UpdtSetting)GitUptOption.SelectedIndex;
 
-            if ((Config.UpdtSetting)GitUptOption.SelectedIndex == Config.UpdtSetting.Never)
+            if ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex == Server.Config.UpdtSetting.Never)
                 cGlobal.ApplicationTasks.EndTask("Application Update");
-            else if ((Config.UpdtSetting)GitUptOption.SelectedIndex != Config.UpdtSetting.Never)
+            else if ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex != Server.Config.UpdtSetting.Never)
                 cGlobal.ApplicationTasks.CreateTask("Application Update", cGlobal.SrvSettings.Update.UpdtChk_Interval);
         }
         #endregion
@@ -372,7 +355,7 @@ namespace Wonderland_Private_Server
             if (cGlobal.SrvSettings.Update.UpdtChk_Interval.Minutes != updtrefresh.Value)
                 cGlobal.SrvSettings.Update.UpdtChk_Interval = new TimeSpan(0,(int)updtrefresh.Value,0);
 
-            if ((Config.UpdtSetting)GitUptOption.SelectedIndex != Config.UpdtSetting.Never)
+            if ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex != Server.Config.UpdtSetting.Never)
                 cGlobal.ApplicationTasks.ChangeInterval("Application Update", cGlobal.SrvSettings.Update.UpdtChk_Interval);
         }
         private void autoUpdt_Hr_ValueChanged(object sender, EventArgs e)
@@ -385,6 +368,7 @@ namespace Wonderland_Private_Server
         }
         
         #endregion
+
 
         
 

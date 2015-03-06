@@ -19,7 +19,7 @@ namespace Wonderland_Private_Server.Utilities.Task
 
         public void CreateTask(string name,TimeSpan interval)
         {
-            Utilities.LogServices.Log("Creating new Task - " + name + " with interval -" + interval, LogType.TASK);
+            DebugSystem.Write("Creating new Task - " + name + " with interval -" + interval, LogType.TASK);
             switch (name)
             {
                 case "Application Update": if (TaskItems.Count(c => c.TaskName == name) == 0) TaskItems.Add(new ApplicationCheckUpdate_Task(interval)); break;
@@ -40,14 +40,14 @@ namespace Wonderland_Private_Server.Utilities.Task
         }
         public void ChangeInterval(string name, TimeSpan src)
         {
-            Utilities.LogServices.Log("Changing interval on Task - " + name + " with new interval -" + src, LogType.TASK);
+            DebugSystem.Write("Changing interval on Task - " + name + " with new interval -" + src, LogType.TASK);
             for (int a = 0; a < TaskItems.Count; a++)
                 if (TaskItems[a].TaskName == name)
                     TaskItems[a].interval = src;
         }
         public void EndTask(string name)
         {
-            Utilities.LogServices.Log("Ending Task - " + name, LogType.TASK);
+            DebugSystem.Write("Ending Task - " + name, LogType.TASK);
             if (TaskItems.Count(c => c.TaskName == name) > 0)
                 TaskItems.Remove(TaskItems.Single(c => c.TaskName == name));
         }

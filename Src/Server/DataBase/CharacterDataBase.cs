@@ -139,12 +139,12 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             #endregion
 
             #region characters table Verification
-            Utilities.LogServices.Log("Checking characters table");
+            DebugSystem.Write("Checking characters table");
         retry:
 
             if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + TableName) != null) goto exist;
 
-            Utilities.LogServices.Log("Setuping up characters table");
+            DebugSystem.Write("Setuping up characters table");
 
             string nonsqlite_prikey = "";
             string cmstr = "create table " + TableName + " (";
@@ -209,7 +209,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             {
                 if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + TableName) == null)
                 {
-                    Utilities.LogServices.Log("Recreating " + TableName + " table");
+                    DebugSystem.Write("Recreating " + TableName + " table");
 
                     cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + TableName);
                     goto retry;
@@ -218,13 +218,13 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             #endregion
 
             #region charactersextdata Verification
-            Utilities.LogServices.Log("Checking charactersextdata table");
+            DebugSystem.Write("Checking charactersextdata table");
 
         retry2:
 
             if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata") != null) goto exist2;
 
-        Utilities.LogServices.Log("Setuping up charactersextdata table");
+        DebugSystem.Write("Setuping up charactersextdata table");
 
             nonsqlite_prikey = "";
             cmstr = "create table " + "charactersextdata" + " (";
@@ -289,7 +289,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             {
                 if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "charactersextdata") == null)
                 {
-                    Utilities.LogServices.Log("Recreating " + "charactersextdata" + " table");
+                    DebugSystem.Write("Recreating " + "charactersextdata" + " table");
 
                     cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "charactersextdata");
                     goto retry2;
@@ -298,12 +298,12 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             #endregion
 
             #region chartent Verification
-            Utilities.LogServices.Log("Checking chartent table");
+            DebugSystem.Write("Checking chartent table");
         retry3:
 
             if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + "chartent") != null) goto exist3;
 
-        Utilities.LogServices.Log("Setuping up chartent table");
+        DebugSystem.Write("Setuping up chartent table");
 
             nonsqlite_prikey = "";
             cmstr = "create table " + "chartent" + " (";
@@ -368,7 +368,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             {
                 if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "chartent") == null)
                 {
-                    Utilities.LogServices.Log("Recreating " + "chartent" + " table");
+                    DebugSystem.Write("Recreating " + "chartent" + " table");
 
                     cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "chartent");
                     goto retry3;
@@ -377,12 +377,12 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             #endregion
 
             #region charquest Verification
-            Utilities.LogServices.Log("Checking charquest table");
+            DebugSystem.Write("Checking charquest table");
         retry4:
 
             if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + "charquest") != null) goto exist4;
 
-        Utilities.LogServices.Log("Setuping up charquest table");
+        DebugSystem.Write("Setuping up charquest table");
 
             nonsqlite_prikey = "";
             cmstr = "create table " + "charquest" + " (";
@@ -447,7 +447,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             {
                 if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "charquest") == null)
                 {
-                    Utilities.LogServices.Log("Recreating " + "charquest" + " table");
+                    DebugSystem.Write("Recreating " + "charquest" + " table");
 
                     cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "charquest");
                     goto retry4;
@@ -456,12 +456,12 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             #endregion
 
             #region charunlocks Verification
-            Utilities.LogServices.Log("Checking charunlocks table");
+            DebugSystem.Write("Checking charunlocks table");
         retry5:
 
             if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + "charunlocks") != null) goto exist5;
 
-        Utilities.LogServices.Log("Setuping up charunlocks table");
+        DebugSystem.Write("Setuping up charunlocks table");
 
             nonsqlite_prikey = "";
             cmstr = "create table " + "charunlocks" + " (";
@@ -526,7 +526,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             {
                 if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "charunlocks") == null)
                 {
-                    Utilities.LogServices.Log("Recreating " + "charunlocks" + " table");
+                    DebugSystem.Write("Recreating " + "charunlocks" + " table");
 
                     cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "charunlocks");
                     goto retry5;
@@ -535,12 +535,12 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             #endregion
 
             #region inv Verification
-        Utilities.LogServices.Log("Checking inventory table");
+        DebugSystem.Write("Checking inventory table");
         retry6:
 
         if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + "inventory") != null) goto exist6;
 
-        Utilities.LogServices.Log("Setuping up inventory table");
+        DebugSystem.Write("Setuping up inventory table");
 
             nonsqlite_prikey = "";
             cmstr = "create table " + "inventory" + " (";
@@ -605,7 +605,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             {
                 if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "inventory") == null)
                 {
-                    Utilities.LogServices.Log("Recreating " + "inventory" + " table");
+                    DebugSystem.Write("Recreating " + "inventory" + " table");
 
                     cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "inventory");
                     goto retry6;
@@ -614,12 +614,12 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             #endregion
 
             #region stats Verification
-        Utilities.LogServices.Log("Checking stats table");
+        DebugSystem.Write("Checking stats table");
         retry7:
 
         if (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + "stats") != null) goto exist7;
 
-        Utilities.LogServices.Log("Setuping up stats table");
+        DebugSystem.Write("Setuping up stats table");
 
             nonsqlite_prikey = "";
             cmstr = "create table " + "stats" + " (";
@@ -684,7 +684,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             {
                 if (cGlobal.gDataBaseConnection.GetDataTable("select " + h + " from " + "stats") == null)
                 {
-                    Utilities.LogServices.Log("Recreating " + "stats" + " table");
+                    DebugSystem.Write("Recreating " + "stats" + " table");
 
                     cGlobal.gDataBaseConnection.ExecuteNonQuery("drop table if exists " + "stats");
                     goto retry7;
@@ -704,7 +704,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             if (!client_requested_names.Contains(name.ToLower()))
             {
                 try { src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM characters where name_clean = @myname", parameters.ToArray()); }
-                catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+                catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
 
                 if (src.Rows.Count == 0)
                 {
@@ -741,12 +741,12 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
 
         //    MySqlConnection conn = GenerateConn();
         //    try { conn.Open(); }
-        //    catch (MySqlException f) { Utilities.LogServices.Log(f); throw; }
+        //    catch (MySqlException f) { DebugSystem.Write(f); throw; }
 
         //    cmd = new MySqlCommand("SELECT * FROM characters where name = @myname", conn);
         //    cmd.Parameters.AddWithValue("@myname", name);
         //    try { reader = cmd.ExecuteReader(); }
-        //    catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }          
+        //    catch (MySqlException ex) { DebugSystem.Write(ex); throw; }          
         //    src = new DataTable();
         //    src.Load(reader);
         //    if (src.Rows.Count != 0)
@@ -754,7 +754,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         //        cmd = new MySqlCommand("SELECT * FROM characters where charID =" + target, conn);
         //        cmd.Parameters.AddWithValue("@myname", name);
         //        try { reader = cmd.ExecuteReader(); }
-        //        catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+        //        catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
         //        src = new DataTable();
         //        src.Load(reader);
         //        if (src.Rows.Count != 0)
@@ -772,13 +772,13 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
 
         //    MySqlConnection conn = GenerateConn();
         //    try { conn.Open(); }
-        //    catch (MySqlException f) { Utilities.LogServices.Log(f); err = f; return false; }
+        //    catch (MySqlException f) { DebugSystem.Write(f); err = f; return false; }
 
         //    cmd = new MySqlCommand("UPDATE characters SET name = @myname, name_clean=@myname2 where charID ='" + charID + "'", conn);
         //    cmd.Parameters.AddWithValue("@myname", name);
         //    cmd.Parameters.AddWithValue("@myname2", name.ToLower());
         //    try { err = null; return (cmd.ExecuteNonQuery() == 1); }
-        //    catch (MySqlException ex) { Utilities.LogServices.Log(ex); err = ex; return false; }
+        //    catch (MySqlException ex) { DebugSystem.Write(ex); err = ex; return false; }
         //    finally
         //    {
         //        conn.Close();
@@ -788,13 +788,13 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         {
 
             try { cGlobal.gDataBaseConnection.Delete(TableName, "charID = '" + ID + "';");}
-            catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+            catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
 
             try { cGlobal.gDataBaseConnection.Delete("stats", "charID = '" + ID + "';"); }
-            catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+            catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
 
             try { cGlobal.gDataBaseConnection.Delete("inventory", "charID = '" + ID + "';"); }
-            catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+            catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
 
             if (Cache.ContainsKey((int)ID))
             {
@@ -815,7 +815,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             DataRow[] rows;
 
             try { src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM characters where charID = '" + charID + "'");}
-            catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+            catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
             
             if (src.Rows.Count > 0)
             {
@@ -839,7 +839,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             }
             else
             {
-                Utilities.LogServices.Log(DBServer + "No Character for " + charID);
+                DebugSystem.Write(DBServer + "No Character for " + charID);
                 return null;
             }
 
@@ -926,7 +926,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
 
 
             try { src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM characters where charID = '" + charID + "'");  }
-            catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+            catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
 
             if (src.Rows.Count > 0)
             {
@@ -950,7 +950,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             }
             else
             {
-                Utilities.LogServices.Log(new Exception("Character not found for " + charID));
+                DebugSystem.Write(new Exception("Character not found for " + charID));
                 throw new Exception("Character not found for " + charID);
             }
             //load stat data
@@ -1032,14 +1032,14 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             insert.Add("online", BitConverter.GetBytes(false)[0].ToString());
 
             try { cGlobal.gDataBaseConnection.Insert(TableName, insert); }
-            catch (MySqlException ex) { Utilities.LogServices.Log(ex); return false; }
+            catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
 
             #endregion
 
             #region Write Extr Data
 
             try { src = cGlobal.gDataBaseConnection.GetDataTable(string.Format("SELECT * FROM {0} where {1}", "charactersExtData", "charID = '" + charID + "'")); }
-            catch (MySqlException ex) { Utilities.LogServices.Log(ex); return false; }
+            catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
 
             Dictionary<string, string> cols = new Dictionary<string, string>();
             cols.Add("charID", charID.ToString());
@@ -1051,12 +1051,12 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             if (src.Rows.Count == 0)
             {
                 try { cGlobal.gDataBaseConnection.Insert("charactersExtData", cols); }
-                catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+                catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
             }
             else
             {
                 try { cGlobal.gDataBaseConnection.Update("charactersExtData", cols, "charID = '" + charID + "';"); }
-                catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+                catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
             }
             #endregion
 
@@ -1065,7 +1065,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             foreach (var u in player.Stat_toSave)
             {
                 try { src = cGlobal.gDataBaseConnection.GetDataTable(string.Format("SELECT * FROM {0} where {1}", "stats", "charID = '" + charID + "' AND statID = '" + u[0] + "'")); }
-                catch (MySqlException ex) { Utilities.LogServices.Log(ex); }
+                catch (MySqlException ex) { DebugSystem.Write(ex); }
 
                 cols = new Dictionary<string, string>();
                 cols.Add("statIdx", "0");
@@ -1082,19 +1082,19 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
                     {
                         cGlobal.gDataBaseConnection.Insert("stats", cols);
                     }
-                    catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+                    catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
                 }
                 else
                 {
                     try { cGlobal.gDataBaseConnection.Update("stats", cols, "charID = '" + charID + "'AND statID = '" + u[0] + "';"); }
-                    catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+                    catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
                 }
             }
             #endregion
 
             #region predelete inv
             try { cGlobal.gDataBaseConnection.ExecuteNonQuery("DELETE FROM inventory where charID ='" + charID + "';"); }
-            catch (MySqlException ex) { Utilities.LogServices.Log(ex); throw; }
+            catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
             #endregion
 
             #region write inv

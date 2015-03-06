@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Phoenix.Core.Networking;
-using PhoenixGameServer.Game;
-using Phoenix.Core;
+using Wlo.Core;
+using Game;
 
-namespace PhoenixGameServer.Network.WAC
+namespace Server.Network.WAC
 {
     public class AC63 : WLOAC
     {
@@ -19,7 +18,7 @@ namespace PhoenixGameServer.Network.WAC
             }
         }
 
-        public override void Process(Player client, Phoenix.Core.Networking.Packet r)
+        public override void Process(Player client, SendPacket r)
         {
             switch (r.Unpack8())
             {
@@ -31,7 +30,7 @@ namespace PhoenixGameServer.Network.WAC
             }
         }
 
-        async void Recv2(Player p, Packet e)
+        async void Recv2(Player p, SendPacket e)
         {
             p.Slot = e.Unpack8();
 
@@ -42,17 +41,17 @@ namespace PhoenixGameServer.Network.WAC
             }
             if (p.Load_CharacterInfo(await cGlobal.gGameDataBase.RequestCharacterInfo((p.Slot == 1) ? p.UserAcc.Character1ID : p.UserAcc.Character2ID)))
             {
-                //p.SendPacket(Packet.ConvertfromFormat<OutgoingPacket>("bbd", 63, 2, p.UserID));
+                //p.SendPacket(SendPacket.FromFormat<OutgoingPacket>("bbd", 63, 2, p.UserID));
                 cGlobal.GameServer.CommenceLogin(p);
             }
             else
             {
                 p.Flags.Add(PlayerFlag.Creating_Character);
-                p.SendPacket(Packet.ConvertfromFormat<Packet>("bbb", 1, 3, (!string.IsNullOrEmpty(p.UserAcc.Cipher))));
+                p.SendPacket(SendPacket.FromFormat("bbb", 1, 3, (!string.IsNullOrEmpty(p.UserAcc.Cipher))));
             }
         }
 
-        async void Recv4(Player client, Packet r)
+        async void Recv4(Player client, SendPacket r)
         {
             //try
             //{
@@ -110,17 +109,17 @@ namespace PhoenixGameServer.Network.WAC
                 #region No Errors Loggin in 0
                 case 0:
                     {
-                        t.Add(Packet.ConvertfromFormat<Packet>("bbd", 63, 2, (loginState == 0) ? client.UserID : 0));
-                        Packet pkt = new Packet(new byte[] { 244, 68, 0, 0, 63, 1 });
+                        t.Add(SendPacket.FromFormat("bbd", 63, 2, (loginState == 0) ? client.UserID : 0));
+                        SendPacket pkt = new SendPacket(new byte[] { 244, 68, 0, 0, 63, 1 });
                         pkt.PackArray((await cGlobal.gGameDataBase.RequestCharacterInfo(client.UserAcc.Character1ID)).ToArray());
                         pkt.PackArray((await cGlobal.gGameDataBase.RequestCharacterInfo(client.UserAcc.Character2ID)).ToArray());
                         pkt.SetHeader();
                         t.Add(pkt);
-                        t.Add(Packet.ConvertfromFormat<Packet>("bb", 35, 11));
+                        t.Add(SendPacket.FromFormat("bb", 35, 11));
                     } break;
                 #endregion
                 case 1: t.Add(Handles.ErrorHandle.SendError(Handles.GameErrorSection.AlreadyOnline)); break;
-                case 2: t.Add(Packet.ConvertfromFormat<Packet>("bb", 1, 6)); break;
+                case 2: t.Add(SendPacket.FromFormat("bb", 1, 6)); break;
                 case 3: t.Add(Handles.ErrorHandle.SendError(Handles.GameErrorSection.BadGameVersion)); break;
                 case 4: t.Add(Handles.ErrorHandle.SendError(Handles.GameErrorSection.BadItemDat)); break;
                 case 5:
@@ -139,7 +138,7 @@ namespace PhoenixGameServer.Network.WAC
         //byte[] Get_63_1Data(Character player, byte slot)
         //{
         //    if (player == null) return null;
-        //    Packet temp = new Packet();
+        //    SendPacket temp = new SendPacket();
         //    temp.Pack8(slot);// data[at] = slot; at++;//PackSend->Pack8(1);
         //    temp.PackString(player.CharacterName);// data[at] = nameLen; at++;
         //    temp.Pack8((byte)player.Level);// data[at] = level; at++;//	PackSend->Pack8(tmp1.level);					// Level 

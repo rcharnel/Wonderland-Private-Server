@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wonderland_Private_Server.Code.Enums
+namespace DataFiles
 {
-    class Class1
+    public interface IDataManager
     {
+        Task<bool> Load(string file);
+        object GetObject(object a);
     }
 }

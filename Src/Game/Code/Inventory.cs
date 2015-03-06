@@ -144,7 +144,7 @@ namespace Game.Code
                                 else
                                     this[slot].Clear();
                             }
-                        if (senddata) owner.SendPacket(Packet.ConvertfromFormat<Packet>("bbbb", 23, 9, at, ammt));
+                        if (senddata) owner.SendPacket(SendPacket.FromFormat("bbbb", 23, 9, at, ammt));
                         return remItem;
                     }
                 }
@@ -171,7 +171,7 @@ namespace Game.Code
                 {
                     if (at != 0) a = at;
 
-                    Packet tmp = new Packet();
+                    SendPacket tmp = new SendPacket();
                     tmp.Pack8(23);
                     tmp.Pack8(6);
                     tmp.Pack16(item.ItemID);
@@ -243,7 +243,7 @@ namespace Game.Code
             {
                 if (this[from].ItemID == 0 || from == to) return;
 
-                Packet tmp = new Packet();
+                SendPacket tmp = new SendPacket();
                 tmp.Pack8(23);
                 tmp.Pack8(10);
                 tmp.Pack8(from);
@@ -264,7 +264,7 @@ namespace Game.Code
             }
         }
 
-        public void ProcessSocket(Packet p)
+        public void ProcessSocket(SendPacket p)
         {
             p.m_nUnpackIndex = 4;
 
@@ -309,7 +309,7 @@ namespace Game.Code
                         if (this[pos].ItemID > 0)
                         {
                             // test confirm destroy item
-                            Packet s = new Packet();
+                            SendPacket s = new SendPacket();
                             s.Pack8(23);
                             s.Pack8(26);
                             s.Pack16(this[pos].ItemID);
@@ -353,7 +353,7 @@ namespace Game.Code
         {
             lock (mylock)
             {
-                Packet tmp = new Packet(false);
+                SendPacket tmp = new SendPacket(false);
                 tmp.Pack8(23);
                 tmp.Pack8(5);
                 if (FilledCount > 0)
