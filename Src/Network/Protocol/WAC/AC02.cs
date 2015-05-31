@@ -140,9 +140,9 @@ namespace Server.Network.WAC
 
                         default:
                             SendPacket s = new SendPacket();
-                            s.Pack8(2);
-                            s.Pack8(2);
-                            s.Pack32(p.CharID);
+                            s.Pack((byte)2);
+                            s.Pack((byte)2);
+                            s.Pack(p.CharID);
                             s.PackStringN(str);
                             s.SetHeader();
                             p.CurMap.Broadcast(s, "Ex", p.CharID);
@@ -154,9 +154,9 @@ namespace Server.Network.WAC
             catch
             {
                 SendPacket s = new SendPacket();
-                s.Pack8(2);
-                s.Pack8(2);
-                s.Pack32(p.CharID);
+                s.Pack((byte)2);
+                s.Pack((byte)2);
+                s.Pack(p.CharID);
                 s.PackStringN(str);
                 s.SetHeader();
                 p.CurMap.Broadcast(s, "Ex", p.CharID);
@@ -170,9 +170,9 @@ namespace Server.Network.WAC
             string text = r.UnpackStringN();
 
             SendPacket to = new SendPacket();
-            to.Pack8(2);
-            to.Pack8(3);
-            to.Pack32(p.CharID);
+            to.Pack((byte)2);
+            to.Pack((byte)3);
+            to.Pack(p.CharID);
             to.PackStringN(text);
             to.SetHeader();
             cGlobal.GameServer.Broadcast(to, "To", targetID,p.CharID);

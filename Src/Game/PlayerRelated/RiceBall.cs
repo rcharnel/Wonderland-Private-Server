@@ -72,7 +72,7 @@ namespace Game.Code.PlayerRelated
         {
             //SendPacket p = new SendPacket();
             //p.PackArray(new byte[] { 23, 207 });
-            //p.Pack8(2);
+            //p.Pack((byte)2);
             //p.Pack16((ushort)(endtime - timer.Elapsed.Seconds));
             //own.Send(p);
         }

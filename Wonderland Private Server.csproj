@@ -106,55 +106,57 @@
   <ItemGroup>
     <Compile Include="Src\ActionCodes\AC.cs" />
     <Compile Include="Src\DataFiles\IDataManager.cs" />
-    <Compile Include="Src\Game\Code\Enums\BattleEnum.cs" />
-    <Compile Include="Src\Game\Code\Enums\CharEnums.cs" />
-    <Compile Include="Src\Game\Code\Enums\DataBaseEnums.cs" />
-    <Compile Include="Src\Game\Code\Enums\EveEnums.cs" />
-    <Compile Include="Src\Game\Code\Enums\MapEnums.cs" />
-    <Compile Include="Src\Game\Code\Enums\NpcEnums.cs" />
-    <Compile Include="Src\Game\Code\Enums\PetEnums.cs" />
-    <Compile Include="Src\Game\Code\Enums\PlayerEnums.cs" />
-    <Compile Include="Src\Game\Code\Enums\SkillEnums.cs" />
-    <Compile Include="Src\Game\Code\Enums\StatEnums.cs" />
-    <Compile Include="Src\Game\Code\Enums\WorldEnums.cs" />
-    <Compile Include="Src\Game\Code\PetRelated\Equip.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\Equip.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\Friends.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\Vehicle.cs" />
+    <Compile Include="Src\Game\Enums\BattleEnum.cs" />
+    <Compile Include="Src\Game\Enums\CharEnums.cs" />
+    <Compile Include="Src\Game\Enums\DataBaseEnums.cs" />
+    <Compile Include="Src\Game\Enums\EveEnums.cs" />
+    <Compile Include="Src\Game\Enums\MapEnums.cs" />
+    <Compile Include="Src\Game\Enums\NpcEnums.cs" />
+    <Compile Include="Src\Game\Enums\PetEnums.cs" />
+    <Compile Include="Src\Game\Enums\PlayerEnums.cs" />
+    <Compile Include="Src\Game\Enums\SkillEnums.cs" />
+    <Compile Include="Src\Game\Enums\StatEnums.cs" />
+    <Compile Include="Src\Game\Enums\WorldEnums.cs" />
+    <Compile Include="Src\Game\PetRelated\Equip.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Equip.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Friends.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Vehicle.cs" />
     <Compile Include="Src\Game\Maps\MapManager.cs" />
     <Compile Include="Src\Game\Maps\WarpData.cs" />
     <Compile Include="Src\Game\Maps\WarpDest.cs" />
     <Compile Include="Src\Game\Maps\WarpPortal.cs" />
+    <Compile Include="Src\Network\Packet.cs" />
     <Compile Include="Src\Server\Bots\Cupid.cs" />
     <Compile Include="Src\Server\Bots\GmBot.cs" />
     <Compile Include="Src\cGlobal.cs" />
-    <Compile Include="Src\Game\Code\Interface\Fighter.cs" />
-    <Compile Include="Src\Game\Code\Interface\guildmember.cs" />
-    <Compile Include="Src\Game\Code\Battle.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\Character.cs" />
-    <Compile Include="Src\Game\Code\Objects\Class1.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\Guild.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\inGameSettings.cs" />
-    <Compile Include="Src\Game\Code\Objects\Instance.cs" />
-    <Compile Include="Src\Game\Code\Inventory.cs" />
-    <Compile Include="Src\Game\Code\Item.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\Mail.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\MessageGuild.cs" />
-    <Compile Include="Src\Game\Code\PetRelated\Pet.cs" />
+    <Compile Include="Src\Game\Interface\Fighter.cs" />
+    <Compile Include="Src\Game\Interface\guildmember.cs" />
+    <Compile Include="Src\Game\Battle.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Character.cs" />
+    <Compile Include="Src\Game\Objects\Class1.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Guild.cs" />
+    <Compile Include="Src\Game\PlayerRelated\inGameSettings.cs" />
+    <Compile Include="Src\Game\Objects\Instance.cs" />
+    <Compile Include="Src\Game\Inventory.cs" />
+    <Compile Include="Src\Game\Item.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Mail.cs" />
+    <Compile Include="Src\Game\PlayerRelated\MessageGuild.cs" />
+    <Compile Include="Src\Game\PetRelated\Pet.cs" />
     <Compile Include="Src\Game\Player.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\Quest.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\RiceBall.cs" />
-    <Compile Include="Src\Game\Code\Objects\Skills.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\Team.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\Tent.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\TentItem.cs" />
-    <Compile Include="Src\Game\Code\PlayerRelated\Trade.cs" />
-    <Compile Include="Src\Game\Code\Objects\Warp.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Quest.cs" />
+    <Compile Include="Src\Game\PlayerRelated\RiceBall.cs" />
+    <Compile Include="Src\Game\Objects\Skills.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Team.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Tent.cs" />
+    <Compile Include="Src\Game\PlayerRelated\TentItem.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Trade.cs" />
+    <Compile Include="Src\Game\Objects\Warp.cs" />
     <Compile Include="Src\Server\Config\Game\PetConfigs.cs" />
     <Compile Include="Src\Server\Config\Repository.cs" />
     <Compile Include="Src\Server\Config\Update.cs" />
     <Compile Include="Src\Server\DataBase\CharacterDataBase.cs" />
     <Compile Include="Src\Server\DataBase\GameDataBase.cs" />
+    <Compile Include="Src\Server\DataBase\phpBB.cs" />
     <Compile Include="Src\Server\DataBase\UserDataBase.cs" />
     <Compile Include="Src\DataFiles\Compound2Dat.cs" />
     <Compile Include="Src\DataFiles\EveExt.cs" />
@@ -164,35 +166,35 @@
     <Compile Include="Src\DataFiles\NpcManager.cs" />
     <Compile Include="Src\DataFiles\SceneLoader.cs" />
     <Compile Include="Src\DataFiles\SkillManager.cs" />
-    <Compile Include="Src\Delegates.cs" />
-    <Compile Include="Src\Form1.cs">
+    <Compile Include="Src\Game\Delegates.cs" />
+    <Compile Include="Src\Gui\MainForm1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Src\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Src\Gui\MainForm1.Designer.cs">
+      <DependentUpon>MainForm1.cs</DependentUpon>
     </Compile>
     <Compile Include="Src\Server\Events\EventSystem.cs" />
     <Compile Include="Src\Server\UDPSystem.cs" />
     <Compile Include="Src\Server\GM\BigLetterLogo.cs" />
     <Compile Include="Src\Game\Maps\Map.cs" />
     <Compile Include="Src\Game\Maps\MapObject.cs" />
-    <Compile Include="Src\Server\Network\Client.cs" />
-    <Compile Include="Src\Server\Network\MapSystem.cs" />
-    <Compile Include="Src\Server\Network\Protocol\AC.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\AC0.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\AC02.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\AC06.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\AC09.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\AC14.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\AC20.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\AC23.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\AC32.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\AC35.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\AC63.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\AC65.cs" />
-    <Compile Include="Src\Server\Network\Protocol\WAC\WLOAC.cs" />
-    <Compile Include="Src\Server\Network\Socket.cs" />
-    <Compile Include="Src\Server\Network\WorldManager.cs" />
+    <Compile Include="Src\Network\Client.cs" />
+    <Compile Include="Src\Network\MapSystem.cs" />
+    <Compile Include="Src\Network\Protocol\AC.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\AC0.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\AC02.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\AC06.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\AC09.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\AC14.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\AC20.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\AC23.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\AC32.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\AC35.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\AC63.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\AC65.cs" />
+    <Compile Include="Src\Network\Protocol\WAC\WLOAC.cs" />
+    <Compile Include="Src\Network\Socket.cs" />
+    <Compile Include="Src\Network\WorldManager.cs" />
     <Compile Include="Src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\Server\Config\Settings.cs" />
@@ -219,11 +221,11 @@
     <Compile Include="Src\Server\Utilities\Task\taskItem.cs" />
     <Compile Include="Src\Server\Utilities\Task\TaskManager.cs" />
     <Compile Include="Src\Server\Utilities\Task\ApplicationUpdate_Task.cs" />
-    <Compile Include="Src\Server\Network\Web\WebServer.cs" />
+    <Compile Include="Src\Network\Web\WebServer.cs" />
     <Compile Include="Src\Server\WloWorldNode.cs" />
     <Compile Include="Tutorials\Creating Dll for Database Connection.cs" />
-    <EmbeddedResource Include="Src\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="Src\Gui\MainForm1.resx">
+      <DependentUpon>MainForm1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -284,10 +286,11 @@
   <ItemGroup>
     <Folder Include="Src\Game\Quests\" />
     <Folder Include="Src\Gui\WebUI\" />
+    <Folder Include="Src\Gui\Web\" />
+    <Folder Include="Src\Network\DHT\Nodes\" />
     <Folder Include="Src\Server\GM\Commands\" />
     <Folder Include="Src\Server\Instance\" />
-    <Folder Include="Src\Server\NewFolder1\" />
-    <Folder Include="Src\Server\Nodes\" />
+    <Folder Include="Src\Server\TaskSystem\" />
     <Folder Include="Src\Server\Utilities\Update\" />
   </ItemGroup>
   <ItemGroup>
@@ -332,10 +335,16 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Dropbox\Wonderland Online Dev Group\Pserver Core\Tools\PhoenixData\PhoenixData.csproj">
+      <Project>{78a5bd03-c93c-43d5-be78-d2e9c692d139}</Project>
+      <Name>PhoenixData</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" />
+      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

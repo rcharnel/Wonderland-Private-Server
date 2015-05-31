@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataFiles;
-using Wlo.Core;
+using RCLibrary.Core.Networking;
+using PhoenixData;
+using Network;
+
 
 namespace Game.Code
 {
@@ -114,15 +117,12 @@ namespace Game.Code
 
             SendPacket tmp = new SendPacket(false);
             tmp.Pack16(ItemID);
-            tmp.Pack8(Damage);
+            tmp.Pack((byte)Damage);
             tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
             return tmp.Buffer;
         }
     }
-}
 
-namespace Game.Code.PlayerRelated
-{
     public class EquipManager
     {
         readonly object m_Lock = new object();
@@ -1022,8 +1022,8 @@ namespace Game.Code.PlayerRelated
                 lock (m_Lock)
                 {
                     SendPacket tmp = new SendPacket(false);
-                    tmp.Pack8(23);
-                    tmp.Pack8(11);
+                    tmp.Pack((byte)23);
+                    tmp.Pack((byte)11);
                     if (WornCount > 0)
                     {
                         for (byte n = 1; n < 7; n++)
@@ -1031,7 +1031,7 @@ namespace Game.Code.PlayerRelated
                             if (this[n].ItemID != 0)
                             {
                                 tmp.Pack16(this[n].ItemID);
-                                tmp.Pack8(this[n].Damage);
+                                tmp.Pack((byte)this[n].Damage);
                                 tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
                             }
                         }
@@ -1083,18 +1083,18 @@ namespace Game.Code.PlayerRelated
                                         Send8_1();
 
                                         SendPacket tmp2 = new SendPacket();
-                                        tmp2.Pack8(5);
-                                        tmp2.Pack8(2);
-                                        tmp2.Pack32(src.CharID);
+                                        tmp2.Pack((byte)5);
+                                        tmp2.Pack((byte)2);
+                                        tmp2.Pack(src.CharID);
                                         tmp2.Pack16(item.ItemID);
                                         tmp2.SetHeader();
                                         src.CurMap.Broadcast(tmp2, "Ex", src.CharID);
 
                                         tmp2 = new SendPacket();
-                                        tmp2.Pack8(23);
-                                        tmp2.Pack8(17);
-                                        tmp2.Pack8(loc);
-                                        tmp2.Pack8(loc);
+                                        tmp2.Pack((byte)23);
+                                        tmp2.Pack((byte)17);
+                                        tmp2.Pack((byte)loc);
+                                        tmp2.Pack((byte)loc);
                                         tmp2.SetHeader();
                                         SendPacket(tmp2);
                                     }
@@ -1118,17 +1118,17 @@ namespace Game.Code.PlayerRelated
                                             {
                                                 Send8_1();
                                                 SendPacket tmp2 = new SendPacket();
-                                                tmp2.Pack8(23);
-                                                tmp2.Pack8(16);
-                                                tmp2.Pack8(loc);
-                                                tmp2.Pack8(dst);
+                                                tmp2.Pack((byte)23);
+                                                tmp2.Pack((byte)16);
+                                                tmp2.Pack((byte)loc);
+                                                tmp2.Pack((byte)dst);
                                                 tmp2.SetHeader();
                                                 SendPacket(tmp2);
 
                                                 tmp2 = new SendPacket();
-                                                tmp2.Pack8(5);
-                                                tmp2.Pack8(1);
-                                                tmp2.Pack32(src.CharID);
+                                                tmp2.Pack((byte)5);
+                                                tmp2.Pack((byte)1);
+                                                tmp2.Pack(src.CharID);
                                                 tmp2.Pack16(eq.ItemID);
                                                 tmp2.SetHeader();
                                                 src.CurMap.Broadcast(tmp2, "Ex", src.CharID);
@@ -1213,8 +1213,8 @@ namespace Game.Code.PlayerRelated
         {
             SendPacket p = new SendPacket();
             p.PackArray(new byte[] { 8, 1 });
-            p.Pack8(36);
-            p.Pack8(1);
+            p.Pack((byte)36);
+            p.Pack((byte)1);
             p.Pack64((ulong)TotalExp);
             p.SetHeader();
             SendPacket(p);

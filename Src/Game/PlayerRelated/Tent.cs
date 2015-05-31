@@ -8,6 +8,7 @@ using System.Threading;
 using System.Collections.Concurrent;
 using Wlo.Core;
 using DataFiles;
+using Game.Maps;
 
 namespace Game.Code.PlayerRelated
 {
@@ -161,15 +162,15 @@ namespace Game.Code.PlayerRelated
             //        warpConf.PackArray(new byte[] { 20, 7 });
             //        SendPacket tmp = new SendPacket();
             //        tmp.PackArray(new byte[] { 23, 32 });
-            //        tmp.Pack32(Players.Values.ToList()[a].ID);
+            //        tmp.Pack(Players.Values.ToList()[a].ID);
             //        Players.Values.ToList()[a].SendPacket(tmp);
             //        tmp = new SendPacket();
             //        tmp.PackArray(new byte[] { 23, 112 });
-            //        tmp.Pack32(p.ID);
+            //        tmp.Pack(p.ID);
             //        Players.Values.ToList()[a].SendPacket(tmp);
             //        tmp = new SendPacket();
             //        tmp.PackArray(new byte[] { 23, 132 });
-            //        tmp.Pack32(p.ID);
+            //        tmp.Pack(p.ID);
             //        Players.Values.ToList()[a].SendPacket(tmp);
 
             //        onWarp_Out(f.Key, ref Players.Values.ToList()[a], warp, false);// warp out of map
@@ -260,10 +261,10 @@ namespace Game.Code.PlayerRelated
                         //{
                         //    SendPacket tmp = new SendPacket();
                         //    tmp.PackArray(new byte[] { 15, 4 });
-                        //    tmp.Pack32(t.CharID);
-                        //    tmp.Pack32(t.Pets.BattlePet.ID);
-                        //    tmp.Pack8(0);
-                        //    tmp.Pack8(1);
+                        //    tmp.Pack(t.CharID);
+                        //    tmp.Pack(t.Pets.BattlePet.ID);
+                        //    tmp.Pack((byte)0);
+                        //    tmp.Pack((byte)1);
                         //    tmp.PackString(t.Pets.BattlePet.Name);
                         //    tmp.Pack16(0);//weapon
                         //    r.Send(tmp);
@@ -272,10 +273,10 @@ namespace Game.Code.PlayerRelated
                         //{
                         //    SendPacket tmp = new SendPacket();
                         //    tmp.PackArray(new byte[] { 15, 4 });
-                        //    tmp.Pack32(r.CharID);
-                        //    tmp.Pack32(r.Pets.BattlePet.ID);
-                        //    tmp.Pack8(0);
-                        //    tmp.Pack8(1);
+                        //    tmp.Pack(r.CharID);
+                        //    tmp.Pack(r.Pets.BattlePet.ID);
+                        //    tmp.Pack((byte)0);
+                        //    tmp.Pack((byte)1);
                         //    tmp.PackString(r.Pets.BattlePet.Name);
                         //    tmp.Pack16(0);//weapon
                         //    t.Send(tmp);
@@ -313,10 +314,10 @@ namespace Game.Code.PlayerRelated
                         //{
                         //    SendPacket qp = new SendPacket(t);
                         //    qp.PackArray(new byte[]{(11, 4);
-                        //    qp.Pack8(2);
-                        //    qp.Pack32(plist[a].CharacterID);
+                        //    qp.Pack((byte)2);
+                        //    qp.Pack(plist[a].CharacterID);
                         //    qp.Pack16(0);
-                        //    qp.Pack8(0);
+                        //    qp.Pack((byte)0);
                         //    qp.Send();
                         //}
                         #endregion

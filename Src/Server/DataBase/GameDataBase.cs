@@ -5,12 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Data;
-using Wonderland_Private_Server.Code.Enums;
-using Wonderland_Private_Server.Code.Objects;
+using Game;
 
-namespace Wonderland_Private_Server.DataManagement.DataBase
+namespace DataBase
 {
-    class GameDataBase
+    public class GameDataBase:RCLibrary.Core.DataBase
     {
         const string DBServer = "GameDataBase";
         //DBConnector.DBOAuth DBAssist;
@@ -19,7 +18,7 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
         {
             //DBAssist = new DBConnector.DBOAuth();
         }
-        public bool Can_Connect { get { return (DBAssist == null) ? false : DBAssist.VerifyConnection(); } }
+
         public void VerifySetup()
         {
             MySqlCommand cmd = null;
@@ -27,99 +26,100 @@ namespace Wonderland_Private_Server.DataManagement.DataBase
             DataTable src = null;
 
         }
-        public void LoadFinalData(ref Player c)
-        {
-            DataTable src = null;
+        //public void LoadFinalData(ref Player c)
+        //{
+        //    DataTable src = null;
             
-            #region Inventory
-            src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM inventory where charID = '" + c.ID + "'");
+        //    #region Inventory
+        //    src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM inventory where charID = '" + c.ID + "'");
 
-            if (src.Rows.Count > 0)
-            {
-                ushort id;
+        //    if (src.Rows.Count > 0)
+        //    {
+        //        ushort id;
 
-                for (int i = 0; i < src.Rows.Count; i++)
-                {
-                    id = ushort.Parse(src.Rows[i]["itemID"].ToString());
-                    switch (uint.Parse(src.Rows[i]["storID"].ToString()))
-                    {
-                        case 0:
-                            if (id != 0)
-                            {
-                                var data = new InvItem();
-                                data.CopyFrom(cGlobal.gItemManager.GetItem(id));
-                                data.Ammt = byte.Parse(src.Rows[i]["qty"].ToString());
-                                data.Damage = byte.Parse(src.Rows[i]["dmg"].ToString());
-                                c.Inv[byte.Parse(src.Rows[i]["pos"].ToString())] = data;
-                                //rows[i]["socketID"].ToString(), rows[i]["bombID"].ToString(),rows[i]["sewID"].ToString(),rows[i]["dmg"].ToString(),rows[i]["forge"].ToString(), , });
-                            }
-                            break;
-                    }
-                }
-            }
+        //        for (int i = 0; i < src.Rows.Count; i++)
+        //        {
+        //            id = ushort.Parse(src.Rows[i]["itemID"].ToString());
+        //            switch (uint.Parse(src.Rows[i]["storID"].ToString()))
+        //            {
+        //                case 0:
+        //                    if (id != 0)
+        //                    {
+        //                        var data = new InvItem();
+        //                        data.CopyFrom(cGlobal.gItemManager.GetItem(id));
+        //                        data.Ammt = byte.Parse(src.Rows[i]["qty"].ToString());
+        //                        data.Damage = byte.Parse(src.Rows[i]["dmg"].ToString());
+        //                        c.Inv[byte.Parse(src.Rows[i]["pos"].ToString())] = data;
+        //                        //rows[i]["socketID"].ToString(), rows[i]["bombID"].ToString(),rows[i]["sewID"].ToString(),rows[i]["dmg"].ToString(),rows[i]["forge"].ToString(), , });
+        //                    }
+        //                    break;
+        //            }
+        //        }
+        //    }
 
-            src = null;
-            #endregion
+        //    src = null;
+        //    #endregion
 
-            #region Tent
-            #endregion
+        //    #region Tent
+        //    #endregion
 
-            #region Friends
-            src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.ID + "'");
+        //    #region Friends
+        //    src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.ID + "'");
 
-            if (src.Rows.Count > 0)
-                c.LoadFriends(src.Rows[0]["Friends"].ToString());
+        //    if (src.Rows.Count > 0)
+        //        c.LoadFriends(src.Rows[0]["Friends"].ToString());
 
-            src = null;
-            #endregion
+        //    src = null;
+        //    #endregion
 
-            #region Mail
-            src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.ID + "'");
+        //    #region Mail
+        //    src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.ID + "'");
             
-            if (src.Rows.Count > 0)
-            {
-                //foreach (string m in src.Rows[0]["Mail"].ToString().Split('&'))
-                //{
-                //    if (m == "none") break;
-                //    Mail tmp = new Mail();
-                //    tmp.Load(m);
-                //    var re = cGlobal.WLO_World.GetPlayer(tmp.targetid);
-                //    if (tmp.type == "Send")
-                //    {
-                //        if (!tmp.isSent && re != null)
-                //        {
-                //            c.MailBox.Add(tmp);
-                //            re.RecvMailfrom(c, tmp.message, tmp.when);
-                //        }
-                //        else
-                //            c.MailBox.Add(tmp);
-                //    }
-                //    else
-                //        c.MailBox.Add(tmp);
-                //}
-            }
-            #endregion
+        //    if (src.Rows.Count > 0)
+        //    {
+        //        //foreach (string m in src.Rows[0]["Mail"].ToString().Split('&'))
+        //        //{
+        //        //    if (m == "none") break;
+        //        //    Mail tmp = new Mail();
+        //        //    tmp.Load(m);
+        //        //    var re = cGlobal.WLO_World.GetPlayer(tmp.targetid);
+        //        //    if (tmp.type == "Send")
+        //        //    {
+        //        //        if (!tmp.isSent && re != null)
+        //        //        {
+        //        //            c.MailBox.Add(tmp);
+        //        //            re.RecvMailfrom(c, tmp.message, tmp.when);
+        //        //        }
+        //        //        else
+        //        //            c.MailBox.Add(tmp);
+        //        //    }
+        //        //    else
+        //        //        c.MailBox.Add(tmp);
+        //        //}
+        //    }
+        //    #endregion
 
-            #region Skills
+        //    #region Skills
 
-            #endregion
+        //    #endregion
 
-            #region Settings
-            src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.ID + "'");
+        //    #region Settings
+        //    src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.ID + "'");
 
-            if (src.Rows.Count > 0)
-                c.Settings.Load_SystemFlag(src.Rows[0]["Settings"].ToString());
+        //    if (src.Rows.Count > 0)
+        //        c.Settings.Load_SystemFlag(src.Rows[0]["Settings"].ToString());
 
-            src = null;
-            #endregion
+        //    src = null;
+        //    #endregion
 
-            #region Quests
-            #endregion
+        //    #region Quests
+        //    #endregion
 
-            #region SideBar
-            #endregion
+        //    #region SideBar
+        //    #endregion
 
-        }
+        //}
+
         public ushort GetBattleBG(ushort map)
         {
             return 140;

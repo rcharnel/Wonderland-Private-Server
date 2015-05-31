@@ -74,16 +74,16 @@ namespace Game.Code.PlayerRelated
                     m_friendlist[a] = (Character)t;
 
             SendPacket s = new SendPacket();
-            s.Pack8(14);
-            s.Pack8(9);
-            s.Pack32(t.CharID);
-            s.Pack8(0);
+            s.Pack((byte)14);
+            s.Pack((byte)9);
+            s.Pack(t.CharID);
+            s.Pack((byte)0);
             s.SetHeader();
             SendPacket(s);
             s = new SendPacket();
-            s.Pack8(14);
-            s.Pack8(7);
-            s.Pack32(t.CharID);
+            s.Pack((byte)14);
+            s.Pack((byte)7);
+            s.Pack(t.CharID);
             s.PackString("Test");
             s.SetHeader();
             SendPacket(s);
@@ -95,9 +95,9 @@ namespace Game.Code.PlayerRelated
                 {
                     m_friendlist[a] = null;
                     SendPacket s = new SendPacket();
-                    s.Pack8(14);
-                    s.Pack8(4);
-                    s.Pack32(t);
+                    s.Pack((byte)14);
+                    s.Pack((byte)4);
+                    s.Pack(t);
                     s.SetHeader();
                     SendPacket(s);
                 }

@@ -89,7 +89,11 @@
             this.tabPage10 = new System.Windows.Forms.TabPage();
             this.tabControl4 = new System.Windows.Forms.TabControl();
             this.tabPage11 = new System.Windows.Forms.TabPage();
+            this.tabControl5 = new System.Windows.Forms.TabControl();
+            this.tabPage13 = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.label20 = new System.Windows.Forms.Label();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
@@ -98,15 +102,37 @@
             this.label19 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
+            this.tabPage14 = new System.Windows.Forms.TabPage();
             this.button2 = new System.Windows.Forms.Button();
             this.tabPage12 = new System.Windows.Forms.TabPage();
-            this.label20 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.tabControl5 = new System.Windows.Forms.TabControl();
-            this.tabPage13 = new System.Windows.Forms.TabPage();
-            this.tabPage14 = new System.Windows.Forms.TabPage();
+            this.tabControl6 = new System.Windows.Forms.TabControl();
+            this.tabPage15 = new System.Windows.Forms.TabPage();
+            this.tabPage16 = new System.Windows.Forms.TabPage();
+            this.tabPage17 = new System.Windows.Forms.TabPage();
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.label22 = new System.Windows.Forms.Label();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.label23 = new System.Windows.Forms.Label();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.label24 = new System.Windows.Forms.Label();
+            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label26 = new System.Windows.Forms.Label();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.dataGridView3 = new System.Windows.Forms.DataGridView();
+            this.dataGridView4 = new System.Windows.Forms.DataGridView();
+            this.dataGridView5 = new System.Windows.Forms.DataGridView();
             this.tabControl1.SuspendLayout();
             this.tabPage6.SuspendLayout();
             this.tabControl3.SuspendLayout();
@@ -132,16 +158,29 @@
             this.tabPage10.SuspendLayout();
             this.tabControl4.SuspendLayout();
             this.tabPage11.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.tabControl5.SuspendLayout();
             this.tabPage13.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.tabControl6.SuspendLayout();
+            this.tabPage15.SuspendLayout();
+            this.tabPage16.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.groupBox6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.groupBox7.SuspendLayout();
+            this.groupBox8.SuspendLayout();
+            this.groupBox9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView5)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(755, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(794, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -163,7 +202,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 24);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(755, 417);
+            this.tabControl1.Size = new System.Drawing.Size(794, 467);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage6
@@ -722,7 +761,7 @@
             this.tabPage10.Location = new System.Drawing.Point(4, 22);
             this.tabPage10.Name = "tabPage10";
             this.tabPage10.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage10.Size = new System.Drawing.Size(747, 391);
+            this.tabPage10.Size = new System.Drawing.Size(786, 441);
             this.tabPage10.TabIndex = 3;
             this.tabPage10.Text = "Admin";
             this.tabPage10.UseVisualStyleBackColor = true;
@@ -735,7 +774,7 @@
             this.tabControl4.Location = new System.Drawing.Point(3, 3);
             this.tabControl4.Name = "tabControl4";
             this.tabControl4.SelectedIndex = 0;
-            this.tabControl4.Size = new System.Drawing.Size(741, 385);
+            this.tabControl4.Size = new System.Drawing.Size(780, 435);
             this.tabControl4.TabIndex = 0;
             // 
             // tabPage11
@@ -745,13 +784,37 @@
             this.tabPage11.Location = new System.Drawing.Point(4, 22);
             this.tabPage11.Name = "tabPage11";
             this.tabPage11.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage11.Size = new System.Drawing.Size(733, 359);
+            this.tabPage11.Size = new System.Drawing.Size(772, 409);
             this.tabPage11.TabIndex = 0;
             this.tabPage11.Text = "Settings";
             this.tabPage11.UseVisualStyleBackColor = true;
             // 
+            // tabControl5
+            // 
+            this.tabControl5.Controls.Add(this.tabPage13);
+            this.tabControl5.Controls.Add(this.tabPage14);
+            this.tabControl5.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tabControl5.Location = new System.Drawing.Point(3, 3);
+            this.tabControl5.Name = "tabControl5";
+            this.tabControl5.SelectedIndex = 0;
+            this.tabControl5.Size = new System.Drawing.Size(766, 371);
+            this.tabControl5.TabIndex = 2;
+            // 
+            // tabPage13
+            // 
+            this.tabPage13.Controls.Add(this.tabControl6);
+            this.tabPage13.Location = new System.Drawing.Point(4, 22);
+            this.tabPage13.Name = "tabPage13";
+            this.tabPage13.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage13.Size = new System.Drawing.Size(758, 345);
+            this.tabPage13.TabIndex = 0;
+            this.tabPage13.Text = "DataBase";
+            this.tabPage13.UseVisualStyleBackColor = true;
+            // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.pictureBox1);
+            this.groupBox4.Controls.Add(this.textBox1);
             this.groupBox4.Controls.Add(this.comboBox2);
             this.groupBox4.Controls.Add(this.label20);
             this.groupBox4.Controls.Add(this.textBox6);
@@ -762,127 +825,14 @@
             this.groupBox4.Controls.Add(this.label19);
             this.groupBox4.Controls.Add(this.textBox2);
             this.groupBox4.Controls.Add(this.label17);
-            this.groupBox4.Controls.Add(this.textBox1);
             this.groupBox4.Controls.Add(this.label16);
-            this.groupBox4.Location = new System.Drawing.Point(6, 6);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox4.Location = new System.Drawing.Point(3, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(707, 43);
+            this.groupBox4.Size = new System.Drawing.Size(738, 43);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "DataBase Connection";
-            // 
-            // textBox6
-            // 
-            this.textBox6.Location = new System.Drawing.Point(638, 13);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(64, 20);
-            this.textBox6.TabIndex = 9;
-            this.textBox6.Text = "0.0.0.0";
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(578, 16);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(54, 13);
-            this.label21.TabIndex = 8;
-            this.label21.Text = "DataBase";
-            // 
-            // textBox3
-            // 
-            this.textBox3.Location = new System.Drawing.Point(508, 13);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(64, 20);
-            this.textBox3.TabIndex = 7;
-            this.textBox3.Text = "0.0.0.0";
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(475, 16);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(30, 13);
-            this.label18.TabIndex = 6;
-            this.label18.Text = "Pass";
-            // 
-            // textBox4
-            // 
-            this.textBox4.Location = new System.Drawing.Point(405, 13);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(64, 20);
-            this.textBox4.TabIndex = 5;
-            this.textBox4.Text = "0.0.0.0";
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(371, 16);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(29, 13);
-            this.label19.TabIndex = 4;
-            this.label19.Text = "User";
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(318, 13);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(47, 20);
-            this.textBox2.TabIndex = 3;
-            this.textBox2.Text = "0.0.0.0";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(288, 16);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(26, 13);
-            this.label17.TabIndex = 2;
-            this.label17.Text = "Port";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(218, 13);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(64, 20);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "0.0.0.0";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(174, 16);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(38, 13);
-            this.label16.TabIndex = 0;
-            this.label16.Text = "Server";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(669, 330);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(58, 23);
-            this.button2.TabIndex = 0;
-            this.button2.Text = "Save";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // tabPage12
-            // 
-            this.tabPage12.Location = new System.Drawing.Point(4, 22);
-            this.tabPage12.Name = "tabPage12";
-            this.tabPage12.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage12.Size = new System.Drawing.Size(733, 359);
-            this.tabPage12.TabIndex = 1;
-            this.tabPage12.Text = "tabPage12";
-            this.tabPage12.UseVisualStyleBackColor = true;
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(8, 16);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(62, 13);
-            this.label20.TabIndex = 10;
-            this.label20.Text = "ServerType";
             // 
             // comboBox2
             // 
@@ -893,27 +843,91 @@
             this.comboBox2.Size = new System.Drawing.Size(90, 21);
             this.comboBox2.TabIndex = 11;
             // 
-            // tabControl5
+            // label20
             // 
-            this.tabControl5.Controls.Add(this.tabPage13);
-            this.tabControl5.Controls.Add(this.tabPage14);
-            this.tabControl5.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tabControl5.Location = new System.Drawing.Point(3, 3);
-            this.tabControl5.Name = "tabControl5";
-            this.tabControl5.SelectedIndex = 0;
-            this.tabControl5.Size = new System.Drawing.Size(727, 321);
-            this.tabControl5.TabIndex = 2;
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(8, 16);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(62, 13);
+            this.label20.TabIndex = 10;
+            this.label20.Text = "ServerType";
             // 
-            // tabPage13
+            // textBox6
             // 
-            this.tabPage13.Controls.Add(this.groupBox4);
-            this.tabPage13.Location = new System.Drawing.Point(4, 22);
-            this.tabPage13.Name = "tabPage13";
-            this.tabPage13.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage13.Size = new System.Drawing.Size(719, 295);
-            this.tabPage13.TabIndex = 0;
-            this.tabPage13.Text = "DataBase";
-            this.tabPage13.UseVisualStyleBackColor = true;
+            this.textBox6.Location = new System.Drawing.Point(634, 13);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(64, 20);
+            this.textBox6.TabIndex = 9;
+            this.textBox6.Text = "0.0.0.0";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(574, 16);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(54, 13);
+            this.label21.TabIndex = 8;
+            this.label21.Text = "DataBase";
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(504, 13);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(64, 20);
+            this.textBox3.TabIndex = 7;
+            this.textBox3.Text = "0.0.0.0";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(471, 16);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(30, 13);
+            this.label18.TabIndex = 6;
+            this.label18.Text = "Pass";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(401, 13);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(64, 20);
+            this.textBox4.TabIndex = 5;
+            this.textBox4.Text = "0.0.0.0";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(367, 16);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(29, 13);
+            this.label19.TabIndex = 4;
+            this.label19.Text = "User";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(314, 13);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(47, 20);
+            this.textBox2.TabIndex = 3;
+            this.textBox2.Text = "0.0.0.0";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(284, 16);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(26, 13);
+            this.label17.TabIndex = 2;
+            this.label17.Text = "Port";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(174, 16);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(38, 13);
+            this.label16.TabIndex = 0;
+            this.label16.Text = "Server";
             // 
             // tabPage14
             // 
@@ -925,11 +939,306 @@
             this.tabPage14.Text = "Node Network";
             this.tabPage14.UseVisualStyleBackColor = true;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(708, 380);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(58, 23);
+            this.button2.TabIndex = 0;
+            this.button2.Text = "Save";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // tabPage12
+            // 
+            this.tabPage12.Location = new System.Drawing.Point(4, 22);
+            this.tabPage12.Name = "tabPage12";
+            this.tabPage12.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage12.Size = new System.Drawing.Size(759, 359);
+            this.tabPage12.TabIndex = 1;
+            this.tabPage12.Text = "tabPage12";
+            this.tabPage12.UseVisualStyleBackColor = true;
+            // 
+            // tabControl6
+            // 
+            this.tabControl6.Controls.Add(this.tabPage16);
+            this.tabControl6.Controls.Add(this.tabPage15);
+            this.tabControl6.Controls.Add(this.tabPage17);
+            this.tabControl6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl6.Location = new System.Drawing.Point(3, 3);
+            this.tabControl6.Name = "tabControl6";
+            this.tabControl6.SelectedIndex = 0;
+            this.tabControl6.Size = new System.Drawing.Size(752, 339);
+            this.tabControl6.TabIndex = 2;
+            // 
+            // tabPage15
+            // 
+            this.tabPage15.Controls.Add(this.dataGridView2);
+            this.tabPage15.Controls.Add(this.groupBox4);
+            this.tabPage15.Location = new System.Drawing.Point(4, 22);
+            this.tabPage15.Name = "tabPage15";
+            this.tabPage15.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage15.Size = new System.Drawing.Size(744, 313);
+            this.tabPage15.TabIndex = 0;
+            this.tabPage15.Text = "User";
+            this.tabPage15.UseVisualStyleBackColor = true;
+            // 
+            // tabPage16
+            // 
+            this.tabPage16.Controls.Add(this.groupBox9);
+            this.tabPage16.Controls.Add(this.groupBox8);
+            this.tabPage16.Controls.Add(this.groupBox7);
+            this.tabPage16.Controls.Add(this.groupBox6);
+            this.tabPage16.Location = new System.Drawing.Point(4, 22);
+            this.tabPage16.Name = "tabPage16";
+            this.tabPage16.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage16.Size = new System.Drawing.Size(744, 313);
+            this.tabPage16.TabIndex = 1;
+            this.tabPage16.Text = "Config";
+            this.tabPage16.UseVisualStyleBackColor = true;
+            // 
+            // tabPage17
+            // 
+            this.tabPage17.Location = new System.Drawing.Point(4, 22);
+            this.tabPage17.Name = "tabPage17";
+            this.tabPage17.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage17.Size = new System.Drawing.Size(744, 313);
+            this.tabPage17.TabIndex = 2;
+            this.tabPage17.Text = "tabPage17";
+            this.tabPage17.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.AllowUserToOrderColumns = true;
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView2.Location = new System.Drawing.Point(70, 92);
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.Size = new System.Drawing.Size(240, 150);
+            this.dataGridView2.TabIndex = 2;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(218, 13);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(64, 20);
+            this.textBox1.TabIndex = 12;
+            this.textBox1.Text = "0.0.0.0";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(704, 13);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(28, 24);
+            this.pictureBox1.TabIndex = 13;
+            this.pictureBox1.TabStop = false;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.pictureBox2);
+            this.groupBox6.Controls.Add(this.textBox5);
+            this.groupBox6.Controls.Add(this.comboBox3);
+            this.groupBox6.Controls.Add(this.label7);
+            this.groupBox6.Controls.Add(this.textBox7);
+            this.groupBox6.Controls.Add(this.label22);
+            this.groupBox6.Controls.Add(this.textBox8);
+            this.groupBox6.Controls.Add(this.label23);
+            this.groupBox6.Controls.Add(this.textBox9);
+            this.groupBox6.Controls.Add(this.label24);
+            this.groupBox6.Controls.Add(this.textBox10);
+            this.groupBox6.Controls.Add(this.label25);
+            this.groupBox6.Controls.Add(this.label26);
+            this.groupBox6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox6.Location = new System.Drawing.Point(3, 3);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(738, 40);
+            this.groupBox6.TabIndex = 2;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "DataBase Connection";
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Location = new System.Drawing.Point(704, 13);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(28, 24);
+            this.pictureBox2.TabIndex = 13;
+            this.pictureBox2.TabStop = false;
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(218, 13);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(64, 20);
+            this.textBox5.TabIndex = 12;
+            this.textBox5.Text = "0.0.0.0";
+            // 
+            // comboBox3
+            // 
+            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox3.FormattingEnabled = true;
+            this.comboBox3.Location = new System.Drawing.Point(76, 13);
+            this.comboBox3.Name = "comboBox3";
+            this.comboBox3.Size = new System.Drawing.Size(90, 21);
+            this.comboBox3.TabIndex = 11;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 16);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(62, 13);
+            this.label7.TabIndex = 10;
+            this.label7.Text = "ServerType";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(634, 13);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(64, 20);
+            this.textBox7.TabIndex = 9;
+            this.textBox7.Text = "0.0.0.0";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(574, 16);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(54, 13);
+            this.label22.TabIndex = 8;
+            this.label22.Text = "DataBase";
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(504, 13);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(64, 20);
+            this.textBox8.TabIndex = 7;
+            this.textBox8.Text = "0.0.0.0";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(471, 16);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(30, 13);
+            this.label23.TabIndex = 6;
+            this.label23.Text = "Pass";
+            // 
+            // textBox9
+            // 
+            this.textBox9.Location = new System.Drawing.Point(401, 13);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(64, 20);
+            this.textBox9.TabIndex = 5;
+            this.textBox9.Text = "0.0.0.0";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(367, 16);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(29, 13);
+            this.label24.TabIndex = 4;
+            this.label24.Text = "User";
+            // 
+            // textBox10
+            // 
+            this.textBox10.Location = new System.Drawing.Point(314, 13);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.Size = new System.Drawing.Size(47, 20);
+            this.textBox10.TabIndex = 3;
+            this.textBox10.Text = "0.0.0.0";
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(284, 16);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(26, 13);
+            this.label25.TabIndex = 2;
+            this.label25.Text = "Port";
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(174, 16);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(38, 13);
+            this.label26.TabIndex = 0;
+            this.label26.Text = "Server";
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.dataGridView3);
+            this.groupBox7.Dock = System.Windows.Forms.DockStyle.Left;
+            this.groupBox7.Location = new System.Drawing.Point(3, 43);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(251, 267);
+            this.groupBox7.TabIndex = 3;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "User Table Field Linking";
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.dataGridView4);
+            this.groupBox8.Dock = System.Windows.Forms.DockStyle.Left;
+            this.groupBox8.Location = new System.Drawing.Point(254, 43);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(252, 267);
+            this.groupBox8.TabIndex = 4;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Character Table Field Linking";
+            // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.dataGridView5);
+            this.groupBox9.Dock = System.Windows.Forms.DockStyle.Left;
+            this.groupBox9.Location = new System.Drawing.Point(506, 43);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(234, 267);
+            this.groupBox9.TabIndex = 5;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "groupBox9";
+            // 
+            // dataGridView3
+            // 
+            this.dataGridView3.AllowUserToAddRows = false;
+            this.dataGridView3.AllowUserToDeleteRows = false;
+            this.dataGridView3.AllowUserToOrderColumns = true;
+            this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView3.Location = new System.Drawing.Point(3, 16);
+            this.dataGridView3.Name = "dataGridView3";
+            this.dataGridView3.Size = new System.Drawing.Size(245, 248);
+            this.dataGridView3.TabIndex = 0;
+            // 
+            // dataGridView4
+            // 
+            this.dataGridView4.AllowUserToAddRows = false;
+            this.dataGridView4.AllowUserToDeleteRows = false;
+            this.dataGridView4.AllowUserToOrderColumns = true;
+            this.dataGridView4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView4.Location = new System.Drawing.Point(3, 16);
+            this.dataGridView4.Name = "dataGridView4";
+            this.dataGridView4.Size = new System.Drawing.Size(246, 248);
+            this.dataGridView4.TabIndex = 1;
+            // 
+            // dataGridView5
+            // 
+            this.dataGridView5.AllowUserToAddRows = false;
+            this.dataGridView5.AllowUserToDeleteRows = false;
+            this.dataGridView5.AllowUserToOrderColumns = true;
+            this.dataGridView5.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView5.Location = new System.Drawing.Point(3, 16);
+            this.dataGridView5.Name = "dataGridView5";
+            this.dataGridView5.Size = new System.Drawing.Size(228, 248);
+            this.dataGridView5.TabIndex = 1;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(755, 441);
+            this.ClientSize = new System.Drawing.Size(794, 491);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -968,10 +1277,24 @@
             this.tabPage10.ResumeLayout(false);
             this.tabControl4.ResumeLayout(false);
             this.tabPage11.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.tabControl5.ResumeLayout(false);
             this.tabPage13.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.tabControl6.ResumeLayout(false);
+            this.tabPage15.ResumeLayout(false);
+            this.tabPage16.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox9.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView5)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1049,7 +1372,6 @@
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TabPage tabPage12;
@@ -1058,6 +1380,33 @@
         private System.Windows.Forms.TabControl tabControl5;
         private System.Windows.Forms.TabPage tabPage13;
         private System.Windows.Forms.TabPage tabPage14;
+        private System.Windows.Forms.TabControl tabControl6;
+        private System.Windows.Forms.TabPage tabPage16;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.DataGridView dataGridView5;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.DataGridView dataGridView4;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.DataGridView dataGridView3;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.ComboBox comboBox3;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.TabPage tabPage15;
+        private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TabPage tabPage17;
     }
 }
 

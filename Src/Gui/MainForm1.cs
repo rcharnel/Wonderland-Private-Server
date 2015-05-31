@@ -87,7 +87,7 @@ namespace Wonderland_Private_Server
                 {
                     this.BeginInvoke(new Action(() =>
                     {
-                        thrd_label.Text = string.Format("Thread Cnt - {0}", ThreadManager.Count);
+                        //thrd_label.Text = string.Format("Thread Cnt - {0}", ThreadManager.Count);
                     }));
                 }
                 catch { }
@@ -105,7 +105,6 @@ namespace Wonderland_Private_Server
                 catch { }
                 #endregion
                 Thread.Sleep(5);
-
             }
             while (true);
         }

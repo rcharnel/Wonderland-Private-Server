@@ -139,26 +139,26 @@ namespace Server.Network.WAC
         //{
         //    if (player == null) return null;
         //    SendPacket temp = new SendPacket();
-        //    temp.Pack8(slot);// data[at] = slot; at++;//PackSend->Pack8(1);
+        //    temp.Pack((byte)slot);// data[at] = slot; at++;//PackSend->Pack((byte)1);
         //    temp.PackString(player.CharacterName);// data[at] = nameLen; at++;
-        //    temp.Pack8((byte)player.Level);// data[at] = level; at++;//	PackSend->Pack8(tmp1.level);					// Level 
-        //    temp.Pack8((byte)player.Element);// data[at] = element; at++;//	PackSend->Pack8(3);  					// element
-        //    temp.Pack32((uint)player.FullHP);// putDWord(maxHP, data + at); at += 4;//	PackSend->Pack32(tmp1.maxHP); 			// max hp
-        //    temp.Pack32((uint)player.CurHP);// putDWord(curHP, data + at); at += 4;//	PackSend->Pack32(tmp1.curHP); 			// cur hp
-        //    temp.Pack32((uint)player.FullSP);// putDWord(maxSP, data + at); at += 4;//	PackSend->Pack32(tmp1.maxSP); 			// max sp
-        //    temp.Pack32((uint)player.CurSP);// putDWord(curSP, data + at); at += 4;//	PackSend->Pack32(tmp1.curSP); 			// cur sp
-        //    temp.Pack32((uint)player.TotalExp);// putDWord(experience, data + at); at += 4;//	PackSend->Pack32(tmp1.exp);			// exp
-        //    temp.Pack32(player.Gold);// putDWord(gold, data + at); at += 4;//	PackSend->Pack32(tmp1.gold); 			// gold
-        //    temp.Pack8((byte)player.Body);// data[at] = body; at++;//	PackSend->Pack8(tmp1.body); 					// body style
-        //    temp.Pack8(0);
-        //    temp.Pack8(player.Head);
-        //    temp.Pack8(0);// data[at] = 0; data[at + 1] = head; data[at + 2] = 0; at += 3;//	PackSend->PackArray(tmp1.hair,3);// hair style
-        //    temp.Pack16(player.HairColor);// putDWord(color1, data + at); at += 4;//	PackSend->Pack32(tmp1.colors1);
+        //    temp.Pack((byte)(byte)player.Level);// data[at] = level; at++;//	PackSend->Pack((byte)tmp1.level);					// Level 
+        //    temp.Pack((byte)(byte)player.Element);// data[at] = element; at++;//	PackSend->Pack((byte)3);  					// element
+        //    temp.Pack((uint)player.FullHP);// putDWord(maxHP, data + at); at += 4;//	PackSend->Pack(tmp1.maxHP); 			// max hp
+        //    temp.Pack((uint)player.CurHP);// putDWord(curHP, data + at); at += 4;//	PackSend->Pack(tmp1.curHP); 			// cur hp
+        //    temp.Pack((uint)player.FullSP);// putDWord(maxSP, data + at); at += 4;//	PackSend->Pack(tmp1.maxSP); 			// max sp
+        //    temp.Pack((uint)player.CurSP);// putDWord(curSP, data + at); at += 4;//	PackSend->Pack(tmp1.curSP); 			// cur sp
+        //    temp.Pack((uint)player.TotalExp);// putDWord(experience, data + at); at += 4;//	PackSend->Pack(tmp1.exp);			// exp
+        //    temp.Pack(player.Gold);// putDWord(gold, data + at); at += 4;//	PackSend->Pack(tmp1.gold); 			// gold
+        //    temp.Pack((byte)(byte)player.Body);// data[at] = body; at++;//	PackSend->Pack((byte)tmp1.body); 					// body style
+        //    temp.Pack((byte)0);
+        //    temp.Pack((byte)player.Head);
+        //    temp.Pack((byte)0);// data[at] = 0; data[at + 1] = head; data[at + 2] = 0; at += 3;//	PackSend->PackArray(tmp1.hair,3);// hair style
+        //    temp.Pack16(player.HairColor);// putDWord(color1, data + at); at += 4;//	PackSend->Pack(tmp1.colors1);
         //    temp.Pack16(player.SkinColor);
         //    temp.Pack16(player.ClothingColor);
         //    temp.Pack16(player.EyeColor);
         //    temp.PackBoolean(player.Reborn);
-        //    temp.Pack8((byte)player.Job);// data[at] = rebirth; data[at + 1] = job; at += 2;//PackSend->Pack8(tmp1.rebirth);PackSend->Pack8(tmp1.rebirthJob); 				// rebirth flag, job skill
+        //    temp.Pack((byte)(byte)player.Job);// data[at] = rebirth; data[at + 1] = job; at += 2;//PackSend->Pack((byte)tmp1.rebirth);PackSend->Pack((byte)tmp1.rebirthJob); 				// rebirth flag, job skill
         //    for (byte a = 1; a < 7; a++)
         //        temp.Pack16(player[a].ItemID);
 
@@ -182,13 +182,13 @@ namespace Server.Network.WAC
         //    Send_70_1( c, 23, "Something", 194);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 20, 33 });
-        //    p.Pack8(0);
+        //    p.Pack((byte)0);
         //    c.Send(p);
         //    //--------------------------Player PreInfo
         //    c.Send8_1();
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 14, 13 });
-        //    p.Pack8(3);
+        //    p.Pack((byte)3);
         //    c.Send(p);
         //    //------------------------Im Mall List
         //    //g.ac75.Send_1(g.gImMall_Manager.Get_75IM);
@@ -219,7 +219,7 @@ namespace Server.Network.WAC
         //    {
         //        SendPacket tmp = new SendPacket();
         //        tmp.PackArray(new byte[] { 19, 4 });
-        //        tmp.Pack32(c.Pets.BattlePet.ID);
+        //        tmp.Pack(c.Pets.BattlePet.ID);
         //        c.Send(tmp);
         //    }
         //    SendPacket g = new SendPacket();
@@ -240,7 +240,7 @@ namespace Server.Network.WAC
         //    //    Send(g);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 26, 4 });
-        //    p.Pack32(c.Gold);
+        //    p.Pack(c.Gold);
         //    c.Send(p);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 33, 2 });
@@ -268,7 +268,7 @@ namespace Server.Network.WAC
 
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 5, 15 });
-        //    p.Pack8(0);
+        //    p.Pack((byte)0);
         //    c.Send(p);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 62, 53 });
@@ -276,11 +276,11 @@ namespace Server.Network.WAC
         //    c.Send(p);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 5, 21 });
-        //    p.Pack8((byte)c.Slot);//hmmmmm
+        //    p.Pack((byte)(byte)c.Slot);//hmmmmm
         //    c.Send(p);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 5, 11 });
-        //    p.Pack32(15085);//hmmmmm
+        //    p.Pack(15085);//hmmmmm
         //    p.Pack16(5000);
         //    c.Send(p);
         //    //g.ac5.Send_11(15085, 0);//244, 68, 8, 0, 5, 11, 237, 58, 0, 0, 0, 0,         
@@ -292,11 +292,11 @@ namespace Server.Network.WAC
         //    //--------------------------------------
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 5, 14 });
-        //    p.Pack8(2);
+        //    p.Pack((byte)2);
         //    c.Send(p);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 5, 16 });
-        //    p.Pack8(2);
+        //    p.Pack((byte)2);
         //    c.Send(p);
         //    var time = DateTime.Now.ToOADate();
         //    Send_23_140( c, 3, time);
@@ -307,11 +307,11 @@ namespace Server.Network.WAC
         //    Send_57("Welcome to the  WLO 4 EVER Community Server :! Enjoy !!",  c);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 69, 1 });
-        //    p.Pack8(71);
+        //    p.Pack((byte)71);
         //    c.Send(p);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 20, 60 });
-        //    p.Pack8(1);
+        //    p.Pack((byte)1);
         //    c.Send(p);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 66, 1 });
@@ -323,25 +323,25 @@ namespace Server.Network.WAC
         //        Send_5_24( c, a, 0);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 23, 162 });
-        //    p.Pack8(2);
+        //    p.Pack((byte)2);
         //    p.Pack16(0);
         //    c.Send(p);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 26, 10 });
-        //    p.Pack32(0);
+        //    p.Pack(0);
         //    c.Send(p);
         //    Send_SingleByte_AC( c, 23, 204, (ushort)1);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 23, 208 });
-        //    p.Pack8(2);
-        //    p.Pack8(3);
-        //    p.Pack32(0);
+        //    p.Pack((byte)2);
+        //    p.Pack((byte)3);
+        //    p.Pack(0);
         //    c.Send(p);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 23, 208 });
-        //    p.Pack8(2);
-        //    p.Pack8(4);
-        //    p.Pack32(0);
+        //    p.Pack((byte)2);
+        //    p.Pack((byte)4);
+        //    p.Pack(0);
         //    c.Send(p);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 1, 11 });
@@ -354,7 +354,7 @@ namespace Server.Network.WAC
         //    //--------------------------------
         //    /*p = new SendPacket();
         //    p.PackArray(new byte[]{(20, 33);
-        //    p.Pack8(0);
+        //    p.Pack((byte)0);
         //    p.SetSize();
         //    c.Send(p);*/
         //    p = new SendPacket();
@@ -365,10 +365,10 @@ namespace Server.Network.WAC
         //    c.Send(p);
         //    SendPacket im = new SendPacket();
         //    im.PackArray(new byte[] { 35, 4 });
-        //    im.Pack32(0);
-        //    im.Pack32(0);
-        //    im.Pack32(0);
-        //    im.Pack32(0);
+        //    im.Pack(0);
+        //    im.Pack(0);
+        //    im.Pack(0);
+        //    im.Pack(0);
         //    c.Send(im);
         //    p = new SendPacket();
         //    p.PackArray(new byte[] { 90, 1 });
@@ -389,7 +389,7 @@ namespace Server.Network.WAC
         //    p.PackArray(new byte[] { ac, subac });
         //    if (byteval is byte)
         //    {
-        //        p.Pack8((byte)byteval);
+        //        p.Pack((byte)(byte)byteval);
         //    }
         //    else if (byteval is ushort)
         //    {
@@ -397,7 +397,7 @@ namespace Server.Network.WAC
         //    }
         //    else if (byteval is UInt32)
         //    {
-        //        p.Pack32((UInt32)byteval);
+        //        p.Pack((UInt32)byteval);
         //    }
         //    player.Send(p);
 
@@ -408,7 +408,7 @@ namespace Server.Network.WAC
         //    p.PackArray(new byte[] { ac });
         //    if (byteval is byte)
         //    {
-        //        p.Pack8((byte)byteval);
+        //        p.Pack((byte)(byte)byteval);
         //    }
         //    else if (byteval is ushort)
         //    {
@@ -421,7 +421,7 @@ namespace Server.Network.WAC
         //{
         //    SendPacket p = new SendPacket();
         //    p.PackArray(new byte[] { 23, 57 });
-        //    p.Pack8(0);
+        //    p.Pack((byte)0);
         //    p.PackNString(text);
         //    o.Send(p);
         //}
@@ -429,7 +429,7 @@ namespace Server.Network.WAC
         //{
         //    SendPacket p = new SendPacket();
         //    p.PackArray(new byte[] { 24, 5 });
-        //    p.Pack8(value);
+        //    p.Pack((byte)value);
         //    p.Pack16(0);
         //    player.Send(p);
 
@@ -438,10 +438,10 @@ namespace Server.Network.WAC
         //{
         //    SendPacket p = new SendPacket();
         //    p.PackArray(new byte[] { 70, 1 });
-        //    p.Pack8(value);
+        //    p.Pack((byte)value);
         //    p.PackString(name);
         //    p.Pack16(id);
-        //    p.Pack8(0);
+        //    p.Pack((byte)0);
         //    player.Send(p);
 
         //}
@@ -449,7 +449,7 @@ namespace Server.Network.WAC
         //{
         //    SendPacket p = new SendPacket();
         //    p.PackArray(new byte[] { 23, 140 });
-        //    p.Pack8(val);
+        //    p.Pack((byte)val);
         //    p.Pack64((ulong)t);
         //    player.Send(p);
         //}
@@ -457,7 +457,7 @@ namespace Server.Network.WAC
         //{
         //    SendPacket p = new SendPacket();
         //    p.PackArray(new byte[] { 25, 44 });
-        //    p.Pack8(val);
+        //    p.Pack((byte)val);
         //    p.Pack64((ulong)v);
         //    player.Send(p);
         //}
@@ -465,7 +465,7 @@ namespace Server.Network.WAC
         //{
         //    SendPacket p = new SendPacket();
         //    p.PackArray(new byte[] { 5, 13 });
-        //    p.Pack8(value);
+        //    p.Pack((byte)value);
         //    p.Pack16(wVal);
         //    player.Send(p);
         //}
@@ -473,7 +473,7 @@ namespace Server.Network.WAC
         //{
         //    SendPacket p = new SendPacket();
         //    p.PackArray(new byte[] { 5, 24 });
-        //    p.Pack8(Val);
+        //    p.Pack((byte)Val);
         //    p.Pack16(wVal);
         //    player.Send(p);
         //}

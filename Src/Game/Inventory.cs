@@ -172,8 +172,8 @@ namespace Game.Code
                     if (at != 0) a = at;
 
                     SendPacket tmp = new SendPacket();
-                    tmp.Pack8(23);
-                    tmp.Pack8(6);
+                    tmp.Pack((byte)23);
+                    tmp.Pack((byte)6);
                     tmp.Pack16(item.ItemID);
 
                     byte ammt = 0;
@@ -214,13 +214,13 @@ namespace Game.Code
                     if (ammt > 0 && sendData)
                     {
                         addammt -= ammt;
-                        tmp.Pack8(ammt);
-                        tmp.Pack32(0);
-                        tmp.Pack32(0);
-                        tmp.Pack32(0);
-                        tmp.Pack32(0);
-                        tmp.Pack32(0);
-                        tmp.Pack32(0);
+                        tmp.Pack((byte)ammt);
+                        tmp.Pack(0);
+                        tmp.Pack(0);
+                        tmp.Pack(0);
+                        tmp.Pack(0);
+                        tmp.Pack(0);
+                        tmp.Pack(0);
                         tmp.Pack16(0);
                         tmp.SetHeader();
                         owner.SendPacket(tmp);
@@ -244,9 +244,9 @@ namespace Game.Code
                 if (this[from].ItemID == 0 || from == to) return;
 
                 SendPacket tmp = new SendPacket();
-                tmp.Pack8(23);
-                tmp.Pack8(10);
-                tmp.Pack8(from);
+                tmp.Pack((byte)23);
+                tmp.Pack((byte)10);
+                tmp.Pack((byte)from);
 
                 var item = RemoveItem(from, ammt, false);
 
@@ -255,8 +255,8 @@ namespace Game.Code
                     byte wasplaced = (byte)AddItem(item, to, false);
                     if (wasplaced > 0)
                     {
-                        tmp.Pack8(wasplaced);
-                        tmp.Pack8(to);
+                        tmp.Pack((byte)wasplaced);
+                        tmp.Pack((byte)to);
                         tmp.SetHeader();
                         owner.SendPacket(tmp);
                     }
@@ -310,10 +310,10 @@ namespace Game.Code
                         {
                             // test confirm destroy item
                             SendPacket s = new SendPacket();
-                            s.Pack8(23);
-                            s.Pack8(26);
+                            s.Pack((byte)23);
+                            s.Pack((byte)26);
                             s.Pack16(this[pos].ItemID);
-                            s.Pack8(qnt);
+                            s.Pack((byte)qnt);
                             s.SetHeader();
                             owner.SendPacket(s);
                             RemoveItem(pos, qnt);
@@ -354,17 +354,17 @@ namespace Game.Code
             lock (mylock)
             {
                 SendPacket tmp = new SendPacket(false);
-                tmp.Pack8(23);
-                tmp.Pack8(5);
+                tmp.Pack((byte)23);
+                tmp.Pack((byte)5);
                 if (FilledCount > 0)
                 {
                     for (byte a = 1; a < 51; a++)
                         if (this[a].ItemID != 0)
                         {
-                            tmp.Pack8(a);
+                            tmp.Pack((byte)a);
                             tmp.Pack16(this[a].ItemID);
-                            tmp.Pack8(this[a].Ammt);
-                            tmp.Pack8(this[a].Damage);
+                            tmp.Pack((byte)this[a].Ammt);
+                            tmp.Pack((byte)this[a].Damage);
                             tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
                         }
                 }
@@ -393,8 +393,8 @@ namespace Game.Code
             //                m_Items[slot].Ammt -= 1;
             //                SendPacket p = new SendPacket();
             //                p.PackArray(new byte[] { 23, 9 });
-            //                p.Pack8(slot);
-            //                p.Pack8(ammt);
+            //                p.Pack((byte)slot);
+            //                p.Pack((byte)ammt);
             //                host.Send(p);
             //                p = new SendPacket();
             //                p.PackArray(new byte[] { 23, 15 });

@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using System.Data;
 using Game;
 using System.Threading;
+using RCLibrary.Core;
 
-namespace System
+namespace DataBase
 {
     public enum GMStatus
     {
@@ -88,7 +90,7 @@ namespace System
 
     }
 
-    public sealed class UserDataBase:RCLibrary.Core.DataBase
+    public sealed class UserDataBase : RCLibrary.Core.DataBase
     {
 
         //Used to provide flexibility to alter columns name and match them with the correct value
@@ -110,8 +112,6 @@ namespace System
         List<Player> OnlineUsers;
         Queue<Player> DisconnectedPlayers = new Queue<Player>(50);
 
-        readonly AsyncLock mlock = new AsyncLock();
-
         readonly ManualResetEvent dbupdate = new ManualResetEvent(true);
 
         bool shutdown = false;
@@ -124,7 +124,7 @@ namespace System
 
             OnlineUsers = new List<Player>();
             GOnlineUsers = new List<string>();
-            refresh = DateTime.Now.AddMinutes(10); 
+            refresh = DateTime.Now.AddMinutes(10);
         }
 
         public void VerifySetup()
@@ -222,43 +222,38 @@ namespace System
 
         public bool isLoggedin(string user)
         {
-            bool resp = (OnlineUsers.Count(c => c.UserAcc.UserName == user) > 0 || GOnlineUsers.Contains(user));
+            bool resp = false; // (OnlineUsers.Count(c => c.UserAcc.UserName == user) > 0 || GOnlineUsers.Contains(user));
             DebugSystem.Write(DebugItemType.Info_Heavy, "Checking if User '{0}' is Online... [Resp]: {1}", DebugItemType.Info_Heavy, user, resp);
             return resp;
         }
 
-        
+
         bool isValidAccount(string username)
         {
-            List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
-            parameters.Add(new KeyValuePair<string, string>("@user", username));
 
-            return (cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + TableName + " where " + Username_Ref + " =@user", parameters.ToArray()).Rows.Count > 0);
+            return (GetDataTable("SELECT * FROM @table where @user=@userchk", new DbParam("@user", Username_Ref), new DbParam("@userchk", username)) != null);
         }
         public uint isValidAccount(string username, string pass)
         {
             uint rem = 0;
-            
+
             DataRow[] rows;
 
-            List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
-            parameters.Add(new KeyValuePair<string, string>("@user", username));
-
-            var table = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + TableName + " where " + Username_Ref + " =@user", parameters.ToArray());
+            var table = GetDataTable("SELECT * FROM @table where @user=@userchk", new DbParam("@user", Username_Ref), new DbParam("@userchk", username));
 
             if (table.Rows.Count > 0)
             {
                 rows = new DataRow[table.Rows.Count];
                 table.Rows.CopyTo(rows, 0);
 
-                if (cGlobal.gDataBaseConnection.VerifyPassword(pass, rows[0][Password_Ref].ToString()))
+                if (VerifyPassword(pass, rows[0][Password_Ref].ToString()))
                     uint.TryParse(rows[0][UserID_Ref].ToString(), out rem);
                 else
                     rem = 0;
             }
             else
                 rem = 0;
-            
+
             return rem;
         }
         public bool Update_Player_ID(uint user, UInt32 id, byte slot)
@@ -272,11 +267,11 @@ namespace System
                 case 2: { col = CharacterID2_Ref; } break;
             }
 
-            Dictionary<string,string> cols = new Dictionary<string,string>();
-            cols.Add(col,id.ToString());
+            Dictionary<string, string> cols = new Dictionary<string, string>();
+            cols.Add(col, id.ToString());
 
-            try {cGlobal.gDataBaseConnection.Update(TableName,cols,UserID_Ref+" = '" + user + "'");}
-            catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
+            //try { Update(TableName, cols, UserID_Ref + " = '" + user + "'"); }
+            //catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
 
             return true;
         }
@@ -287,7 +282,7 @@ namespace System
             List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
             parameters.Add(new KeyValuePair<string, string>("@id", user.ToString()));
 
-            var src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + TableName + " WHERE "+UserID_Ref+" = @id", parameters.ToArray());
+            var src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + TableName + " WHERE " + UserID_Ref + " = @id", parameters.ToArray());
 
             if (src.Rows.Count > 0)
             {
@@ -311,8 +306,11 @@ namespace System
             DataTable src = null;
             DataRow[] rows = new DataRow[0];
 
-            try {src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM "+TableName+" where "+UserID_Ref+" = '" + user + "'"
-                ); }
+            try
+            {
+                src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + TableName + " where " + UserID_Ref + " = '" + user + "'"
+                    );
+            }
             catch (MySqlException ex) { DebugSystem.Write(ex); return 0; }
 
             if (src.Rows.Count > 0)
@@ -326,17 +324,23 @@ namespace System
         public bool UpdateUser(uint user, string delete = null, object im = null, object char1 = null, object char2 = null)
         {
             if (user == 0) return false;
-            
+
             Dictionary<string, string> str = new Dictionary<string, string>();
             if (delete != null) str.Add(Char_Delete_Code_Ref, delete);
             if (im != null) str.Add(IM_Ref, im.ToString());
             if (char1 != null) str.Add(CharacterID1_Ref, char1.ToString());
             if (char2 != null) str.Add(CharacterID2_Ref, char2.ToString());
 
-             try {cGlobal.gDataBaseConnection.Update(TableName, str,UserID_Ref+" = '" + user + "'");}
+            try { cGlobal.gDataBaseConnection.Update(TableName, str, UserID_Ref + " = '" + user + "'"); }
             catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
 
             return true;
+        }
+
+
+        public override bool VerifyPassword(string check, string with)
+        {
+            return new phpBB.phpBBCryptoServiceProvider().phpbbCheckHash(check, with);
         }
 
     }

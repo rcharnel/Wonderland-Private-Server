@@ -185,7 +185,7 @@ namespace Game.Code.PetRelated
                         p.Pack(((ushort)petlist[n].ID));
                         p.Pack((uint)petlist[n].TotalExp);
                         p.Pack((byte)petlist[n].Level);
-                        p.Pack(100);// p.Pack32((uint)petlist[n].CurHP);
+                        p.Pack(100);// p.Pack((uint)petlist[n].CurHP);
                         p.Pack((ushort)100);// p.Pack16((ushort)petlist[n].CurSP);
                         p.Pack((ushort)5);// p.Pack16(petlist[n].Int);
                         p.Pack((ushort)5);//p.Pack16(petlist[n].Str);
@@ -197,12 +197,12 @@ namespace Game.Code.PetRelated
                         p.Pack((ushort)1);
                         p.Pack((byte)0);
 
-                        //p.Pack8(petlist[n].Skill1.Grade);
-                        //p.Pack32(petlist[n].Skill1.Exp);
-                        //p.Pack8(petlist[n].Skill2.Grade);
-                        //p.Pack32(petlist[n].Skill2.Exp);
-                        //p.Pack8((petlist[n].Reborn) ? petlist[n].Skill3.Grade : (byte)0);
-                        //p.Pack32((petlist[n].Reborn) ? petlist[n].Skill3.Exp : (byte)0);
+                        //p.Pack((byte)petlist[n].Skill1.Grade);
+                        //p.Pack(petlist[n].Skill1.Exp);
+                        //p.Pack((byte)petlist[n].Skill2.Grade);
+                        //p.Pack(petlist[n].Skill2.Exp);
+                        //p.Pack((byte)(petlist[n].Reborn) ? petlist[n].Skill3.Grade : (byte)0);
+                        //p.Pack((petlist[n].Reborn) ? petlist[n].Skill3.Exp : (byte)0);
                         p.Pack(petlist[n].FullEqData);
                         p.Pack((ushort)0);
                         p.Pack((byte)0);//reborn?
@@ -236,20 +236,20 @@ namespace Game.Code.PetRelated
         //    {
         //        SendPacket pkt = new SendPacket();
         //        pkt.PackArray(new byte[] { 15, 1 });
-        //        pkt.Pack32(host.ID);
-        //        pkt.Pack32(pet.NpcID);
-        //        pkt.Pack8(2);//testing if level
-        //        pkt.Pack32((uint)tmp.TotalExp);
-        //        pkt.Pack8(tmp.Skill1.Grade);
-        //        pkt.Pack32(tmp.Skill1.Exp);
-        //        pkt.Pack8(tmp.Skill2.Grade);
-        //        pkt.Pack32(tmp.Skill2.Exp);
-        //        pkt.Pack8(tmp.Skill3.Grade);
-        //        pkt.Pack32(tmp.Skill3.Exp);
-        //        pkt.Pack8(tmp.Amity);
+        //        pkt.Pack(host.ID);
+        //        pkt.Pack(pet.NpcID);
+        //        pkt.Pack((byte)2);//testing if level
+        //        pkt.Pack((uint)tmp.TotalExp);
+        //        pkt.Pack((byte)tmp.Skill1.Grade);
+        //        pkt.Pack(tmp.Skill1.Exp);
+        //        pkt.Pack((byte)tmp.Skill2.Grade);
+        //        pkt.Pack(tmp.Skill2.Exp);
+        //        pkt.Pack((byte)tmp.Skill3.Grade);
+        //        pkt.Pack(tmp.Skill3.Exp);
+        //        pkt.Pack((byte)tmp.Amity);
         //        pkt.Pack16(0);
         //        pkt.Pack16(0);
-        //        pkt.Pack8(0);
+        //        pkt.Pack((byte)0);
         //        host.Send(pkt);
 
         //        if (BattlePet != null)
@@ -266,8 +266,8 @@ namespace Game.Code.PetRelated
         //        {
         //            SendPacket tmp = new SendPacket();
         //            tmp.PackArray(new byte[] { 15, 2 });
-        //            tmp.Pack32(host.ID);
-        //            tmp.Pack8(slot);
+        //            tmp.Pack(host.ID);
+        //            tmp.Pack((byte)slot);
         //            host.Send(tmp);
         //        }
         //    }
@@ -285,10 +285,10 @@ namespace Game.Code.PetRelated
         //        {
         //            SendPacket tmp = new SendPacket();
         //            tmp.PackArray(new byte[] { 15, 4 });
-        //            tmp.Pack32(host.ID);
-        //            tmp.Pack32(BattlePet.ID);
-        //            tmp.Pack8(0);
-        //            tmp.Pack8(1);
+        //            tmp.Pack(host.ID);
+        //            tmp.Pack(BattlePet.ID);
+        //            tmp.Pack((byte)0);
+        //            tmp.Pack((byte)1);
         //            tmp.PackString(BattlePet.Name);
         //            tmp.Pack16(0);//weapon
         //            host.CurrentMap.Broadcast(tmp, host.ID);
@@ -302,7 +302,7 @@ namespace Game.Code.PetRelated
         //    host.Send(tmp);
         //    tmp = new SendPacket();
         //    tmp.PackArray(new byte[] { 19, 7 });
-        //    tmp.Pack32(host.ID);
+        //    tmp.Pack(host.ID);
         //    host.CurrentMap.Broadcast(tmp, host.ID);
         //    BattlePet = null;
         //}
@@ -315,14 +315,14 @@ namespace Game.Code.PetRelated
         //            SendPacket tmp = new SendPacket();
         //            tmp = new SendPacket();
         //            tmp.PackArray(new byte[] { 19, 7 });
-        //            tmp.Pack32(host.ID);
+        //            tmp.Pack(host.ID);
         //            host.CurrentMap.Broadcast(tmp, host.ID); RidePet = BattlePet; BattlePet = null;
         //        }
         //        SendPacket f = new SendPacket();
         //        f.PackArray(new byte[] { 15, 16 });
-        //        f.Pack8((byte)slot);
-        //        f.Pack32(host.ID);
-        //        f.Pack32(petlist[slot].ID);
+        //        f.Pack((byte)(byte)slot);
+        //        f.Pack(host.ID);
+        //        f.Pack(petlist[slot].ID);
         //        host.CurrentMap.Broadcast(f);
         //        host.Send8_1();
         //    }
@@ -333,7 +333,7 @@ namespace Game.Code.PetRelated
         //    {
         //        SendPacket f = new SendPacket();
         //        f.PackArray(new byte[] { 15, 17 });
-        //        f.Pack32(host.ID);
+        //        f.Pack(host.ID);
         //        host.CurrentMap.Broadcast(f);
         //        host.Send8_1();
         //        RidePet = null;

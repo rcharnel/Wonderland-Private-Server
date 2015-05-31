@@ -135,13 +135,13 @@ namespace Game.Maps
                             DroppedItem gi = new DroppedItem();
                             gi.CopyFrom(src.Inv[loc]);
                             gi.Ammt = 1;
-                            gi.DropX = src.CurX;
-                            gi.DropY = src.CurY;
-                            gi.StartCountDown();
+                            gi.X = src.CurX;
+                            gi.Y = src.CurY;
+                            //gi..StartCountDown();
 
 
-                            src.SendPacket(SendPacket.FromFormat("bbwwwdb", 23, 3, gi.ItemID, gi.DropX, gi.DropY, 0, 1));
-                            Broadcast(SendPacket.FromFormat("bbwwwdb", 23, 3, gi.ItemID, gi.DropX, gi.DropY, 0, 0), "Ex", src.CharID);
+                            //src.SendPacket(SendPacket.FromFormat("bbwwwdb", 23, 3, gi.ItemID, gi.DropX, gi.DropY, 0, 1));
+                            //Broadcast(SendPacket.FromFormat("bbwwwdb", 23, 3, gi.ItemID, gi.DropX, gi.DropY, 0, 0), "Ex", src.CharID);
                             cnt++;
                         }
                         else if (cnt >= amt)
@@ -204,40 +204,40 @@ namespace Game.Maps
                         //send to them
                         Broadcast(player.ToAC3Packet(), "Ex", player.CharID);
                         SendPacket p = new SendPacket();
-                        p.Pack8(5);
-                        p.Pack8(0);
-                        p.Pack32(player.CharID);
+                        p.Pack((byte)5);
+                        p.Pack((byte)0);
+                        p.Pack(player.CharID);
                         p.PackArray(player.Worn_Equips);
                         p.SetHeader();
                         Broadcast(p);
                         p = new SendPacket();
-                        p.Pack8(10);
-                        p.Pack8(3);
-                        p.Pack32(player.CharID);
-                        p.Pack8(255);
+                        p.Pack((byte)10);
+                        p.Pack((byte)3);
+                        p.Pack(player.CharID);
+                        p.Pack((byte)255);
                         p.SetHeader();
                         Broadcast(p);
                         p = new SendPacket();
-                        p.Pack8(5);
-                        p.Pack8(8);
-                        p.Pack32(player.CharID);
-                        p.Pack8(0);
+                        p.Pack((byte)5);
+                        p.Pack((byte)8);
+                        p.Pack(player.CharID);
+                        p.Pack((byte)0);
                         p.SetHeader();
                         Broadcast(p);
 
                         //send to me
                         p = new SendPacket();
-                        p.Pack8(7);
-                        p.Pack32(r.CharID);
+                        p.Pack((byte)7);
+                        p.Pack(r.CharID);
                         p.Pack16((ushort)MapID);
                         p.Pack16(r.CurX);
                         p.Pack16(r.CurY);
                         p.SetHeader();
                         player.SendPacket(p);
                         p = new SendPacket();
-                        p.Pack8(5);
-                        p.Pack8(0);
-                        p.Pack32(r.CharID);
+                        p.Pack((byte)5);
+                        p.Pack((byte)0);
+                        p.Pack(r.CharID);
                         p.PackArray(r.Worn_Equips);
                         p.SetHeader();
                         player.SendPacket(p);
@@ -266,34 +266,34 @@ namespace Game.Maps
                 {
                     //send to them
                     SendPacket p = new SendPacket();
-                    p.Pack8(5);
-                    p.Pack8(0);
-                    p.Pack32(src.CharID);
-                    p.PackArray(src.Worn_Equips);
+                    p.Pack((byte)5);
+                    p.Pack((byte)0);
+                    p.Pack(src.CharID);
+                    p.Pack(src.Worn_Equips);
                     p.SetHeader();
                     r.SendPacket(p);
                     p = new SendPacket();
-                    p.Pack8(10);
-                    p.Pack8(3);
-                    p.Pack32(src.CharID);
-                    p.Pack8(255);
+                    p.Pack((byte)10);
+                    p.Pack((byte)3);
+                    p.Pack(src.CharID);
+                    p.Pack((byte)255);
                     p.SetHeader();
                     r.SendPacket(p);//maybe guild info???
 
                     //send to me
                     p = new SendPacket();
-                    p.Pack8(7);
-                    p.Pack32(r.CharID);
-                    p.Pack16((ushort)MapID);
-                    p.Pack16(r.CurX);
-                    p.Pack16(r.CurY);
+                    p.Pack((byte)7);
+                    p.Pack(r.CharID);
+                    p.Pack((ushort)MapID);
+                    p.Pack(r.CurX);
+                    p.Pack(r.CurY);
                     p.SetHeader();
                     src.SendPacket(p);
                     p = new SendPacket();
-                    p.Pack8(5);
-                    p.Pack8(0);
-                    p.Pack32(r.CharID);
-                    p.PackArray(r.Worn_Equips);
+                    p.Pack((byte)5);
+                    p.Pack((byte)0);
+                    p.Pack(r.CharID);
+                    p.Pack(r.Worn_Equips);
                     p.SetHeader();
                     src.SendPacket(p);
                 }
@@ -317,27 +317,27 @@ namespace Game.Maps
             if (teletype == TeleportType.Regular || teletype == TeleportType.CmD)
             {
                 SendPacket warpConf = new SendPacket();
-                warpConf.PackArray(new byte[] { 20, 7 });
+                warpConf.Pack(new byte[] { 20, 7 });
                 warpConf.SetHeader();
                 sender.SendPacket(warpConf);
             }
 
             SendPacket tmp = new SendPacket();
-            tmp.Pack8(23);
-            tmp.Pack8(32);
-            tmp.Pack32(sender.CharID);
+            tmp.Pack((byte)23);
+            tmp.Pack((byte)32);
+            tmp.Pack(sender.CharID);
             tmp.SetHeader();
             sender.SendPacket(tmp);
             tmp = new SendPacket();
-            tmp.Pack8(23);
-            tmp.Pack8(112);
-            tmp.Pack32(sender.CharID);
+            tmp.Pack((byte)23);
+            tmp.Pack((byte)112);
+            tmp.Pack(sender.CharID);
             tmp.SetHeader();
             sender.SendPacket(tmp);
             tmp = new SendPacket();
-            tmp.Pack8(23);
-            tmp.Pack8(132);
-            tmp.Pack32(sender.CharID);
+            tmp.Pack((byte)23);
+            tmp.Pack((byte)132);
+            tmp.Pack(sender.CharID);
             tmp.SetHeader();
             sender.SendPacket(tmp);
             sender.Flags.Add(PlayerFlag.Warping);
@@ -426,7 +426,7 @@ namespace Game.Maps
                 tmp.Add(SendPacket.FromFormat("bb", 23, 138));
                 /* p = new SendPacket();
                  p.PackArray(new byte[]{(6, 2);
-                 p.Pack32(1);
+                 p.Pack(1);
                  p.SetSize();
                  g.SendPacket(t, p);*/
                 #region Send Npc
@@ -441,16 +441,16 @@ namespace Game.Maps
                 //    {
                 //        if (Items_Dropped[a].NonExpirable)
                 //        {
-                //            p.Pack8(3);
-                //            p.Pack8(1);
+                //            p.Pack((byte)3);
+                //            p.Pack((byte)1);
                 //            unk = Items_Dropped[a].Control;
                 //        }
 
                 //        p.Pack16((ushort)a);
-                //        p.Pack32((ushort)Items_Dropped[a].ItemID);
+                //        p.Pack((ushort)Items_Dropped[a].ItemID);
                 //        p.Pack16((ushort)Items_Dropped[a].X);
                 //        p.Pack16((ushort)Items_Dropped[a].Y);
-                //        p.Pack32((uint)unk);
+                //        p.Pack((uint)unk);
                 //    }
                 //    t.Send(p);
                 //}
@@ -478,10 +478,10 @@ namespace Game.Maps
                         //{
                         //    SendPacket tmp = new SendPacket();
                         //    tmp.PackArray(new byte[] { 15, 4 });
-                        //    tmp.Pack32(t.CharID);
-                        //    tmp.Pack32(t.Pets.BattlePet.ID);
-                        //    tmp.Pack8(0);
-                        //    tmp.Pack8(1);
+                        //    tmp.Pack(t.CharID);
+                        //    tmp.Pack(t.Pets.BattlePet.ID);
+                        //    tmp.Pack((byte)0);
+                        //    tmp.Pack((byte)1);
                         //    tmp.PackString(t.Pets.BattlePet.Name);
                         //    tmp.Pack16(0);//weapon
                         //    r.Send(tmp);
@@ -490,10 +490,10 @@ namespace Game.Maps
                         //{
                         //    SendPacket tmp = new SendPacket();
                         //    tmp.PackArray(new byte[] { 15, 4 });
-                        //    tmp.Pack32(r.CharID);
-                        //    tmp.Pack32(r.Pets.BattlePet.ID);
-                        //    tmp.Pack8(0);
-                        //    tmp.Pack8(1);
+                        //    tmp.Pack(r.CharID);
+                        //    tmp.Pack(r.Pets.BattlePet.ID);
+                        //    tmp.Pack((byte)0);
+                        //    tmp.Pack((byte)1);
                         //    tmp.PackString(r.Pets.BattlePet.Name);
                         //    tmp.Pack16(0);//weapon
                         //    t.Send(tmp);
@@ -531,10 +531,10 @@ namespace Game.Maps
                         //{
                         //    SendPacket qp = new SendPacket(t);
                         //    qp.PackArray(new byte[]{(11, 4);
-                        //    qp.Pack8(2);
-                        //    qp.Pack32(plist[a].CharacterID);
+                        //    qp.Pack((byte)2);
+                        //    qp.Pack(plist[a].CharacterID);
                         //    qp.Pack16(0);
-                        //    qp.Pack8(0);
+                        //    qp.Pack((byte)0);
                         //    qp.Send();
                         //}
                         #endregion
@@ -549,7 +549,7 @@ namespace Game.Maps
                 // cServer.Send(gh, t);
                 /*tmp = new SendPacket(g);
                 tmp.PackArray(new byte[]{(6, 2);
-                tmp.Pack8(1);
+                tmp.Pack((byte)1);
                 tmp.SetSize();
                 tmp.Player = t;
                 tmp.Send();
@@ -599,16 +599,16 @@ namespace Game.Maps
             if (Tents.Count > 0)
             {
                 SendPacket tmp = new SendPacket();
-                tmp.Pack8(65);
-                tmp.Pack8(3);
+                tmp.Pack((byte)65);
+                tmp.Pack((byte)3);
                 Parallel.ForEach(Tents.Values, r =>
                 {
-                    tmp.Pack32(r.MapID);
+                    tmp.Pack(r.MapID);
                     tmp.Pack16(36002);
-                    tmp.Pack32(r.X);
-                    tmp.Pack32(r.Y);
-                    tmp.Pack8(0);
-                    tmp.Pack8(0);
+                    tmp.Pack(r.X);
+                    tmp.Pack(r.Y);
+                    tmp.Pack((byte)0);
+                    tmp.Pack((byte)0);
                 });
                 p.SendPacket(tmp);
             }
@@ -645,18 +645,18 @@ namespace Game.Maps
         void SendAc12(Player target, byte portalID, WarpData To, bool toTent = false)
         {
             SendPacket sp = new SendPacket();
-            sp.Pack8(12);
-            sp.Pack32(target.CharID);
+            sp.Pack((byte)12);
+            sp.Pack(target.CharID);
             sp.Pack16((toTent) ? (ushort)63507 : To.DstMap);
             sp.Pack16(To.DstX_Axis);
             sp.Pack16(To.DstY_Axis);
             sp.Pack16(portalID);
-            sp.Pack8(0);
+            sp.Pack((byte)0);
             if (toTent)
             {
                 sp.Pack16(1);
-                sp.Pack8(1);
-                sp.Pack8(1);
+                sp.Pack((byte)1);
+                sp.Pack((byte)1);
             }
             sp.SetHeader();
             Broadcast(sp);

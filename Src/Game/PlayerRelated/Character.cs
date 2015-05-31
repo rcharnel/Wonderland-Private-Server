@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wlo.Core;
-using RCLibrary.Core.Networking;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Game.Code;
+using Network;
+using RCLibrary.Core.Networking;
 
-namespace Game.Code.PlayerRelated
+namespace Game
 {
     public class Character : EquipManager
     {
@@ -126,7 +127,7 @@ namespace Game.Code.PlayerRelated
             //if (MySkills.Count > 0)
             //    p.PackArray(MySkills.GetSkillData());
             //p.Pack16(1); //ammt of skills
-            //p.Pack16(188); p.Pack16(1); p.Pack16(0); p.Pack8(0); //skill data
+            //p.Pack16(188); p.Pack16(1); p.Pack16(0); p.Pack((byte)0); //skill data
             //--------------- table with rebirth and job
             p.Add(0);
             p.Add(Reborn);
@@ -161,24 +162,24 @@ namespace Game.Code.PlayerRelated
             if (src == null) return null;
             PacketBuilder temp = new PacketBuilder();
             temp.Begin(false);
-            temp.Add((byte)src.Slot);// data[at] = slot; at++;//PackSend->Pack8(1);
+            temp.Add((byte)src.Slot);// data[at] = slot; at++;//PackSend->Pack((byte)1);
             temp.Add(src.CharName);// data[at] = nameLen; at++;
-            temp.Add((byte)src.Level);// data[at] = level; at++;//	PackSend->Pack8(tmp1.level);					// Level 
-            temp.Add((byte)src.Element);// data[at] = element; at++;//	PackSend->Pack8(3);  					// element
-            temp.Add(src.FullHP);// putDWord(maxHP, data + at); at += 4;//	PackSend->Pack32(tmp1.maxHP); 			// max hp
-            temp.Add(src.CurHP);// putDWord(curHP, data + at); at += 4;//	PackSend->Pack32(tmp1.curHP); 			// cur hp
-            temp.Add(src.FullSP);// putDWord(maxSP, data + at); at += 4;//	PackSend->Pack32(tmp1.maxSP); 			// max sp
-            temp.Add(src.CurSP);// putDWord(curSP, data + at); at += 4;//	PackSend->Pack32(tmp1.curSP); 			// cur sp
-            temp.Add((uint)src.TotalExp);// putDWord(experience, data + at); at += 4;//	PackSend->Pack32(tmp1.exp);			// exp
-            temp.Add(src.Gold);// putDWord(gold, data + at); at += 4;//	PackSend->Pack32(tmp1.gold); 			// gold
-            temp.Add((ushort)src.Body);// data[at] = body; at++;//	PackSend->Pack8(tmp1.body); 					// body style
+            temp.Add((byte)src.Level);// data[at] = level; at++;//	PackSend->Pack((byte)tmp1.level);					// Level 
+            temp.Add((byte)src.Element);// data[at] = element; at++;//	PackSend->Pack((byte)3);  					// element
+            temp.Add(src.FullHP);// putDWord(maxHP, data + at); at += 4;//	PackSend->Pack(tmp1.maxHP); 			// max hp
+            temp.Add(src.CurHP);// putDWord(curHP, data + at); at += 4;//	PackSend->Pack(tmp1.curHP); 			// cur hp
+            temp.Add(src.FullSP);// putDWord(maxSP, data + at); at += 4;//	PackSend->Pack(tmp1.maxSP); 			// max sp
+            temp.Add(src.CurSP);// putDWord(curSP, data + at); at += 4;//	PackSend->Pack(tmp1.curSP); 			// cur sp
+            temp.Add((uint)src.TotalExp);// putDWord(experience, data + at); at += 4;//	PackSend->Pack(tmp1.exp);			// exp
+            temp.Add(src.Gold);// putDWord(gold, data + at); at += 4;//	PackSend->Pack(tmp1.gold); 			// gold
+            temp.Add((ushort)src.Body);// data[at] = body; at++;//	PackSend->Pack((byte)tmp1.body); 					// body style
             temp.Add((ushort)src.Head);
-            temp.Add((ushort)src.HairColor);// putDWord(color1, data + at); at += 4;//	PackSend->Pack32(tmp1.colors1);
+            temp.Add((ushort)src.HairColor);// putDWord(color1, data + at); at += 4;//	PackSend->Pack(tmp1.colors1);
             temp.Add((ushort)src.SkinColor);
             temp.Add((ushort)src.ClothingColor);
             temp.Add((ushort)src.EyeColor);
             temp.Add(src.Reborn);
-            temp.Add((byte)src.Job);// data[at] = rebirth; data[at + 1] = job; at += 2;//PackSend->Pack8(tmp1.rebirth);PackSend->Pack8(tmp1.rebirthJob); 				// rebirth flag, job skill
+            temp.Add((byte)src.Job);// data[at] = rebirth; data[at + 1] = job; at += 2;//PackSend->Pack((byte)tmp1.rebirth);PackSend->Pack((byte)tmp1.rebirthJob); 				// rebirth flag, job skill
 
             for (byte a = 1; a < 7; a++)
                 temp.Add((ushort)src[a].ItemID);

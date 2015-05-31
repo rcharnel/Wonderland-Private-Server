@@ -29,10 +29,10 @@ namespace Server.Network.WAC
             p.CurY = g.Unpack16();
             ushort unknown = g.Unpack16();
             SendPacket tmp = new SendPacket();
-            tmp.Pack8(6);
-            tmp.Pack8(1);
-            tmp.Pack32(p.CharID);
-            tmp.Pack8(direction);
+            tmp.Pack((byte)6);
+            tmp.Pack((byte)1);
+            tmp.Pack(p.CharID);
+            tmp.Pack((byte)direction);
             tmp.Pack16(p.CurX);
             tmp.Pack16(p.CurY);
             tmp.SetHeader();

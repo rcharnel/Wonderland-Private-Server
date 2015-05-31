@@ -28,9 +28,9 @@ namespace System
 
         //public static Utilities.Task.TaskManager ApplicationTasks;
 
-        //public static Server.DataBase.CharacterDataBase gCharacterDataBase;
-        public static UserDataBase gUserDataBase;
-        //public static DataBase.GameDataBase gGameDataBase;
+        public static DataBase.CharacterDataBase gCharacterDataBase;
+        public static DataBase.UserDataBase gUserDataBase;
+        public static DataBase.GameDataBase gGameDataBase;
 
         #region Systems
         public static Instance gInstanceSystem = new Instance();
