@@ -1,4 +1,4 @@
-﻿namespace Wonderland_Private_Server.UI
+﻿namespace Gui.Update
 {
     partial class GitUpdateItem
     {
@@ -39,7 +39,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Location = new System.Drawing.Point(3, 5);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 18);
             this.label1.TabIndex = 0;
@@ -51,13 +51,13 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(303, 52);
+            this.textBox1.Size = new System.Drawing.Size(357, 52);
             this.textBox1.TabIndex = 3;
             // 
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Wonderland_Private_Server.Properties.Resources.checkmark_24_48;
-            this.pictureBox1.Location = new System.Drawing.Point(207, 0);
+            this.pictureBox1.Location = new System.Drawing.Point(261, 3);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(23, 25);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -69,7 +69,7 @@
             this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Image = global::Wonderland_Private_Server.Properties.Resources.install_button;
-            this.button1.Location = new System.Drawing.Point(236, 0);
+            this.button1.Location = new System.Drawing.Point(290, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(67, 25);
             this.button1.TabIndex = 1;
@@ -85,7 +85,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Name = "GitUpdateItem";
-            this.Size = new System.Drawing.Size(305, 82);
+            this.Size = new System.Drawing.Size(360, 82);
             this.Load += new System.EventHandler(this.GitUpdateItem_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

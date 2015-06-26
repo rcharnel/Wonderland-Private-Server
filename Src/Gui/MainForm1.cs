@@ -31,10 +31,13 @@ namespace Wonderland_Private_Server
             //cGlobal.gCompoundDat = new DataManagement.DataFiles.cCompound2Dat();
             //cGlobal.gUserDataBase = new UserDataBase();
             //cGlobal.gNpcManager = new DataManagement.DataFiles.NpcDat();
-            //cGlobal.ApplicationTasks = new Utilities.Task.TaskManager();
+            cGlobal.ApplicationTasks = new Server.TaskManager();
+            cGlobal.GitClient = new GupdtSrv.gitClient();
+            cGlobal.GitClient.GitinfoUpdated += GitClient_GitinfoUpdated;
             #endregion
             InitializeComponent();
         }
+
 
         void DebugSystem_onNewLog(object sender, DebugItem j)
         {
@@ -69,17 +72,13 @@ namespace Wonderland_Private_Server
             {
                 #region LogGUI
                 string s = null;
-                if (!string.IsNullOrEmpty((s = DebugSystem.PullLogItem())))
-                    SystemLog.AppendText(s);
+                //if (!string.IsNullOrEmpty((s = DebugSystem.PullLogItem())))
+                //    SystemLog.AppendText(s);
                 #endregion
                 #region TaskGui
 
                 if (cGlobal.ApplicationTasks != null)
-                    try
-                    {
-                        this.BeginInvoke(new Action(() => { cGlobal.ApplicationTasks.onUpdateGuiTick(); }));
-                    }
-                    catch { }
+                    this.BeginInvoke(new Action(() => { cGlobal.ApplicationTasks.onUpdateGuiTick(); }));
                     
                 #endregion
                 #region Form.System.Status gui
@@ -93,16 +92,16 @@ namespace Wonderland_Private_Server
                 catch { }
                 #endregion
                 #region Form.Update
-                try
-                {
-                    this.BeginInvoke(new Action(() =>
-                    {
-                        DateTime tmp = (cGlobal.ApplicationTasks.TaskItems.Count(c => c.TaskName == "Updating Application") > 0) ? cGlobal.ApplicationTasks.TaskItems.Single(c => c.TaskName == "Updating Application").Createdat : new DateTime();
+                //try
+                //{
+                //    this.BeginInvoke(new Action(() =>
+                //    {
+                //        DateTime tmp = (cGlobal.ApplicationTasks.TaskItems.Count(c => c.TaskName == "Updating Application") > 0) ? cGlobal.ApplicationTasks.TaskItems.Single(c => c.TaskName == "Updating Application").Createdat : new DateTime();
 
-                        autoUpdt_label.Text = string.Format(tmp.Add(cGlobal.SrvSettings.Update.AutoUpdt_Schedule).ToString());
-                    }));
-                }
-                catch { }
+                //        autoUpdt_label.Text = string.Format(tmp.Add(cGlobal.SrvSettings.Update.AutoUpdt_Schedule).ToString());
+                //    }));
+                //}
+                //catch { }
                 #endregion
                 Thread.Sleep(5);
             }
@@ -114,13 +113,8 @@ namespace Wonderland_Private_Server
         {
 
             cGlobal.Run = true;
-            DebugSystem.Write("Intializing Please Wait.....");             
+            DebugSystem.Write("Intializing Please Wait.....");
             cGlobal.SrvSettings = new Server.Config.Settings();
-            cGlobal.GClient = new GupdtSrv.gitClient();
-            cGlobal.GClient.GitinfoUpdated += GClient_GitinfoUpdated;
-            cGlobal.GClient.onError += GClient_onError;
-            cGlobal.GClient.infopipe += GClient_infopipe;
-            cGlobal.GClient.onNewUpdate += GClient_onNewUpdate; 
 
             #region load settings file
             
@@ -141,15 +135,31 @@ namespace Wonderland_Private_Server
                 DebugSystem.Write("Settings File not found");
 
             if (GitBranch.Text != cGlobal.SrvSettings.Update.GitBranch)
-            {
-                cGlobal.GClient.Branch = cGlobal.SrvSettings.Update.GitBranch;
                 GitBranch.Text = cGlobal.SrvSettings.Update.GitBranch;
-            }
 
             if (GitUptOption.SelectedIndex != (byte)cGlobal.SrvSettings.Update.UpdtControl)
                 GitUptOption.SelectedIndex = (byte)cGlobal.SrvSettings.Update.UpdtControl;
 
             #endregion
+
+            #region  Setup Tasks
+
+            this.Invoke(new Action(() =>
+            {
+                dataGridView1.Columns[0].DataPropertyName = "TaskName";
+                dataGridView1.Columns[1].DataPropertyName = "Interval";
+                dataGridView1.Columns[2].DataPropertyName = "LastExecution";
+                dataGridView1.Columns[3].DataPropertyName = "NextExecution";
+                dataGridView1.Columns[4].DataPropertyName = "Status";
+                dataGridView1.DataSource = cGlobal.ApplicationTasks.TaskItems;
+            }));
+            cGlobal.ApplicationTasks.CreateTask("Application Update", new TimeSpan(0, 10, 0));
+            #endregion
+
+            //use for testing
+#if DEBUG
+
+#endif
             
 
             #region Intialize Base Threads
@@ -161,67 +171,60 @@ namespace Wonderland_Private_Server
             #endregion
 
             #region intial check  if theres an update from github
-            DebugSystem.Write("Checking For Update on Git...");
-            cGlobal.GClient.CheckFor_Update();
-            Thread.Sleep(2000);
+            //DebugSystem.Write("Checking For Update on Git...");
+            //cGlobal.GClient.CheckFor_Update();
+            //Thread.Sleep(2000);
 
-            if (cGlobal.SrvSettings.Update.UpdtControl != Server.Config.UpdtSetting.Never && cGlobal.ApplicationTasks.TaskItems.Count(c => c.TaskName == "Updating Application") > 0)
-                goto ShutDwn;
+            //if (cGlobal.SrvSettings.Update.UpdtControl != Server.Config.UpdtSetting.Never && cGlobal.ApplicationTasks.TaskItems.Count(c => c.TaskName == "Updating Application") > 0)
+            //    goto ShutDwn;
             #endregion
 
             
 
             #region Setup Form
-            this.Invoke(new Action(() =>
-            {
-                dataGridView1.Columns[0].DataPropertyName = "TaskName";
-                dataGridView1.Columns[1].DataPropertyName = "Interval";
-                dataGridView1.Columns[2].DataPropertyName = "LastExecution";
-                dataGridView1.Columns[3].DataPropertyName = "NextExecution";
-                dataGridView1.Columns[4].DataPropertyName = "Status";
-                dataGridView1.DataSource = cGlobal.ApplicationTasks.TaskItems;
-            }));
+            
             #endregion
 
             #region DataBase Initialization
             
 
 
-            DebugSystem.Write("Verifying DataBase Authencation Setup");
-            if (cGlobal.gUserDataBase.TestConnection())
-            {
-                DebugSystem.Write("Connection Successful");
-                DebugSystem.Write("Verifying DataBase Tables");
-                cGlobal.gUserDataBase.VerifySetup();
-                cGlobal.gCharacterDataBase.VerifySetup();
-                cGlobal.gGameDataBase.VerifySetup();
-            }
-            else
-            {
-                DebugSystem.Write("Connection not successful\r\n unable to start server");
-                return;
-            }
+            //DebugSystem.Write("Verifying DataBase Authencation Setup");
+            //if (cGlobal.gUserDataBase.TestConnection())
+            //{
+            //    DebugSystem.Write("Connection Successful");
+            //    DebugSystem.Write("Verifying DataBase Tables");
+            //    cGlobal.gUserDataBase.VerifySetup();
+            //    //cGlobal.gCharacterDataBase.VerifySetup();
+            //    cGlobal.gGameDataBase.VerifySetup();
+            //}
+            //else
+            //{
+            //    DebugSystem.Write("Connection not successful\r\n unable to start server");
+            //    return;
+            //}
 
            
 
 
             #endregion
 
+
             #region Load Data Files
-            cGlobal.gItemManager.LoadItems("Data\\Item.dat");
-            cGlobal.gSkillManager.LoadSkills("Data\\Skill.dat");
-            cGlobal.gNpcManager.LoadNpc("Data\\Npc.dat");
-            cGlobal.gEveManager.LoadFile("Data\\eve.Emg");
-            cGlobal.gCompoundDat.Load("Data\\Compound.dat");
-            cGlobal.gCompoundDat.Load("Data\\Compound2.dat", false);
+            //cGlobal.gItemManager.LoadItems("Data\\Item.dat");
+            //cGlobal.gSkillManager.LoadSkills("Data\\Skill.dat");
+            //cGlobal.gNpcManager.LoadNpc("Data\\Npc.dat");
+            //cGlobal.gEveManager.LoadFile("Data\\eve.Emg");
+            //cGlobal.gCompoundDat.Load("Data\\Compound.dat");
+            //cGlobal.gCompoundDat.Load("Data\\Compound2.dat", false);
 
             #endregion
 
             #region Initialize the Wonderland Server
             DebugSystem.Write("Jump Starting Server...");
-            cGlobal.WLO_World.Initialize();
+            //cGlobal.WLO_World.Initialize();
             Thread.Sleep(2);
-            cGlobal.TcpListener.Initialize();
+            //cGlobal.TcpListener.Initialize();
             #endregion
 
 
@@ -265,6 +268,23 @@ namespace Wonderland_Private_Server
 
 
         #region Git Client Events
+
+        void GitClient_GitinfoUpdated(object sender, EventArgs e)
+        {
+            try
+            {
+                this.BeginInvoke(new Action(() =>
+                {
+                    UpdatePane.Controls.Clear();
+
+                    foreach (var y in cGlobal.GitClient.Releases.Where(c => c.TagName != null).OrderByDescending(c => new Version(c.TagName)))
+                        UpdatePane.Controls.Add(new Gui.Update.GitUpdateItem(cGlobal.GitClient.myVersion, y));
+
+                }));
+            }
+            catch (Exception fe) { DebugSystem.Write(new ExceptionData(fe)); }
+        }
+
         void GClient_onNewUpdate(object sender, Octokit.Release e)
         {
             switch ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex)
@@ -272,7 +292,7 @@ namespace Wonderland_Private_Server
                 case Server.Config.UpdtSetting.Auto:
                     {
                         DateTime tomorrow = new DateTime(DateTime.Now.Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day, 1, 0, 0);
-                        cGlobal.ApplicationTasks.CreateTask("Updating Application", tomorrow - DateTime.Now);
+                        //cGlobal.ApplicationTasks.CreateTask("Updating Application", tomorrow - DateTime.Now);
                     } break;
                 case Server.Config.UpdtSetting.AutoandForce:
                     {
@@ -289,24 +309,6 @@ namespace Wonderland_Private_Server
         {
             DebugSystem.Write(new ExceptionData(e));
         }
-
-        void GClient_GitinfoUpdated(object sender, EventArgs e)
-        {
-            try
-            {
-                this.BeginInvoke(new Action(() =>
-                {
-                    UpdatePane.Controls.Clear();
-                    var list = cGlobal.GClient.ReleasesFnd;
-
-                    foreach (var y in list.Where(c=>c.TagName != null).OrderByDescending(c => new Version(c.TagName)))
-                        UpdatePane.Controls.Add(new UI.GitUpdateItem(cGlobal.GClient.myVersion, y));
-
-                }));
-            }
-            catch { }
-
-        }
         #endregion
 
         #region Form Events
@@ -318,23 +320,21 @@ namespace Wonderland_Private_Server
         }
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 || (e.ColumnIndex !=
-           dataGridView1.Columns["canceltask"].Index && e.ColumnIndex !=
-           dataGridView1.Columns["retrytask"].Index)) return;
+            if (e.RowIndex < 0 || (e.ColumnIndex != dataGridView1.Columns["retrytask"].Index)) return;
 
-            if (e.ColumnIndex == dataGridView1.Columns["canceltask"].Index)
-                cGlobal.ApplicationTasks.TaskItems[e.RowIndex].onCancel();
-            else if (e.ColumnIndex == dataGridView1.Columns["retrytask"].Index)
+            
+            if (e.ColumnIndex == dataGridView1.Columns["retrytask"].Index)
                 cGlobal.ApplicationTasks.TaskItems[e.RowIndex].onRetry();
         }
 
         #region Update Section
         private void GitBranch_TextChanged(object sender, EventArgs e)
         {
-            if (cGlobal.GClient != null && cGlobal.GClient.Branch != GitBranch.Text)
+            if (cGlobal.GitClient != null && cGlobal.GitClient.Branch != GitBranch.Text)
             {
                 cGlobal.SrvSettings.Update.GitBranch = GitBranch.Text;
-                cGlobal.GClient.Branch = GitBranch.Text;
+                cGlobal.GitClient.Branch = GitBranch.Text;
+                cGlobal.GitClient.CheckFor_Update();
             }
         }
         private void GitUptOption_SelectedIndexChanged(object sender, EventArgs e)
@@ -342,10 +342,10 @@ namespace Wonderland_Private_Server
             if (cGlobal.SrvSettings.Update.UpdtControl != (Server.Config.UpdtSetting)GitUptOption.SelectedIndex)
                 cGlobal.SrvSettings.Update.UpdtControl = (Server.Config.UpdtSetting)GitUptOption.SelectedIndex;
 
-            if ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex == Server.Config.UpdtSetting.Never)
-                cGlobal.ApplicationTasks.EndTask("Application Update");
-            else if ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex != Server.Config.UpdtSetting.Never)
-                cGlobal.ApplicationTasks.CreateTask("Application Update", cGlobal.SrvSettings.Update.UpdtChk_Interval);
+            //if ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex == Server.Config.UpdtSetting.Never)
+            //    cGlobal.ApplicationTasks.EndTask("Application Update");
+            //else if ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex != Server.Config.UpdtSetting.Never)
+            //    cGlobal.ApplicationTasks.CreateTask("Application Update", cGlobal.SrvSettings.Update.UpdtChk_Interval);
         }
         #endregion
 
@@ -354,8 +354,8 @@ namespace Wonderland_Private_Server
             if (cGlobal.SrvSettings.Update.UpdtChk_Interval.Minutes != updtrefresh.Value)
                 cGlobal.SrvSettings.Update.UpdtChk_Interval = new TimeSpan(0,(int)updtrefresh.Value,0);
 
-            if ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex != Server.Config.UpdtSetting.Never)
-                cGlobal.ApplicationTasks.ChangeInterval("Application Update", cGlobal.SrvSettings.Update.UpdtChk_Interval);
+            //if ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex != Server.Config.UpdtSetting.Never)
+            //    cGlobal.ApplicationTasks.ChangeInterval("Application Update", cGlobal.SrvSettings.Update.UpdtChk_Interval);
         }
         private void autoUpdt_Hr_ValueChanged(object sender, EventArgs e)
         {

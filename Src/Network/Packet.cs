@@ -9,9 +9,19 @@ namespace Network
     public class SendPacket : Packet
     {
 
+        public SendPacket(bool header = true)
+            : base(header)
+        {
+        }
+        public SendPacket(byte[] init, int initLength = -1)
+            : base(init, initLength)
+        {
+        }
+
         public SendPacket()
         {
         }
+
     }
 
     public class RecievePacket : Packet

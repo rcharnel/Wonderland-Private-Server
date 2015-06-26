@@ -24,7 +24,7 @@ namespace DataBase
         /// <summary>
         /// saves a cache of a character
         /// </summary>
-        ConcurrentDictionary<int, Character> Cache = new ConcurrentDictionary<int,Character>();
+        //ConcurrentDictionary<int, Character> Cache = new ConcurrentDictionary<int,Character>();
         
         Dictionary<string, uint> CharNames = new Dictionary<string, uint>();
         public CharacterDataBase()
@@ -783,6 +783,7 @@ namespace DataBase
         //        conn.Close();
         //    }
         //}
+
         public void DeleteCharacter(UInt32 ID)
         {
 
@@ -795,424 +796,432 @@ namespace DataBase
             //try { cGlobal.gDataBaseConnection.Delete("inventory", "charID = '" + ID + "';"); }
             //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
 
-            if (Cache.ContainsKey((int)ID))
-            {
-                Character t;
-                Cache.TryRemove((int)ID, out t);
-            }
+            //if (Cache.ContainsKey((int)ID))
+            //{
+            //    Character t;
+            //    Cache.TryRemove((int)ID, out t);
+            //}
         }
-        public Character GetCharacterData(uint charID)
-        {
-            bool good = true;
-            if (charID == 0) return null;
-            if (Cache.ContainsKey((int)charID))
-                return Cache[(int)charID];
+//        public Character GetCharacterData(uint charID)
+//        {
+//            return null; 
+//            bool good = true;
+//            if (charID == 0) return null;
+//            if (Cache.ContainsKey((int)charID))
+//                return Cache[(int)charID];
 
-            Character t = new Character();
+//            Character t = new Character();
 
-            DataTable src = null;
-            DataRow[] rows;
+//            DataTable src = null;
+//            DataRow[] rows;
 
-            //try { src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM characters where charID = '" + charID + "'");}
-            //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+////            #region Get Character
+////            //try { src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM characters where charID = '" + charID + "'");}
+////            //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
             
-            if (src.Rows.Count > 0)
-            {
-                rows = new DataRow[src.Rows.Count];
-                src.Rows.CopyTo(rows, 0);
-                t.ID = uint.Parse(rows[0]["charID"].ToString());
-                t.Head = byte.Parse(rows[0]["head"].ToString());
-                t.Body = (BodyStyle)uint.Parse(rows[0]["body"].ToString());
-                t.m_name = rows[0]["name"].ToString();
-                t.Nickname = rows[0]["nickname"].ToString();
-                t.LoginMap = ushort.Parse(rows[0]["location_map"].ToString());
-                t.X = ushort.Parse(rows[0]["location_x"].ToString());
-                t.Y = ushort.Parse(rows[0]["location_y"].ToString());
-                t.HairColor = ushort.Parse(rows[0]["haircolor"].ToString());
-                t.SkinColor = ushort.Parse(rows[0]["skincolor"].ToString());
-                t.ClothingColor = ushort.Parse(rows[0]["clothingcolor"].ToString());
-                t.EyeColor = ushort.Parse(rows[0]["eyecolor"].ToString());
-                t.SetGold(int.Parse(rows[0]["gold"].ToString()));
-                t.Element = (Affinity)byte.Parse(rows[0]["element"].ToString());
-                t.Job = (RebornJob)byte.Parse(rows[0]["job"].ToString());
-            }
-            else
-            {
-                DebugSystem.Write(DBServer + "No Character for " + charID);
-                return null;
-            }
+////            if (src.Rows.Count > 0)
+////            {
+////                rows = new DataRow[src.Rows.Count];
+////                src.Rows.CopyTo(rows, 0);
+////                t.ID = uint.Parse(rows[0]["charID"].ToString());
+////                t.Head = byte.Parse(rows[0]["head"].ToString());
+////                t.Body = (BodyStyle)uint.Parse(rows[0]["body"].ToString());
+////                t.m_name = rows[0]["name"].ToString();
+////                t.Nickname = rows[0]["nickname"].ToString();
+////                t.LoginMap = ushort.Parse(rows[0]["location_map"].ToString());
+////                t.X = ushort.Parse(rows[0]["location_x"].ToString());
+////                t.Y = ushort.Parse(rows[0]["location_y"].ToString());
+////                t.HairColor = ushort.Parse(rows[0]["haircolor"].ToString());
+////                t.SkinColor = ushort.Parse(rows[0]["skincolor"].ToString());
+////                t.ClothingColor = ushort.Parse(rows[0]["clothingcolor"].ToString());
+////                t.EyeColor = ushort.Parse(rows[0]["eyecolor"].ToString());
+////                t.SetGold(int.Parse(rows[0]["gold"].ToString()));
+////                t.Element = (Affinity)byte.Parse(rows[0]["element"].ToString());
+////                t.Job = (RebornJob)byte.Parse(rows[0]["job"].ToString());
+////            }
+////            else
+////            {
+////                DebugSystem.Write(DBServer + "No Character for " + charID);
+////                return null;
+////            }
+////            #endregion
 
-            //load stat data
-            src = GetDataTable("SELECT * FROM stats where charID = '" + charID + "'");
+////            #region load stat data
+////            src = GetDataTable("SELECT * FROM stats where charID = '" + charID + "'");
 
-            if (src.Rows.Count > 0)
-            {
-                rows = new DataRow[src.Rows.Count];
-                src.Rows.CopyTo(rows, 0);
-                List<long[]> tmp2 = new List<long[]>();
-                if (t == null) t = new Character();
-                foreach (var row in rows)
-                {
-                    switch (long.Parse(row["statID"].ToString()))
-                    {
-                        case 25: t.CurHP = int.Parse(row["statVal"].ToString()); break;
-                        case 26: t.CurSP = ushort.Parse(row["statVal"].ToString()); break;
-                        case 38: t.SkillPoints = ushort.Parse(row["statVal"].ToString()); break;
-                        case 36: t.TotalExp = long.Parse(row["statVal"].ToString()); break;
-                        case 28: t.Str = ushort.Parse(row["statVal"].ToString()); break;
-                        case 29: t.Con = ushort.Parse(row["statVal"].ToString()); break;
-                        case 30: t.Agi = ushort.Parse(row["statVal"].ToString()); break;
-                        case 27: t.Int = ushort.Parse(row["statVal"].ToString()); break;
-                        case 33: t.Wis = ushort.Parse(row["statVal"].ToString()); break;
-                    }
-                }
-            }
+////            if (src.Rows.Count > 0)
+////            {
+////                rows = new DataRow[src.Rows.Count];
+////                src.Rows.CopyTo(rows, 0);
+////                List<long[]> tmp2 = new List<long[]>();
+////                if (t == null) t = new Character();
+////                foreach (var row in rows)
+////                {
+////                    switch (long.Parse(row["statID"].ToString()))
+////                    {
+////                        case 25: t.CurHP = int.Parse(row["statVal"].ToString()); break;
+////                        case 26: t.CurSP = ushort.Parse(row["statVal"].ToString()); break;
+////                        case 38: t.SkillPoints = ushort.Parse(row["statVal"].ToString()); break;
+////                        case 36: t.TotalExp = long.Parse(row["statVal"].ToString()); break;
+////                        case 28: t.Str = ushort.Parse(row["statVal"].ToString()); break;
+////                        case 29: t.Con = ushort.Parse(row["statVal"].ToString()); break;
+////                        case 30: t.Agi = ushort.Parse(row["statVal"].ToString()); break;
+////                        case 27: t.Int = ushort.Parse(row["statVal"].ToString()); break;
+////                        case 33: t.Wis = ushort.Parse(row["statVal"].ToString()); break;
+////                    }
+////                }
+////            }
+////#endregion
 
-            //load equips
-            src = GetDataTable("SELECT * FROM inventory where charID = '" + charID +"' AND storID =1");
+////            #region load equips
+////            src = GetDataTable("SELECT * FROM inventory where charID = '" + charID +"' AND storID =1");
 
-            if (src.Rows.Count > 0)
-            {
-                rows = new DataRow[src.Rows.Count];
+////            if (src.Rows.Count > 0)
+////            {
+////                rows = new DataRow[src.Rows.Count];
 
-                src.Rows.CopyTo(rows, 0);
+////                src.Rows.CopyTo(rows, 0);
 
-                ushort id;
+////                ushort id;
 
-                for (int i = 0; i < rows.Length; i++)
-                {
-                    id = ushort.Parse(rows[i]["itemID"].ToString());
-                    if (id != 0)
-                    {
-                        t[byte.Parse(rows[i]["pos"].ToString())].CopyFrom(cGlobal.gItemManager.GetItem(id));
-                        t[byte.Parse(rows[i]["pos"].ToString())].Ammt = 1;
-                        t[byte.Parse(rows[i]["pos"].ToString())].Damage = byte.Parse(rows[i]["dmg"].ToString());
-                        //                    tmp4.Add((byte)i, new string[]{id.ToString(), rows[i]["socketID"].ToString(), rows[i]["bombID"].ToString(),rows[i]["sewID"].ToString(), 
-                        //rows[i]["dmg"].ToString(),rows[i]["forge"].ToString(), });
-                    }
-                }
-            }
+////                for (int i = 0; i < rows.Length; i++)
+////                {
+////                    id = ushort.Parse(rows[i]["itemID"].ToString());
+////                    if (id != 0)
+////                    {
+////                        t[byte.Parse(rows[i]["pos"].ToString())].CopyFrom(cGlobal.gItemManager.GetItem(id));
+////                        t[byte.Parse(rows[i]["pos"].ToString())].Ammt = 1;
+////                        t[byte.Parse(rows[i]["pos"].ToString())].Damage = byte.Parse(rows[i]["dmg"].ToString());
+////                        //                    tmp4.Add((byte)i, new string[]{id.ToString(), rows[i]["socketID"].ToString(), rows[i]["bombID"].ToString(),rows[i]["sewID"].ToString(), 
+////                        //rows[i]["dmg"].ToString(),rows[i]["forge"].ToString(), });
+////                    }
+////                }
+////            }
+////#endregion
 
-            return t;
-        }
-        public void GetCharacterData(uint charID, ref Player t)
-        {
-            if (charID == 0) return;
-            if (Cache.ContainsKey((int)charID))
-            {
-                t.ID = Cache[(int)charID].ID;
-                t.Head = Cache[(int)charID].Head;
-                t.Body = Cache[(int)charID].Body;
-                t.CharacterName = Cache[(int)charID].m_name;
-                t.Nickname = Cache[(int)charID].Nickname;
-                t.LoginMap = Cache[(int)charID].LoginMap;
-                t.X = Cache[(int)charID].X;
-                t.Y = Cache[(int)charID].Y;
-                t.HairColor = Cache[(int)charID].HairColor;
-                t.SkinColor = Cache[(int)charID].SkinColor;
-                t.ClothingColor = Cache[(int)charID].ClothingColor;
-                t.EyeColor = Cache[(int)charID].EyeColor;
-                t.SetGold((int)Cache[(int)charID].Gold);
-                t.Element = Cache[(int)charID].Element;
-                t.Job = Cache[(int)charID].Job;
-                return;
-            }
+//            return t;
+//        }
 
-            DataTable src = null;
-            DataRow[] rows = new DataRow[0];
+//        public bool GetCharacterData(uint charID, ref Player t)
+//        {
+//            if (charID == 0) return false;
+//            //if (Cache.ContainsKey((int)charID))
+//            //{
+//            //    t.ID = Cache[(int)charID].ID;
+//            //    t.Head = Cache[(int)charID].Head;
+//            //    t.Body = Cache[(int)charID].Body;
+//            //    t.CharacterName = Cache[(int)charID].m_name;
+//            //    t.Nickname = Cache[(int)charID].Nickname;
+//            //    t.LoginMap = Cache[(int)charID].LoginMap;
+//            //    t.X = Cache[(int)charID].X;
+//            //    t.Y = Cache[(int)charID].Y;
+//            //    t.HairColor = Cache[(int)charID].HairColor;
+//            //    t.SkinColor = Cache[(int)charID].SkinColor;
+//            //    t.ClothingColor = Cache[(int)charID].ClothingColor;
+//            //    t.EyeColor = Cache[(int)charID].EyeColor;
+//            //    t.SetGold((int)Cache[(int)charID].Gold);
+//            //    t.Element = Cache[(int)charID].Element;
+//            //    t.Job = Cache[(int)charID].Job;
+//            //    return;
+//            //}
 
-
-
-
-            //try { src = GetDataTable("SELECT * FROM characters where charID = '" + charID + "'");  }
-            //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
-
-            if (src.Rows.Count > 0)
-            {
-                rows = new DataRow[src.Rows.Count];
-                src.Rows.CopyTo(rows, 0);
-                t.ID = uint.Parse(rows[0]["charID"].ToString());
-                t.Head = byte.Parse(rows[0]["head"].ToString());
-                t.Body = (BodyStyle)uint.Parse(rows[0]["body"].ToString());
-                t.CharacterName = rows[0]["name"].ToString();
-                t.Nickname = rows[0]["nickname"].ToString();
-                t.LoginMap = ushort.Parse(rows[0]["location_map"].ToString());
-                t.X = ushort.Parse(rows[0]["location_x"].ToString());
-                t.Y = ushort.Parse(rows[0]["location_y"].ToString());
-                t.HairColor = ushort.Parse(rows[0]["haircolor"].ToString());
-                t.SkinColor = ushort.Parse(rows[0]["skincolor"].ToString());
-                t.ClothingColor = ushort.Parse(rows[0]["clothingcolor"].ToString());
-                t.EyeColor = ushort.Parse(rows[0]["eyecolor"].ToString());
-                t.SetGold(int.Parse(rows[0]["gold"].ToString()));
-                t.Element = (Affinity)byte.Parse(rows[0]["element"].ToString());
-                t.Job = (RebornJob)byte.Parse(rows[0]["job"].ToString());
-            }
-            else
-            {
-                DebugSystem.Write(new Exception("Character not found for " + charID));
-                throw new Exception("Character not found for " + charID);
-            }
-            //load stat data
-            src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM stats where charID = '" + charID + "'");
-
-            if (src.Rows.Count > 0)
-            {
-                rows = new DataRow[src.Rows.Count];
-                src.Rows.CopyTo(rows, 0);
-                List<long[]> tmp2 = new List<long[]>();
-                foreach (var row in rows)
-                {
-                    switch (long.Parse(row["statID"].ToString()))
-                    {
-                        case 25: t.CurHP = int.Parse(row["statVal"].ToString()); break;
-                        case 26: t.CurSP = ushort.Parse(row["statVal"].ToString()); break;
-                        case 38: t.SkillPoints = ushort.Parse(row["statVal"].ToString()); break;
-                        case 36: t.TotalExp = long.Parse(row["statVal"].ToString()); break;
-                        case 28: t.Str = ushort.Parse(row["statVal"].ToString()); break;
-                        case 29: t.Con = ushort.Parse(row["statVal"].ToString()); break;
-                        case 30: t.Agi = ushort.Parse(row["statVal"].ToString()); break;
-                        case 27: t.Int = ushort.Parse(row["statVal"].ToString()); break;
-                        case 33: t.Wis = ushort.Parse(row["statVal"].ToString()); break;
-                    }
-                }
-            }
-
-            //load equips
-            src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM inventory where charID = '" + charID + "' AND storID =1");
-
-            if (src.Rows.Count > 0)
-            {
-                rows = new DataRow[src.Rows.Count];
-                src.Rows.CopyTo(rows, 0);
-                ushort id;
-
-                for (int i = 0; i < rows.Length; i++)
-                {
-                    id = ushort.Parse(rows[i]["itemID"].ToString());
-                    if (id != 0)
-                    {
-                        t[byte.Parse(rows[i]["pos"].ToString())].CopyFrom(cGlobal.gItemManager.GetItem(id));
-                        t[byte.Parse(rows[i]["pos"].ToString())].Ammt = 1;
-                        t[byte.Parse(rows[i]["pos"].ToString())].Damage = byte.Parse(rows[i]["dmg"].ToString());
-                        //                    tmp4.Add((byte)i, new string[]{id.ToString(), rows[i]["socketID"].ToString(), rows[i]["bombID"].ToString(),rows[i]["sewID"].ToString(), 
-                        //rows[i]["dmg"].ToString(),rows[i]["forge"].ToString(), });
-                    }
-                }
-            }
-        }
-        public bool WriteNewPlayer(uint charID, Player player)
-        {
-            if (charID == 0) return false;
-
-            DataTable src = null;
-            DataRow[] rows = new DataRow[0];
-
-            #region write character Data
-
-            Character c = (Character)player;
-            Dictionary<string, string> insert = new Dictionary<string, string>();
-            insert.Add("charID", player.ID.ToString());
-            insert.Add("head", c.Head.ToString());
-            insert.Add("body", ((byte)c.Body).ToString());
-            insert.Add("name", c.m_name);
-            insert.Add("name_clean", c.m_name.ToLower());
-            insert.Add("nickname", c.Nickname);
-            insert.Add("location_map", c.LoginMap.ToString());
-            insert.Add("location_x", c.X.ToString());
-            insert.Add("location_y", c.Y.ToString());
-            insert.Add("haircolor", c.HairColor.ToString());
-            insert.Add("skincolor", c.SkinColor.ToString());
-            insert.Add("clothingcolor", c.ClothingColor.ToString());
-            insert.Add("eyecolor", c.EyeColor.ToString());
-            insert.Add("gold", c.Gold.ToString());
-            insert.Add("element", ((byte)c.Element).ToString());
-            insert.Add("rebirth", BitConverter.GetBytes(c.Reborn)[0].ToString());
-            insert.Add("job", ((byte)c.Job).ToString());//fix
-            insert.Add("online", BitConverter.GetBytes(false)[0].ToString());
-
-            try { cGlobal.gDataBaseConnection.Insert(TableName, insert); }
-            catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
-
-            #endregion
-
-            #region Write Extr Data
-
-            try { src = cGlobal.gDataBaseConnection.GetDataTable(string.Format("SELECT * FROM {0} where {1}", "charactersExtData", "charID = '" + charID + "'")); }
-            catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
-
-            Dictionary<string, string> cols = new Dictionary<string, string>();
-            cols.Add("charID", charID.ToString());
-            cols.Add("Settings", player.Settings.Get_SysytemFlag());
-            cols.Add("Friends", player.GetFriends_Flag);
-            cols.Add("Guild", "0");
-            cols.Add("Mail", player.GetMailboxFlags());
-
-            if (src.Rows.Count == 0)
-            {
-                try { cGlobal.gDataBaseConnection.Insert("charactersExtData", cols); }
-                catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
-            }
-            else
-            {
-                try { cGlobal.gDataBaseConnection.Update("charactersExtData", cols, "charID = '" + charID + "';"); }
-                catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
-            }
-            #endregion
-
-            #region write stats
-
-            foreach (var u in player.Stat_toSave)
-            {
-                try { src = cGlobal.gDataBaseConnection.GetDataTable(string.Format("SELECT * FROM {0} where {1}", "stats", "charID = '" + charID + "' AND statID = '" + u[0] + "'")); }
-                catch (MySqlException ex) { DebugSystem.Write(ex); }
-
-                cols = new Dictionary<string, string>();
-                cols.Add("statIdx", "0");
-                cols.Add("charID", charID.ToString());
-                cols.Add("statID", u[0].ToString());
-                cols.Add("statVal", u[1].ToString());
-                cols.Add("potential", player.Potential.ToString());
+//            DataTable src = null;
+//            DataRow[] rows = new DataRow[0];
 
 
 
-                if (src.Rows.Count == 0)
-                {
-                    try
-                    {
-                        cGlobal.gDataBaseConnection.Insert("stats", cols);
-                    }
-                    catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
-                }
-                else
-                {
-                    try { cGlobal.gDataBaseConnection.Update("stats", cols, "charID = '" + charID + "'AND statID = '" + u[0] + "';"); }
-                    catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
-                }
-            }
-            #endregion
 
-            #region predelete inv
-            try { cGlobal.gDataBaseConnection.ExecuteNonQuery("DELETE FROM inventory where charID ='" + charID + "';"); }
-            catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
-            #endregion
+//            //try { src = GetDataTable("SELECT * FROM characters where charID = '" + charID + "'");  }
+//            //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
 
-            #region write inv
-            if (player.Inv.InventoryDBData != null)
-            {
-                string t = "";
-                foreach (var u in player.Inv.InventoryDBData)
-                {
-                    t += string.Format("('{0}','{1}','0','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}'),",
-                         u.Key, charID, u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]);
-                }
-                t = t.Substring(0, t.Length - 1);
-                t += ";";
-                cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("INSERT INTO inventory (invIdx,charID,storID,itemID,dmg,qty,pos,socketID,bombID,sewID,forge) VALUES {0}", t));
+//            if (src.Rows.Count > 0)
+//            {
+//                rows = new DataRow[src.Rows.Count];
+//                src.Rows.CopyTo(rows, 0);
+//                t.CharID = uint.Parse(rows[0]["charID"].ToString());
+//                t.Head = byte.Parse(rows[0]["head"].ToString());
+//                t.Body = (BodyStyle)uint.Parse(rows[0]["body"].ToString());
+//                t.CharName = rows[0]["name"].ToString();
+//                t.NickName = rows[0]["nickname"].ToString();
+//                t.LoginMap = ushort.Parse(rows[0]["location_map"].ToString());
+//                t.CurX = ushort.Parse(rows[0]["location_x"].ToString());
+//                t.CurY = ushort.Parse(rows[0]["location_y"].ToString());
+//                t.HairColor = ushort.Parse(rows[0]["haircolor"].ToString());
+//                t.SkinColor = ushort.Parse(rows[0]["skincolor"].ToString());
+//                t.ClothingColor = ushort.Parse(rows[0]["clothingcolor"].ToString());
+//                t.EyeColor = ushort.Parse(rows[0]["eyecolor"].ToString());
+//                t.SetGold(int.Parse(rows[0]["gold"].ToString()));
+//                t.Element = (Affinity)byte.Parse(rows[0]["element"].ToString());
+//                t.Job = (RebornJob)byte.Parse(rows[0]["job"].ToString());
+//            }
+//            else
+//            {
+//                DebugSystem.Write(new ExceptionData( ExceptionSeverity.Warning,"Character not found for " + charID));
+//                return false;
+//            }
+//            //load stat data
+//            src = GetDataTable("SELECT * FROM stats where charID = '" + charID + "'");
 
-            }
-            #endregion
+//            if (src.Rows.Count > 0)
+//            {
+//                rows = new DataRow[src.Rows.Count];
+//                src.Rows.CopyTo(rows, 0);
+//                List<long[]> tmp2 = new List<long[]>();
+//                foreach (var row in rows)
+//                {
+//                    switch (long.Parse(row["statID"].ToString()))
+//                    {
+//                        case 25: t.CurHP = int.Parse(row["statVal"].ToString()); break;
+//                        case 26: t.CurSP = ushort.Parse(row["statVal"].ToString()); break;
+//                        case 38: t.SkillPoints = ushort.Parse(row["statVal"].ToString()); break;
+//                        case 36: t.TotalExp = long.Parse(row["statVal"].ToString()); break;
+//                        case 28: t.Str = ushort.Parse(row["statVal"].ToString()); break;
+//                        case 29: t.Con = ushort.Parse(row["statVal"].ToString()); break;
+//                        case 30: t.Agi = ushort.Parse(row["statVal"].ToString()); break;
+//                        case 27: t.Int = ushort.Parse(row["statVal"].ToString()); break;
+//                        case 33: t.Wis = ushort.Parse(row["statVal"].ToString()); break;
+//                    }
+//                }
+//            }
 
-            #region write eqs
+//            //load equips
+//            src = GetDataTable("SELECT * FROM inventory where charID = '" + charID + "' AND storID =1");
 
-            if (player.EqData != null)
-            {
-                string t = "";
-                foreach (var u in player.EqData)
-                {
-                    t += string.Format("('{0}','{1}','1','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}'),",
-                            u.Key, charID, u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]);
-                }
-                t = t.Substring(0, t.Length - 1);
-                t += ";";
-                cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("INSERT INTO inventory (invIdx,charID,storID,itemID,dmg,qty,pos,socketID,bombID,sewID,forge) VALUES {0}", t));
-            }
+//            if (src.Rows.Count > 0)
+//            {
+//                rows = new DataRow[src.Rows.Count];
+//                src.Rows.CopyTo(rows, 0);
+//                ushort id;
 
-            if (Cache.ContainsKey((int)charID) && !player.BlockSave)
-                Cache[(int)charID] = player;
-            #endregion
+//                for (int i = 0; i < rows.Length; i++)
+//                {
+//                    id = ushort.Parse(rows[i]["itemID"].ToString());
+//                    if (id != 0)
+//                    {
+//                        //t[byte.Parse(rows[i]["pos"].ToString())].CopyFrom(cGlobal.gItemManager.GetItem(id));
+//                        t[byte.Parse(rows[i]["pos"].ToString())].Ammt = 1;
+//                        t[byte.Parse(rows[i]["pos"].ToString())].Damage = byte.Parse(rows[i]["dmg"].ToString());
+//                        //                    tmp4.Add((byte)i, new string[]{id.ToString(), rows[i]["socketID"].ToString(), rows[i]["bombID"].ToString(),rows[i]["sewID"].ToString(), 
+//                        //rows[i]["dmg"].ToString(),rows[i]["forge"].ToString(), });
+//                    }
+//                }
+//            }
+//            return false;
+//        }
 
-            return true;
-        }
-        public bool WritePlayer(uint charID, Player player)
-        {
-            bool rem = false;
-            if (charID == 0 || player.BlockSave) return rem;
+//        public bool WriteNewPlayer(uint charID, Player player)
+//        {
+//            if (charID == 0) return false;
 
-            if (Cache.ContainsKey((int)charID))
-                Cache[(int)charID] = player;
+//            DataTable src = null;
+//            DataRow[] rows = new DataRow[0];
+
+//            #region write character Data
+
+//            Character c = (Character)player;
+//            Dictionary<string, string> insert = new Dictionary<string, string>();
+//            //insert.Add("charID", player.ID.ToString());
+//            //insert.Add("head", c.Head.ToString());
+//            //insert.Add("body", ((byte)c.Body).ToString());
+//            //insert.Add("name", c.m_name);
+//            //insert.Add("name_clean", c.m_name.ToLower());
+//            //insert.Add("nickname", c.Nickname);
+//            //insert.Add("location_map", c.LoginMap.ToString());
+//            //insert.Add("location_x", c.X.ToString());
+//            //insert.Add("location_y", c.Y.ToString());
+//            //insert.Add("haircolor", c.HairColor.ToString());
+//            //insert.Add("skincolor", c.SkinColor.ToString());
+//            //insert.Add("clothingcolor", c.ClothingColor.ToString());
+//            //insert.Add("eyecolor", c.EyeColor.ToString());
+//            //insert.Add("gold", c.Gold.ToString());
+//            //insert.Add("element", ((byte)c.Element).ToString());
+//            //insert.Add("rebirth", BitConverter.GetBytes(c.Reborn)[0].ToString());
+//            //insert.Add("job", ((byte)c.Job).ToString());//fix
+//            //insert.Add("online", BitConverter.GetBytes(false)[0].ToString());
+
+//            //try { cGlobal.gDataBaseConnection.Insert(TableName, insert); }
+//            //catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
+
+//            #endregion
+
+//            #region Write Extr Data
+
+//            //try { src = cGlobal.gDataBaseConnection.GetDataTable(string.Format("SELECT * FROM {0} where {1}", "charactersExtData", "charID = '" + charID + "'")); }
+//            //catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
+
+//            //Dictionary<string, string> cols = new Dictionary<string, string>();
+//            //cols.Add("charID", charID.ToString());
+//            //cols.Add("Settings", player.Settings.Get_SysytemFlag());
+//            //cols.Add("Friends", player.GetFriends_Flag);
+//            //cols.Add("Guild", "0");
+//            //cols.Add("Mail", player.GetMailboxFlags());
+
+//            if (src.Rows.Count == 0)
+//            {
+//                //try { cGlobal.gDataBaseConnection.Insert("charactersExtData", cols); }
+//                //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+//            }
+//            else
+//            {
+//                //try { cGlobal.gDataBaseConnection.Update("charactersExtData", cols, "charID = '" + charID + "';"); }
+//                //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+//            }
+//            #endregion
+
+//            #region write stats
+
+//            //foreach (var u in player.Stat_toSave)
+//            //{
+//            //    try { src = cGlobal.gDataBaseConnection.GetDataTable(string.Format("SELECT * FROM {0} where {1}", "stats", "charID = '" + charID + "' AND statID = '" + u[0] + "'")); }
+//            //    catch (MySqlException ex) { DebugSystem.Write(ex); }
+
+//            //    cols = new Dictionary<string, string>();
+//            //    cols.Add("statIdx", "0");
+//            //    cols.Add("charID", charID.ToString());
+//            //    cols.Add("statID", u[0].ToString());
+//            //    cols.Add("statVal", u[1].ToString());
+//            //    cols.Add("potential", player.Potential.ToString());
+
+
+
+//            //    if (src.Rows.Count == 0)
+//            //    {
+//            //        try
+//            //        {
+//            //            cGlobal.gDataBaseConnection.Insert("stats", cols);
+//            //        }
+//            //        catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+//            //    }
+//            //    else
+//            //    {
+//            //        try { cGlobal.gDataBaseConnection.Update("stats", cols, "charID = '" + charID + "'AND statID = '" + u[0] + "';"); }
+//            //        catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+//            //    }
+//            //}
+//            #endregion
+
+//            #region predelete inv
+//            //try { cGlobal.gDataBaseConnection.ExecuteNonQuery("DELETE FROM inventory where charID ='" + charID + "';"); }
+//            //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+//            #endregion
+
+//            #region write inv
+//            //if (player.Inv.InventoryDBData != null)
+//            //{
+//            //    string t = "";
+//            //    foreach (var u in player.Inv.InventoryDBData)
+//            //    {
+//            //        t += string.Format("('{0}','{1}','0','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}'),",
+//            //             u.Key, charID, u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]);
+//            //    }
+//            //    t = t.Substring(0, t.Length - 1);
+//            //    t += ";";
+//            //    ExecuteNonQuery(string.Format("INSERT INTO inventory (invIdx,charID,storID,itemID,dmg,qty,pos,socketID,bombID,sewID,forge) VALUES {0}", t));
+
+//            //}
+//            #endregion
+
+//            //#region write eqs
+
+//            //if (player.EqData != null)
+//            //{
+//            //    string t = "";
+//            //    foreach (var u in player.EqData)
+//            //    {
+//            //        t += string.Format("('{0}','{1}','1','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}'),",
+//            //                u.Key, charID, u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]);
+//            //    }
+//            //    t = t.Substring(0, t.Length - 1);
+//            //    t += ";";
+//            //    cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("INSERT INTO inventory (invIdx,charID,storID,itemID,dmg,qty,pos,socketID,bombID,sewID,forge) VALUES {0}", t));
+//            //}
+
+//            //if (Cache.ContainsKey((int)charID) && !player.BlockSave)
+//            //    Cache[(int)charID] = player;
+//            //#endregion
+
+//            return true;
+//        }
+//        public bool WritePlayer(uint charID, Player player)
+//        {
+//            bool rem = false;
+//            //if (charID == 0 || player.BlockSave) return rem;
+
+//            if (Cache.ContainsKey((int)charID))
+//                Cache[(int)charID] = player;
             
-            DataTable src = null;
+//            DataTable src = null;
             
-            #region write character Data
-            Character c = player;
-            Dictionary<string, string> insert = new Dictionary<string, string>();
-            insert.Add("head", c.Head.ToString());
-            insert.Add("body", ((byte)c.Body).ToString());
-            insert.Add("nickname", c.Nickname);
-            insert.Add("location_map",(c.CurrentMap.TypeofMap == MapType.Regular) ? c.CurrentMap.MapID.ToString() : player.PrevMap.DstMap.ToString());
-            insert.Add("location_x", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.X.ToString() : player.PrevMap.DstX_Axis.ToString());
-            insert.Add("location_y", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.Y.ToString() : player.PrevMap.DstY_Axis.ToString());
-            insert.Add("haircolor", c.HairColor.ToString());
-            insert.Add("skincolor", c.SkinColor.ToString());
-            insert.Add("clothingcolor", c.ClothingColor.ToString());
-            insert.Add("eyecolor", c.EyeColor.ToString());
-            insert.Add("gold", c.Gold.ToString());
-            insert.Add("element", ((byte)c.Element).ToString());
-            insert.Add("rebirth", BitConverter.GetBytes(c.Reborn)[0].ToString());
-            insert.Add("job", ((byte)c.Job).ToString());//fix
-            insert.Add("online", BitConverter.GetBytes(false)[0].ToString());
+//            #region write character Data
+//            //Character c = player;
+//            //Dictionary<string, string> insert = new Dictionary<string, string>();
+//            //insert.Add("head", c.Head.ToString());
+//            //insert.Add("body", ((byte)c.Body).ToString());
+//            //insert.Add("nickname", c.Nickname);
+//            //insert.Add("location_map",(c.CurrentMap.TypeofMap == MapType.Regular) ? c.CurrentMap.MapID.ToString() : player.PrevMap.DstMap.ToString());
+//            //insert.Add("location_x", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.X.ToString() : player.PrevMap.DstX_Axis.ToString());
+//            //insert.Add("location_y", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.Y.ToString() : player.PrevMap.DstY_Axis.ToString());
+//            //insert.Add("haircolor", c.HairColor.ToString());
+//            //insert.Add("skincolor", c.SkinColor.ToString());
+//            //insert.Add("clothingcolor", c.ClothingColor.ToString());
+//            //insert.Add("eyecolor", c.EyeColor.ToString());
+//            //insert.Add("gold", c.Gold.ToString());
+//            //insert.Add("element", ((byte)c.Element).ToString());
+//            //insert.Add("rebirth", BitConverter.GetBytes(c.Reborn)[0].ToString());
+//            //insert.Add("job", ((byte)c.Job).ToString());//fix
+//            //insert.Add("online", BitConverter.GetBytes(false)[0].ToString());
 
-            cGlobal.gDataBaseConnection.Update(TableName,insert,"charID = '" + charID + "'");
+//            //Update(TableName,insert,"charID = '" + charID + "'");
 
-            #endregion
+//            #endregion
 
-            #region write stats
+//            #region write stats
 
-            foreach (var u in player.Stat_toSave)
-            {
-                src = cGlobal.gDataBaseConnection.GetDataTable(string.Format("SELECT * FROM {0} where {1}", "stats", "charID = '" + charID + "' AND statID = '" + u[0] + "'"));
+//            //foreach (var u in player.Stat_toSave)
+//            //{
+//            //    src = cGlobal.gDataBaseConnection.GetDataTable(string.Format("SELECT * FROM {0} where {1}", "stats", "charID = '" + charID + "' AND statID = '" + u[0] + "'"));
 
-                if (src.Rows.Count == 0)
-                {
-                    cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("INSERT INTO stats {0}", string.Format("(statIdx,charID,statID,statVal,potential) VALUES('0','{0}','{1}','{2}','{3}');", charID, u[0], u[1], player.Potential)));
-                }
-                else
-                {
-                   cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE stats SET {0} where charID = '" + charID + "' AND statID = '"+u[0]+"'", string.Format(" statID = '{0}',statVal ='{1}',potential ='{2}'", u[0], u[1], player.Potential)));
-                }
-            }
-            #endregion
+//            //    if (src.Rows.Count == 0)
+//            //    {
+//            //        cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("INSERT INTO stats {0}", string.Format("(statIdx,charID,statID,statVal,potential) VALUES('0','{0}','{1}','{2}','{3}');", charID, u[0], u[1], player.Potential)));
+//            //    }
+//            //    else
+//            //    {
+//            //       cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE stats SET {0} where charID = '" + charID + "' AND statID = '"+u[0]+"'", string.Format(" statID = '{0}',statVal ='{1}',potential ='{2}'", u[0], u[1], player.Potential)));
+//            //    }
+//            //}
+//            #endregion
 
-            #region write inv
+//            #region write inv
 
-            string str = "";
-            if (player.Inv.InventoryDBData != null)
-                foreach (var u in player.Inv.InventoryDBData)
-                {
-                   cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE inventory SET {0} where {1};", string.Format("itemID = '{0}', dmg = '{1}', qty = '{2}', pos = '{3}', socketID = '{4}', bombID = '{5}', sewID = '{6}', forge = '{7}'",
-                         u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]), "charID ='" + charID + "' AND storID ='0' AND invIdx = '" + u.Key + "'"));
-                }
-            #endregion
+//            string str = "";
+//            //if (player.Inv.InventoryDBData != null)
+//            //    foreach (var u in player.Inv.InventoryDBData)
+//            //    {
+//            //       cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE inventory SET {0} where {1};", string.Format("itemID = '{0}', dmg = '{1}', qty = '{2}', pos = '{3}', socketID = '{4}', bombID = '{5}', sewID = '{6}', forge = '{7}'",
+//            //             u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]), "charID ='" + charID + "' AND storID ='0' AND invIdx = '" + u.Key + "'"));
+//            //    }
+//            #endregion
 
-            #region write eqs
+//            #region write eqs
 
-            str = "";
-            if (player.EqData != null)
-                foreach (var u in player.EqData)
-                {
-                   cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE inventory SET {0} where {1};", string.Format("itemID = '{0}', dmg = '{1}', qty = '{2}', pos = '{3}', socketID = '{4}', bombID = '{5}', sewID = '{6}', forge = '{7}'",
-                         u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]), "charID ='" + charID + "' AND storID ='1' AND invIdx = '" + u.Key + "'"));
-                }
-            if (Cache.ContainsKey((int)charID) && !player.BlockSave)
-                Cache[(int)charID] = player;
+//            str = "";
+//            //if (player.EqData != null)
+//            //    foreach (var u in player.EqData)
+//            //    {
+//            //       cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE inventory SET {0} where {1};", string.Format("itemID = '{0}', dmg = '{1}', qty = '{2}', pos = '{3}', socketID = '{4}', bombID = '{5}', sewID = '{6}', forge = '{7}'",
+//            //             u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]), "charID ='" + charID + "' AND storID ='1' AND invIdx = '" + u.Key + "'"));
+//            //    }
+//            //if (Cache.ContainsKey((int)charID) && !player.BlockSave)
+//            //    Cache[(int)charID] = player;
 
-            #endregion
+//            #endregion
 
-            #region write ext data
-            cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE charactersExtData SET {0} where charID = '" + charID + "';", string.Format(" Settings = '{0}', Friends = '{1}', Guild = '{2}', Mail = '{3}'", player.Settings.Get_SysytemFlag(), player.GetFriends_Flag, "0", player.GetMailboxFlags())));
-            #endregion
+//            #region write ext data
+//            //ExecuteNonQuery(string.Format("UPDATE charactersExtData SET {0} where charID = '" + charID + "';", string.Format(" Settings = '{0}', Friends = '{1}', Guild = '{2}', Mail = '{3}'", player.Settings.Get_SysytemFlag(), player.GetFriends_Flag, "0", player.GetMailboxFlags())));
+//            #endregion
 
-            return true;
-        }
+//            return true;
+//        }
     }
 }

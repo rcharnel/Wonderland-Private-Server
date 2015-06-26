@@ -8,13 +8,12 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Server.Events;
-using Game.Maps;
-using Wlo.Core;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using RCLibrary.Core.Networking;
+using Network;
 using Game.Code;
-using Game.Code.PlayerRelated;
-using Game.Code.PetRelated;
+
 
 
 
@@ -61,11 +60,11 @@ using Game.Code.PetRelated;
         }
 
 
-        public class Player : Game.Code.PlayerRelated.Character, IDisposable, INotifyPropertyChanged, IEventRequester
+        public class Player : Game.Character, IDisposable, INotifyPropertyChanged, IEventRequester
         {
             readonly object mlock = new object();
 
-            WloClient m_socket;
+            Client3 m_socket;
             Thread net;
 
             PlayerFlagManager m_Flags;
@@ -73,41 +72,41 @@ using Game.Code.PetRelated;
             public Queue<SendPacket> QueueData;
             SendMode m_sendMode;
 
-            WarpData prevMap;
-            WarpData returnSpawnMap;
-            WarpData recordMap;
-            WarpData gpsMap;
+            //WarpData prevMap;
+            //WarpData returnSpawnMap;
+            //WarpData recordMap;
+            //WarpData gpsMap;
 
             byte emote;
 
             User m_useracc;
-            Game.Code.Inventory m_inv;
-            clientSettings m_setting;
-            MailManager m_Mail;
-            Friendlist m_friendlist;
-            RiceBall m_riceball;
-            PetList m_petlist;
-            Tent m_tent;
+            //Game.Code.Inventory m_inv;
+            //clientSettings m_setting;
+            //MailManager m_Mail;
+            //Friendlist m_friendlist;
+            //RiceBall m_riceball;
+            //PetList m_petlist;
+            //Tent m_tent;
 
-            public Player(WloClient src)
+            public Player(Client3 src)
                 : base(src.SendPacket)
             {
                 m_socket = src;
-                m_socket.onConnectionLost = m_socket_onConnectionLost;
+                m_socket.onConnectionLost += m_socket_onConnectionLost;
                 QueueData = new Queue<SendPacket>(25);
 
 
-                m_inv = new Inventory(this);
-                onWearEquip = m_inv.onWearEquip;
-                onEquip_Remove = m_inv.onUnEquip;
+                //m_inv = new Inventory(this);
+                //onWearEquip = m_inv.onWearEquip;
+                //onEquip_Remove = m_inv.onUnEquip;
 
                 m_useracc = new User();
                 Flags = new PlayerFlagManager();
-                m_setting = new clientSettings();
-                m_friendlist = new Friendlist(new Action<SendPacket>(SendPacket));
-                m_Mail = new MailManager(this);
-                m_tent = new Tent(this);
-                m_petlist = new PetList(this);
+                //m_setting = new clientSettings();
+                //m_friendlist = new Friendlist(new Action<SendPacket>(SendPacket));
+                //m_Mail = new MailManager(this);
+                //m_tent = new Tent(this);
+                //m_petlist = new PetList(this);
 
             }
             ~Player()
@@ -141,47 +140,47 @@ using Game.Code.PetRelated;
                     lock (mlock) m_Flags = value;
                 }
             }
-            public Inventory Inv { get { return m_inv; } }
-            public override IMap CurMap
-            {
-                get
-                {
-                    return base.CurMap;
-                }
-                set
-                {
-                    if (base.CurMap != null)
-                    {
-                        if (base.CurMap is GameMap)
-                        {
-                            prevMap = new WarpData();
-                            prevMap.DstMap = (ushort)base.CurMap.MapID;
-                            prevMap.DstX_Axis = CurX;
-                            prevMap.DstY_Axis = CurY;
+            //public Inventory Inv { get { return m_inv; } }
+            //public override IMap CurMap
+            //{
+            //    get
+            //    {
+            //        return base.CurMap;
+            //    }
+            //    set
+            //    {
+            //        if (base.CurMap != null)
+            //        {
+            //            if (base.CurMap is GameMap)
+            //            {
+            //                prevMap = new WarpData();
+            //                prevMap.DstMap = (ushort)base.CurMap.MapID;
+            //                prevMap.DstX_Axis = CurX;
+            //                prevMap.DstY_Axis = CurY;
 
-                            (base.CurMap as GameMap).onItemDropped_fromMap = null;
-                            (base.CurMap as GameMap).onItemPickup_fromMap = null;
-                        }
-                    }
-                    base.CurMap = value;
-                    if (base.CurMap is GameMap)
-                    {
-                        (base.CurMap as GameMap).onItemDropped_fromMap = m_inv.onItemDropped_fromMap;
-                        (base.CurMap as GameMap).onItemPickup_fromMap = m_inv.onItemPickedUp_fromMap;
-                    }
-                }
-            }
-            public WarpData PrevMap
-            {
-                get { lock (mlock) return prevMap; }
-                set { lock (mlock)prevMap = value; }
-            }
+            //                (base.CurMap as GameMap).onItemDropped_fromMap = null;
+            //                (base.CurMap as GameMap).onItemPickup_fromMap = null;
+            //            }
+            //        }
+            //        base.CurMap = value;
+            //        if (base.CurMap is GameMap)
+            //        {
+            //            (base.CurMap as GameMap).onItemDropped_fromMap = m_inv.onItemDropped_fromMap;
+            //            (base.CurMap as GameMap).onItemPickup_fromMap = m_inv.onItemPickedUp_fromMap;
+            //        }
+            //    }
+            //}
+            //public WarpData PrevMap
+            //{
+            //    get { lock (mlock) return prevMap; }
+            //    set { lock (mlock)prevMap = value; }
+            //}
             public byte Emote { get { lock (mlock)return emote; } set { lock (mlock)emote = value; } }
-            public MailManager Mail { get { return m_Mail; } }
-            public Friendlist MyFriends { get { return m_friendlist; } }
-            public RiceBall Disguise { get { return m_riceball; } }
-            public PetList Pets { get { return m_petlist; } }
-            public Tent Tent { get { return m_tent; } }
+            //public MailManager Mail { get { return m_Mail; } }
+            //public Friendlist MyFriends { get { return m_friendlist; } }
+            //public RiceBall Disguise { get { return m_riceball; } }
+            //public PetList Pets { get { return m_petlist; } }
+            //public Tent Tent { get { return m_tent; } }
 
             #endregion
 
@@ -211,16 +210,16 @@ using Game.Code.PetRelated;
 
             public Action<Player> OnDisconnect;
 
-            public void SendPacket(SendPacket p)
+            public void Send(IPacket p)
             {
                 p.Encode();
                 m_socket.SendPacket(p);
             }
 
-            public void SendPacket(SendPacket p, RCLibrary.Core.Networking.PacketFlags pFlags)
+            public void Send(IPacket p, RCLibrary.Core.Networking.PacketFlags pFlags)
             {
                 p.Flags = pFlags;
-                SendPacket(p);
+                Send(p);
 
             }
 
@@ -255,8 +254,8 @@ using Game.Code.PetRelated;
 
 
                         base.ProcessSocket(this, p);
-                        m_inv.ProcessSocket(p);
-                        m_setting.ProcessSocket(p);
+                        //m_inv.ProcessSocket(p);
+                        //m_setting.ProcessSocket(p);
                     }
 
                 }
@@ -295,7 +294,7 @@ using Game.Code.PetRelated;
             #region User Methods/Properties
             public User UserAcc { get { return m_useracc; } }
             public int UserID { get { return (m_useracc == null) ? 0 : m_useracc.DataBaseID; } }
-            public clientSettings Settings { get { return m_setting; } }
+            //public clientSettings Settings { get { return m_setting; } }
             #endregion
 
             #region Game.Mail

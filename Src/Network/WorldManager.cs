@@ -7,12 +7,9 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Collections.Concurrent;
 using System.Reflection;
-using Wonderland_Private_Server.Maps;
-using Wonderland_Private_Server.Code.Enums;
-using Wonderland_Private_Server.Code.Objects;
-using Wlo.Core;
 
-namespace Wonderland_Private_Server.Network
+
+namespace Network
 {
     /// <summary>
     /// Handles the Recv and SendPacket Proccesing of all clients
@@ -56,17 +53,17 @@ namespace Wonderland_Private_Server.Network
 
 
 
-        public void QueueaLoginClient( Wlo.Core.WloClient client)
-        {
-            var p = new Player(ref client);
+        //public void QueueaLoginClient( Wlo.Core.WloClient client)
+        //{
+        //    var p = new Player(ref client);
 
-            if (Players.Contains(p))
-                p.Disconnect();
-            else
-                Players.Add(p);
+        //    if (Players.Contains(p))
+        //        p.Disconnect();
+        //    else
+        //        Players.Add(p);
 
-            mylock.Set();
-        }
+        //    mylock.Set();
+        //}
         public void QueueAssistToolClient(Socket client)
         {
             //var p = new AssistTool(ref client);

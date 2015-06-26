@@ -16,79 +16,7 @@ namespace DataBase
         None,
     }
 
-    public class User
-    {
-        readonly object mlock = new object();
-
-        DateTime imupdate; public DateTime last_imUpdate { get { lock (mlock)return imupdate; } set { lock (mlock)imupdate = value; } }
-        string username, cipher;
-        int databaseID;
-        int im;
-        int gmlvl; public int GMlvl { private get { return gmlvl; } set { lock (mlock)gmlvl = value; } }
-        public GMStatus GMRank
-        {
-            get
-            {
-                lock (mlock)
-                    return GMStatus.None;
-            }
-        }
-        int character1ID, character2ID;
-
-        public int Character1ID
-        {
-            get
-            {
-                lock (mlock) return character1ID;
-            }
-            set
-            {
-                lock (mlock) character1ID = value;
-            }
-
-        }
-        public int Character2ID
-        {
-            get
-            {
-                lock (mlock) return character2ID;
-            }
-            set
-            {
-                lock (mlock) character2ID = value;
-            }
-
-        }
-        public string Cipher
-        {
-            get { lock (mlock)return cipher; }
-            set { lock (mlock)cipher = value; }
-        }
-        public string UserName
-        {
-            get { lock (mlock)return username; }
-            set { lock (mlock)username = value; }
-        }
-        public int IM
-        {
-            get { lock (mlock)return im; }
-            set { lock (mlock)im = value; }
-        }
-        public int DataBaseID
-        {
-            get { lock (mlock)return databaseID; }
-            set { lock (mlock)databaseID = value; }
-        }
-
-        public void Clear()
-        {
-            imupdate = new DateTime();
-            username = "";
-            databaseID = im = GMlvl = character1ID = character2ID = 0;
-
-        }
-
-    }
+    
 
     public sealed class UserDataBase : RCLibrary.Core.DataBase
     {
@@ -109,8 +37,8 @@ namespace DataBase
         DateTime refresh;
 
         List<string> GOnlineUsers;
-        List<Player> OnlineUsers;
-        Queue<Player> DisconnectedPlayers = new Queue<Player>(50);
+        //List<Player> OnlineUsers;
+        //Queue<Player> DisconnectedPlayers = new Queue<Player>(50);
 
         readonly ManualResetEvent dbupdate = new ManualResetEvent(true);
 
@@ -122,7 +50,7 @@ namespace DataBase
             userTable = new DataSet("user");
             InitializeMysqlAdapter("select * from " + TableName);
 
-            OnlineUsers = new List<Player>();
+            //OnlineUsers = new List<Player>();
             GOnlineUsers = new List<string>();
             refresh = DateTime.Now.AddMinutes(10);
         }
@@ -218,7 +146,7 @@ namespace DataBase
             #endregion
         }
 
-        public int Count() { return GOnlineUsers.Count + OnlineUsers.Count; }
+        //public int Count() { return GOnlineUsers.Count + OnlineUsers.Count; }
 
         public bool isLoggedin(string user)
         {
@@ -278,17 +206,14 @@ namespace DataBase
         public string[] GetUserData(uint user, string pass)
         {
             DataRow[] rows = new DataRow[0];
-
-            List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
-            parameters.Add(new KeyValuePair<string, string>("@id", user.ToString()));
-
-            var src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + TableName + " WHERE " + UserID_Ref + " = @id", parameters.ToArray());
+            
+            var src = GetDataTable("SELECT * FROM @table WHERE @userRef= @id",new DbParam("@table",TableName),new DbParam("@userRef",Username_Ref),new DbParam("@id",user));
 
             if (src.Rows.Count > 0)
             {
                 rows = new DataRow[src.Rows.Count];
                 src.Rows.CopyTo(rows, 0);
-                if (cGlobal.gDataBaseConnection.VerifyPassword(pass, rows[0][Password_Ref].ToString()))
+                if (VerifyPassword(pass, rows[0][Password_Ref].ToString()))
                 {
                     string ch = ""; string ch2 = "0";
                     if (rows[0][Char_Delete_Code_Ref] != DBNull.Value)
@@ -308,10 +233,10 @@ namespace DataBase
 
             try
             {
-                src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM " + TableName + " where " + UserID_Ref + " = '" + user + "'"
+                src = GetDataTable("SELECT * FROM " + TableName + " where " + UserID_Ref + " = '" + user + "'"
                     );
             }
-            catch (MySqlException ex) { DebugSystem.Write(ex); return 0; }
+            catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); return 0; }
 
             if (src.Rows.Count > 0)
             {
@@ -331,8 +256,8 @@ namespace DataBase
             if (char1 != null) str.Add(CharacterID1_Ref, char1.ToString());
             if (char2 != null) str.Add(CharacterID2_Ref, char2.ToString());
 
-            try { cGlobal.gDataBaseConnection.Update(TableName, str, UserID_Ref + " = '" + user + "'"); }
-            catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
+            //try { Update(TableName, str, UserID_Ref + " = '" + user + "'"); }
+            //catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); return false; }
 
             return true;
         }

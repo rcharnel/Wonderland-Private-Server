@@ -42,11 +42,11 @@ namespace Wonderland_Private_Server.UI
                 cGlobal.SrvSettings.SaveSettings(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo");
 
                 dispMsg = "Stopping Tcp Listener";
-                cGlobal.TcpListener.Kill();
+                //cGlobal.TcpListener.Kill();
                 dispMsg = "Disconnecting and saving Player info Remaining..";
 
                 dispMsg = "Shutting Down Server";
-                cGlobal.WLO_World.Kill();
+                //cGlobal.WLO_World.Kill();
                 perct += 10;
                 //foreach (var t in cGlobal.ThreadManager.Values.ToList())
                 //{

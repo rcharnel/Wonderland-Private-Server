@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wlo.Core;
+using RCLibrary.Core.Networking;
+using Network;
 using Game;
 
 namespace Server.Network.WAC
@@ -18,11 +19,11 @@ namespace Server.Network.WAC
             }
         }
 
-        public override void Process(Player client, SendPacket r)
+        public override void Process(Player client, RecievePacket r)
         {
             switch (r.Unpack8())
             {
-                case 0: { cGlobal.gUserDataBase.unRegisterUser(client); client.Clear(); } break;
+                //case 0: { cGlobal.gUserDataBase.unRegisterUser(client); client.Clear(); } break;
                 case 3:client.CharName = ""; break;
                 case 2: Recv2(client, r); break;
                 case 4: Recv4(client, r); break;
@@ -30,28 +31,28 @@ namespace Server.Network.WAC
             }
         }
 
-        async void Recv2(Player p, SendPacket e)
+        async void Recv2(Player p, RecievePacket e)
         {
             p.Slot = e.Unpack8();
 
-            if ((p.Slot < 1) || (p.Slot > 2))//by userid
-            {
-                p.Clear();
-                return;
-            }
-            if (p.Load_CharacterInfo(await cGlobal.gGameDataBase.RequestCharacterInfo((p.Slot == 1) ? p.UserAcc.Character1ID : p.UserAcc.Character2ID)))
-            {
-                //p.SendPacket(SendPacket.FromFormat<OutgoingPacket>("bbd", 63, 2, p.UserID));
-                cGlobal.GameServer.CommenceLogin(p);
-            }
-            else
-            {
-                p.Flags.Add(PlayerFlag.Creating_Character);
-                p.SendPacket(SendPacket.FromFormat("bbb", 1, 3, (!string.IsNullOrEmpty(p.UserAcc.Cipher))));
-            }
+            //if ((p.Slot < 1) || (p.Slot > 2))//by userid
+            //{
+            //    p.Clear();
+            //    return;
+            //}
+            //if (p.Load_CharacterInfo(await cGlobal.gGameDataBase.RequestCharacterInfo((p.Slot == 1) ? p.UserAcc.Character1ID : p.UserAcc.Character2ID)))
+            //{
+            //    //p.SendPacket(SendPacket.FromFormat<OutgoingPacket>("bbd", 63, 2, p.UserID));
+            //    cGlobal.GameServer.CommenceLogin(p);
+            //}
+            //else
+            //{
+            //    p.Flags.Add(PlayerFlag.Creating_Character);
+            //    p.SendPacket(SendPacket.FromFormat("bbb", 1, 3, (!string.IsNullOrEmpty(p.UserAcc.Cipher))));
+            //}
         }
 
-        async void Recv4(Player client, SendPacket r)
+        async void Recv4(Player client, RecievePacket r)
         {
             //try
             //{
@@ -91,16 +92,16 @@ namespace Server.Network.WAC
 
             //Validate Account
             if ((loginState = (cGlobal.gUserDataBase.isLoggedin(name)) ? 1 : 0) != 0) goto checkResult;
-            if ((loginState = cGlobal.gUserDataBase.LoadUserData(name, password, client))!= 0) goto checkResult;
+            //if ((loginState = cGlobal.gUserDataBase.LoadUserData(name, password, client))!= 0) goto checkResult;
 
-            loginState = (cGlobal.gGameDataBase.isOnline(client.UserAcc.Character1ID) || cGlobal.gGameDataBase.isOnline(client.UserAcc.Character2ID)) ? 1 : 0;
+            //loginState = (cGlobal.gGameDataBase.isOnline(client.UserAcc.Character1ID) || cGlobal.gGameDataBase.isOnline(client.UserAcc.Character2ID)) ? 1 : 0;
 
 
         checkResult:
 
             PacketBuilder t = new PacketBuilder();
 
-            t.Begin(false);          
+            t.Begin(null);          
 
             #region Result of Login State
             // here we do the results of loginstate
@@ -131,7 +132,7 @@ namespace Server.Network.WAC
                     } break;
             }
             #endregion
-            client.SendPacket(t.End());
+            client.Send(new SendPacket(t.End(),t.End().Count()));
         }
 
         //#region wlo methods

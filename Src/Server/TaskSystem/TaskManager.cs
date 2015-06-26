@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.ComponentModel;
+using Server.Task;
 
-namespace Wonderland_Private_Server.Utilities.Task
+namespace Server
 {
     public class TaskManager
     {
@@ -19,13 +20,13 @@ namespace Wonderland_Private_Server.Utilities.Task
 
         public void CreateTask(string name,TimeSpan interval)
         {
-            DebugSystem.Write("Creating new Task - " + name + " with interval -" + interval, LogType.TASK);
+            DebugSystem.Write(DebugItemType.Info_Heavy, "Creating new Task - " + name + " with interval -" + interval);
             switch (name)
             {
                 case "Application Update": if (TaskItems.Count(c => c.TaskName == name) == 0) TaskItems.Add(new ApplicationCheckUpdate_Task(interval)); break;
                 case "Updating Application":
                     {
-                        if (cGlobal.WLO_World != null && TaskItems.Count(c => c.TaskName == "Application Update Notification") == 0)
+                        if (TaskItems.Count(c => c.TaskName == "Application Update Notification") == 0)
                         {
                             var time = DateTime.Now.Add(cGlobal.SrvSettings.Update.AutoUpdt_Schedule).Subtract(new TimeSpan(0, 5, 0));
 
@@ -34,27 +35,28 @@ namespace Wonderland_Private_Server.Utilities.Task
                             TaskItems.Add(tmp);
                         }
 
-                        if (TaskItems.Count(c => c.TaskName == name) == 0) TaskItems.Add(new ApplicationCheckUpdate_Task(interval)); 
+                        if (TaskItems.Count(c => c.TaskName == name) == 0) TaskItems.Add(new ApplicationCheckUpdate_Task(interval));
                     } break;
             }
         }
         public void ChangeInterval(string name, TimeSpan src)
         {
-            DebugSystem.Write("Changing interval on Task - " + name + " with new interval -" + src, LogType.TASK);
-            for (int a = 0; a < TaskItems.Count; a++)
-                if (TaskItems[a].TaskName == name)
-                    TaskItems[a].interval = src;
+            //DebugSystem.Write("Changing interval on Task - " + name + " with new interval -" + src, LogType.TASK);
+            //for (int a = 0; a < TaskItems.Count; a++)
+            //    if (TaskItems[a].TaskName == name)
+            //        TaskItems[a].interval = src;
         }
         public void EndTask(string name)
         {
-            DebugSystem.Write("Ending Task - " + name, LogType.TASK);
+            DebugSystem.Write(DebugItemType.Info_Heavy, "Ending Task - " + name);
             if (TaskItems.Count(c => c.TaskName == name) > 0)
                 TaskItems.Remove(TaskItems.Single(c => c.TaskName == name));
         }
         public void onUpdateTick()
         {
             for (int a = 0; a < TaskItems.Count; a++)
-                if (TaskItems[a].EndofLife <= DateTime.Now)
+
+                if (!TaskItems[a].SystemTask && TaskItems[a].EndofLife <= DateTime.Now)
                     EndTask(TaskItems[a].TaskName);
 
             foreach (var t in TaskItems)

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Threading;
 
-namespace Wonderland_Private_Server.Utilities.Task
+namespace Server
 {
     public class taskItem : INotifyPropertyChanged
     {
@@ -20,6 +20,7 @@ namespace Wonderland_Private_Server.Utilities.Task
         public DateTime Createdat,EndofLife;
         protected DateTime RanAt, nextExec,guidelay;
         protected string status;
+        protected bool systemTask;
         Thread tskwrk;
         public taskItem(string name,TimeSpan time = new TimeSpan())
         {
@@ -34,6 +35,11 @@ namespace Wonderland_Private_Server.Utilities.Task
         }
 
         #region Properties
+        [Browsable(false)]
+        public bool SystemTask
+        {
+            get { return systemTask; }
+        }
         public string TaskName
         {
             get { return taskname; }
@@ -49,12 +55,12 @@ namespace Wonderland_Private_Server.Utilities.Task
                 if (RanAt == new DateTime())
                     return "Did not Run";
                 else
-                    return string.Format("Ran {0} ago",TimeStringFormat(TimeDifference(RanAt, DateTime.Now)));
+                    return RanAt.ToShortTimeString();
             }
         }
         public string NextExecution
         {
-            get { return string.Format("Run in {0}",TimeStringFormat(TimeDifference(DateTime.Now,nextExec))); }
+            get { return string.Format("{0}",TimeStringFormat(TimeDifference(DateTime.Now,nextExec))); }
         }
         public string Status
         {
@@ -77,6 +83,7 @@ namespace Wonderland_Private_Server.Utilities.Task
                 }
             }
         }
+
         public virtual void onRetry()
         {
             if (tskwrk != null) { MessageBox.Show("Task already Running"); return; }

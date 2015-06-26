@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Wonderland_Private_Server.UI
+namespace Gui
 {
     public partial class TaskItem : UserControl
     {

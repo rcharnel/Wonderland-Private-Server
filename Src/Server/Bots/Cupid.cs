@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Server.Bots
 {
-    public class Cupid : GmBot
-    {
-        public Cupid()
-        {
-            CharName = "Cupid100";
-        }
+    //public class Cupid : GmBot
+    //{
+    //    public Cupid()
+    //    {
+    //        CharName = "Cupid100";
+    //    }
         
-    }
+    //}
 }

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Collections.Concurrent;
 using DataFiles;
-using Wlo.Core;
+using RCLibrary.Core.Networking;
+using Network;
 using Game;
 using Game.Code;
-using Game.Code.PlayerRelated;
 
 
 namespace Game.Maps
@@ -25,14 +25,14 @@ namespace Game.Maps
 
     public class GameMap : IDisposable, IMap
     {
+        readonly object mlock = new object();
+
         Queue<Task> QueuedTasks = new Queue<Task>(252);
-        protected readonly AsyncLock mlock = new AsyncLock();
-        protected readonly AsyncLock listlock = new AsyncLock();
 
         protected List<Player> m_playerlist;
         protected List<Item> ItemsDropped;
-        protected ConcurrentDictionary<int, Battle> Battles;
-        protected ConcurrentDictionary<uint, Tent> Tents;
+        //protected ConcurrentDictionary<int, Battle> Battles;
+        //protected ConcurrentDictionary<uint, Tent> Tents;
 
         protected Queue<Player> DisconnectedQueue;
         protected Queue<KeyValuePair<DateTime, Action>> WaitingtoLogin;
@@ -49,8 +49,8 @@ namespace Game.Maps
             ItemsDropped = new List<Item>(255);
             DisconnectedQueue = new Queue<Player>(50);
             WaitingtoLogin = new Queue<KeyValuePair<DateTime, Action>>(105);
-            Tents = new ConcurrentDictionary<uint, Tent>();
-            Battles = new ConcurrentDictionary<int, Battle>();
+            //Tents = new ConcurrentDictionary<uint, Tent>();
+            //Battles = new ConcurrentDictionary<int, Battle>();
         }
 
         public void Dispose()
@@ -98,10 +98,7 @@ namespace Game.Maps
             while (DisconnectedQueue.Count > 0)
             {
                 var p = DisconnectedQueue.Dequeue();
-                using (var releaser = await listlock.LockAsync())
-                {
-                    m_playerlist.Remove(p);
-                }
+                m_playerlist.Remove(p);
             }
         }
 
@@ -173,7 +170,7 @@ namespace Game.Maps
                         //        o.dropin = DateTime.Now.AddMinutes(2);
                         //    }
                         //}
-                        src.SendPacket(SendPacket.FromFormat("bbwb", 23, 2, res.ItemID, 1));
+                        src.Send(SendPacket.FromFormat("bbwb", 23, 2, res.ItemID, 1));
                         Broadcast(SendPacket.FromFormat("bbwb", 23, 2, res.ItemID, 0), "Ex", src.CharID);
                     }
                 }
@@ -187,62 +184,60 @@ namespace Game.Maps
         async void onLogin(Player player)
         {
             DebugSystem.Write(DebugItemType.Info_Heavy, "onLogin Task started at {0} for {1}", DateTime.Now.ToShortTimeString(), player.CharName);
-            cGlobal.gGameDataBase.onPlayerLogin(player);
+            //cGlobal.gGameDataBase.onPlayerLogin(player);
 
             player.CurMap = this;
             player.Flags.Remove(PlayerFlag.Logging_into_Map);
 
-            using (var releaser = await listlock.LockAsync())
+            if (!m_playerlist.Contains(player))
+                m_playerlist.Add(player);
+
+            foreach (var r in m_playerlist)
             {
-                if (!m_playerlist.Contains(player))
-                    m_playerlist.Add(player);
-
-                foreach (var r in m_playerlist)
+                if (r != player)
                 {
-                    if (r != player)
-                    {
-                        //send to them
-                        Broadcast(player.ToAC3Packet(), "Ex", player.CharID);
-                        SendPacket p = new SendPacket();
-                        p.Pack((byte)5);
-                        p.Pack((byte)0);
-                        p.Pack(player.CharID);
-                        p.PackArray(player.Worn_Equips);
-                        p.SetHeader();
-                        Broadcast(p);
-                        p = new SendPacket();
-                        p.Pack((byte)10);
-                        p.Pack((byte)3);
-                        p.Pack(player.CharID);
-                        p.Pack((byte)255);
-                        p.SetHeader();
-                        Broadcast(p);
-                        p = new SendPacket();
-                        p.Pack((byte)5);
-                        p.Pack((byte)8);
-                        p.Pack(player.CharID);
-                        p.Pack((byte)0);
-                        p.SetHeader();
-                        Broadcast(p);
+                    //send to them
+                    Broadcast(player.ToAC3Packet(), "Ex", player.CharID);
+                    SendPacket p = new SendPacket();
+                    p.Pack8((byte)5);
+                    p.Pack8((byte)0);
+                    p.Pack32(player.CharID);
+                    p.PackArray(player.Worn_Equips);
+                    p.SetHeader();
+                    Broadcast(p);
+                    p = new SendPacket();
+                    p.Pack8((byte)10);
+                    p.Pack8((byte)3);
+                    p.Pack32(player.CharID);
+                    p.Pack8((byte)255);
+                    p.SetHeader();
+                    Broadcast(p);
+                    p = new SendPacket();
+                    p.Pack8((byte)5);
+                    p.Pack8((byte)8);
+                    p.Pack32(player.CharID);
+                    p.Pack8((byte)0);
+                    p.SetHeader();
+                    Broadcast(p);
 
-                        //send to me
-                        p = new SendPacket();
-                        p.Pack((byte)7);
-                        p.Pack(r.CharID);
-                        p.Pack16((ushort)MapID);
-                        p.Pack16(r.CurX);
-                        p.Pack16(r.CurY);
-                        p.SetHeader();
-                        player.SendPacket(p);
-                        p = new SendPacket();
-                        p.Pack((byte)5);
-                        p.Pack((byte)0);
-                        p.Pack(r.CharID);
-                        p.PackArray(r.Worn_Equips);
-                        p.SetHeader();
-                        player.SendPacket(p);
-                    }
+                    //send to me
+                    p = new SendPacket();
+                    p.Pack8((byte)7);
+                    p.Pack32(r.CharID);
+                    p.Pack16((ushort)MapID);
+                    p.Pack16(r.CurX);
+                    p.Pack16(r.CurY);
+                    p.SetHeader();
+                    player.Send(p);
+                    p = new SendPacket();
+                    p.Pack8((byte)5);
+                    p.Pack8((byte)0);
+                    p.Pack32(r.CharID);
+                    p.PackArray(r.Worn_Equips);
+                    p.SetHeader();
+                    player.Send(p);
                 }
+
             }
             SendMapInfo(player, true);
 
@@ -253,8 +248,6 @@ namespace Game.Maps
 
             src.CurMap = this;
 
-
-            using (var releaser = await listlock.LockAsync())
                 if (!m_playerlist.Contains(src))
                     m_playerlist.Add(src);
 
@@ -266,36 +259,36 @@ namespace Game.Maps
                 {
                     //send to them
                     SendPacket p = new SendPacket();
-                    p.Pack((byte)5);
-                    p.Pack((byte)0);
-                    p.Pack(src.CharID);
-                    p.Pack(src.Worn_Equips);
+                    p.Pack8((byte)5);
+                    p.Pack8((byte)0);
+                    p.Pack32(src.CharID);
+                    p.PackArray(src.Worn_Equips);
                     p.SetHeader();
-                    r.SendPacket(p);
+                    r.Send(p);
                     p = new SendPacket();
-                    p.Pack((byte)10);
-                    p.Pack((byte)3);
-                    p.Pack(src.CharID);
-                    p.Pack((byte)255);
+                    p.Pack8((byte)10);
+                    p.Pack8((byte)3);
+                    p.Pack32(src.CharID);
+                    p.Pack8((byte)255);
                     p.SetHeader();
-                    r.SendPacket(p);//maybe guild info???
+                    r.Send(p);//maybe guild info???
 
                     //send to me
                     p = new SendPacket();
-                    p.Pack((byte)7);
-                    p.Pack(r.CharID);
-                    p.Pack((ushort)MapID);
-                    p.Pack(r.CurX);
-                    p.Pack(r.CurY);
+                    p.Pack8((byte)7);
+                    p.Pack32(r.CharID);
+                    p.Pack16((ushort)MapID);
+                    p.Pack32(r.CurX);
+                    p.Pack32(r.CurY);
                     p.SetHeader();
-                    src.SendPacket(p);
+                    src.Send(p);
                     p = new SendPacket();
-                    p.Pack((byte)5);
-                    p.Pack((byte)0);
-                    p.Pack(r.CharID);
-                    p.Pack(r.Worn_Equips);
+                    p.Pack8(5);
+                    p.Pack8(0);
+                    p.Pack32(r.CharID);
+                    p.PackArray(r.Worn_Equips);
                     p.SetHeader();
-                    src.SendPacket(p);
+                    src.Send(p);
                 }
             }
             SendMapInfo(src);
@@ -307,39 +300,34 @@ namespace Game.Maps
             src.PrevMap.DstMap = (ushort)MapID;
             src.PrevMap.DstX_Axis = src.CurX;
             src.PrevMap.DstY_Axis = src.CurY;
+
             SendAc12(src, portalID, To, toTent);
-            using (var releaser = await listlock.LockAsync())
                 m_playerlist.Remove(src);
         }
 
         public virtual bool Teleport(TeleportType teletype, Player sender, byte portalID, WarpData warp = null)
         {
             if (teletype == TeleportType.Regular || teletype == TeleportType.CmD)
-            {
-                SendPacket warpConf = new SendPacket();
-                warpConf.Pack(new byte[] { 20, 7 });
-                warpConf.SetHeader();
-                sender.SendPacket(warpConf);
-            }
+                sender.Send(SendPacket.FromFormat("bb",20,7));
 
             SendPacket tmp = new SendPacket();
-            tmp.Pack((byte)23);
-            tmp.Pack((byte)32);
-            tmp.Pack(sender.CharID);
+            tmp.Pack8((byte)23);
+            tmp.Pack8((byte)32);
+            tmp.Pack32(sender.CharID);
             tmp.SetHeader();
-            sender.SendPacket(tmp);
+            sender.Send(tmp);
             tmp = new SendPacket();
-            tmp.Pack((byte)23);
-            tmp.Pack((byte)112);
-            tmp.Pack(sender.CharID);
+            tmp.Pack8((byte)23);
+            tmp.Pack8((byte)112);
+            tmp.Pack32(sender.CharID);
             tmp.SetHeader();
-            sender.SendPacket(tmp);
+            sender.Send(tmp);
             tmp = new SendPacket();
-            tmp.Pack((byte)23);
-            tmp.Pack((byte)132);
-            tmp.Pack(sender.CharID);
+            tmp.Pack8((byte)23);
+            tmp.Pack8((byte)132);
+            tmp.Pack32(sender.CharID);
             tmp.SetHeader();
-            sender.SendPacket(tmp);
+            sender.Send(tmp);
             sender.Flags.Add(PlayerFlag.Warping);
             onWarp_Out(portalID, sender, warp, (teletype == TeleportType.Tent));// warp out of map
 
@@ -419,10 +407,8 @@ namespace Game.Maps
 
         protected async virtual void SendMapInfo(Player t, bool login = false)
         {
-            using (var releaser = await listlock.LockAsync())
-            {
               RCLibrary.Core.Networking.PacketBuilder tmp = new RCLibrary.Core.Networking.PacketBuilder();
-                tmp.Begin(false);
+                tmp.Begin(null);
                 tmp.Add(SendPacket.FromFormat("bb", 23, 138));
                 /* p = new SendPacket();
                  p.PackArray(new byte[]{(6, 2);
@@ -467,8 +453,8 @@ namespace Game.Maps
 
                     if (r.CharID != t.CharID)
                     {
-                        r.SendPacket(SendPacket.FromFormat("bbd", 23, 122, t.CharID));
-                        r.SendPacket(SendPacket.FromFormat("bbdb", 10, 3, t.CharID, 255));
+                        //r.SendPacket(SendPacket.FromFormat("bbd", 23, 122, t.CharID));
+                        //r.SendPacket(SendPacket.FromFormat("bbdb", 10, 3, t.CharID, 255));
 
                         if (r.Emote != 0)
                             tmp.Add(SendPacket.FromFormat("bbdb", 32, 2, r.CharID, r.Emote));
@@ -568,23 +554,22 @@ namespace Game.Maps
                 tmp.Add(SendPacket.FromFormat("bb", 23, 102));
                 tmp.Add(SendPacket.FromFormat("bb", 20, 8));
                 t.Flags.Add(PlayerFlag.InMap); //t.CharacterState = PlayerState.inMap;
-                t.SendPacket(new SendPacket(tmp.End(),false));
+                t.Send(new SendPacket(tmp.End(),tmp.End().Count()));
             }
-        }
 
         #endregion
 
         #region Tent
-        public void onTentOpened(Tent Tentsrc)
-        {
-            if (Tents.TryAdd(Tentsrc.MapID, Tentsrc))
-                Broadcast(SendPacket.FromFormat("bbdWddW", 65, 1, Tentsrc.MapID, 36002, Tentsrc.X, Tentsrc.Y, 0));
-        }
-        public void onTentClosing(Tent tent)
-        {
-            if (Tents.TryRemove(tent.MapID, out tent))
-                Broadcast(SendPacket.FromFormat("bbd", 65, 4, tent.MapID));
-        }
+        //public void onTentOpened(Tent Tentsrc)
+        //{
+        //    if (Tents.TryAdd(Tentsrc.MapID, Tentsrc))
+        //        Broadcast(SendPacket.FromFormat("bbdWddW", 65, 1, Tentsrc.MapID, 36002, Tentsrc.X, Tentsrc.Y, 0));
+        //}
+        //public void onTentClosing(Tent tent)
+        //{
+        //    if (Tents.TryRemove(tent.MapID, out tent))
+        //        Broadcast(SendPacket.FromFormat("bbd", 65, 4, tent.MapID));
+        //}
         public void onEnterTent(UInt32 ID, Player p)
         {
             WarpData tmp = new WarpData();
@@ -596,22 +581,22 @@ namespace Game.Maps
 
         void SendOpenTents(Player p)
         {
-            if (Tents.Count > 0)
-            {
-                SendPacket tmp = new SendPacket();
-                tmp.Pack((byte)65);
-                tmp.Pack((byte)3);
-                Parallel.ForEach(Tents.Values, r =>
-                {
-                    tmp.Pack(r.MapID);
-                    tmp.Pack16(36002);
-                    tmp.Pack(r.X);
-                    tmp.Pack(r.Y);
-                    tmp.Pack((byte)0);
-                    tmp.Pack((byte)0);
-                });
-                p.SendPacket(tmp);
-            }
+            //if (Tents.Count > 0)
+            //{
+            //    SendPacket tmp = new SendPacket();
+            //    tmp.Pack8((byte)65);
+            //    tmp.Pack8((byte)3);
+            //    Parallel.ForEach(Tents.Values, r =>
+            //    {
+            //        tmp.Pack32(r.MapID);
+            //        tmp.Pack16(36002);
+            //        tmp.Pack32(r.X);
+            //        tmp.Pack32(r.Y);
+            //        tmp.Pack8((byte)0);
+            //        tmp.Pack8((byte)0);
+            //    });
+            //    p.Send(tmp);
+            //}
         }
 
         #endregion
@@ -620,7 +605,7 @@ namespace Game.Maps
         /// Broadcasts a packet to all who are in a Map
         /// </summary>
         /// <param CharacterName="pkt"></param>
-        public void Broadcast(SendPacket pkt)
+        public void Broadcast(IPacket pkt)
         {
             Broadcast(pkt, "ALL");
         }
@@ -629,34 +614,31 @@ namespace Game.Maps
         /// </summary>
         /// <param name="pkt"></param>
         /// <param name="To">"Multiple target IDs as string to send to specific people"</param>
-        public async void Broadcast(SendPacket pkt, string parameter, params object[] To)
+        public async void Broadcast(IPacket pkt, string parameter, params object[] To)
         {
-            using (var releaser = await listlock.LockAsync())
-            {
                 switch (parameter)
                 {
-                    case "ALL": m_playerlist.ForEach(c => c.SendPacket(pkt)); break;
-                    case "Ex": m_playerlist.Where(c => To.Count(d => Convert.ToUInt32(d) == c.CharID) == 0).ToList().ForEach(c => c.SendPacket(pkt)); break;
-                    case "To": m_playerlist.Where(c => To.Count(d => Convert.ToUInt32(d) == c.CharID) > 0).ToList().ForEach(c => c.SendPacket(pkt)); break;
+                    case "ALL": m_playerlist.ForEach(c => c.Send(pkt)); break;
+                    case "Ex": m_playerlist.Where(c => To.Count(d => Convert.ToUInt32(d) == c.CharID) == 0).ToList().ForEach(c => c.Send(pkt)); break;
+                    case "To": m_playerlist.Where(c => To.Count(d => Convert.ToUInt32(d) == c.CharID) > 0).ToList().ForEach(c => c.Send(pkt)); break;
                 }
-            }
         }
 
         void SendAc12(Player target, byte portalID, WarpData To, bool toTent = false)
         {
             SendPacket sp = new SendPacket();
-            sp.Pack((byte)12);
-            sp.Pack(target.CharID);
+            sp.Pack8(12);
+            sp.Pack32(target.CharID);
             sp.Pack16((toTent) ? (ushort)63507 : To.DstMap);
             sp.Pack16(To.DstX_Axis);
             sp.Pack16(To.DstY_Axis);
             sp.Pack16(portalID);
-            sp.Pack((byte)0);
+            sp.Pack8(0);
             if (toTent)
             {
                 sp.Pack16(1);
-                sp.Pack((byte)1);
-                sp.Pack((byte)1);
+                sp.Pack8(1);
+                sp.Pack8(1);
             }
             sp.SetHeader();
             Broadcast(sp);

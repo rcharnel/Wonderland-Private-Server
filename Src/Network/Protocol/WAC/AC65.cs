@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wlo.Core;
+using Network;
 using Game;
 
 namespace Server.Network.WAC
@@ -12,7 +12,7 @@ namespace Server.Network.WAC
     {
         public override int ID { get { return 65; } }
 
-        public override void Process(Player p, SendPacket r)
+        public override void Process(Player p, RecievePacket r)
         {
             switch (r.Unpack8())
             {
@@ -22,12 +22,12 @@ namespace Server.Network.WAC
             }
         }
 
-        void Recv1(Player r, SendPacket p)
+        void Recv1(Player r, RecievePacket p)
         {
-            if(r.CurMap is GameMap)
-            (r.CurMap as GameMap).onEnterTent(p.Unpack32(), r);
+            //if(r.CurMap is GameMap)
+            //(r.CurMap as GameMap).onEnterTent(p.Unpack32(), r);
         }
-        void Recv2(Player r, SendPacket p)
+        void Recv2(Player r, RecievePacket p)
         {
             r.Inv.onItemCanceled(p.Unpack8());
         }

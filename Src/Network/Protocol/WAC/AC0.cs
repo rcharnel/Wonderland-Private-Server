@@ -4,21 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game;
-using Wlo.Core;
+using RCLibrary.Core.Networking;
 
-namespace Server.Network.WAC
+
+namespace Network
 {
-    public class AC0:WLOAC 
+    public class AC0 
     {
 
-        public override void Process( Player client, Phoenix.Core.Networking.SendPacket r)
+        public override void Process( Player client, RecievePacket r)
         {
             PacketBuilder s = new PacketBuilder();
             s.Begin();
             s.Add(new byte[] { 1, 9 });
             s.Add(new byte[] { 107, 000, 001, });
             s.Add("WloPhoenix");
-            client.SendPacket(s.End());
+            //client.Send(s.End());
             s.Begin();
             s.Add(new byte[] { 54, 29 });
             s.Add(new byte[] {037, 001, 145, 001, 002, 101, 000,
@@ -31,7 +32,7 @@ namespace Server.Network.WAC
                 001, 079, 004, 001, 035, 003, 001, 033, 003, 002, 034,
                 003, 001, 233, 003, 002, 133, 003, 001, 135, 003, 001,
                 134, 003, 001, 077, 004, 002});
-            client.SendPacket(s.End());
+            //client.SendPacket(s.End());
         }
     }
 }

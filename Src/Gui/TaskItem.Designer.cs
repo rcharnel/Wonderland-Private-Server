@@ -1,4 +1,4 @@
-﻿namespace Wonderland_Private_Server.UI
+﻿namespace Gui
 {
     partial class TaskItem
     {

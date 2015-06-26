@@ -24,11 +24,14 @@ namespace Server.Config
         readonly object m_Lock = new object();
 
         public UpdateSetting Update;
+        public DataBaseConfig DB;
         
         public Settings()
         {
-            diskio = new XmlSerializer(this.GetType());
             Update = new UpdateSetting();
+            DB = new DataBaseConfig();
+            diskio = new XmlSerializer(this.GetType());
+            
         }
 
 

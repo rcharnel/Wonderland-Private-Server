@@ -99,13 +99,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Wlo.Core">
-      <HintPath>..\..\..\Dropbox\Wonderland Online Dev Group\Pserver Core\CServer\Wlo.Core\bin\Debug\Wlo.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Src\ActionCodes\AC.cs" />
-    <Compile Include="Src\DataFiles\IDataManager.cs" />
     <Compile Include="Src\Game\Enums\BattleEnum.cs" />
     <Compile Include="Src\Game\Enums\CharEnums.cs" />
     <Compile Include="Src\Game\Enums\DataBaseEnums.cs" />
@@ -117,55 +112,18 @@
     <Compile Include="Src\Game\Enums\SkillEnums.cs" />
     <Compile Include="Src\Game\Enums\StatEnums.cs" />
     <Compile Include="Src\Game\Enums\WorldEnums.cs" />
-    <Compile Include="Src\Game\PetRelated\Equip.cs" />
-    <Compile Include="Src\Game\PlayerRelated\Equip.cs" />
-    <Compile Include="Src\Game\PlayerRelated\Friends.cs" />
-    <Compile Include="Src\Game\PlayerRelated\Vehicle.cs" />
-    <Compile Include="Src\Game\Maps\MapManager.cs" />
-    <Compile Include="Src\Game\Maps\WarpData.cs" />
-    <Compile Include="Src\Game\Maps\WarpDest.cs" />
-    <Compile Include="Src\Game\Maps\WarpPortal.cs" />
+    <Compile Include="Src\Game\User.cs" />
     <Compile Include="Src\Network\Packet.cs" />
     <Compile Include="Src\Server\Bots\Cupid.cs" />
     <Compile Include="Src\Server\Bots\GmBot.cs" />
     <Compile Include="Src\cGlobal.cs" />
-    <Compile Include="Src\Game\Interface\Fighter.cs" />
-    <Compile Include="Src\Game\Interface\guildmember.cs" />
-    <Compile Include="Src\Game\Battle.cs" />
-    <Compile Include="Src\Game\PlayerRelated\Character.cs" />
-    <Compile Include="Src\Game\Objects\Class1.cs" />
-    <Compile Include="Src\Game\PlayerRelated\Guild.cs" />
-    <Compile Include="Src\Game\PlayerRelated\inGameSettings.cs" />
-    <Compile Include="Src\Game\Objects\Instance.cs" />
-    <Compile Include="Src\Game\Inventory.cs" />
-    <Compile Include="Src\Game\Item.cs" />
-    <Compile Include="Src\Game\PlayerRelated\Mail.cs" />
-    <Compile Include="Src\Game\PlayerRelated\MessageGuild.cs" />
-    <Compile Include="Src\Game\PetRelated\Pet.cs" />
-    <Compile Include="Src\Game\Player.cs" />
-    <Compile Include="Src\Game\PlayerRelated\Quest.cs" />
-    <Compile Include="Src\Game\PlayerRelated\RiceBall.cs" />
-    <Compile Include="Src\Game\Objects\Skills.cs" />
-    <Compile Include="Src\Game\PlayerRelated\Team.cs" />
-    <Compile Include="Src\Game\PlayerRelated\Tent.cs" />
-    <Compile Include="Src\Game\PlayerRelated\TentItem.cs" />
-    <Compile Include="Src\Game\PlayerRelated\Trade.cs" />
-    <Compile Include="Src\Game\Objects\Warp.cs" />
     <Compile Include="Src\Server\Config\Game\PetConfigs.cs" />
-    <Compile Include="Src\Server\Config\Repository.cs" />
+    <Compile Include="Src\Server\Config\DataBase.cs" />
     <Compile Include="Src\Server\Config\Update.cs" />
     <Compile Include="Src\Server\DataBase\CharacterDataBase.cs" />
     <Compile Include="Src\Server\DataBase\GameDataBase.cs" />
     <Compile Include="Src\Server\DataBase\phpBB.cs" />
     <Compile Include="Src\Server\DataBase\UserDataBase.cs" />
-    <Compile Include="Src\DataFiles\Compound2Dat.cs" />
-    <Compile Include="Src\DataFiles\EveExt.cs" />
-    <Compile Include="Src\DataFiles\EveLoader.cs" />
-    <Compile Include="Src\DataFiles\GroundMMg.cs" />
-    <Compile Include="Src\DataFiles\ItemManager.cs" />
-    <Compile Include="Src\DataFiles\NpcManager.cs" />
-    <Compile Include="Src\DataFiles\SceneLoader.cs" />
-    <Compile Include="Src\DataFiles\SkillManager.cs" />
     <Compile Include="Src\Game\Delegates.cs" />
     <Compile Include="Src\Gui\MainForm1.cs">
       <SubType>Form</SubType>
@@ -173,28 +131,7 @@
     <Compile Include="Src\Gui\MainForm1.Designer.cs">
       <DependentUpon>MainForm1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Src\Server\Events\EventSystem.cs" />
-    <Compile Include="Src\Server\UDPSystem.cs" />
     <Compile Include="Src\Server\GM\BigLetterLogo.cs" />
-    <Compile Include="Src\Game\Maps\Map.cs" />
-    <Compile Include="Src\Game\Maps\MapObject.cs" />
-    <Compile Include="Src\Network\Client.cs" />
-    <Compile Include="Src\Network\MapSystem.cs" />
-    <Compile Include="Src\Network\Protocol\AC.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\AC0.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\AC02.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\AC06.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\AC09.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\AC14.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\AC20.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\AC23.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\AC32.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\AC35.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\AC63.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\AC65.cs" />
-    <Compile Include="Src\Network\Protocol\WAC\WLOAC.cs" />
-    <Compile Include="Src\Network\Socket.cs" />
-    <Compile Include="Src\Network\WorldManager.cs" />
     <Compile Include="Src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\Server\Config\Settings.cs" />
@@ -210,19 +147,19 @@
     <Compile Include="Src\Gui\TaskItem.Designer.cs">
       <DependentUpon>TaskItem.cs</DependentUpon>
     </Compile>
-    <Compile Include="Src\Gui\GitUpdateItem.cs">
+    <Compile Include="Src\Gui\Update\GitUpdateItem.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Src\Gui\GitUpdateItem.Designer.cs">
+    <Compile Include="Src\Gui\Update\GitUpdateItem.Designer.cs">
       <DependentUpon>GitUpdateItem.cs</DependentUpon>
     </Compile>
+    <Compile Include="Src\Server\System\UpdateSystem.cs" />
     <Compile Include="Src\Server\Utilities\Request\RequestManager.cs" />
     <Compile Include="Src\Server\Utilities\Request\requests.cs" />
-    <Compile Include="Src\Server\Utilities\Task\taskItem.cs" />
-    <Compile Include="Src\Server\Utilities\Task\TaskManager.cs" />
-    <Compile Include="Src\Server\Utilities\Task\ApplicationUpdate_Task.cs" />
+    <Compile Include="Src\Server\TaskSystem\taskItem.cs" />
+    <Compile Include="Src\Server\TaskSystem\TaskManager.cs" />
+    <Compile Include="Src\Server\TaskSystem\Task\ApplicationUpdate_Task.cs" />
     <Compile Include="Src\Network\Web\WebServer.cs" />
-    <Compile Include="Src\Server\WloWorldNode.cs" />
     <Compile Include="Tutorials\Creating Dll for Database Connection.cs" />
     <EmbeddedResource Include="Src\Gui\MainForm1.resx">
       <DependentUpon>MainForm1.cs</DependentUpon>
@@ -242,6 +179,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Src\Gui\TaskItem.resx">
       <DependentUpon>TaskItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Src\Gui\Update\GitUpdateItem.resx">
+      <DependentUpon>GitUpdateItem.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="bin\Debug\Data\Compound.dat" />
     <None Include="bin\Debug\Data\Compound2.dat" />
@@ -284,13 +224,22 @@
     <None Include="Src\App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Src\ActionCodes\" />
+    <Folder Include="Src\DataFiles\" />
+    <Folder Include="Src\Game\Interface\" />
+    <Folder Include="Src\Game\Maps\" />
+    <Folder Include="Src\Game\Objects\" />
+    <Folder Include="Src\Game\PetRelated\" />
+    <Folder Include="Src\Game\PlayerRelated\" />
     <Folder Include="Src\Game\Quests\" />
+    <Folder Include="Src\Gui\FirstRun\" />
     <Folder Include="Src\Gui\WebUI\" />
     <Folder Include="Src\Gui\Web\" />
     <Folder Include="Src\Network\DHT\Nodes\" />
+    <Folder Include="Src\Network\Protocol\WAC\" />
+    <Folder Include="Src\Server\Events\" />
     <Folder Include="Src\Server\GM\Commands\" />
     <Folder Include="Src\Server\Instance\" />
-    <Folder Include="Src\Server\TaskSystem\" />
     <Folder Include="Src\Server\Utilities\Update\" />
   </ItemGroup>
   <ItemGroup>
@@ -344,7 +293,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

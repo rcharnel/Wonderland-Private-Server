@@ -117,7 +117,7 @@ namespace Game.Code
 
             SendPacket tmp = new SendPacket(false);
             tmp.Pack16(ItemID);
-            tmp.Pack((byte)Damage);
+            tmp.Pack8(Damage);
             tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
             return tmp.Buffer;
         }
@@ -136,9 +136,9 @@ namespace Game.Code
         Affinity element;
         RebornJob job;
 
-        Action<SendPacket> Send;
+        Action<IPacket> Send;
 
-        public EquipManager(Action<SendPacket> src)
+        public EquipManager(Action<IPacket> src)
         {
             Send = src;
             equippedItems = new Equip[6];
@@ -1022,8 +1022,8 @@ namespace Game.Code
                 lock (m_Lock)
                 {
                     SendPacket tmp = new SendPacket(false);
-                    tmp.Pack((byte)23);
-                    tmp.Pack((byte)11);
+                    tmp.Pack8(23);
+                    tmp.Pack8(11);
                     if (WornCount > 0)
                     {
                         for (byte n = 1; n < 7; n++)
@@ -1031,7 +1031,7 @@ namespace Game.Code
                             if (this[n].ItemID != 0)
                             {
                                 tmp.Pack16(this[n].ItemID);
-                                tmp.Pack((byte)this[n].Damage);
+                                tmp.Pack8(this[n].Damage);
                                 tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
                             }
                         }
@@ -1057,7 +1057,8 @@ namespace Game.Code
         /// </summary>
         /// <param name="p"></param>
         /// <param name="client"></param>
-        public virtual void ProcessSocket(Player src, SendPacket p)
+        /// 
+        public virtual void ProcessSocket(Player src, RecievePacket p)
         {
             p.m_nUnpackIndex = 4;
 
@@ -1083,20 +1084,20 @@ namespace Game.Code
                                         Send8_1();
 
                                         SendPacket tmp2 = new SendPacket();
-                                        tmp2.Pack((byte)5);
-                                        tmp2.Pack((byte)2);
-                                        tmp2.Pack(src.CharID);
+                                        tmp2.Pack8(5);
+                                        tmp2.Pack8(2);
+                                        tmp2.Pack32(src.CharID);
                                         tmp2.Pack16(item.ItemID);
                                         tmp2.SetHeader();
                                         src.CurMap.Broadcast(tmp2, "Ex", src.CharID);
 
                                         tmp2 = new SendPacket();
-                                        tmp2.Pack((byte)23);
-                                        tmp2.Pack((byte)17);
-                                        tmp2.Pack((byte)loc);
-                                        tmp2.Pack((byte)loc);
+                                        tmp2.Pack8(23);
+                                        tmp2.Pack8(17);
+                                        tmp2.Pack8(loc);
+                                        tmp2.Pack8(loc);
                                         tmp2.SetHeader();
-                                        SendPacket(tmp2);
+                                        Send(tmp2);
                                     }
                                 } break;
                             #endregion
@@ -1118,17 +1119,17 @@ namespace Game.Code
                                             {
                                                 Send8_1();
                                                 SendPacket tmp2 = new SendPacket();
-                                                tmp2.Pack((byte)23);
-                                                tmp2.Pack((byte)16);
-                                                tmp2.Pack((byte)loc);
-                                                tmp2.Pack((byte)dst);
+                                                tmp2.Pack8(23);
+                                                tmp2.Pack8(16);
+                                                tmp2.Pack8(loc);
+                                                tmp2.Pack8(dst);
                                                 tmp2.SetHeader();
-                                                SendPacket(tmp2);
+                                                Send(tmp2);
 
                                                 tmp2 = new SendPacket();
-                                                tmp2.Pack((byte)5);
-                                                tmp2.Pack((byte)1);
-                                                tmp2.Pack(src.CharID);
+                                                tmp2.Pack8(5);
+                                                tmp2.Pack8(1);
+                                                tmp2.Pack32(src.CharID);
                                                 tmp2.Pack16(eq.ItemID);
                                                 tmp2.SetHeader();
                                                 src.CurMap.Broadcast(tmp2, "Ex", src.CharID);
@@ -1158,7 +1159,7 @@ namespace Game.Code
             lock (m_Lock)
             {
                 PacketBuilder tmp = new PacketBuilder();
-                tmp.Begin(false);
+                tmp.Begin(null);
 
                 if (levelup)
                 {
@@ -1205,7 +1206,7 @@ namespace Game.Code
                     tmp.Add(SendPacket.FromFormat("bbbbdd", 8, 1, 33, 1, Wis, 0));
                 }
 
-                SendPacket(tmp.End());
+                Send( new SendPacket(tmp.End(),tmp.End().Count()));
             }
         }
 
@@ -1213,11 +1214,11 @@ namespace Game.Code
         {
             SendPacket p = new SendPacket();
             p.PackArray(new byte[] { 8, 1 });
-            p.Pack((byte)36);
-            p.Pack((byte)1);
+            p.Pack8(36);
+            p.Pack8(1);
             p.Pack64((ulong)TotalExp);
             p.SetHeader();
-            SendPacket(p);
+            Send(p);
         }
 
         public void SetBeginnerOutfit()
@@ -1359,7 +1360,7 @@ namespace Game.Code
         #region Gold Methods
         public void SendGold()
         {
-            SendPacket(SendPacket.FromFormat("bbd", 26, 4, Gold));
+            Send(SendPacket.FromFormat("bbd", 26, 4, Gold));
         }
         public bool AddGold(int g)
         {
@@ -1375,7 +1376,7 @@ namespace Game.Code
             lock (m_Lock)
             {
                 if (gold < g) return false;
-                SendPacket(SendPacket.FromFormat("bbd", 26, 2, g));
+                Send(SendPacket.FromFormat("bbd", 26, 2, g));
                 gold -= g;
                 return true;
             }

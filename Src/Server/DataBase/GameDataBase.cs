@@ -125,14 +125,14 @@ namespace DataBase
             return 140;
         }
 
-        public void SetupMap(ref Game.Maps.GameMap src)
-        {
+        //public void SetupMap(ref Game.Maps.GameMap src)
+        //{
 
-        }
-        public void WriteTent(Game.Code.PlayerRelated.Tent src)
-        {
+        //}
+        //public void WriteTent(Game.Code.PlayerRelated.Tent src)
+        //{
 
-        }
+        //}
         
         //public bool WriteStorage(ref Player src, Storagetype writetype, List<long[]> Data)
         //{

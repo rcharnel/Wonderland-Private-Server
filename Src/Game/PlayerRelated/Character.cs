@@ -14,7 +14,7 @@ namespace Game
     public class Character : EquipManager
     {
         readonly object c_lock = new object();
-        Action<SendPacket> SendPacket;
+        Action<SendPacket> Send;
 
         byte emote;
         Dictionary<string, string> m_colors; public Dictionary<string, string> Colors { get { lock (c_lock) return m_colors; } }
@@ -30,25 +30,25 @@ namespace Game
         string m_nickname; public String NickName { get { lock (c_lock)return m_nickname; } set { lock (c_lock)m_nickname = value; } }
         UInt16 m_x; public UInt16 CurX { get { lock (c_lock)return m_x; } set { lock (c_lock)m_x = value; } }
         UInt16 m_y; public UInt16 CurY { get { lock (c_lock)return m_y; } set { lock (c_lock)m_y = value; } }
-        Maps.IMap curMap;
-        public virtual Maps.IMap CurMap
-        {
-            get { lock (c_lock) return curMap; }
-            set
-            {
-                lock (c_lock)
-                {
-                    curMap = value;
-                }
-            }
-        }
+        //Maps.IMap curMap;
+        //public virtual Maps.IMap CurMap
+        //{
+        //    get { lock (c_lock) return curMap; }
+        //    set
+        //    {
+        //        lock (c_lock)
+        //        {
+        //            curMap = value;
+        //        }
+        //    }
+        //}
         ushort m_loginMap; public UInt16 LoginMap { get { lock (c_lock)return m_loginMap; } set { lock (c_lock)m_loginMap = value; } }
         byte m_slot; public byte Slot { get { lock (c_lock)return m_slot; } set { lock (c_lock)m_slot = value; } }
 
         public Character(Action<IPacket> src)
             : base(src)
         {
-            SendPacket = src;
+            Send = src;
             m_colors = new Dictionary<string, string>();
             m_nickname = "";
             m_name = "";
@@ -92,7 +92,7 @@ namespace Game
             p.Add(CharName);
             p.Add(NickName);
             p.Add(0);
-            SendPacket(p.End());
+            Send( new SendPacket(p.End(),p.End().Count()));
         }
         public void Send_5_3() //logging in player info
         {
@@ -133,7 +133,7 @@ namespace Game
             p.Add(Reborn);
             p.Add((byte)Job);
             p.Add((byte)Potential);
-            SendPacket(p.End());
+            Send(new SendPacket(p.End(), p.End().Count()));
         }
 
         #region Inotify Property
@@ -161,7 +161,7 @@ namespace Game
         {
             if (src == null) return null;
             PacketBuilder temp = new PacketBuilder();
-            temp.Begin(false);
+            temp.Begin();
             temp.Add((byte)src.Slot);// data[at] = slot; at++;//PackSend->Pack((byte)1);
             temp.Add(src.CharName);// data[at] = nameLen; at++;
             temp.Add((byte)src.Level);// data[at] = level; at++;//	PackSend->Pack((byte)tmp1.level);					// Level 
@@ -184,7 +184,7 @@ namespace Game
             for (byte a = 1; a < 7; a++)
                 temp.Add((ushort)src[a].ItemID);
 
-            return temp.End().Buffer;
+            return temp.End();
 
         }
         public static SendPacket ToAC3Packet(this Character src)
@@ -215,7 +215,7 @@ namespace Game
             p.Add(src.CharName);
             p.Add(src.NickName);
             p.Add(255);
-            return p.End();
+            return new SendPacket(p.End(),p.End().Count());
         }
     }
 }
