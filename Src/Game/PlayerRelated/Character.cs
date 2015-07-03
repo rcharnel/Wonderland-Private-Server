@@ -197,7 +197,7 @@ namespace Game
             p.Add((byte)src.Body);
             p.Add((byte)src.Element);
             p.Add((byte)src.Level);
-            p.Add((ushort)src.CurMap.MapID);
+            //p.Add((ushort)src.CurMap.MapID);
             p.Add((ushort)src.CurX);
             p.Add((ushort)src.CurY);
             p.Add((byte)0);

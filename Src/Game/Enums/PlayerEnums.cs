@@ -11,4 +11,17 @@ namespace Game
         Normal,
         Multi,
     }
+    /// <summary>
+        /// Flags that tell what a player is doing
+        /// </summary>
+        public enum PlayerFlag
+        {
+            Creating_Character,
+            Logging_into_Map,
+            Warping,
+            InGame,
+            InMap,
+            InTent,
+        }
+
 }

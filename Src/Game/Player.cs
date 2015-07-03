@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Server.Events;
+//using Server.Events;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using RCLibrary.Core.Networking;
@@ -19,19 +19,7 @@ using Game.Code;
 
     namespace Game
     {
-        /// <summary>
-        /// Flags that tell what a player is doing
-        /// </summary>
-        public enum PlayerFlag
-        {
-            Creating_Character,
-            Logging_into_Map,
-            Warping,
-            InGame,
-            InMap,
-            InTent,
-        }
-
+        
         public class PlayerFlagManager
         {
             List<PlayerFlag> m_Flags;
@@ -60,7 +48,7 @@ using Game.Code;
         }
 
 
-        public class Player : Game.Character, IDisposable, INotifyPropertyChanged, IEventRequester
+        public class Player : Game.Character, IDisposable, INotifyPropertyChanged
         {
             readonly object mlock = new object();
 
@@ -122,7 +110,7 @@ using Game.Code;
             public override void Clear()
             {
                 m_Flags = new PlayerFlagManager();
-                m_inv.RemoveAll(true);
+                //m_inv.RemoveAll(true);
                 QueueData = new Queue<SendPacket>(25);
                 UserAcc.Clear();
                 base.Clear();
@@ -245,12 +233,12 @@ using Game.Code;
                         DebugSystem.Write(DebugItemType.Network_Heavy, "Recv Data from {0} Data:{1}", SockAddress(), p.ToString());
 
                         var b = p.Unpack8();
-                        Server.Network.AC ac = cGlobal.GetAction(b);
-                        if (ac != null)
-                        {
-                            var c = this;
-                            ac.Process(c, p);
-                        }
+                        //Server.Network.AC ac = cGlobal.GetAction(b);
+                        //if (ac != null)
+                        //{
+                        //    var c = this;
+                        //    ac.Process(c, p);
+                        //}
 
 
                         base.ProcessSocket(this, p);

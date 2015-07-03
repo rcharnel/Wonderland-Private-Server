@@ -4,11 +4,11 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wonderland_Private_Server.Code.Objects;
+using Game;
 
-namespace Wonderland_Private_Server.Network
+namespace Network
 {
-     class Client : ConcurrentDictionary<int, Player>
+     class LoginClient : ConcurrentDictionary<int, Player>
     {
         public void TerminateAll()
         {

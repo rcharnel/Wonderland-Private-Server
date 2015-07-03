@@ -70,6 +70,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLS\Octokit.dll</HintPath>
     </Reference>
+    <Reference Include="PhoenixData, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Dropbox\Wonderland Online Dev Group\Pserver Core\Tools\PhoenixData\bin\Debug\PhoenixData.dll</HintPath>
+    </Reference>
     <Reference Include="RCLibrary">
       <HintPath>..\..\..\Dropbox\Wonderland Online Dev Group\Pserver Core\CServer\Wlo.Core\bin\Debug\RCLibrary.dll</HintPath>
     </Reference>
@@ -112,7 +116,12 @@
     <Compile Include="Src\Game\Enums\SkillEnums.cs" />
     <Compile Include="Src\Game\Enums\StatEnums.cs" />
     <Compile Include="Src\Game\Enums\WorldEnums.cs" />
+    <Compile Include="Src\Game\Item.cs" />
+    <Compile Include="Src\Game\Player.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Character.cs" />
+    <Compile Include="Src\Game\PlayerRelated\Equip.cs" />
     <Compile Include="Src\Game\User.cs" />
+    <Compile Include="Src\Network\Client.cs" />
     <Compile Include="Src\Network\Packet.cs" />
     <Compile Include="Src\Server\Bots\Cupid.cs" />
     <Compile Include="Src\Server\Bots\GmBot.cs" />
@@ -153,6 +162,7 @@
     <Compile Include="Src\Gui\Update\GitUpdateItem.Designer.cs">
       <DependentUpon>GitUpdateItem.cs</DependentUpon>
     </Compile>
+    <Compile Include="Src\Server\LoginServer.cs" />
     <Compile Include="Src\Server\System\UpdateSystem.cs" />
     <Compile Include="Src\Server\Utilities\Request\RequestManager.cs" />
     <Compile Include="Src\Server\Utilities\Request\requests.cs" />
@@ -230,7 +240,6 @@
     <Folder Include="Src\Game\Maps\" />
     <Folder Include="Src\Game\Objects\" />
     <Folder Include="Src\Game\PetRelated\" />
-    <Folder Include="Src\Game\PlayerRelated\" />
     <Folder Include="Src\Game\Quests\" />
     <Folder Include="Src\Gui\FirstRun\" />
     <Folder Include="Src\Gui\WebUI\" />
@@ -283,12 +292,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Dropbox\Wonderland Online Dev Group\Pserver Core\Tools\PhoenixData\PhoenixData.csproj">
-      <Project>{78a5bd03-c93c-43d5-be78-d2e9c692d139}</Project>
-      <Name>PhoenixData</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

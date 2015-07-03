@@ -105,7 +105,7 @@ namespace Wonderland_Private_Server
                 #endregion
                 Thread.Sleep(5);
             }
-            while (true);
+            while (cGlobal.Run);
         }
 
 
@@ -113,6 +113,8 @@ namespace Wonderland_Private_Server
         {
 
             cGlobal.Run = true;
+            DebugSystem.Initialize(ref MainOutput, true);
+            DebugSystem.VerboseLvl = 1;
             DebugSystem.Write("Intializing Please Wait.....");
             cGlobal.SrvSettings = new Server.Config.Settings();
 
@@ -137,8 +139,11 @@ namespace Wonderland_Private_Server
             if (GitBranch.Text != cGlobal.SrvSettings.Update.GitBranch)
                 GitBranch.Text = cGlobal.SrvSettings.Update.GitBranch;
 
-            if (GitUptOption.SelectedIndex != (byte)cGlobal.SrvSettings.Update.UpdtControl)
-                GitUptOption.SelectedIndex = (byte)cGlobal.SrvSettings.Update.UpdtControl;
+            //if (GitUptOption.SelectedIndex != (byte)cGlobal.SrvSettings.Update.UpdtControl)
+            //    GitUptOption.SelectedIndex = (byte)cGlobal.SrvSettings.Update.UpdtControl;
+
+
+            cGlobal.GitClient.Branch = GitBranch.Text;
 
             #endregion
 
@@ -171,9 +176,8 @@ namespace Wonderland_Private_Server
             #endregion
 
             #region intial check  if theres an update from github
-            //DebugSystem.Write("Checking For Update on Git...");
-            //cGlobal.GClient.CheckFor_Update();
-            //Thread.Sleep(2000);
+            DebugSystem.Write("Checking For Update on Git...");
+            cGlobal.GitClient.CheckFor_Update();
 
             //if (cGlobal.SrvSettings.Update.UpdtControl != Server.Config.UpdtSetting.Never && cGlobal.ApplicationTasks.TaskItems.Count(c => c.TaskName == "Updating Application") > 0)
             //    goto ShutDwn;
@@ -186,23 +190,23 @@ namespace Wonderland_Private_Server
             #endregion
 
             #region DataBase Initialization
-            
 
-
-            //DebugSystem.Write("Verifying DataBase Authencation Setup");
-            //if (cGlobal.gUserDataBase.TestConnection())
-            //{
-            //    DebugSystem.Write("Connection Successful");
-            //    DebugSystem.Write("Verifying DataBase Tables");
-            //    cGlobal.gUserDataBase.VerifySetup();
-            //    //cGlobal.gCharacterDataBase.VerifySetup();
-            //    cGlobal.gGameDataBase.VerifySetup();
-            //}
-            //else
-            //{
-            //    DebugSystem.Write("Connection not successful\r\n unable to start server");
-            //    return;
-            //}
+            DebugSystem.Write("Initializing UserDataBase");
+            cGlobal.gUserDataBase = new DataBase.UserDataBase();
+            DebugSystem.Write("Testing Connection to UserDatabase");
+            if (cGlobal.gUserDataBase.TestConnection())
+            {
+                DebugSystem.Write("Connection Successful");
+                //DebugSystem.Write("Verifying DataBase Tables");
+                //cGlobal.gUserDataBase.VerifySetup();
+                //cGlobal.gCharacterDataBase.VerifySetup();
+                //cGlobal.gGameDataBase.VerifySetup();
+            }
+            else
+            {
+                DebugSystem.Write("Connection not successful\r\n unable to start server");
+                return;
+            }
 
            
 
@@ -284,31 +288,6 @@ namespace Wonderland_Private_Server
             }
             catch (Exception fe) { DebugSystem.Write(new ExceptionData(fe)); }
         }
-
-        void GClient_onNewUpdate(object sender, Octokit.Release e)
-        {
-            switch ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex)
-            {
-                case Server.Config.UpdtSetting.Auto:
-                    {
-                        DateTime tomorrow = new DateTime(DateTime.Now.Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day, 1, 0, 0);
-                        //cGlobal.ApplicationTasks.CreateTask("Updating Application", tomorrow - DateTime.Now);
-                    } break;
-                case Server.Config.UpdtSetting.AutoandForce:
-                    {
-
-                    } break;
-            }
-            //cGlobal.ApplicationTasks.CreateTask()
-        }
-        void GClient_infopipe(object sender, string e)
-        {
-            DebugSystem.Write("GitUpdate: " + e);
-        }
-        void GClient_onError(object sender, Exception e)
-        {
-            DebugSystem.Write(new ExceptionData(e));
-        }
         #endregion
 
         #region Form Events
@@ -339,8 +318,8 @@ namespace Wonderland_Private_Server
         }
         private void GitUptOption_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cGlobal.SrvSettings.Update.UpdtControl != (Server.Config.UpdtSetting)GitUptOption.SelectedIndex)
-                cGlobal.SrvSettings.Update.UpdtControl = (Server.Config.UpdtSetting)GitUptOption.SelectedIndex;
+            //if (cGlobal.SrvSettings.Update.UpdtControl != (Server.Config.UpdtSetting)GitUptOption.SelectedIndex)
+            //    cGlobal.SrvSettings.Update.UpdtControl = (Server.Config.UpdtSetting)GitUptOption.SelectedIndex;
 
             //if ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex == Server.Config.UpdtSetting.Never)
             //    cGlobal.ApplicationTasks.EndTask("Application Update");
@@ -351,22 +330,23 @@ namespace Wonderland_Private_Server
 
         private void updtrefresh_ValueChanged(object sender, EventArgs e)
         {
-            if (cGlobal.SrvSettings.Update.UpdtChk_Interval.Minutes != updtrefresh.Value)
-                cGlobal.SrvSettings.Update.UpdtChk_Interval = new TimeSpan(0,(int)updtrefresh.Value,0);
+            //if (cGlobal.SrvSettings.Update.UpdtChk_Interval.Minutes != updtrefresh.Value)
+            //    cGlobal.SrvSettings.Update.UpdtChk_Interval = new TimeSpan(0,(int)updtrefresh.Value,0);
 
             //if ((Server.Config.UpdtSetting)GitUptOption.SelectedIndex != Server.Config.UpdtSetting.Never)
             //    cGlobal.ApplicationTasks.ChangeInterval("Application Update", cGlobal.SrvSettings.Update.UpdtChk_Interval);
         }
         private void autoUpdt_Hr_ValueChanged(object sender, EventArgs e)
         {
-            cGlobal.SrvSettings.Update.AutoUpdt_Schedule = new TimeSpan((int)autoUpdt_Hr.Value, (int)autoUpdt_Min.Value, 0);
+            //cGlobal.SrvSettings.Update.AutoUpdt_Schedule = new TimeSpan((int)autoUpdt_Hr.Value, (int)autoUpdt_Min.Value, 0);
         }
         private void autoUpdt_Min_ValueChanged(object sender, EventArgs e)
         {
-            cGlobal.SrvSettings.Update.AutoUpdt_Schedule = new TimeSpan((int)autoUpdt_Hr.Value, (int)autoUpdt_Min.Value, 0);
+            //cGlobal.SrvSettings.Update.AutoUpdt_Schedule = new TimeSpan((int)autoUpdt_Hr.Value, (int)autoUpdt_Min.Value, 0);
         }
         
         #endregion
+
 
 
         

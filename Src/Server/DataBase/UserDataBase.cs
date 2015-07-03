@@ -16,7 +16,7 @@ namespace DataBase
         None,
     }
 
-    
+
 
     public sealed class UserDataBase : RCLibrary.Core.DataBase
     {

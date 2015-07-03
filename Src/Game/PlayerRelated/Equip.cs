@@ -1089,7 +1089,7 @@ namespace Game.Code
                                         tmp2.Pack32(src.CharID);
                                         tmp2.Pack16(item.ItemID);
                                         tmp2.SetHeader();
-                                        src.CurMap.Broadcast(tmp2, "Ex", src.CharID);
+                                        //src.CurMap.Broadcast(tmp2, "Ex", src.CharID);
 
                                         tmp2 = new SendPacket();
                                         tmp2.Pack8(23);
@@ -1132,7 +1132,7 @@ namespace Game.Code
                                                 tmp2.Pack32(src.CharID);
                                                 tmp2.Pack16(eq.ItemID);
                                                 tmp2.SetHeader();
-                                                src.CurMap.Broadcast(tmp2, "Ex", src.CharID);
+                                                //src.CurMap.Broadcast(tmp2, "Ex", src.CharID);
                                             }
                                         }
                                     }
