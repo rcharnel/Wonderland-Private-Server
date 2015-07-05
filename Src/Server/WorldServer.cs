@@ -7,14 +7,16 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Collections.Concurrent;
 using System.Reflection;
+using Game;
+using Network;
 
 
-namespace Network
+namespace Server
 {
     /// <summary>
     /// Handles the Recv and SendPacket Proccesing of all clients
     /// </summary>
-    public class WorldManager:MapSystem
+    public class WorldServer
     {
         Thread Mainthrd,Mapthrd,Eventthrd;
         bool killFlag;
@@ -33,7 +35,7 @@ namespace Network
         /// <summary>
         /// Maps loaded into the world
         /// </summary>
-        ConcurrentDictionary<ushort, Map> MapList = new ConcurrentDictionary<ushort, Map>();
+        //ConcurrentDictionary<ushort, Map> MapList = new ConcurrentDictionary<ushort, Map>();
                
         
         System.Diagnostics.Stopwatch exptimer = new System.Diagnostics.Stopwatch();
@@ -46,24 +48,24 @@ namespace Network
         ///// </summary>
         //public int Clients_inGame { get { int a = 0; ConnectedPlayers.Values.ToList().ForEach(c => a += c.Values.Count(n => n.inGame)); return a; } }
 
-        public WorldManager()
+        public WorldServer()
         {
             mylock = new ManualResetEvent(false);
         }
 
 
 
-        //public void QueueaLoginClient( Wlo.Core.WloClient client)
-        //{
-        //    var p = new Player(ref client);
+        public void OnNewClient(Player client)
+        {
 
-        //    if (Players.Contains(p))
-        //        p.Disconnect();
-        //    else
-        //        Players.Add(p);
+            if (Players.Contains(client))
+                client.Disconnect();
+            else
+                Players.Add(client);
 
-        //    mylock.Set();
-        //}
+            mylock.Set();
+        }
+
         public void QueueAssistToolClient(Socket client)
         {
             //var p = new AssistTool(ref client);
@@ -118,43 +120,29 @@ namespace Network
             {
                 #region Queued Clients
 
-                Parallel.ForEach<Player>(Players, new Action<Player>(c =>
+                try
+                {
+
+                    Parallel.ForEach<Player>(Players, new Action<Player>(c =>
+                        {
+                            if (c.TimeIdle > new TimeSpan(0, 5, 0) || c.isDisconnected())
+                            {
+                                if (!c.isDisconnected())
+                                    c.Disconnect();
+                                DebugSystem.Write(DebugItemType.Info_Light, "Client {0} timed out.", c.SockAddress());
+                                c.Send(new SendPacket(new byte[] { 1, 7 }));
+                                DeadClients.Enqueue(c);
+                            }
+
+
+                        }));
+                }
+                catch (AggregateException e)
+                {
+                    foreach (var se in e.InnerExceptions)
                     {
-                        if ((!c.inGame && c.Elapsed > new TimeSpan(0, (c.inGame) ? 35 : 5, 0)) || !c.isAlive)
-                        {
-                            DebugSystem.Write( DebugItemType.Info_Light,"Client {0} timed out.", c.Socket.SockAddress());
-                            c.Send(new SendPacket(new byte[] { 1, 7 }));
-                            DeadClients.Enqueue(c);
-                        }
-                        else
-                        {
-                            //if (!c.Socket.RecvProc())
-                            //{
-                            //    c.Socket.Close();
-                            //    DeadClients.Enqueue(c);
-                            //}
-
-                            var p = c.Socket.GetIncomingPacket();
-
-                            try
-                            {
-                                if (p != null)
-                                {
-                                    var o = new RecvPacket(p);
-                                    cGlobal.GetActionCode(o.A).ProcessPkt(ref c, o);
-                                }
-                            }
-                            catch (AggregateException ex)
-                            {
-                                DebugSystem.Write(new ExceptionData(ex));
-                            }
-                            finally
-                            {
-                                //c.Socket.SendProc();
-                            }
-
-                        }
-                    }));
+                    }
+                }
 
                 if (DeadClients.Count > 0)
                 {
@@ -163,11 +151,11 @@ namespace Network
             }
             while (!killFlag);
 
-            Parallel.ForEach<Player>(Players, new Action<Player>(c =>
-                    {
-                        c.Disconnect();
-                        onPlayerDisconnected(ref c);
-                    }));
+            //Parallel.ForEach<Player>(Players, new Action<Player>(c =>
+            //        {
+            //            c.Disconnect();
+            //            onPlayerDisconnected(ref c);
+            //        }));
 
 
 
@@ -275,9 +263,9 @@ namespace Network
         /// <returns></returns>
         public bool isOnline(uint Databaseid)
         {
-            foreach (var t in Players)
-                    if (t.DataBaseID == Databaseid && t.State != PlayerState.Connected_LoginWindow)
-                        return true;
+            //foreach (var t in Players)
+            //        if (t.DataBaseID == Databaseid && t.State != PlayerState.Connected_LoginWindow)
+            //            return true;
 
             return false;
         }
@@ -287,8 +275,8 @@ namespace Network
         /// <param CharacterName="id"></param>
         public void DisconnectPlayer(uint Databaseid)
         {
-            foreach (var r in Players)
-                    if (r.DataBaseID == Databaseid) { r.Disconnect(); return; }
+            //foreach (var r in Players)
+            //        if (r.DataBaseID == Databaseid) { r.Disconnect(); return; }
         }
 
         /// <summary>
@@ -358,115 +346,115 @@ namespace Network
         /// Broadcasts a packet to all
         /// </summary>
         /// <param CharacterName="pkt"></param>
-        public void BroadcastTo(SendPacket pkt)
-        {
-            foreach (var p in Players)
-                    p.Send(pkt);
-        }
+        //public void BroadcastTo(SendPacket pkt)
+        //{
+        //    foreach (var p in Players)
+        //            p.Send(pkt);
+        //}
         /// <summary>
         /// Broadcast's a direct packet or a packet that will ignore the selcected
         /// </summary>
         /// <param CharacterName="pkt"></param>
         /// <param CharacterName="directTo">Person to send to/ or avoid</param>
         /// <param CharacterName="avoid">Avoid the Person and send to everyone else</param>
-        public void BroadcastTo(SendPacket pkt, uint? directTo = null, bool exclude = false)
-        {
-            foreach (var p in Players)
-                    if (p.ID == directTo && exclude)
-                    continue;
-                    else if (p.ID == directTo && !exclude)
-                {
-                    p.Send(pkt); return;
-                }
-                    else if (exclude && p.ID != directTo)
-                    p.Send(pkt);
-        }
+        //public void BroadcastTo(SendPacket pkt, uint? directTo = null, bool exclude = false)
+        //{
+        //    //foreach (var p in Players)
+        //    //        if (p.ID == directTo && exclude)
+        //    //        continue;
+        //    //        else if (p.ID == directTo && !exclude)
+        //    //    {
+        //    //        p.Send(pkt); return;
+        //    //    }
+        //    //        else if (exclude && p.ID != directTo)
+        //    //        p.Send(pkt);
+        //}
 
-        public override void onPlayerDisconnected(ref Player src)
-        {
-            lock (mylock)
-            {
-                base.onPlayerDisconnected(ref src);
-                //if (WorldEvent != null) WorldEvent(c, WorldEventType.PlayerLogoff);
-                //dc socket
-                src.Disconnect();
+        //public override void onPlayerDisconnected(ref Player src)
+        //{
+        //    lock (mylock)
+        //    {
+        //        //base.onPlayerDisconnected(ref src);
+        //        ////if (WorldEvent != null) WorldEvent(c, WorldEventType.PlayerLogoff);
+        //        ////dc socket
+        //        //src.Disconnect();
 
-                //unlock CharacterName
-                cGlobal.gCharacterDataBase.unLockName(src.CharacterName);
-                //send dc packet
-                SendPacket bye = new SendPacket();
-                bye.Pack(new byte[] { 1, 1 });
-                bye.Pack(src.ID);
-                BroadcastTo(bye, src.ID, true);
-                //save data
-                if (cGlobal.gCharacterDataBase.WritePlayer(src.ID, src))
-                    DebugSystem.Write(src.UserName + " Info has been Fully Saved");
+        //        ////unlock CharacterName
+        //        //cGlobal.gCharacterDataBase.unLockName(src.CharacterName);
+        //        ////send dc packet
+        //        //SendPacket bye = new SendPacket();
+        //        //bye.Pack(new byte[] { 1, 1 });
+        //        //bye.Pack(src.ID);
+        //        //BroadcastTo(bye, src.ID, true);
+        //        ////save data
+        //        //if (cGlobal.gCharacterDataBase.WritePlayer(src.ID, src))
+        //        //    DebugSystem.Write(src.UserName + " Info has been Fully Saved");
 
-                DebugSystem.Write(String.Format("Client {0} {1} Disconnected.", src.ClientIP + ":" + src.ClientPort, src.UserName));
-            }
-        }
+        //        //DebugSystem.Write(String.Format("Client {0} {1} Disconnected.", src.ClientIP + ":" + src.ClientPort, src.UserName));
+        //    }
+        //}
 
-        public void SendCurrentPlayers(Player to)
-        {
-            SendPacket p = new SendPacket();
-            foreach (var y in (from c in Assembly.GetExecutingAssembly().GetTypes()
-                               where c.IsClass && c.IsSubclassOf(typeof(Bots.GmBot))
-                               select c))
-            {
-                var c = (Activator.CreateInstance(y) as Bots.GmBot);
-                p = new SendPacket();
-                p.Pack(new byte[] { 4 });
-                p.Pack(c.ID);
-                p.Pack((byte)c.Body); //body style
-                p.Pack((byte)c.Element); //element
-                p.Pack(c.Level); //level
-                p.Pack((c.CurrentMap == null) ? c.LoginMap : c.CurrentMap.MapID); //map id
-                p.Pack(c.X); //x
-                p.Pack(c.Y); //y
-                p.Pack(0); p.Pack(c.Head); p.Pack(0);
-                p.Pack(c.HairColor);
-                p.Pack(c.SkinColor);
-                p.Pack(c.ClothingColor);
-                p.Pack(c.EyeColor);
-                p.Pack(c.WornCount);//clothesAmmt); // ammt of clothes
-                p.Pack(c.Worn_Equips);
-                p.Pack(0); p.Pack(0); //??
-                p.Pack(c.Reborn); //is rebirth
-                p.Pack((byte)c.Job); //rb class
-                p.Pack(c.CharacterName);//(BYTE*)c.CharacterName,c.nameLen); //CharacterName
-                p.Pack(c.Nickname);//(BYTE*)c.nick,c.nickLen); //nickname
-                p.Pack(255); //??
-                to.Send(p);
-            }
-            foreach (var d in Players.Where(c => c.inGame))
-            {
-                Character c = d;
-                p = new SendPacket();
-                p.Pack(new byte[] { 4 });
-                p.Pack(d.ID);
-                p.Pack((byte)c.Body); //body style
-                p.Pack((byte)c.Element); //element
-                p.Pack(c.Level); //level
-                p.Pack(c.CurrentMap.MapID); //map id
-                p.Pack(c.X); //x
-                p.Pack(c.Y); //y
-                p.Pack(0); p.Pack(c.Head); p.Pack(0);
-                p.Pack(c.HairColor);
-                p.Pack(c.SkinColor);
-                p.Pack(c.ClothingColor);
-                p.Pack(c.EyeColor);
-                p.Pack(c.WornCount);//clothesAmmt); // ammt of clothes
-                p.Pack(c.Worn_Equips);
-                p.Pack(0); p.Pack(0); //??
-                p.Pack(c.Reborn); //is rebirth
-                p.Pack((byte)c.Job); //rb class
-                p.Pack(c.CharacterName);//(BYTE*)c.CharacterName,c.nameLen); //CharacterName
-                p.Pack(c.Nickname);//(BYTE*)c.nick,c.nickLen); //nickname
-                p.Pack(255); //??
-                to.Send(p);
-                to.onPlayerLogin(c.ID);
-                d.onPlayerLogin(to.ID);
-            }
-        }    
+        //public void SendCurrentPlayers(Player to)
+        //{
+        //    //SendPacket p = new SendPacket();
+        //    //foreach (var y in (from c in Assembly.GetExecutingAssembly().GetTypes()
+        //    //                   where c.IsClass && c.IsSubclassOf(typeof(Bots.GmBot))
+        //    //                   select c))
+        //    //{
+        //    //    var c = (Activator.CreateInstance(y) as Bots.GmBot);
+        //    //    p = new SendPacket();
+        //    //    p.Pack(new byte[] { 4 });
+        //    //    p.Pack(c.ID);
+        //    //    p.Pack((byte)c.Body); //body style
+        //    //    p.Pack((byte)c.Element); //element
+        //    //    p.Pack(c.Level); //level
+        //    //    p.Pack((c.CurrentMap == null) ? c.LoginMap : c.CurrentMap.MapID); //map id
+        //    //    p.Pack(c.X); //x
+        //    //    p.Pack(c.Y); //y
+        //    //    p.Pack(0); p.Pack(c.Head); p.Pack(0);
+        //    //    p.Pack(c.HairColor);
+        //    //    p.Pack(c.SkinColor);
+        //    //    p.Pack(c.ClothingColor);
+        //    //    p.Pack(c.EyeColor);
+        //    //    p.Pack(c.WornCount);//clothesAmmt); // ammt of clothes
+        //    //    p.Pack(c.Worn_Equips);
+        //    //    p.Pack(0); p.Pack(0); //??
+        //    //    p.Pack(c.Reborn); //is rebirth
+        //    //    p.Pack((byte)c.Job); //rb class
+        //    //    p.Pack(c.CharacterName);//(BYTE*)c.CharacterName,c.nameLen); //CharacterName
+        //    //    p.Pack(c.Nickname);//(BYTE*)c.nick,c.nickLen); //nickname
+        //    //    p.Pack(255); //??
+        //    //    to.Send(p);
+        //    //}
+        //    //foreach (var d in Players.Where(c => c.inGame))
+        //    //{
+        //    //    Character c = d;
+        //    //    p = new SendPacket();
+        //    //    p.Pack(new byte[] { 4 });
+        //    //    p.Pack(d.ID);
+        //    //    p.Pack((byte)c.Body); //body style
+        //    //    p.Pack((byte)c.Element); //element
+        //    //    p.Pack(c.Level); //level
+        //    //    p.Pack(c.CurrentMap.MapID); //map id
+        //    //    p.Pack(c.X); //x
+        //    //    p.Pack(c.Y); //y
+        //    //    p.Pack(0); p.Pack(c.Head); p.Pack(0);
+        //    //    p.Pack(c.HairColor);
+        //    //    p.Pack(c.SkinColor);
+        //    //    p.Pack(c.ClothingColor);
+        //    //    p.Pack(c.EyeColor);
+        //    //    p.Pack(c.WornCount);//clothesAmmt); // ammt of clothes
+        //    //    p.Pack(c.Worn_Equips);
+        //    //    p.Pack(0); p.Pack(0); //??
+        //    //    p.Pack(c.Reborn); //is rebirth
+        //    //    p.Pack((byte)c.Job); //rb class
+        //    //    p.Pack(c.CharacterName);//(BYTE*)c.CharacterName,c.nameLen); //CharacterName
+        //    //    p.Pack(c.Nickname);//(BYTE*)c.nick,c.nickLen); //nickname
+        //    //    p.Pack(255); //??
+        //    //    to.Send(p);
+        //    //    to.onPlayerLogin(c.ID);
+        //    //    d.onPlayerLogin(to.ID);
+        //    //}
+        //}    
     }
 }

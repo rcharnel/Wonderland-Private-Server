@@ -126,7 +126,7 @@ namespace Game.Code
     public class EquipManager
     {
         readonly object m_Lock = new object();
-
+        PhxItemDat _ItemManager;
         Equip[] equippedItems;
 
         byte head;
@@ -138,8 +138,9 @@ namespace Game.Code
 
         Action<IPacket> Send;
 
-        public EquipManager(Action<IPacket> src)
+        public EquipManager(Action<IPacket> src, PhxItemDat itemsrc)
         {
+            _ItemManager = itemsrc;
             Send = src;
             equippedItems = new Equip[6];
             for (int a = 0; a < 6; a++)
@@ -1058,7 +1059,7 @@ namespace Game.Code
         /// <param name="p"></param>
         /// <param name="client"></param>
         /// 
-        public virtual void ProcessSocket(Player src, RecievePacket p)
+        public virtual void ProcessSocket(Player src, RCLibrary.Core.Networking.Packet p)
         {
             p.m_nUnpackIndex = 4;
 
@@ -1233,53 +1234,53 @@ namespace Game.Code
                         {
                             case "Iris":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(22005)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21006)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(23001)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24006)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(22005)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21006)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(23001)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24006)));
                                 } break;
                             case "Lique":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21007)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(23002)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24007)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21007)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(23002)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24007)));
                                 } break;
                             case "Maria":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(22006)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21011)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(10004)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24011)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(22006)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21011)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(10004)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24011)));
                                 } break;
                             case "Vanessa":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21008)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24008)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21008)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24008)));
                                 } break;
                             case "Breillat":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(22007)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21009)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(10002)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24009)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(22007)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21009)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(10002)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24009)));
                                 } break;
                             case "Karin":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21015)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(22008)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24015)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21015)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(22008)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24015)));
                                 } break;
                             case "Konnotsuroko":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24013)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21013)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24013)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21013)));
                                 } break;
                             case "Jessica":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(22002)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21010)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(10003)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24010)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(22002)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21010)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(10003)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24010)));
                                 } break;
                         }
                     } break;
@@ -1293,25 +1294,25 @@ namespace Game.Code
                         {
                             case "Daniel":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21004)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24004)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21004)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24004)));
                                 } break;
                             case "Sid":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21005)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24005)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21005)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24005)));
                                 } break;
                             case "More":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21012)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24012)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21012)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24012)));
                                 } break;
                             case "Kurogane":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(22009)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21014)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(18002)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24014)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(22009)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21014)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(18002)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24014)));
                                 } break;
                         }
                     } break;
@@ -1325,15 +1326,15 @@ namespace Game.Code
                         {
                             case "Nina":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(22003)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21002)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24002)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(22003)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21002)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24002)));
                                 } break;
                             case "Betty":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(22001)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21003)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24003)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(22001)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21003)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24003)));
                                 } break;
                         }
                     } break;
@@ -1347,8 +1348,8 @@ namespace Game.Code
                         {
                             case "Rocco":
                                 {
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(21001)));
-                                    Wear(new Item((PhxItemInfo)cGlobal.DatFile["item"].GetObject(24001)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(21001)));
+                                    Wear(new Item((PhxItemInfo)_ItemManager.GetObject(24001)));
                                 } break;
                         }
 

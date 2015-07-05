@@ -24,9 +24,6 @@ namespace Network
 
     }
 
-    public class RecievePacket : Packet
-    {
-
-    }
+    
 
 }

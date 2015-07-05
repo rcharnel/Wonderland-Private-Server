@@ -1,18 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6BBC2E05-AA32-455F-B0B2-72DBA562C8D4}</ProjectGuid>
+    <ProjectGuid>{D549AF04-F847-4474-819F-64BB1C09D90D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DBConnector</RootNamespace>
-    <AssemblyName>DBConnector</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>wlo.pserver.core</RootNamespace>
+    <AssemblyName>wlo.pserver.core</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,15 +31,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PhoenixData">
+      <HintPath>..\..\..\..\Dropbox\Wonderland Online Dev Group\Pserver Core\Tools\PhoenixData\bin\Debug\PhoenixData.dll</HintPath>
+    </Reference>
+    <Reference Include="RCLibrary">
+      <HintPath>..\..\..\..\Dropbox\Wonderland Online Dev Group\Pserver Core\CServer\RCLibrary\bin\Debug\RCLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.93.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\System.Data.SQLite.Core.1.0.94.0\lib\net45\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.94.1\lib\net45\System.Data.SQLite.Linq.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,23 +46,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Template.cs" />
+    <Compile Include="Game\Delegates.cs" />
+    <Compile Include="Game\Enums\BattleEnum.cs" />
+    <Compile Include="Game\Enums\CharEnums.cs" />
+    <Compile Include="Game\Enums\DataBaseEnums.cs" />
+    <Compile Include="Game\Enums\EveEnums.cs" />
+    <Compile Include="Game\Enums\MapEnums.cs" />
+    <Compile Include="Game\Enums\NpcEnums.cs" />
+    <Compile Include="Game\Enums\PetEnums.cs" />
+    <Compile Include="Game\Enums\PlayerEnums.cs" />
+    <Compile Include="Game\Enums\SkillEnums.cs" />
+    <Compile Include="Game\Enums\StatEnums.cs" />
+    <Compile Include="Game\Enums\WorldEnums.cs" />
+    <Compile Include="Game\Item.cs" />
+    <Compile Include="Game\Player.cs" />
+    <Compile Include="Game\PlayerRelated\Character.cs" />
+    <Compile Include="Game\PlayerRelated\Equip.cs" />
+    <Compile Include="Game\User.cs" />
+    <Compile Include="Network\ActionCodes\AC.cs" />
+    <Compile Include="Network\Packet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="x64\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x86\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
+    <Folder Include="Game\Interface\" />
+    <Folder Include="Game\Maps\" />
+    <Folder Include="Game\Objects\" />
+    <Folder Include="Game\PetRelated\" />
+    <Folder Include="Game\Quests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

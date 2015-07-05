@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wonderland_Private_Server.Network;
-using Wlo.Core;
+using Network;
+using Game;
 
-namespace Wonderland_Private_Server.ActionCodes
+namespace Network.ActionCodes
 {
     public class AC0:AC
     {
@@ -18,16 +18,18 @@ namespace Wonderland_Private_Server.ActionCodes
             }
         }
 
-        public override void ProcessPkt(ref Code.Objects.Player c, RecvPacket p)
+        public override void ProcessPkt(Player c, RCLibrary.Core.Networking.Packet p)
         {
             SendPacket s = new SendPacket();
-            s.Pack(new byte[] { 1, 9 });
-            s.Pack(new byte[] { 107, 000, 001, });
-            s.Pack("WPS"+cGlobal.GClient.myVersion,false);
-            c.Send(s);
+            s.Pack8(1);
+            s.Pack8(9);
+            s.PackArray(new byte[] { 107, 000, 001, });
+            s.PackStringN("WloPsrv");
+            c.Send( s);
             s = new SendPacket();
-            s.Pack(new byte[] { 54, 29 });
-            s.Pack(new byte[] {037, 001, 145, 001, 002, 101, 000,
+            s.Pack8(54);
+            s.Pack8(29);
+            s.PackArray(new byte[] {037, 001, 145, 001, 002, 101, 000,
                 002, 102, 000, 002, 103, 000, 002, 106, 000, 002, 202,
                 000, 002, 201, 000, 002, 204, 000, 002, 203, 000, 002,
                 045, 001, 002, 047, 001, 001, 105, 000, 002, 046, 001,

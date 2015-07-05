@@ -19,22 +19,7 @@ namespace Wonderland_Private_Server
 
         public Form1()
         {
-            DebugSystem.Initialize();
-            #region Initialize Objects           
-                    
-            //cGlobal.WLO_World = new Server.WloWorldNode();
-            //cGlobal.gCharacterDataBase = new DataManagement.DataBase.CharacterDataBase();
-            //cGlobal.gEveManager = new DataManagement.DataFiles.EveManager();
-            //cGlobal.gGameDataBase = new DataManagement.DataBase.GameDataBase();
-            //cGlobal.gItemManager = new DataManagement.DataFiles.ItemManager();
-            //cGlobal.gSkillManager = new DataManagement.DataFiles.SkillDataFile();
-            //cGlobal.gCompoundDat = new DataManagement.DataFiles.cCompound2Dat();
-            //cGlobal.gUserDataBase = new UserDataBase();
-            //cGlobal.gNpcManager = new DataManagement.DataFiles.NpcDat();
-            cGlobal.ApplicationTasks = new Server.TaskManager();
-            cGlobal.GitClient = new GupdtSrv.gitClient();
-            cGlobal.GitClient.GitinfoUpdated += GitClient_GitinfoUpdated;
-            #endregion
+          
             InitializeComponent();
         }
 
@@ -115,7 +100,27 @@ namespace Wonderland_Private_Server
             cGlobal.Run = true;
             DebugSystem.Initialize(ref MainOutput, true);
             DebugSystem.VerboseLvl = 1;
-            DebugSystem.Write("Intializing Please Wait.....");
+            
+            DebugSystem.Write("[init] - Initializing DataBase Objects");
+            cGlobal.gUserDataBase = new DataBase.UserDataBase();
+            DebugSystem.Write("[init] - Initializing DataFile Objects");
+            cGlobal.ItemDatManager = new DataFiles.PhxItemDat();
+            DebugSystem.Write("[Init] - Intializing Please Wait.....");
+            cGlobal.gLoginServer = new Server.LoginServer();
+            cGlobal.gWorld = new Server.WorldServer();
+            //cGlobal.WLO_World = new Server.WloWorldNode();
+            //cGlobal.gCharacterDataBase = new DataManagement.DataBase.CharacterDataBase();
+            //cGlobal.gEveManager = new DataManagement.DataFiles.EveManager();
+            //cGlobal.gGameDataBase = new DataManagement.DataBase.GameDataBase();
+            //cGlobal.gItemManager = new DataManagement.DataFiles.ItemManager();
+            //cGlobal.gSkillManager = new DataManagement.DataFiles.SkillDataFile();
+            //cGlobal.gCompoundDat = new DataManagement.DataFiles.cCompound2Dat();
+            //cGlobal.gUserDataBase = new UserDataBase();
+            //cGlobal.gNpcManager = new DataManagement.DataFiles.NpcDat();
+            cGlobal.ApplicationTasks = new Server.TaskManager();
+            cGlobal.GitClient = new GupdtSrv.gitClient();
+            cGlobal.GitClient.GitinfoUpdated += GitClient_GitinfoUpdated;
+            
             cGlobal.SrvSettings = new Server.Config.Settings();
 
             #region load settings file
@@ -182,17 +187,15 @@ namespace Wonderland_Private_Server
             //if (cGlobal.SrvSettings.Update.UpdtControl != Server.Config.UpdtSetting.Never && cGlobal.ApplicationTasks.TaskItems.Count(c => c.TaskName == "Updating Application") > 0)
             //    goto ShutDwn;
             #endregion
+                        
 
-            
-
-            #region Setup Form
+            #region Configure Form Data
             
             #endregion
 
             #region DataBase Initialization
 
-            DebugSystem.Write("Initializing UserDataBase");
-            cGlobal.gUserDataBase = new DataBase.UserDataBase();
+            
             DebugSystem.Write("Testing Connection to UserDatabase");
             if (cGlobal.gUserDataBase.TestConnection())
             {
@@ -224,8 +227,12 @@ namespace Wonderland_Private_Server
 
             #endregion
 
-            #region Initialize the Wonderland Server
-            DebugSystem.Write("Jump Starting Server...");
+            #region Initialize Server Components
+            DebugSystem.Write(" Starting Server...");
+            cGlobal.gWorld.Initialize();
+            DebugSystem.Write(" Starting LoginServer...");            
+            cGlobal.gLoginServer.Initialize();
+
             //cGlobal.WLO_World.Initialize();
             Thread.Sleep(2);
             //cGlobal.TcpListener.Initialize();

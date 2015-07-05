@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Game.Code;
 using Network;
+using DataFiles;
 using RCLibrary.Core.Networking;
 
 namespace Game
@@ -45,8 +46,8 @@ namespace Game
         ushort m_loginMap; public UInt16 LoginMap { get { lock (c_lock)return m_loginMap; } set { lock (c_lock)m_loginMap = value; } }
         byte m_slot; public byte Slot { get { lock (c_lock)return m_slot; } set { lock (c_lock)m_slot = value; } }
 
-        public Character(Action<IPacket> src)
-            : base(src)
+        public Character(Action<IPacket> src,PhxItemDat itemdat)
+            : base(src,itemdat)
         {
             Send = src;
             m_colors = new Dictionary<string, string>();
@@ -54,12 +55,12 @@ namespace Game
             m_name = "";
         }
         public Character()
-            : base(null)
+            : base(null,null)
         {
             m_colors = new Dictionary<string, string>();
         }
 
-        public override void ProcessSocket(Player src, RecievePacket p)
+        public override void ProcessSocket(Player src, RCLibrary.Core.Networking.Packet p)
         {
             base.ProcessSocket(src, p);
         }

@@ -14,9 +14,6 @@ using RCLibrary.Core.Networking;
 using Network;
 using Game.Code;
 
-
-
-
     namespace Game
     {
         
@@ -76,11 +73,12 @@ using Game.Code;
             //PetList m_petlist;
             //Tent m_tent;
 
-            public Player(Client3 src)
-                : base(src.SendPacket)
+            public Player(Client3 src,DataFiles.PhxItemDat itemdat)
+                : base(src.SendPacket,itemdat)
             {
                 m_socket = src;
                 m_socket.onConnectionLost += m_socket_onConnectionLost;
+                m_socket.onPacketRecved = ProcessSocket;
                 QueueData = new Queue<SendPacket>(25);
 
 
@@ -95,6 +93,14 @@ using Game.Code;
                 //m_Mail = new MailManager(this);
                 //m_tent = new Tent(this);
                 //m_petlist = new PetList(this);
+
+                while (m_socket.m_IncomingPackets.Count > 0)
+                {
+                    IPacket p;
+                    m_socket.m_IncomingPackets.TryDequeue(out p);
+                    ProcessSocket(p);
+                }
+
 
             }
             ~Player()
@@ -198,13 +204,14 @@ using Game.Code;
 
             public Action<Player> OnDisconnect;
 
-            public void Send(IPacket p)
+            public void Send(SendPacket p)
             {
+                p.SetHeader();
                 p.Encode();
                 m_socket.SendPacket(p);
             }
 
-            public void Send(IPacket p, RCLibrary.Core.Networking.PacketFlags pFlags)
+            public void Send(SendPacket p, RCLibrary.Core.Networking.PacketFlags pFlags)
             {
                 p.Flags = pFlags;
                 Send(p);
@@ -212,42 +219,32 @@ using Game.Code;
             }
 
 
-            public void ProcessSocket()
+            public void ProcessSocket(IPacket g)
             {
-
-                if (IdleTimer() >= (new TimeSpan(0, 5, 0) + ((Flags.HasFlag(PlayerFlag.InGame)) ? new TimeSpan(0, 30, 0) : new TimeSpan(0))))
-                {
-                    DebugSystem.Write(String.Format("Player {0} timed out.", SockAddress()));
-                    Disconnect();
-                }
                 try
                 {
-                    if (m_socket.m_IncomingPackets.Count > 0)
+                    RCLibrary.Core.Networking.Packet p;
+                    p = (RCLibrary.Core.Networking.Packet)g;
+
+                    if (m_socket.isDisconnected()) { return; }
+                    DebugSystem.Write(DebugItemType.Network_Heavy, "Recv Data from {0} Data:{1}", SockAddress(), p.ToString());
+
+                    var b = p.Unpack8();
+                    Network.ActionCodes.AC ac = Network.ActionCodes.AC.GetAction(b);
+                    if (ac != null)
                     {
-                        RecievePacket p;
-                        RCLibrary.Core.Networking.IPacket g;
-                        m_socket.m_IncomingPackets.TryDequeue(out g);
-                        p = (RecievePacket)g;
-
-                        if (m_socket.isDisconnected()) { if (OnDisconnect != null) OnDisconnect(this); return; }
-                        DebugSystem.Write(DebugItemType.Network_Heavy, "Recv Data from {0} Data:{1}", SockAddress(), p.ToString());
-
-                        var b = p.Unpack8();
-                        //Server.Network.AC ac = cGlobal.GetAction(b);
-                        //if (ac != null)
-                        //{
-                        //    var c = this;
-                        //    ac.Process(c, p);
-                        //}
-
-
-                        base.ProcessSocket(this, p);
-                        //m_inv.ProcessSocket(p);
-                        //m_setting.ProcessSocket(p);
+                        var c = this;
+                        ac.ProcessPkt(c, p);
                     }
 
+
+                    base.ProcessSocket(this, p);
+                    //m_inv.ProcessSocket(p);
+                    //m_setting.ProcessSocket(p);
+
+
                 }
-                catch (Exception f) { DebugSystem.Write(new ExceptionData(f)); }
+                catch (Exception f) { DebugSystem.Write(new ExceptionData(f)); m_socket.Disconnect(); }
             }
 
             public void Disconnect()
@@ -256,7 +253,7 @@ using Game.Code;
                     m_socket.Disconnect();
             }
 
-            public TimeSpan IdleTimer() { return m_socket.Elapsed(); }
+            public TimeSpan TimeIdle { get { return m_socket.Elapsed(); } }
             public bool isDisconnected() { return m_socket.isDisconnected(); }
             public String SockAddress() { return m_socket.SockAddress(); }
             public String LocalPort() { return m_socket.LocalPort(); }
