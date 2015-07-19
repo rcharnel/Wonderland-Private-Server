@@ -19,8 +19,8 @@ namespace Game.Code
             get
             {
                 int val = 0;
-                //val += (Data.statType[0] == 207) ? (Int32)Data.statVal[0] : 0;
-                //val += (Data.statType[1] == 207) ? (Int32)Data.statVal[1] : 0;
+                //val += (Data.StatusType[0] == 207) ? (Int32)Data.StatusUp[0] : 0;
+                //val += (Data.StatusType[1] == 207) ? (Int32)Data.StatusUp[1] : 0;
                 return val;
             }
         }
@@ -30,8 +30,8 @@ namespace Game.Code
             get
             {
                 int val = 0;
-                //val += (Data.statType[0] == 208) ? (Int32)Data.statVal[0] : 0;
-                //val += (Data.statType[1] == 208) ? (Int32)Data.statVal[1] : 0;
+                //val += (Data.StatusType[0] == 208) ? (Int32)Data.StatusUp[0] : 0;
+                //val += (Data.StatusType[1] == 208) ? (Int32)Data.StatusUp[1] : 0;
                 return val;
             }
         }
@@ -41,8 +41,8 @@ namespace Game.Code
             get
             {
                 int val = 0;
-                //val += (Data.statType[0] == 210) ? (Int32)Data.statVal[0] : 0;
-                //val += (Data.statType[1] == 210) ? (Int32)Data.statVal[1] : 0;
+                //val += (Data.StatusType[0] == 210) ? (Int32)Data.StatusUp[0] : 0;
+                //val += (Data.StatusType[1] == 210) ? (Int32)Data.StatusUp[1] : 0;
                 return val;
             }
         }
@@ -52,8 +52,8 @@ namespace Game.Code
             get
             {
                 int val = 0;
-                //val += (Data.statType[0] == 211) ? (Int32)Data.statVal[0] : 0;
-                //val += (Data.statType[1] == 211) ? (Int32)Data.statVal[1] : 0;
+                //val += (Data.StatusType[0] == 211) ? (Int32)Data.StatusUp[0] : 0;
+                //val += (Data.StatusType[1] == 211) ? (Int32)Data.StatusUp[1] : 0;
                 return val;
             }
         }
@@ -63,8 +63,8 @@ namespace Game.Code
             get
             {
                 int val = 0;
-                //val += (Data.statType[0] == 215) ? (Int32)Data.statVal[0] : 0;
-                //val += (Data.statType[1] == 215) ? (Int32)Data.statVal[1] : 0;
+                //val += (Data.StatusType[0] == 215) ? (Int32)Data.StatusUp[0] : 0;
+                //val += (Data.StatusType[1] == 215) ? (Int32)Data.StatusUp[1] : 0;
                 return val;
             }
         }
@@ -74,8 +74,8 @@ namespace Game.Code
             get
             {
                 int val = 0;
-                //val += (Data.statType[0] == 216) ? (Int32)Data.statVal[0] : 0;
-                //val += (Data.statType[1] == 216) ? (Int32)Data.statVal[1] : 0;
+                //val += (Data.StatusType[0] == 216) ? (Int32)Data.StatusUp[0] : 0;
+                //val += (Data.StatusType[1] == 216) ? (Int32)Data.StatusUp[1] : 0;
                 return val;
             }
         }
@@ -85,8 +85,8 @@ namespace Game.Code
             get
             {
                 int val = 0;
-                //val += (Data.statType[0] == 214) ? (Int32)Data.statVal[0] : 0;
-                //val += (Data.statType[1] == 214) ? (Int32)Data.statVal[1] : 0;
+                //val += (Data.StatusType[0] == 214) ? (Int32)Data.StatusUp[0] : 0;
+                //val += (Data.StatusType[1] == 214) ? (Int32)Data.StatusUp[1] : 0;
                 return val;
             }
         }

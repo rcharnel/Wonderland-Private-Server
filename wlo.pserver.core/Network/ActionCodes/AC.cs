@@ -27,11 +27,8 @@ namespace Network.ActionCodes
         public static AC GetAction(int ID)
         {
 
-            try
-            {
+            if (AcList.ContainsKey(ID))
                 return AcList[ID];
-            }
-            catch (Exception e) { }
 
             lock (mlock)
             {
@@ -46,11 +43,13 @@ namespace Network.ActionCodes
                         try
                         {
                             m = (Activator.CreateInstance(y) as AC);
-
-                            AcList.Add(m.ID, m);
-                            return m;
+                            if (m.ID == ID)
+                            {
+                                AcList.Add(m.ID, m);
+                                return m;
+                            }                                
                         }
-                        catch { DebugSystem.Write(new ExceptionData(ExceptionSeverity.Warning, "failed to load AC " + m.ID)); m = null; throw; }
+                        catch { DebugSystem.Write(new ExceptionData(ExceptionSeverity.Warning, "failed to load AC " + m.ID)); m = null; }
                     }
                 }
                 return resp;

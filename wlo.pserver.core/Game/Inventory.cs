@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataFiles;
+using Network;
+using RCLibrary.Core.Networking;
 
 
 namespace Game.Code
@@ -144,7 +146,7 @@ namespace Game.Code
                                 else
                                     this[slot].Clear();
                             }
-                        if (senddata) owner.SendPacket(SendPacket.FromFormat("bbbb", 23, 9, at, ammt));
+                        if (senddata) owner.Send(new SendPacket(Packet.FromFormat("bbbb", 23, 9, at, ammt)));
                         return remItem;
                     }
                 }
@@ -172,8 +174,8 @@ namespace Game.Code
                     if (at != 0) a = at;
 
                     SendPacket tmp = new SendPacket();
-                    tmp.Pack((byte)23);
-                    tmp.Pack((byte)6);
+                    tmp.Pack8(23);
+                    tmp.Pack8(6);
                     tmp.Pack16(item.ItemID);
 
                     byte ammt = 0;
@@ -214,16 +216,16 @@ namespace Game.Code
                     if (ammt > 0 && sendData)
                     {
                         addammt -= ammt;
-                        tmp.Pack((byte)ammt);
-                        tmp.Pack(0);
-                        tmp.Pack(0);
-                        tmp.Pack(0);
-                        tmp.Pack(0);
-                        tmp.Pack(0);
-                        tmp.Pack(0);
+                        tmp.Pack8(ammt);
+                        tmp.Pack32(0);
+                        tmp.Pack32(0);
+                        tmp.Pack32(0);
+                        tmp.Pack32(0);
+                        tmp.Pack32(0);
+                        tmp.Pack32(0);
                         tmp.Pack16(0);
                         tmp.SetHeader();
-                        owner.SendPacket(tmp);
+                        owner.Send(tmp);
                     }
                     if (totalammt == item.Ammt || at != 0)
                         return ammt;
@@ -244,9 +246,9 @@ namespace Game.Code
                 if (this[from].ItemID == 0 || from == to) return;
 
                 SendPacket tmp = new SendPacket();
-                tmp.Pack((byte)23);
-                tmp.Pack((byte)10);
-                tmp.Pack((byte)from);
+                tmp.Pack8(23);
+                tmp.Pack8(10);
+                tmp.Pack8(from);
 
                 var item = RemoveItem(from, ammt, false);
 
@@ -255,16 +257,16 @@ namespace Game.Code
                     byte wasplaced = (byte)AddItem(item, to, false);
                     if (wasplaced > 0)
                     {
-                        tmp.Pack((byte)wasplaced);
-                        tmp.Pack((byte)to);
+                        tmp.Pack8(wasplaced);
+                        tmp.Pack8(to);
                         tmp.SetHeader();
-                        owner.SendPacket(tmp);
+                        owner.Send(tmp);
                     }
                 }
             }
         }
 
-        public void ProcessSocket(SendPacket p)
+        public void ProcessSocket(Packet p)
         {
             p.m_nUnpackIndex = 4;
 
@@ -294,7 +296,7 @@ namespace Game.Code
                         if (this[pos].ItemID > 0)
                             switch (this[pos].Type)
                             {
-                                case eItemType.Tent: owner.Tent.Open(); break;
+                                //case eItemType.Tent: owner.Tent.Open(); break;
                             }
                     }
                     break;
@@ -309,13 +311,7 @@ namespace Game.Code
                         if (this[pos].ItemID > 0)
                         {
                             // test confirm destroy item
-                            SendPacket s = new SendPacket();
-                            s.Pack((byte)23);
-                            s.Pack((byte)26);
-                            s.Pack16(this[pos].ItemID);
-                            s.Pack((byte)qnt);
-                            s.SetHeader();
-                            owner.SendPacket(s);
+                            owner.Send(new SendPacket(Packet.FromFormat("bbwb", 23, 26, this[pos].ItemID, qnt)));
                             RemoveItem(pos, qnt);
                         }
                     } break;
@@ -354,17 +350,17 @@ namespace Game.Code
             lock (mylock)
             {
                 SendPacket tmp = new SendPacket(false);
-                tmp.Pack((byte)23);
-                tmp.Pack((byte)5);
+                tmp.Pack8(23);
+                tmp.Pack8(5);
                 if (FilledCount > 0)
                 {
                     for (byte a = 1; a < 51; a++)
                         if (this[a].ItemID != 0)
                         {
-                            tmp.Pack((byte)a);
+                            tmp.Pack8(a);
                             tmp.Pack16(this[a].ItemID);
-                            tmp.Pack((byte)this[a].Ammt);
-                            tmp.Pack((byte)this[a].Damage);
+                            tmp.Pack8(this[a].Ammt);
+                            tmp.Pack8(this[a].Damage);
                             tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
                         }
                 }
@@ -387,7 +383,7 @@ namespace Game.Code
             //                host.DataOut = SendType.Multi;
             //                //switch (tgrt)
             //                //{
-            //                //    case 0: for (int a = 0; a < 2; a++) host.AddStat((byte)Items[slot].Data.statType[a], (byte)Items[slot].Data.statVal[a]); break;
+            //                //    case 0: for (int a = 0; a < 2; a++) host.AddStat((byte)Items[slot].Data.StatusType[a], (byte)Items[slot].Data.StatusUp[a]); break;
             //                //    //default:for (int a = 0; a < 2; a++) 
             //                //}
             //                m_Items[slot].Ammt -= 1;
@@ -410,7 +406,7 @@ namespace Game.Code
             if (m_Items[slot].ItemID > 0)
                 switch (m_Items[slot].Type)
                 {
-                    case eItemType.Tent: owner.Tent.Close(); break;
+                    //case eItemType.Tent: owner.Tent.Close(); break;
                 }
         }
         int MatrixtoNumber(int a, int b) { return ((a * 5) + (b - 5)); }//wlo specific
@@ -435,7 +431,7 @@ namespace Game.Code
         }//wlo specific
     }
 
-    public class TentInventoryManager : InventoryManager
+    public class TentInventoryManager : Inventory
     {
 
         public TentInventoryManager(Player src):base(src)

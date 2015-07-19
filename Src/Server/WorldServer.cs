@@ -9,14 +9,14 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using Game;
 using Network;
-
+using Plugin;
 
 namespace Server
 {
     /// <summary>
     /// Handles the Recv and SendPacket Proccesing of all clients
     /// </summary>
-    public class WorldServer
+    public class WorldServer:WorldServerHost
     {
         Thread Mainthrd,Mapthrd,Eventthrd;
         bool killFlag;
@@ -37,8 +37,7 @@ namespace Server
         /// </summary>
         //ConcurrentDictionary<ushort, Map> MapList = new ConcurrentDictionary<ushort, Map>();
                
-        
-        System.Diagnostics.Stopwatch exptimer = new System.Diagnostics.Stopwatch();
+        // System.Diagnostics.Stopwatch exptimer = new System.Diagnostics.Stopwatch();
         /// <summary>
         /// Clients that are in the Process of Logging into the Server
         /// </summary>
@@ -148,6 +147,7 @@ namespace Server
                 {
                 }
                 #endregion
+                Thread.Sleep(1);
             }
             while (!killFlag);
 
@@ -346,29 +346,29 @@ namespace Server
         /// Broadcasts a packet to all
         /// </summary>
         /// <param CharacterName="pkt"></param>
-        //public void BroadcastTo(SendPacket pkt)
-        //{
-        //    foreach (var p in Players)
-        //            p.Send(pkt);
-        //}
+        public void Broadcast(SendPacket pkt)
+        {
+            foreach (var p in Players)
+                p.Send(pkt);
+        }
         /// <summary>
         /// Broadcast's a direct packet or a packet that will ignore the selcected
         /// </summary>
         /// <param CharacterName="pkt"></param>
         /// <param CharacterName="directTo">Person to send to/ or avoid</param>
         /// <param CharacterName="avoid">Avoid the Person and send to everyone else</param>
-        //public void BroadcastTo(SendPacket pkt, uint? directTo = null, bool exclude = false)
-        //{
-        //    //foreach (var p in Players)
-        //    //        if (p.ID == directTo && exclude)
-        //    //        continue;
-        //    //        else if (p.ID == directTo && !exclude)
-        //    //    {
-        //    //        p.Send(pkt); return;
-        //    //    }
-        //    //        else if (exclude && p.ID != directTo)
-        //    //        p.Send(pkt);
-        //}
+        public void Broadcast(SendPacket pkt, uint? directTo = null, bool exclude = false)
+        {
+            //foreach (var p in Players)
+            //        if (p.ID == directTo && exclude)
+            //        continue;
+            //        else if (p.ID == directTo && !exclude)
+            //    {
+            //        p.Send(pkt); return;
+            //    }
+            //        else if (exclude && p.ID != directTo)
+            //        p.Send(pkt);
+        }
 
         //public override void onPlayerDisconnected(ref Player src)
         //{

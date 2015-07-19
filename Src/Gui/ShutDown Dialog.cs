@@ -20,9 +20,8 @@ namespace Wonderland_Private_Server.UI
         string dispMsg = "";
         int perct = 0,maxperct = 100;
 
-        public ShutDown_Dialog(bool update = false)
+        public ShutDown_Dialog()
         {
-            isupdating = update;
             InitializeComponent();
             timer1.Start();
         }
@@ -42,11 +41,11 @@ namespace Wonderland_Private_Server.UI
                 cGlobal.SrvSettings.SaveSettings(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\PServer\\Config.settings.wlo");
 
                 dispMsg = "Stopping Tcp Listener";
-                //cGlobal.TcpListener.Kill();
+                cGlobal.gLoginServer.Kill();
                 dispMsg = "Disconnecting and saving Player info Remaining..";
 
                 dispMsg = "Shutting Down Server";
-                //cGlobal.WLO_World.Kill();
+                cGlobal.gWorld.Kill();
                 perct += 10;
                 //foreach (var t in cGlobal.ThreadManager.Values.ToList())
                 //{
@@ -56,16 +55,6 @@ namespace Wonderland_Private_Server.UI
                 //    perct++;
                 //}
                 perct = 100;
-                if (isupdating)
-                {
-                    //dispMsg = "Preparing for update";
-                    //dispMsg = "Launching Updater";
-                    //ProcessStartInfo start = new ProcessStartInfo();
-                    //start.FileName = Environment.CurrentDirectory + "\\WloPSrvUpdater.exe";
-                    //start.Arguments = cGlobal.GClient.Branch+ " "+cGlobal.GClient.myVersion + " " +cGlobal.GClientUpdateInfo.TagName;
-                    //Process.Start(start);                    
-
-                }
                 dispMsg = "Server Shutdown Completed..";
                 Thread.Sleep(1500);
 

@@ -9,6 +9,7 @@ using Game.Code;
 using Network;
 using DataFiles;
 using RCLibrary.Core.Networking;
+using Game;
 
 namespace Game
 {
@@ -31,18 +32,18 @@ namespace Game
         string m_nickname; public String NickName { get { lock (c_lock)return m_nickname; } set { lock (c_lock)m_nickname = value; } }
         UInt16 m_x; public UInt16 CurX { get { lock (c_lock)return m_x; } set { lock (c_lock)m_x = value; } }
         UInt16 m_y; public UInt16 CurY { get { lock (c_lock)return m_y; } set { lock (c_lock)m_y = value; } }
-        //Maps.IMap curMap;
-        //public virtual Maps.IMap CurMap
-        //{
-        //    get { lock (c_lock) return curMap; }
-        //    set
-        //    {
-        //        lock (c_lock)
-        //        {
-        //            curMap = value;
-        //        }
-        //    }
-        //}
+        IMap curMap;
+        public virtual IMap CurMap
+        {
+            get { lock (c_lock) return curMap; }
+            set
+            {
+                lock (c_lock)
+                {
+                    curMap = value;
+                }
+            }
+        }
         ushort m_loginMap; public UInt16 LoginMap { get { lock (c_lock)return m_loginMap; } set { lock (c_lock)m_loginMap = value; } }
         byte m_slot; public byte Slot { get { lock (c_lock)return m_slot; } set { lock (c_lock)m_slot = value; } }
 

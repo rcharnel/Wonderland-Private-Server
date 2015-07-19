@@ -9,12 +9,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.IO;
+using Server.Plugin;
 
 namespace Wonderland_Private_Server
 {
     public partial class Form1 : Form
     {
         bool blockclose = true;
+
+        PluginManager phostManager;
           
 
         public Form1()
@@ -101,13 +104,23 @@ namespace Wonderland_Private_Server
             DebugSystem.Initialize(ref MainOutput, true);
             DebugSystem.VerboseLvl = 1;
             
-            DebugSystem.Write("[init] - Initializing DataBase Objects");
+            DebugSystem.Write("[Init] - Initializing DataBase Objects");
             cGlobal.gUserDataBase = new DataBase.UserDataBase();
-            DebugSystem.Write("[init] - Initializing DataFile Objects");
+            cGlobal.gCharacterDataBase = new DataBase.CharacterDataBase();
+            DebugSystem.Write("[Init] - Initializing DataFile Objects");
             cGlobal.ItemDatManager = new DataFiles.PhxItemDat();
-            DebugSystem.Write("[Init] - Intializing Please Wait.....");
+            DebugSystem.Write("[Init] - Intializing Systems Please Wait.....");
+            cGlobal.ApplicationTasks = new Server.TaskManager();
+            cGlobal.Update_System = new Server.System.UpdateSystem();
+            cGlobal.Update_System.MainFrm = this;
+            cGlobal.Update_System.MapUpdtPanel = UpdtPane2;
+            cGlobal.Update_System.AppUpdtPanel = UpdatePane;
+            phostManager = new PluginManager();
+            phostManager.Intialize();
+            DebugSystem.Write("[Init] - Intializing Server Please Wait.....");
             cGlobal.gLoginServer = new Server.LoginServer();
             cGlobal.gWorld = new Server.WorldServer();
+
             //cGlobal.WLO_World = new Server.WloWorldNode();
             //cGlobal.gCharacterDataBase = new DataManagement.DataBase.CharacterDataBase();
             //cGlobal.gEveManager = new DataManagement.DataFiles.EveManager();
@@ -117,9 +130,6 @@ namespace Wonderland_Private_Server
             //cGlobal.gCompoundDat = new DataManagement.DataFiles.cCompound2Dat();
             //cGlobal.gUserDataBase = new UserDataBase();
             //cGlobal.gNpcManager = new DataManagement.DataFiles.NpcDat();
-            cGlobal.ApplicationTasks = new Server.TaskManager();
-            cGlobal.GitClient = new GupdtSrv.gitClient();
-            cGlobal.GitClient.GitinfoUpdated += GitClient_GitinfoUpdated;
             
             cGlobal.SrvSettings = new Server.Config.Settings();
 
@@ -141,30 +151,24 @@ namespace Wonderland_Private_Server
             else
                 DebugSystem.Write("Settings File not found");
 
-            if (GitBranch.Text != cGlobal.SrvSettings.Update.GitBranch)
-                GitBranch.Text = cGlobal.SrvSettings.Update.GitBranch;
 
+
+            cGlobal.gUserDataBase.TableName = cGlobal.SrvSettings.DB.TableName_Ref;
+            cGlobal.gUserDataBase.Username_Ref = cGlobal.SrvSettings.DB.Username_Ref;
+            cGlobal.gUserDataBase.Password_Ref = cGlobal.SrvSettings.DB.Password_Ref;
+            cGlobal.gUserDataBase.DataBaseID_Ref = cGlobal.SrvSettings.DB.UserID_Ref;
+            cGlobal.gUserDataBase.IM_Ref = cGlobal.SrvSettings.DB.IM_Ref;
+            cGlobal.gUserDataBase.CharacterID1_Ref = cGlobal.SrvSettings.DB.CharacterID1_Ref;
+            cGlobal.gUserDataBase.CharacterID2_Ref = cGlobal.SrvSettings.DB.CharacterID2_Ref;
+            cGlobal.gUserDataBase.Char_Delete_Code_Ref = cGlobal.SrvSettings.DB.Char_Delete_Code_Ref;
             //if (GitUptOption.SelectedIndex != (byte)cGlobal.SrvSettings.Update.UpdtControl)
             //    GitUptOption.SelectedIndex = (byte)cGlobal.SrvSettings.Update.UpdtControl;
 
 
-            cGlobal.GitClient.Branch = GitBranch.Text;
 
             #endregion
 
-            #region  Setup Tasks
-
-            this.Invoke(new Action(() =>
-            {
-                dataGridView1.Columns[0].DataPropertyName = "TaskName";
-                dataGridView1.Columns[1].DataPropertyName = "Interval";
-                dataGridView1.Columns[2].DataPropertyName = "LastExecution";
-                dataGridView1.Columns[3].DataPropertyName = "NextExecution";
-                dataGridView1.Columns[4].DataPropertyName = "Status";
-                dataGridView1.DataSource = cGlobal.ApplicationTasks.TaskItems;
-            }));
-            cGlobal.ApplicationTasks.CreateTask("Application Update", new TimeSpan(0, 10, 0));
-            #endregion
+           
 
             //use for testing
 #if DEBUG
@@ -182,7 +186,6 @@ namespace Wonderland_Private_Server
 
             #region intial check  if theres an update from github
             DebugSystem.Write("Checking For Update on Git...");
-            cGlobal.GitClient.CheckFor_Update();
 
             //if (cGlobal.SrvSettings.Update.UpdtControl != Server.Config.UpdtSetting.Never && cGlobal.ApplicationTasks.TaskItems.Count(c => c.TaskName == "Updating Application") > 0)
             //    goto ShutDwn;
@@ -190,7 +193,22 @@ namespace Wonderland_Private_Server
                         
 
             #region Configure Form Data
-            
+             this.Invoke(new Action(() =>
+            {
+                dataGridView1.Columns[0].DataPropertyName = "TaskName";
+                dataGridView1.Columns[1].DataPropertyName = "Interval";
+                dataGridView1.Columns[2].DataPropertyName = "LastExecution";
+                dataGridView1.Columns[3].DataPropertyName = "NextExecution";
+                dataGridView1.Columns[4].DataPropertyName = "Status";
+                dataGridView1.DataSource = cGlobal.ApplicationTasks.TaskItems;
+            }));
+
+             TableName.DataBindings.Add("Text", cGlobal.SrvSettings.DB, "TableName_Ref");
+             Username_Ref.DataBindings.Add("Text", cGlobal.SrvSettings.DB, "Username_Ref");
+             Password_Ref.DataBindings.Add("Text", cGlobal.SrvSettings.DB, "Password_Ref");
+             UserID_Ref.DataBindings.Add("Text", cGlobal.SrvSettings.DB, "UserID_Ref");
+             IM_Ref.DataBindings.Add("Text", cGlobal.SrvSettings.DB, "IM_Ref");
+             Char_Delete_Code_Ref.DataBindings.Add("Text", cGlobal.SrvSettings.DB, "Char_Delete_Code_Ref");
             #endregion
 
             #region DataBase Initialization
@@ -198,24 +216,24 @@ namespace Wonderland_Private_Server
             
             DebugSystem.Write("Testing Connection to UserDatabase");
             if (cGlobal.gUserDataBase.TestConnection())
+                DebugSystem.Write("Connection Successful");
+            else
+                DebugSystem.Write("Connection not successful\r\n unable to authencate  users connecting to server");
+
+            DebugSystem.Write("Testing Connection to Character Database");
+            if (cGlobal.gCharacterDataBase.TestConnection())
             {
                 DebugSystem.Write("Connection Successful");
-                //DebugSystem.Write("Verifying DataBase Tables");
-                //cGlobal.gUserDataBase.VerifySetup();
-                //cGlobal.gCharacterDataBase.VerifySetup();
-                //cGlobal.gGameDataBase.VerifySetup();
+                DebugSystem.Write("Verifying DataBase Tables");
+                cGlobal.gCharacterDataBase.VerifySetup();
             }
             else
-            {
-                DebugSystem.Write("Connection not successful\r\n unable to start server");
-                return;
-            }
+                DebugSystem.Write("Connection not successful\r\n unable to create neccesary tables for the server");
 
            
 
 
             #endregion
-
 
             #region Load Data Files
             //cGlobal.gItemManager.LoadItems("Data\\Item.dat");
@@ -259,8 +277,15 @@ namespace Wonderland_Private_Server
             }
             while (cGlobal.Run);
 
-        ShutDwn:
+            ShutDown();
 
+            
+
+        }
+
+
+        public void ShutDown()
+        {
             this.Invoke(new Action(() => { this.Enabled = false; }));
 
             UI.ShutDown_Dialog tmp = new UI.ShutDown_Dialog();
@@ -274,7 +299,6 @@ namespace Wonderland_Private_Server
             cGlobal.Run = false;
             blockclose = false;
             this.Invoke(new Action(() => { Close(); }));
-
         }
 
 
@@ -284,14 +308,14 @@ namespace Wonderland_Private_Server
         {
             try
             {
-                this.BeginInvoke(new Action(() =>
-                {
-                    UpdatePane.Controls.Clear();
+                //this.BeginInvoke(new Action(() =>
+                //{
+                //    UpdatePane.Controls.Clear();
 
-                    foreach (var y in cGlobal.GitClient.Releases.Where(c => c.TagName != null).OrderByDescending(c => new Version(c.TagName)))
-                        UpdatePane.Controls.Add(new Gui.Update.GitUpdateItem(cGlobal.GitClient.myVersion, y));
+                //    foreach (var y in cGlobal.GitClient.Releases.Where(c => c.TagName != null).OrderByDescending(c => new Version(c.TagName)))
+                //        UpdatePane.Controls.Add(new Gui.Update.GitUpdateItem(cGlobal.GitClient.myVersion, y));
 
-                }));
+                //}));
             }
             catch (Exception fe) { DebugSystem.Write(new ExceptionData(fe)); }
         }
@@ -316,12 +340,12 @@ namespace Wonderland_Private_Server
         #region Update Section
         private void GitBranch_TextChanged(object sender, EventArgs e)
         {
-            if (cGlobal.GitClient != null && cGlobal.GitClient.Branch != GitBranch.Text)
-            {
-                cGlobal.SrvSettings.Update.GitBranch = GitBranch.Text;
-                cGlobal.GitClient.Branch = GitBranch.Text;
-                cGlobal.GitClient.CheckFor_Update();
-            }
+            //if (cGlobal.GitClient != null && cGlobal.GitClient.Branch != GitBranch.Text)
+            //{
+            //    cGlobal.SrvSettings.Update.GitBranch = GitBranch.Text;
+            //    cGlobal.GitClient.Branch = GitBranch.Text;
+            //    cGlobal.GitClient.CheckFor_Update();
+            //}
         }
         private void GitUptOption_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -354,6 +378,35 @@ namespace Wonderland_Private_Server
         
         #endregion
 
+        private void updtschedule_CheckedChanged(object sender, EventArgs e)
+        {
+            cGlobal.SrvSettings.Update.EnableSchedUpdate = updtschedule.Checked;
+        }
+
+        private void updtday_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void updttime_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void updttime2_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void updt_warn_how_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void updt_warn_CheckedChanged(object sender, EventArgs e)
+        {
+            cGlobal.SrvSettings.Update.WarnofUpdate = updt_warn.Checked;
+        }
 
 
         

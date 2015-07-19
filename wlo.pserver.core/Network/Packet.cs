@@ -17,6 +17,10 @@ namespace Network
             : base(init, initLength)
         {
         }
+        public SendPacket(Packet src):base(src.Buffer.ToArray())
+        {
+           
+        }
 
         public SendPacket()
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
@@ -32,6 +33,10 @@ namespace Server
             ClientList = new List<LoginClient>();
         }
 
+
+        public int Count { get { return ClientList.Count; } }
+
+
         public override void ListenThread()
         {
 
@@ -46,7 +51,7 @@ namespace Server
                 DebugSystem.Write("Server bound to port " + 6414 + " successfully.");
                 m_Socket.Listen(40);
                 DebugSystem.Write("Now listening for clients on Port " + 6414 + ".");
-                while (bKeepAlive && m_ThreadHandle.ThreadState != System.Threading.ThreadState.AbortRequested)
+                while (bKeepAlive && m_ThreadHandle.ThreadState != ThreadState.AbortRequested)
                 {
                     try
                     {
@@ -92,7 +97,7 @@ namespace Server
                     {
                         bKeepAlive = m_bKeepAlive;
                     }
-                    System.Threading.Thread.Sleep(1);
+                    Thread.Sleep(1);
                 }
             }
             catch (SocketException ex)
@@ -111,6 +116,33 @@ namespace Server
                 DebugSystem.Write(new ExceptionData(e));
             }
             m_Socket = null;
+        }
+
+        public bool IsOnline(string name)
+        {
+            int cnt = 0;
+            foreach (var c in ClientList)
+                foreach (var p in c.Values)
+                    if (p.UserAcc.UserName == name) cnt++;
+            return !(cnt <= 1);
+
+        }
+
+        public bool IsOnline(uint userID)
+        {
+            int cnt = 0;
+            foreach (var c in ClientList)
+                foreach (var p in c.Values)
+                    if (p.UserAcc.UserID == userID) cnt++;
+
+            return !(cnt <= 1);
+        }
+
+        public void Disconnect(uint userID)
+        {
+            foreach (var c in ClientList)
+                foreach (var p in c.Values)
+                    if (p.UserAcc.UserID == userID) p.Disconnect();
         }
     }
 }

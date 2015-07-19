@@ -9,6 +9,8 @@ using Server.Task;
 
 namespace Server
 {
+    
+   
     public class TaskManager
     {
         public BindingList<taskItem> TaskItems;
@@ -18,26 +20,11 @@ namespace Server
             TaskItems = new BindingList<taskItem>();
         }
 
-        public void CreateTask(string name,TimeSpan interval)
+        public void CreateTask(taskItem Task)
         {
-            DebugSystem.Write(DebugItemType.Info_Heavy, "Creating new Task - " + name + " with interval -" + interval);
-            switch (name)
-            {
-                case "Application Update": if (TaskItems.Count(c => c.TaskName == name) == 0) TaskItems.Add(new ApplicationCheckUpdate_Task(interval)); break;
-                case "Updating Application":
-                    {
-                        if (TaskItems.Count(c => c.TaskName == "Application Update Notification") == 0)
-                        {
-                            var time = DateTime.Now.Add(cGlobal.SrvSettings.Update.AutoUpdt_Schedule).Subtract(new TimeSpan(0, 5, 0));
+            DebugSystem.Write(DebugItemType.Info_Heavy, "Creating new Task - " + Task.TaskName + " with interval -" + Task.Interval);
 
-                            var tmp = new Application_Update_Warning(new TimeSpan(0, (int)time.Minute / 2, 0));
-                            tmp.EndofLife = time;
-                            TaskItems.Add(tmp);
-                        }
-
-                        if (TaskItems.Count(c => c.TaskName == name) == 0) TaskItems.Add(new ApplicationCheckUpdate_Task(interval));
-                    } break;
-            }
+            if (TaskItems.Count(c => c.TaskName == Task.TaskName) == 0) TaskItems.Add(Task);
         }
         public void ChangeInterval(string name, TimeSpan src)
         {

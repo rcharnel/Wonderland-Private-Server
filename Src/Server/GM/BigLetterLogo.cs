@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wonderland_Private_Server.GM
+namespace Game
 
 {
     public static partial class GMStuff

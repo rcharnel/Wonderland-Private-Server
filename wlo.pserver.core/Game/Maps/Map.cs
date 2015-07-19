@@ -10,20 +10,21 @@ using RCLibrary.Core.Networking;
 using Network;
 using Game;
 using Game.Code;
+using Game.Maps;
+using System.Reflection;
 
-
-namespace Game.Maps
+namespace Game
 {
     public interface IMap
     {
         uint MapID { get; set; }
 
-        void Broadcast(SendPacket pkt);
-        void Broadcast(SendPacket pkt, string parameter, params object[] To);
+        //void Broadcast(SendPacket pkt);
+        //void Broadcast(SendPacket pkt, string parameter, params object[] To);
         bool Teleport(TeleportType teletype, Player sender, byte portalID, WarpData warp = null);
     }
 
-    public class GameMap : IDisposable, IMap
+    public class GameMap : Plugin.PluginObj, IDisposable, IMap
     {
         readonly object mlock = new object();
 
@@ -37,10 +38,11 @@ namespace Game.Maps
         protected Queue<Player> DisconnectedQueue;
         protected Queue<KeyValuePair<DateTime, Action>> WaitingtoLogin;
 
-        protected uint m_mapid; public virtual uint MapID { get { lock (mlock) return m_mapid; } set { lock (mlock)m_mapid = value; } }
+        protected uint m_mapid;
         protected string m_name;
 
         bool shutdown = false;
+
 
 
         public GameMap()
@@ -52,6 +54,94 @@ namespace Game.Maps
             //Tents = new ConcurrentDictionary<uint, Tent>();
             //Battles = new ConcurrentDictionary<int, Battle>();
         }
+        public GameMap(Plugin.PluginHost host, System.IO.FileInfo src)
+            : base(src)
+        {
+            myhost = (Plugin.PluginHost)host;
+            m_playerlist = new List<Player>();
+            ItemsDropped = new List<Item>(255);
+            DisconnectedQueue = new Queue<Player>(50);
+            WaitingtoLogin = new Queue<KeyValuePair<DateTime, Action>>(105);
+            //Tents = new ConcurrentDictionary<uint, Tent>();
+            //Battles = new ConcurrentDictionary<int, Battle>();
+            LoadData();
+
+        }
+
+
+        /// <summary>
+        /// Called to Load Additional Data contained within the individual maps
+        /// </summary>
+        protected virtual void LoadData()
+        {
+            DebugSystem.Write("["+Assembly.GetAssembly(this.GetType()).FullName+"] - Initializing Map " + MapID + " - " + MapName);
+            #region load Interactable Objects for this map
+
+            //load data from data files
+
+
+            //foreach (var y in (from c in myDllAssembly.GetTypes()
+            //                   where c.IsClass && c.IsPublic && c.IsSubclassOf(typeof(InteractableObj))
+            //                   select c))
+            //{
+            //    InteractableObj m = null;
+
+            //    try
+            //    {
+            //        m = (Activator.CreateInstance(y) as InteractableObj);
+            //        if (MapObjects.ContainsKey(m.clickID))
+            //            MapObjects[m.clickID].DataOverride = m;
+            //    }
+            //    catch { DLogger.DllError((myDllAssembly == null) ? Assembly.GetExecutingAssembly().FullName : myDllAssembly.FullName, "LoadData", new Exception("failed to load Map Object " + (Activator.CreateInstance(y) as InteractableObj).clickID)); }
+            //}
+
+            //DLogger.DllLog((myDllAssembly == null) ? Assembly.GetExecutingAssembly().FullName : myDllAssembly.FullName, "loaded " + MapObjects.Count + " Map Objects");
+            //#endregion
+
+            //#region load Warp Destinations for this map
+
+            //foreach (var y in (from c in myDllAssembly.GetTypes()
+            //                   where c.IsClass && c.IsPublic && typeof(WarpData).IsAssignableFrom(c)
+            //                   select c))
+            //{
+            //    WarpData m = null;
+            //    try
+            //    {
+            //        m = (Activator.CreateInstance(y) as WarpData);
+            //    }
+            //    catch { DLogger.DllError("PserverDataPlugin", "Map.cs LoadData", new Exception("failed to load Warp Destination " + (Activator.CreateInstance(y) as InteractableObj).clickID)); }
+            //    if (!Destinations.ContainsKey((byte)m.ID))
+            //        Destinations.Add((byte)m.ID, m);
+
+            //}
+            //DLogger.DllLog((myDllAssembly == null) ? Assembly.GetExecutingAssembly().FullName : myDllAssembly.FullName, "loaded " + Destinations.Count + " Warp Destinations");
+            //#endregion
+
+            //#region load Warp Portals for this map
+
+            //foreach (var y in (from c in myDllAssembly.GetTypes()
+            //                   where c.IsClass && c.IsPublic && typeof(WarpPortal).IsAssignableFrom(c)
+            //                   select c))
+            //{
+            //    WarpPortal m = null;
+            //    try
+            //    {
+            //        m = (Activator.CreateInstance(y) as WarpPortal);
+            //    }
+            //    catch { DLogger.DllError("PserverDataPlugin", "Map.cs LoadData", new Exception("failed to load Warp Portal " + (Activator.CreateInstance(y) as InteractableObj).clickID)); }
+            //    if (!Portals.ContainsKey((byte)m.ID))
+            //        Portals.Add((byte)m.ID, m);
+            //}
+
+            //DLogger.DllLog((myDllAssembly == null) ? Assembly.GetExecutingAssembly().FullName : myDllAssembly.FullName, "loaded " + Portals.Count + " Warp Portals");
+            #endregion
+
+        }
+
+        #region Properties
+        public virtual uint MapID { get { lock (mlock) return m_mapid; } set { lock (mlock)m_mapid = value; } }
+        public virtual string MapName { get { return ""; } }
+        #endregion
 
         public void Dispose()
         {
@@ -170,8 +260,8 @@ namespace Game.Maps
                         //        o.dropin = DateTime.Now.AddMinutes(2);
                         //    }
                         //}
-                        src.Send(SendPacket.FromFormat("bbwb", 23, 2, res.ItemID, 1));
-                        Broadcast(SendPacket.FromFormat("bbwb", 23, 2, res.ItemID, 0), "Ex", src.CharID);
+                        src.Send(new SendPacket(Packet.FromFormat("bbwb", 23, 2, res.ItemID, 1)));
+                        Broadcast(new SendPacket(Packet.FromFormat("bbwb", 23, 2, res.ItemID, 0)), "Ex", src.CharID);
                     }
                 }
             });
@@ -296,10 +386,10 @@ namespace Game.Maps
 
         async protected virtual void onWarp_Out(byte portalID, Player src, WarpData To, bool toTent)
         {
-            src.PrevMap = new WarpData();
-            src.PrevMap.DstMap = (ushort)MapID;
-            src.PrevMap.DstX_Axis = src.CurX;
-            src.PrevMap.DstY_Axis = src.CurY;
+            //src.PrevMap = new WarpData();
+            //src.PrevMap.DstMap = (ushort)MapID;
+            //src.PrevMap.DstX_Axis = src.CurX;
+            //src.PrevMap.DstY_Axis = src.CurY;
 
             SendAc12(src, portalID, To, toTent);
                 m_playerlist.Remove(src);
@@ -308,7 +398,7 @@ namespace Game.Maps
         public virtual bool Teleport(TeleportType teletype, Player sender, byte portalID, WarpData warp = null)
         {
             if (teletype == TeleportType.Regular || teletype == TeleportType.CmD)
-                sender.Send(SendPacket.FromFormat("bb",20,7));
+                sender.Send(new SendPacket(Packet.FromFormat("bb",20,7)));
 
             SendPacket tmp = new SendPacket();
             tmp.Pack8((byte)23);
@@ -387,7 +477,7 @@ namespace Game.Maps
                         onWarp_Out(portalID, sender, warp, (teletype == TeleportType.Tent));// warp out of map
                         sender.CurX = warp.DstX_Axis;//switch x
                         sender.CurY = warp.DstY_Axis;//switch y
-                        Tents[warp.DstMap].onWarp_In(0, sender, warp);
+                        //Tents[warp.DstMap].onWarp_In(0, sender, warp);
                     } break;
                 #endregion
                 case TeleportType.Tool:/*t.inv.RemoveInv((byte)Entry, 1);*/ break;
@@ -605,7 +695,7 @@ namespace Game.Maps
         /// Broadcasts a packet to all who are in a Map
         /// </summary>
         /// <param CharacterName="pkt"></param>
-        public void Broadcast(IPacket pkt)
+        public void Broadcast(SendPacket pkt)
         {
             Broadcast(pkt, "ALL");
         }
@@ -614,7 +704,7 @@ namespace Game.Maps
         /// </summary>
         /// <param name="pkt"></param>
         /// <param name="To">"Multiple target IDs as string to send to specific people"</param>
-        public async void Broadcast(IPacket pkt, string parameter, params object[] To)
+        public async void Broadcast(SendPacket pkt, string parameter, params object[] To)
         {
                 switch (parameter)
                 {

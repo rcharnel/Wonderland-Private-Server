@@ -14,10 +14,10 @@ namespace Server.Config
     }
     public class UpdateSetting
     {
-
+        public bool EnableSchedUpdate;
+        public bool WarnofUpdate;
         public UpdtSetting UpdtControl;
         public TimeSpan UpdtChk_Interval;
         public TimeSpan AutoUpdt_Schedule;
-        public string GitBranch;
     }
 }

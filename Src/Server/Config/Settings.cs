@@ -20,7 +20,7 @@ namespace Server.Config
 
     public class Settings
     {
-        readonly System.Xml.Serialization.XmlSerializer diskio;
+        readonly XmlSerializer diskio;
         readonly object m_Lock = new object();
 
         public UpdateSetting Update;

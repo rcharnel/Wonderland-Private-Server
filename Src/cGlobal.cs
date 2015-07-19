@@ -9,6 +9,7 @@ using System.Reflection;
 using Wonderland_Private_Server.Config;
 using System.Collections.Concurrent;
 using Server;
+using Server.System;
 
 namespace System
 {
@@ -17,9 +18,6 @@ namespace System
 
         
         public static bool Run;
-
-        public static gitClient GitClient;
-
         
 
         public static Server.Config.Settings SrvSettings;
@@ -36,11 +34,10 @@ namespace System
         //public static Server.WloWorldNode WLO_World;
         //public static Game.Maps.MapManager gMapManager;
 
-        public static TaskManager ApplicationTasks;
-
-        
 
         #region Systems
+        public static TaskManager ApplicationTasks;
+        public static UpdateSystem Update_System;
         //public static Instance gInstanceSystem = new Instance();
         //public static GuildSystem gGuildSystem = new GuildSystem();
 

@@ -16,7 +16,7 @@ namespace Server
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected string taskname;
-        public TimeSpan interval;
+         TimeSpan interval;
         public DateTime Createdat,EndofLife;
         protected DateTime RanAt, nextExec,guidelay;
         protected string status;

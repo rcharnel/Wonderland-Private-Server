@@ -64,8 +64,9 @@
     </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" />
     <Reference Include="Microsoft.ReportViewer.WinForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" />
-    <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <Private>True</Private>
+    <Reference Include="MySql.Data, Version=6.9.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\MySql.Data.6.9.7\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="Octokit, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -106,19 +107,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Src\Network\ActionCodes\AC09.cs" />
+    <Compile Include="Src\Network\ActionCodes\AC35.cs" />
     <Compile Include="Src\Network\Client.cs" />
-    <Compile Include="Src\Network\Web\WebServer.cs" />
-    <Compile Include="Src\Server\ActionCodes\AC0.cs" />
+    <Compile Include="Src\Server\Plugin\Plugin.cs" />
+    <Compile Include="Src\Server\WebServer.cs" />
+    <Compile Include="Src\Network\ActionCodes\AC0.cs" />
+    <Compile Include="Src\Network\ActionCodes\AC63.cs" />
     <Compile Include="Src\Server\Bots\Cupid.cs" />
     <Compile Include="Src\Server\Bots\GmBot.cs" />
     <Compile Include="Src\cGlobal.cs" />
     <Compile Include="Src\Server\Config\Game\PetConfigs.cs" />
-    <Compile Include="Src\Server\Config\DataBase.cs" />
+    <Compile Include="Src\Server\Config\DB\DataBase.cs" />
     <Compile Include="Src\Server\Config\Update.cs" />
-    <Compile Include="Src\Server\DataBase\CharacterDataBase.cs" />
-    <Compile Include="Src\Server\DataBase\GameDataBase.cs" />
-    <Compile Include="Src\Server\DataBase\phpBB.cs" />
-    <Compile Include="Src\Server\DataBase\UserDataBase.cs" />
     <Compile Include="Src\Gui\MainForm1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -151,9 +152,9 @@
     <Compile Include="Src\Server\System\UpdateSystem.cs" />
     <Compile Include="Src\Server\Utilities\Request\RequestManager.cs" />
     <Compile Include="Src\Server\Utilities\Request\requests.cs" />
-    <Compile Include="Src\Server\TaskSystem\taskItem.cs" />
-    <Compile Include="Src\Server\TaskSystem\TaskManager.cs" />
-    <Compile Include="Src\Server\TaskSystem\Task\ApplicationUpdate_Task.cs" />
+    <Compile Include="Src\Server\System\TaskSystem\Task\taskItem.cs" />
+    <Compile Include="Src\Server\System\TaskSystem\TaskManager.cs" />
+    <Compile Include="Src\Server\System\TaskSystem\Task\ApplicationUpdate_Task.cs" />
     <Compile Include="Src\Server\WorldServer.cs" />
     <Compile Include="Tutorials\Creating Dll for Database Connection.cs" />
     <EmbeddedResource Include="Src\Gui\MainForm1.resx">
@@ -205,6 +206,7 @@
     <None Include="bin\Release\Data\SkillData.MBTM" />
     <None Include="bin\Release\Data\Talk.dat" />
     <None Include="bin\Release\Data\Wem.MMG" />
+    <None Include="packages.config" />
     <None Include="Src\packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -226,8 +228,7 @@
     <Folder Include="Src\Gui\WebUI\" />
     <Folder Include="Src\Gui\Web\" />
     <Folder Include="Src\Network\DHT\Nodes\" />
-    <Folder Include="Src\Network\Protocol\WAC\" />
-    <Folder Include="Src\Server\Events\" />
+    <Folder Include="Src\Network\Web\" />
     <Folder Include="Src\Server\GM\Commands\" />
     <Folder Include="Src\Server\Instance\" />
     <Folder Include="Src\Server\Utilities\Update\" />
@@ -250,6 +251,7 @@
     <Content Include="DLLS\RCLibrary.dll" />
     <Content Include="DLLS\System.Data.SQLite.dll" />
     <None Include="DLLS\Wlo.Core.dll" />
+    <Content Include="LICENSE.txt" />
     <Content Include="Tutorials\x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -286,7 +288,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
