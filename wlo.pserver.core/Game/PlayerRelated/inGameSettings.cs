@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RCLibrary.Core.Networking;
 
-
-
-namespace Game.Code.PlayerRelated
+namespace Game.Code
 {
     [Flags]
     public enum ChannelCodeType
@@ -19,7 +18,7 @@ namespace Game.Code.PlayerRelated
         worldchannel = 16
     }
 
-    public class clientSettings
+    public class ClientSettings
     {
         readonly object mlock = new object();
 
@@ -39,7 +38,7 @@ namespace Game.Code.PlayerRelated
 
 
 
-        public clientSettings()
+        public ClientSettings()
         {
             chatChannel = ChannelCodeType.guildchannel |
                 ChannelCodeType.localchannel |
@@ -48,7 +47,7 @@ namespace Game.Code.PlayerRelated
                 ChannelCodeType.worldchannel;
         }
 
-        public void ProcessSocket(SendPacket p)
+        public void ProcessSocket(Packet p)
         {
             p.m_nUnpackIndex = 4;
 
@@ -83,14 +82,34 @@ namespace Game.Code.PlayerRelated
         public IEnumerable<byte> ToArray()
         {
            RCLibrary.Core.Networking.PacketBuilder tmp = new RCLibrary.Core.Networking.PacketBuilder();
-            tmp.Begin(false);
+            tmp.Begin();
             tmp.Add(33);
             tmp.Add(2);
             tmp.Add((pk) ? 1 : 2);
             tmp.Add((fighting) ? 1 : 2);
             tmp.Add((trade) ? 1 : 2);
             tmp.Add((byte)chatChannel);
-            return tmp.End().Buffer;
+            return tmp.End();
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1} {2} {3}", pk, fighting, (byte)chatChannel, trade);
+        }
+
+        public void Load(string str)
+        {
+            try
+            {
+                var word = str.Split(' ');
+                pk = bool.Parse(word[0]);
+                fighting = bool.Parse(word[1]);
+                chatChannel = (ChannelCodeType)byte.Parse(word[2]);
+                trade = bool.Parse(word[3]);
+            }
+            catch (Exception f) { DebugSystem.Write(new ExceptionData(f)); }
+
+        }
+
     }
 }

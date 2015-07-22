@@ -18,7 +18,7 @@ namespace Game
     }
     public enum MapType
     {
-        Regular,
+        RegularMap,
         Tent,
     }
     public enum TeleportType

@@ -27,7 +27,7 @@ namespace Game
         UInt16 m_eyeColor; public UInt16 EyeColor { get { lock (c_lock)return m_eyeColor; } set { lock (c_lock)m_eyeColor = value; } }
         UInt32 m_colorcode1; public UInt32 ColorCode1 { get { lock (c_lock)return m_colorcode1; } set { lock (c_lock)m_colorcode1 = value; } }
         UInt32 m_colorcode2; public UInt32 ColorCode2 { get { lock (c_lock)return m_colorcode2; } set { lock (c_lock)m_colorcode2 = value; } }
-        UInt32 m_charID = 0; public UInt32 CharID { get { lock (c_lock)return m_charID; } set { lock (c_lock)m_charID = value; } }
+        UInt32 m_charID = 0; public virtual UInt32 CharID { get { lock (c_lock)return m_charID; } set { lock (c_lock)m_charID = value; } }
         string m_name; public String CharName { get { lock (c_lock)return m_name; } set { lock (c_lock)m_name = value; } }
         string m_nickname; public String NickName { get { lock (c_lock)return m_nickname; } set { lock (c_lock)m_nickname = value; } }
         UInt16 m_x; public UInt16 CurX { get { lock (c_lock)return m_x; } set { lock (c_lock)m_x = value; } }
@@ -162,8 +162,8 @@ namespace Game
         public static IEnumerable<Byte> ToArray(this Character src)
         {
             if (src == null) return null;
-            PacketBuilder temp = new PacketBuilder();
-            temp.Begin();
+             PacketBuilder temp = new PacketBuilder();
+            temp.Begin(null);
             temp.Add((byte)src.Slot);// data[at] = slot; at++;//PackSend->Pack((byte)1);
             temp.Add(src.CharName);// data[at] = nameLen; at++;
             temp.Add((byte)src.Level);// data[at] = level; at++;//	PackSend->Pack((byte)tmp1.level);					// Level 

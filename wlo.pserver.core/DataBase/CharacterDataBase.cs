@@ -719,8 +719,8 @@ namespace DataBase
         {
             if (name == null) return false;
 
-            List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
-            parameters.Add(new KeyValuePair<string, string>("@myname", name.ToLower()));
+            List<KeyValuePair<string, object>> parameters = new List<KeyValuePair<string, object>>();
+            parameters.Add(new KeyValuePair<string, object>("@myname", name.ToLower()));
 
             DataTable src = null;
 
@@ -770,7 +770,7 @@ namespace DataBase
         //    cmd = new MySqlCommand("SELECT * FROM characters where name = @myname", conn);
         //    cmd.Parameters.AddWithValue("@myname", name);
         //    try { reader = cmd.ExecuteReader(); }
-        //    catch (MySqlException ex) { DebugSystem.Write(ex); throw; }          
+        //    catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }          
         //    src = new DataTable();
         //    src.Load(reader);
         //    if (src.Rows.Count != 0)
@@ -778,7 +778,7 @@ namespace DataBase
         //        cmd = new MySqlCommand("SELECT * FROM characters where charID =" + target, conn);
         //        cmd.Parameters.AddWithValue("@myname", name);
         //        try { reader = cmd.ExecuteReader(); }
-        //        catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+        //        catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
         //        src = new DataTable();
         //        src.Load(reader);
         //        if (src.Rows.Count != 0)
@@ -802,7 +802,7 @@ namespace DataBase
         //    cmd.Parameters.AddWithValue("@myname", name);
         //    cmd.Parameters.AddWithValue("@myname2", name.ToLower());
         //    try { err = null; return (cmd.ExecuteNonQuery() == 1); }
-        //    catch (MySqlException ex) { DebugSystem.Write(ex); err = ex; return false; }
+        //    catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); err = ex; return false; }
         //    finally
         //    {
         //        conn.Close();
@@ -812,14 +812,14 @@ namespace DataBase
         public void DeleteCharacter(UInt32 ID)
         {
 
-            //try { cGlobal.gDataBaseConnection.Delete(TableName, "charID = '" + ID + "';");}
-            //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+            //try { Delete(TableName, "charID = '" + ID + "';");}
+            //catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
 
-            //try { cGlobal.gDataBaseConnection.Delete("stats", "charID = '" + ID + "';"); }
-            //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+            //try { Delete("stats", "charID = '" + ID + "';"); }
+            //catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
 
-            //try { cGlobal.gDataBaseConnection.Delete("inventory", "charID = '" + ID + "';"); }
-            //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+            //try { Delete("inventory", "charID = '" + ID + "';"); }
+            //catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
 
             //if (Cache.ContainsKey((int)ID))
             //{
@@ -960,7 +960,7 @@ namespace DataBase
 
 
             //try { src = GetDataTable("SELECT * FROM characters where charID = '" + charID + "'");  }
-            //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+            //catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
 
             if (src.Rows.Count > 0)
             {
@@ -1047,133 +1047,134 @@ namespace DataBase
             #region write character Data
 
             Character c = (Character)player;
-            Dictionary<string, string> insert = new Dictionary<string, string>();
-            //insert.Add("charID", player.ID.ToString());
-            //insert.Add("head", c.Head.ToString());
-            //insert.Add("body", ((byte)c.Body).ToString());
-            //insert.Add("name", c.m_name);
-            //insert.Add("name_clean", c.m_name.ToLower());
-            //insert.Add("nickname", c.Nickname);
-            //insert.Add("location_map", c.LoginMap.ToString());
-            //insert.Add("location_x", c.X.ToString());
-            //insert.Add("location_y", c.Y.ToString());
-            //insert.Add("haircolor", c.HairColor.ToString());
-            //insert.Add("skincolor", c.SkinColor.ToString());
-            //insert.Add("clothingcolor", c.ClothingColor.ToString());
-            //insert.Add("eyecolor", c.EyeColor.ToString());
-            //insert.Add("gold", c.Gold.ToString());
-            //insert.Add("element", ((byte)c.Element).ToString());
-            //insert.Add("rebirth", BitConverter.GetBytes(c.Reborn)[0].ToString());
-            //insert.Add("job", ((byte)c.Job).ToString());//fix
-            //insert.Add("online", BitConverter.GetBytes(false)[0].ToString());
+            Dictionary<string, object> insert = new Dictionary<string, object>();
+            insert.Add("charID", player.CharID);
+            insert.Add("slot", player.Slot);
+            insert.Add("head", c.Head.ToString());
+            insert.Add("body", ((byte)c.Body));
+            insert.Add("name", c.CharName);
+            insert.Add("name_clean", c.CharName.ToLower());
+            insert.Add("nickname", c.NickName);
+            insert.Add("location_map", c.LoginMap);
+            insert.Add("location_x", c.CurX);
+            insert.Add("location_y", c.CurY);
+            insert.Add("haircolor", c.HairColor);
+            insert.Add("skincolor", c.SkinColor);
+            insert.Add("clothingcolor", c.ClothingColor);
+            insert.Add("eyecolor", c.EyeColor);
+            insert.Add("gold", c.Gold);
+            insert.Add("element", ((byte)c.Element));
+            insert.Add("rebirth", BitConverter.GetBytes(c.Reborn)[0]);
+            insert.Add("job", ((byte)c.Job));//fix
+            insert.Add("online", BitConverter.GetBytes(false)[0]);
 
-            //try { cGlobal.gDataBaseConnection.Insert(TableName, insert); }
-            //catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
+            try { Insert("characters", insert); }
+            catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); return false; }
 
             #endregion
 
             #region Write Extr Data
 
-            //try { src = cGlobal.gDataBaseConnection.GetDataTable(string.Format("SELECT * FROM {0} where {1}", "charactersExtData", "charID = '" + charID + "'")); }
-            //catch (MySqlException ex) { DebugSystem.Write(ex); return false; }
+            try { src = GetDataTable(string.Format("SELECT * FROM {0} where {1}", "charactersExtData", "charID = '" + charID + "'")); }
+            catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); return false; }
 
-            //Dictionary<string, string> cols = new Dictionary<string, string>();
-            //cols.Add("charID", charID.ToString());
-            //cols.Add("Settings", player.Settings.Get_SysytemFlag());
-            //cols.Add("Friends", player.GetFriends_Flag);
-            //cols.Add("Guild", "0");
-            //cols.Add("Mail", player.GetMailboxFlags());
+            Dictionary<string, object> cols = new Dictionary<string, object>();
+            cols.Add("charID", charID.ToString());
+            cols.Add("Settings", player.Settings.ToString());
+            cols.Add("Friends", /*player.GetFriends_Flag*/"");
+            cols.Add("Guild", "0");
+            cols.Add("Mail", /*player.GetMailboxFlags()*/"");
 
             if (src.Rows.Count == 0)
             {
-                //try { cGlobal.gDataBaseConnection.Insert("charactersExtData", cols); }
-                //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+                try { Insert("charactersExtData", cols); }
+                catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
             }
             else
             {
-                //try { cGlobal.gDataBaseConnection.Update("charactersExtData", cols, "charID = '" + charID + "';"); }
-                //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+                try { Update("charactersExtData", cols, "charID = '" + charID + "';"); }
+                catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
             }
             #endregion
 
             #region write stats
 
-            //foreach (var u in player.Stat_toSave)
-            //{
-            //    try { src = cGlobal.gDataBaseConnection.GetDataTable(string.Format("SELECT * FROM {0} where {1}", "stats", "charID = '" + charID + "' AND statID = '" + u[0] + "'")); }
-            //    catch (MySqlException ex) { DebugSystem.Write(ex); }
+            foreach (var u in player.Stat_toSave)
+            {
+                try { src = GetDataTable(string.Format("SELECT * FROM {0} where {1}", "stats", "charID = '" + charID + "' AND statID = '" + u[0] + "'")); }
+                catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); }
 
-            //    cols = new Dictionary<string, string>();
-            //    cols.Add("statIdx", "0");
-            //    cols.Add("charID", charID.ToString());
-            //    cols.Add("statID", u[0].ToString());
-            //    cols.Add("StatusUp", u[1].ToString());
-            //    cols.Add("potential", player.Potential.ToString());
+                cols = new Dictionary<string, object>();
+                cols.Add("statIdx", "0");
+                cols.Add("charID", charID.ToString());
+                cols.Add("statID", u[0].ToString());
+                cols.Add("StatusUp", u[1].ToString());
+                cols.Add("potential", player.Potential.ToString());
 
 
 
-            //    if (src.Rows.Count == 0)
-            //    {
-            //        try
-            //        {
-            //            cGlobal.gDataBaseConnection.Insert("stats", cols);
-            //        }
-            //        catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
-            //    }
-            //    else
-            //    {
-            //        try { cGlobal.gDataBaseConnection.Update("stats", cols, "charID = '" + charID + "'AND statID = '" + u[0] + "';"); }
-            //        catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
-            //    }
-            //}
+                if (src.Rows.Count == 0)
+                {
+                    try
+                    {
+                        Insert("stats", cols);
+                    }
+                    catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
+                }
+                else
+                {
+                    try { Update("stats", cols, "charID = '" + charID + "'AND statID = '" + u[0] + "';"); }
+                    catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
+                }
+            }
             #endregion
 
             #region predelete inv
-            //try { cGlobal.gDataBaseConnection.ExecuteNonQuery("DELETE FROM inventory where charID ='" + charID + "';"); }
-            //catch (MySqlException ex) { DebugSystem.Write(ex); throw; }
+            try { ExecuteNonQuery("DELETE FROM inventory where charID ='" + charID + "';"); }
+            catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
             #endregion
 
             #region write inv
-            //if (player.Inv.InventoryDBData != null)
-            //{
-            //    string t = "";
-            //    foreach (var u in player.Inv.InventoryDBData)
-            //    {
-            //        t += string.Format("('{0}','{1}','0','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}'),",
-            //             u.Key, charID, u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]);
-            //    }
-            //    t = t.Substring(0, t.Length - 1);
-            //    t += ";";
-            //    ExecuteNonQuery(string.Format("INSERT INTO inventory (invIdx,charID,storID,itemID,dmg,qty,pos,socketID,bombID,sewID,forge) VALUES {0}", t));
+            if (player.Inv.InventoryDBData != null)
+            {
+                string t = "";
+                foreach (var u in player.Inv.InventoryDBData)
+                {
+                    t += string.Format("('{0}','{1}','0','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}'),",
+                         u.Key, charID, u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]);
+                }
+                t = t.Substring(0, t.Length - 1);
+                t += ";";
+                ExecuteNonQuery(string.Format("INSERT INTO inventory (invIdx,charID,storID,itemID,dmg,qty,pos,socketID,bombID,sewID,forge) VALUES {0}", t));
 
-            //}
+            }
             #endregion
 
-            //#region write eqs
+            #region write eqs
 
-            //if (player.EqData != null)
-            //{
-            //    string t = "";
-            //    foreach (var u in player.EqData)
-            //    {
-            //        t += string.Format("('{0}','{1}','1','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}'),",
-            //                u.Key, charID, u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]);
-            //    }
-            //    t = t.Substring(0, t.Length - 1);
-            //    t += ";";
-            //    cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("INSERT INTO inventory (invIdx,charID,storID,itemID,dmg,qty,pos,socketID,bombID,sewID,forge) VALUES {0}", t));
-            //}
+            if (player.EqData != null)
+            {
+                string t = "";
+                foreach (var u in player.EqData)
+                {
+                    t += string.Format("('{0}','{1}','1','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}'),",
+                            u.Key, charID, u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]);
+                }
+                t = t.Substring(0, t.Length - 1);
+                t += ";";
+                ExecuteNonQuery(string.Format("INSERT INTO inventory (invIdx,charID,storID,itemID,dmg,qty,pos,socketID,bombID,sewID,forge) VALUES {0}", t));
+            }
 
-            //if (Cache.ContainsKey((int)charID) && !player.BlockSave)
-            //    Cache[(int)charID] = player;
-            //#endregion
+            if (Cache.ContainsKey((int)charID))
+                Cache[(int)charID] = player;
+            #endregion
 
             return true;
         }
         public bool WritePlayer(uint charID, Player player)
         {
             bool rem = false;
-            //if (charID == 0 || player.BlockSave) return rem;
+            if (charID == 0) return rem;
 
             if (Cache.ContainsKey((int)charID))
                 Cache[(int)charID] = player;
@@ -1181,72 +1182,72 @@ namespace DataBase
             DataTable src = null;
 
             #region write character Data
-            //Character c = player;
-            //Dictionary<string, string> insert = new Dictionary<string, string>();
-            //insert.Add("head", c.Head.ToString());
-            //insert.Add("body", ((byte)c.Body).ToString());
-            //insert.Add("nickname", c.Nickname);
-            //insert.Add("location_map",(c.CurrentMap.TypeofMap == MapType.Regular) ? c.CurrentMap.MapID.ToString() : player.PrevMap.DstMap.ToString());
-            //insert.Add("location_x", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.X.ToString() : player.PrevMap.DstX_Axis.ToString());
-            //insert.Add("location_y", (c.CurrentMap.TypeofMap == MapType.Regular) ? c.Y.ToString() : player.PrevMap.DstY_Axis.ToString());
-            //insert.Add("haircolor", c.HairColor.ToString());
-            //insert.Add("skincolor", c.SkinColor.ToString());
-            //insert.Add("clothingcolor", c.ClothingColor.ToString());
-            //insert.Add("eyecolor", c.EyeColor.ToString());
-            //insert.Add("gold", c.Gold.ToString());
-            //insert.Add("element", ((byte)c.Element).ToString());
-            //insert.Add("rebirth", BitConverter.GetBytes(c.Reborn)[0].ToString());
-            //insert.Add("job", ((byte)c.Job).ToString());//fix
-            //insert.Add("online", BitConverter.GetBytes(false)[0].ToString());
+            Character c = player;
+            Dictionary<string, object> insert = new Dictionary<string, object>();
+            insert.Add("head", c.Head.ToString());
+            insert.Add("body", ((byte)c.Body).ToString());
+            insert.Add("nickname", c.NickName);
+            insert.Add("location_map", (c.CurMap.Type == MapType.RegularMap) ? c.CurMap.MapID.ToString() : player.PrevMap.DstMap.ToString());
+            insert.Add("location_x", (c.CurMap.Type == MapType.RegularMap) ? c.CurX.ToString() : player.PrevMap.DstX_Axis.ToString());
+            insert.Add("location_y", (c.CurMap.Type == MapType.RegularMap) ? c.CurY.ToString() : player.PrevMap.DstY_Axis.ToString());
+            insert.Add("haircolor", c.HairColor.ToString());
+            insert.Add("skincolor", c.SkinColor.ToString());
+            insert.Add("clothingcolor", c.ClothingColor.ToString());
+            insert.Add("eyecolor", c.EyeColor.ToString());
+            insert.Add("gold", c.Gold.ToString());
+            insert.Add("element", ((byte)c.Element).ToString());
+            insert.Add("rebirth", BitConverter.GetBytes(c.Reborn)[0].ToString());
+            insert.Add("job", ((byte)c.Job).ToString());//fix
+            insert.Add("online", BitConverter.GetBytes(false)[0].ToString());
 
-            //Update(TableName,insert,"charID = '" + charID + "'");
+            Update("characters", insert, "charID = '" + charID + "'");
 
             #endregion
 
             #region write stats
 
-            //foreach (var u in player.Stat_toSave)
-            //{
-            //    src = cGlobal.gDataBaseConnection.GetDataTable(string.Format("SELECT * FROM {0} where {1}", "stats", "charID = '" + charID + "' AND statID = '" + u[0] + "'"));
+            foreach (var u in player.Stat_toSave)
+            {
+                src = GetDataTable(string.Format("SELECT * FROM {0} where {1}", "stats", "charID = '" + charID + "' AND statID = '" + u[0] + "'"));
 
-            //    if (src.Rows.Count == 0)
-            //    {
-            //        cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("INSERT INTO stats {0}", string.Format("(statIdx,charID,statID,StatusUp,potential) VALUES('0','{0}','{1}','{2}','{3}');", charID, u[0], u[1], player.Potential)));
-            //    }
-            //    else
-            //    {
-            //       cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE stats SET {0} where charID = '" + charID + "' AND statID = '"+u[0]+"'", string.Format(" statID = '{0}',StatusUp ='{1}',potential ='{2}'", u[0], u[1], player.Potential)));
-            //    }
-            //}
+                if (src.Rows.Count == 0)
+                {
+                    ExecuteNonQuery(string.Format("INSERT INTO stats {0}", string.Format("(statIdx,charID,statID,StatusUp,potential) VALUES('0','{0}','{1}','{2}','{3}');", charID, u[0], u[1], player.Potential)));
+                }
+                else
+                {
+                    ExecuteNonQuery(string.Format("UPDATE stats SET {0} where charID = '" + charID + "' AND statID = '" + u[0] + "'", string.Format(" statID = '{0}',StatusUp ='{1}',potential ='{2}'", u[0], u[1], player.Potential)));
+                }
+            }
             #endregion
 
             #region write inv
 
             string str = "";
-            //if (player.Inv.InventoryDBData != null)
-            //    foreach (var u in player.Inv.InventoryDBData)
-            //    {
-            //       cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE inventory SET {0} where {1};", string.Format("itemID = '{0}', dmg = '{1}', qty = '{2}', pos = '{3}', socketID = '{4}', bombID = '{5}', sewID = '{6}', forge = '{7}'",
-            //             u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]), "charID ='" + charID + "' AND storID ='0' AND invIdx = '" + u.Key + "'"));
-            //    }
+            if (player.Inv.InventoryDBData != null)
+                foreach (var u in player.Inv.InventoryDBData)
+                {
+                    ExecuteNonQuery(string.Format("UPDATE inventory SET {0} where {1};", string.Format("itemID = '{0}', dmg = '{1}', qty = '{2}', pos = '{3}', socketID = '{4}', bombID = '{5}', sewID = '{6}', forge = '{7}'",
+                          u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]), "charID ='" + charID + "' AND storID ='0' AND invIdx = '" + u.Key + "'"));
+                }
             #endregion
 
             #region write eqs
 
             str = "";
-            //if (player.EqData != null)
-            //    foreach (var u in player.EqData)
-            //    {
-            //       cGlobal.gDataBaseConnection.ExecuteNonQuery(string.Format("UPDATE inventory SET {0} where {1};", string.Format("itemID = '{0}', dmg = '{1}', qty = '{2}', pos = '{3}', socketID = '{4}', bombID = '{5}', sewID = '{6}', forge = '{7}'",
-            //             u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]), "charID ='" + charID + "' AND storID ='1' AND invIdx = '" + u.Key + "'"));
-            //    }
-            //if (Cache.ContainsKey((int)charID) && !player.BlockSave)
-            //    Cache[(int)charID] = player;
+            if (player.EqData != null)
+                foreach (var u in player.EqData)
+                {
+                    ExecuteNonQuery(string.Format("UPDATE inventory SET {0} where {1};", string.Format("itemID = '{0}', dmg = '{1}', qty = '{2}', pos = '{3}', socketID = '{4}', bombID = '{5}', sewID = '{6}', forge = '{7}'",
+                          u.Value[0], u.Value[1], u.Value[2], u.Value[3], u.Value[4], u.Value[5], u.Value[6], u.Value[7]), "charID ='" + charID + "' AND storID ='1' AND invIdx = '" + u.Key + "'"));
+                }
+            if (Cache.ContainsKey((int)charID))
+                Cache[(int)charID] = player;
 
             #endregion
 
             #region write ext data
-            //ExecuteNonQuery(string.Format("UPDATE charactersExtData SET {0} where charID = '" + charID + "';", string.Format(" Settings = '{0}', Friends = '{1}', Guild = '{2}', Mail = '{3}'", player.Settings.Get_SysytemFlag(), player.GetFriends_Flag, "0", player.GetMailboxFlags())));
+            ExecuteNonQuery(string.Format("UPDATE charactersExtData SET {0} where charID = '" + charID + "';", string.Format(" Settings = '{0}', Friends = '{1}', Guild = '{2}', Mail = '{3}'", player.Settings.ToString(), /*player.GetFriends_Flag*/"", "0", /*player.GetMailboxFlags()*/"")));
             #endregion
 
             return true;

@@ -1052,6 +1052,93 @@ namespace Game.Code
             }
         }
 
+        public List<long[]> Stat_toSave
+        {
+            get
+            {
+                lock (m_Lock)
+                {
+                    List<long[]> tmp = new List<long[]>();
+                    tmp.Add(new long[] { 36, TotalExp, 0 });
+                    tmp.Add(new long[] { 38, SkillPoints, 0 });
+                    tmp.Add(new long[] { 25, CurHP, 0 });
+                    tmp.Add(new long[] { 26, CurSP, 0 });
+                    tmp.Add(new long[] { 28, baseStr, Potential });
+                    tmp.Add(new long[] { 29, baseCon, Potential });
+                    tmp.Add(new long[] { 30, baseAgi, Potential });
+                    tmp.Add(new long[] { 27, baseInt, Potential });
+                    tmp.Add(new long[] { 33, baseWis, Potential });
+                    return tmp;
+                }
+            }
+        }
+        public void LoadStats(List<long[]> src)
+        {
+            lock (m_Lock)
+            {
+                foreach (var t in src)
+                {
+                    switch (t[0])
+                    {
+                        case 25: CurHP = (int)t[1]; break;
+                        case 26: CurSP = (ushort)t[1]; break;
+                        case 38: SkillPoints = (ushort)t[1]; break;
+                        case 36: TotalExp = (long)t[1]; break;
+                        case 28: Str = (ushort)t[1]; break;
+                        case 29: Con = (ushort)t[1]; break;
+                        case 30: Agi = (ushort)t[1]; break;
+                        case 27: Int = (ushort)t[1]; break;
+                        case 33: Wis = (ushort)t[1]; break;
+                    }
+                    Potential = (byte)t[2];
+                }
+            }
+        }
+
+        public void LoadStats(string s)
+        {
+            var stats = s.Split(' ');
+
+            CurHP = int.Parse(stats[0]);
+            CurSP = int.Parse(stats[1]);
+            job = (RebornJob)int.Parse(stats[2]);
+            element = (Affinity)int.Parse(stats[3]);
+            m_skillpoint = int.Parse(stats[4]);
+            Str = ushort.Parse(stats[5]);
+            Int = ushort.Parse(stats[6]);
+            Wis = ushort.Parse(stats[7]);
+            Con = ushort.Parse(stats[8]);
+            Agi = ushort.Parse(stats[9]);
+            TotalExp = long.Parse(stats[10]);
+            m_potential = int.Parse(stats[11]);
+            
+        }
+
+        public string StatString
+            {
+                get
+                {
+                    string s = CurHP + " " + CurSP + " " + (byte)Job + " " + (byte)Element +
+                        " " + SkillPoints + " " + Str + " " + Int + " " + Wis + " " + Con + " " + Agi + " "
+                        + TotalExp + " " + Potential;
+                    return s;
+                }
+            }
+
+        public Dictionary<byte, uint[]> EqData
+        {
+            get
+            {
+                lock (m_Lock)
+                {
+                    Dictionary<byte, uint[]> tmp = new Dictionary<byte, uint[]>();
+                    for (byte a = 1; a < 7; a++)
+                        tmp.Add(a, new uint[] { equippedItems[a].ItemID, equippedItems[a].Damage, equippedItems[a].Ammt, (uint)equippedItems[a].Wear_At, 0, 0, 0, 0 });
+                    return tmp;
+                }
+            }
+        }
+
         /// <summary>
         /// Processes Network Related Packets
         /// This class will also send queue packets that have been generated 

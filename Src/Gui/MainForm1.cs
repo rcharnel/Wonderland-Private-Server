@@ -109,6 +109,7 @@ namespace Wonderland_Private_Server
             cGlobal.gCharacterDataBase = new DataBase.CharacterDataBase();
             DebugSystem.Write("[Init] - Initializing DataFile Objects");
             cGlobal.ItemDatManager = new DataFiles.PhxItemDat();
+            cGlobal.ItemDatManager.Load(Environment.CurrentDirectory + "\\Data\\itemDat.wpdat");
             DebugSystem.Write("[Init] - Intializing Systems Please Wait.....");
             cGlobal.ApplicationTasks = new Server.TaskManager();
             cGlobal.Update_System = new Server.System.UpdateSystem();
@@ -117,7 +118,7 @@ namespace Wonderland_Private_Server
             cGlobal.Update_System.AppUpdtPanel = UpdatePane;
             phostManager = new PluginManager();
             phostManager.Intialize();
-            DebugSystem.Write("[Init] - Intializing Server Please Wait.....");
+           
             cGlobal.gLoginServer = new Server.LoginServer();
             cGlobal.gWorld = new Server.WorldServer();
 
@@ -245,10 +246,9 @@ namespace Wonderland_Private_Server
 
             #endregion
 
+            DebugSystem.Write("[Init] - Intializing Server Please Wait.....");
             #region Initialize Server Components
-            DebugSystem.Write(" Starting Server...");
-            cGlobal.gWorld.Initialize();
-            DebugSystem.Write(" Starting LoginServer...");            
+            cGlobal.gWorld.Initialize();            
             cGlobal.gLoginServer.Initialize();
 
             //cGlobal.WLO_World.Initialize();

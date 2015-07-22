@@ -70,7 +70,7 @@ using Game.Maps;
 
             User m_useracc;
             Inventory m_inv;
-            //clientSettings m_setting;
+            ClientSettings m_settings;
             //MailManager m_Mail;
             //Friendlist m_friendlist;
             //RiceBall m_riceball;
@@ -87,14 +87,14 @@ using Game.Maps;
                 m_socket.onPacketRecved = ProcessSocket;
                 QueueData = new Queue<SendPacket>(25);
 
-
-                //m_inv = new Inventory(this);
-                //onWearEquip = m_inv.onWearEquip;
-                //onEquip_Remove = m_inv.onUnEquip;
+                
+                m_inv = new Inventory(this);
+                onWearEquip = m_inv.onWearEquip;
+                onEquip_Remove = m_inv.onUnEquip;
 
                 m_useracc = new User();
                 Flags = new PlayerFlagManager();
-                //m_setting = new clientSettings();
+                m_settings = new ClientSettings();
                 //m_friendlist = new Friendlist(new Action<SendPacket>(SendPacket));
                 //m_Mail = new MailManager(this);
                 //m_tent = new Tent(this);
@@ -145,6 +145,7 @@ using Game.Maps;
 
             #region Player
             
+            
             public PlayerFlagManager Flags
             {
                 get
@@ -156,7 +157,17 @@ using Game.Maps;
                     lock (mlock) m_Flags = value;
                 }
             }
-
+            public override uint CharID
+            {
+                get
+                {
+                    return (Slot == 1) ? UserAcc.Character1ID : UserAcc.Character2ID;
+                }
+                set
+                {
+                    base.CharID = value;
+                }
+            }
             //public bool BlockSave { get; set; }
             //public bool inGame { get; set; }
             //public PlayerState State
@@ -177,13 +188,13 @@ using Game.Maps;
             //    }
             //}
             //public IReadOnlyList<Quest> Completed_Quest { get { return m_started_Quests.Where(c => c.progress == c.total).ToList(); } }
-            //public inGameSettings Settings
-            //{
-            //    get
-            //    {
-            //        return m_settings;
-            //    }
-            //}
+            public ClientSettings Settings
+            {
+                get
+                {
+                    return m_settings;
+                }
+            }
             //public List<Character> Friends
             //{
             //    get
@@ -226,7 +237,41 @@ using Game.Maps;
             //        base.CharacterName = value;
             //    }
             //}
+            public override IMap CurMap
+            {
+                get
+                {
+                    return base.CurMap;
+                }
+                set
+                {
+                    if (base.CurMap != null)
+                    {
+                        if (base.CurMap is GameMap)
+                        {
+                            prevMap = new WarpData();
+                            prevMap.DstMap = (ushort)base.CurMap.MapID;
+                            prevMap.DstX_Axis = CurX;
+                            prevMap.DstY_Axis = CurY;
 
+                            (base.CurMap as GameMap).onItemDropped_fromMap = null;
+                            (base.CurMap as GameMap).onItemPickup_fromMap = null;
+                        }
+                    }
+                    base.CurMap = value;
+                    if (base.CurMap is GameMap)
+                    {
+                        (base.CurMap as GameMap).onItemDropped_fromMap = m_inv.onItemDropped_fromMap;
+                        (base.CurMap as GameMap).onItemPickup_fromMap = m_inv.onItemPickedUp_fromMap;
+                    }
+                }
+            }
+
+            public WarpData PrevMap
+            {
+                get { lock (mlock) return prevMap; }
+                set { lock (mlock)prevMap = value; }
+            }
 
             #endregion
 
@@ -777,40 +822,8 @@ using Game.Maps;
             
 
             //public Inventory Inv { get { return m_inv; } }
-            //public override IMap CurMap
-            //{
-            //    get
-            //    {
-            //        return base.CurMap;
-            //    }
-            //    set
-            //    {
-            //        if (base.CurMap != null)
-            //        {
-            //            if (base.CurMap is GameMap)
-            //            {
-            //                prevMap = new WarpData();
-            //                prevMap.DstMap = (ushort)base.CurMap.MapID;
-            //                prevMap.DstX_Axis = CurX;
-            //                prevMap.DstY_Axis = CurY;
-
-            //                (base.CurMap as GameMap).onItemDropped_fromMap = null;
-            //                (base.CurMap as GameMap).onItemPickup_fromMap = null;
-            //            }
-            //        }
-            //        base.CurMap = value;
-            //        if (base.CurMap is GameMap)
-            //        {
-            //            (base.CurMap as GameMap).onItemDropped_fromMap = m_inv.onItemDropped_fromMap;
-            //            (base.CurMap as GameMap).onItemPickup_fromMap = m_inv.onItemPickedUp_fromMap;
-            //        }
-            //    }
-            //}
-            //public WarpData PrevMap
-            //{
-            //    get { lock (mlock) return prevMap; }
-            //    set { lock (mlock)prevMap = value; }
-            //}
+            
+           
             public byte Emote { get { lock (mlock)return emote; } set { lock (mlock)emote = value; } }
             //public MailManager Mail { get { return m_Mail; } }
             //public Friendlist MyFriends { get { return m_friendlist; } }

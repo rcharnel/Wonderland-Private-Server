@@ -35,7 +35,7 @@ namespace Server
         /// <summary>
         /// Maps loaded into the world
         /// </summary>
-        //ConcurrentDictionary<ushort, Map> MapList = new ConcurrentDictionary<ushort, Map>();
+        ConcurrentDictionary<ushort, GameMap> MapList = new ConcurrentDictionary<ushort, GameMap>();
                
         // System.Diagnostics.Stopwatch exptimer = new System.Diagnostics.Stopwatch();
         /// <summary>

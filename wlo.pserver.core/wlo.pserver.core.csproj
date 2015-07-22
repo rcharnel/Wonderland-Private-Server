@@ -77,6 +77,7 @@
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\PlayerRelated\Character.cs" />
     <Compile Include="Game\PlayerRelated\Equip.cs" />
+    <Compile Include="Game\PlayerRelated\inGameSettings.cs" />
     <Compile Include="Game\User.cs" />
     <Compile Include="Network\ActionCodes\AC.cs" />
     <Compile Include="Network\Packet.cs" />

@@ -16,90 +16,82 @@ namespace Network.ActionCodes
 
         public override void ProcessPkt(Player r, Packet p)
         {
-            switch (p.B)
+            switch (p.Unpack8())
             {
-                //case 1: Recv1(ref r, p); break;
+                case 1: Recv1(ref r, p); break;
                 case 2: Recv2(r, p); break;
             }
         }
 
-        //void Recv1(ref Player tp, Packet e)
-        //{
-        //    try
-        //    {
-        //        if (string.IsNullOrEmpty(tp.Cipher))
-        //        {
-        //            tp.Cipher = e.UnpackChar(20);
-        //            if ((tp.Cipher.Length < 6) ||
-        //                (tp.Cipher.Length > 14))
-        //            {
-        //                //make sure no save of data by setting values to 0
-        //                tp.Clear();
-        //                SendPacket p = new SendPacket();
-        //                p.Pack(new byte[] { 0, 30 });
-        //                tp.Send(p);
-        //                return;
-        //            }
-        //        }
-            
-        //        tp.Eqs.Element = (ElementType)e.Unpack8(14);
-        //        tp.Eqs.Body = (BodyStyle)e.Unpack8(2);
-        //        tp.Eqs.Head = e.Unpack8(4);
-        //        tp.HairColor = e.Unpack16(6);
-        //        tp.SkinColor = e.Unpack16(8);
-        //        tp.ClothingColor = e.Unpack16(10);
-        //        tp.EyeColor = e.Unpack16(12);
-        //        tp.Eqs.Str = e.Unpack8(15);
-        //        tp.Eqs.Agi = e.Unpack8(16);
-        //        tp.Eqs.Wis = e.Unpack8(17);
-        //        tp.Eqs.Int = e.Unpack8(18);
-        //        tp.Eqs.Con = e.Unpack8(19);
-        //        foreach (cItem u in GetNoobClothes(tp))
-        //        {
-        //            InvItemCell i = new InvItemCell();
-        //            i.CopyFrom(u);
-        //            tp.Eqs.SetEQ((byte)u.Equippped_At, i);
-        //        }
-        //        tp.FillHP(); tp.FillSP();
-        //        tp.Settings.Set(3, 31);
-        //        tp.Settings.Set(1, 2);
-        //        tp.Settings.Set(2, 1);
-        //        tp.Settings.Set(4, 1);
-        //        tp.Eqs.TotalExp = 6;
-        //        tp.LoginMap = 60000; //ship map 10017;
-        //        tp.X = 602; // ship x 1042;
-        //        tp.Y = 455; //ship y 1075;
-        //        tp.SetGold(0);
-        //        //tp.Started_Quests.Add(new Quest() { QID = 1 });
+        void Recv1(ref Player tp, Packet e)
+        {
+            try
+            {
+                tp.Eqs.Body = (BodyStyle)e.Unpack16();
+                tp.Eqs.Head = (byte)e.Unpack16();
+                tp.HairColor = e.Unpack16();
+                tp.SkinColor = e.Unpack16();
+                tp.ClothingColor = e.Unpack16();
+                tp.EyeColor = e.Unpack16();
+                tp.Eqs.Element = (Affinity)e.Unpack8();
+                tp.Eqs.Str = e.Unpack8();
+                tp.Eqs.Agi = e.Unpack8();
+                tp.Eqs.Wis = e.Unpack8();
+                tp.Eqs.Int = e.Unpack8();
+                tp.Eqs.Con = e.Unpack8();
+                if (string.IsNullOrEmpty(tp.UserAcc.Cipher))
+                {
 
-        //        //tp.Info.MySkills.AddSkill(cGlobal.SkillManager.GetSkillByID(15003));
-        //        //create a character id for this new character
-        //        //tp.Info.ID = tp.UserID + (byte)(tp.Slot - 1);
-        //        // cGlobal.GameDB.CreateInventory((sender as WloPlayer));
+                    tp.UserAcc.Cipher = e.UnpackString();
+                    if ((tp.UserAcc.Cipher.Length < 6) ||
+                        (tp.UserAcc.Cipher.Length > 14))
+                    {
+                        //make sure no save of data by setting values to 0
+                        tp.Clear();
+                        tp.Send(new SendPacket(Packet.FromFormat("bb", 0, 30)));
+                        return;
+                    }
+                }
 
-        //        var id = tp.ID;
-        //        if (cGlobal.gCharacterDataBase.WriteNewPlayer(tp.ID, tp))
-        //        {
-        //           cGlobal.gUserDataBase.Update_Player_ID(tp.DataBaseID, tp.ID, (byte)tp.Slot);
-        //           cGlobal.gUserDataBase.UpdateUser(tp.DataBaseID, tp.Cipher);
-        //            NormalLog(tp);
-        //        }
-        //        else 
-        //            throw new Exception("unable to write player");
+                tp.SetBeginnerOutfit();
 
-        //        //tp.CharacterState = GameCharacter.PlayerState.Logging_In;
-               
-        //    }
-        //    catch (Exception t)
-        //    {
-        //       Utilities.LogServices.Log(t); 
-        //        SendPacket p = new SendPacket();
-        //        p.Pack(new byte[] { 0, 49 });
-        //        tp.Send(p);
-        //    }
+                tp.FillHP(); tp.FillSP();
+                tp.Settings.ChannelCode = (ChannelCodeType)31;
+                tp.Settings.TRADABLE = true;
+                tp.Settings.PKABLE = false;
+                tp.Settings.JOINABLE = true;
+                tp.Eqs.TotalExp = 6;
+                tp.LoginMap = 60000; //ship map 10017;
+                tp.CurX = 602; // ship x 1042;
+                tp.CurY = 455; //ship y 1075;
+                tp.SetGold(0);
+                //tp.Started_Quests.Add(new Quest() { QID = 1 });
+
+                //tp.Info.MySkills.AddSkill(cGlobal.SkillManager.GetSkillByID(15003));
+                //create a character id for this new character
+                //tp.Info.ID = tp.UserID + (byte)(tp.Slot - 1);
+                // cGlobal.GameDB.CreateInventory((sender as WloPlayer));
+
+                if (cGlobal.gCharacterDataBase.WriteNewPlayer(tp.CharID, tp))
+                {
+                    cGlobal.gUserDataBase.Update_Player_ID(tp.UserAcc.DataBaseID, tp.CharID, (byte)tp.Slot);
+                    cGlobal.gUserDataBase.UpdateUser(tp.UserAcc.DataBaseID, tp.UserAcc.Cipher);
+                    //NormalLog(tp);
+                }
+                else
+                    throw new Exception("unable to write player");
+
+                //tp.CharacterState = GameCharacter.PlayerState.Logging_In;
+
+            }
+            catch (Exception t)
+            {
+                DebugSystem.Write(new ExceptionData(t));
+                tp.Send(new SendPacket(Packet.FromFormat("bb", 0, 30)));
+            }
 
 
-        //}
+        }
 
         void Recv2( Player tp, Packet e)
         {
@@ -114,128 +106,11 @@ namespace Network.ActionCodes
             tp.Send(new SendPacket(Packet.FromFormat("bbb", 9, 3, 0)));
         }
 
-       
-        //Item[] GetNoobClothes(Player p)
-        //{
-        //    Item[] y = new Item[1];
-        //    switch (p.Eqs.Body)
-        //    {
-        //        case BodyStyle.Big_Female:
-        //            {
-        //                HairStyle_BigF g = new HairStyle_BigF();
-        //                switch (Enum.GetName(g.GetType(), (HairStyle_BigF)p.Eqs.Head))
-        //                {
-        //                    case "Iris":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(22005),
-        //                               cGlobal.gItemManager.GetItem(21006),cGlobal.gItemManager.GetItem(23001),
-        //                               cGlobal.gItemManager.GetItem(24006)};
-        //                        } break;
-        //                    case "Lique":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(21007),cGlobal.gItemManager.GetItem(23002),
-        //                               cGlobal.gItemManager.GetItem(24007)};
-        //                        } break;
-        //                    case "Maria":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(22006),
-        //                               cGlobal.gItemManager.GetItem(21011),cGlobal.gItemManager.GetItem(10004),
-        //                               cGlobal.gItemManager.GetItem(24011)};
-        //                        } break;
-        //                    case "Vanessa":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(21008),
-        //                               cGlobal.gItemManager.GetItem(24008)};
-        //                        } break;
-        //                    case "Breillat":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(22007),
-        //                               cGlobal.gItemManager.GetItem(21009),cGlobal.gItemManager.GetItem(10002),
-        //                               cGlobal.gItemManager.GetItem(24009)};
-        //                        } break;
-        //                    case "Karin":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(21015),
-        //                                cGlobal.gItemManager.GetItem(22008),
-        //                               cGlobal.gItemManager.GetItem(24015)};
-        //                        } break;
-        //                    case "Konnotsuroko":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(24013),
-        //                               cGlobal.gItemManager.GetItem(21013),};
-        //                        } break;
-        //                    case "Jessica":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(22002),
-        //                               cGlobal.gItemManager.GetItem(21010),cGlobal.gItemManager.GetItem(10003),
-        //                               cGlobal.gItemManager.GetItem(24010)};
-        //                        } break;
-        //                }
-        //            } break;
-        //        case BodyStyle.Big_Male:
-        //            {
-        //                HairStyle_BigM g = new HairStyle_BigM();
-        //                switch (Enum.GetName(g.GetType(), (HairStyle_BigM)p.Eqs.Head))
-        //                {
-        //                    case "Daniel":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(21004),
-        //                               cGlobal.gItemManager.GetItem(24004)};
-        //                        } break;
-        //                    case "Sid":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(21005),
-        //                               cGlobal.gItemManager.GetItem(24005)};
-        //                        } break;
-        //                    case "More":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(21012),
-        //                               cGlobal.gItemManager.GetItem(24012)};
-        //                        } break;
-        //                    case "Kurogane":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(22009),
-        //                               cGlobal.gItemManager.GetItem(21014),cGlobal.gItemManager.GetItem(18002),
-        //                               cGlobal.gItemManager.GetItem(24014)};
-        //                        } break;
-        //                }
-        //            } break;
-        //        case BodyStyle.Small_Female:
-        //            {
-        //                HairStyle_SmallF g = new HairStyle_SmallF();
-        //                switch (Enum.GetName(g.GetType(), (HairStyle_SmallF)p.Eqs.Head))
-        //                {
-        //                    case "Nina":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(22003),
-        //                               cGlobal.gItemManager.GetItem(21002),cGlobal.gItemManager.GetItem(24002)};
-        //                        } break;
-        //                    case "Betty":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(22001),
-        //                               cGlobal.gItemManager.GetItem(21003),cGlobal.gItemManager.GetItem(24003)};
-        //                        } break;
-        //                }
-        //            } break;
-        //        case BodyStyle.Small_Male:
-        //            {
-        //                HairStyle_SmallM g = new HairStyle_SmallM();
-        //                switch (Enum.GetName(g.GetType(), (HairStyle_SmallM)p.Eqs.Head))
-        //                {
-        //                    case "Rocco":
-        //                        {
-        //                            y = new cItem[]{ cGlobal.gItemManager.GetItem(21001),
-        //                               cGlobal.gItemManager.GetItem(24001)};
-        //                        } break;
-        //                }
-
-        //            } break;
-        //    }
-        //    return y;
-        //}
 
 
-        //#region wlo methods
+
+        #region wlo methods
+
         //byte[] Get_63_1Data(Character player, byte slot)
         //{
         //    Packet temp = new Packet();
@@ -301,9 +176,9 @@ namespace Network.ActionCodes
         //        c.Send(p);
         //        //------------------------
         //        c.Send_3_Me();
-        //       cGlobal.WLO_World.SendCurrentPlayers(c);
+        //        cGlobal.WLO_World.SendCurrentPlayers(c);
         //        //Load final Data
-        //       cGlobal.gGameDataBase.LoadFinalData(ref c);
+        //        cGlobal.gGameDataBase.LoadFinalData(ref c);
         //        //send sidebar
         //        c.Send_5_3();
         //        p = new SendPacket();
@@ -472,7 +347,7 @@ namespace Network.ActionCodes
         //        //c.CharacterState = GameCharacter.PlayerState.inMap;
         //        //---------------------------------
         //    }
-        //    catch (Exception t) {Utilities.LogServices.Log(t); }
+        //    catch (Exception t) { Utilities.LogServices.Log(t); }
         //}
 
         //void Send_SingleByte_AC(ref Player player, byte ac, byte subac, object byteval)
@@ -569,6 +444,6 @@ namespace Network.ActionCodes
         //    p.Pack(wVal);
         //    player.Send(p);
         //}
-        //#endregion
+        #endregion
     }
 }

@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Reflection;
 using System.Net;
+using System.IO;
 
 namespace Server.System
 {
@@ -98,7 +99,7 @@ namespace Server.System
                 if (cGlobal.SrvSettings.Update.EnableSchedUpdate)
                 {
                 }
-                else if (cGlobal.gLoginServer.Count == 0)
+                else if (cGlobal.gLoginServer.Count == 0 && File.Exists(Environment.CurrentDirectory + "\\WloPSrvUpdater.exe"))
                 {
                     cGlobal.gLoginServer.Kill();
                     cGlobal.Run = false;

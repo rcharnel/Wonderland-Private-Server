@@ -368,6 +368,21 @@ namespace Game.Code
             }
         }
 
+        public Dictionary<byte, uint[]> InventoryDBData
+        {
+            get
+            {
+                lock (mylock)
+                {
+                    Dictionary<byte, uint[]> tmp = new Dictionary<byte, uint[]>();
+
+                    for(byte a =1;a<51;a++)
+                        tmp.Add(a, new uint[] { this[a].ItemID, this[a].Damage, this[a].Ammt, a, 0, 0, 0, 0 });
+                    return tmp;
+                }
+            }
+        }
+
 
 
         public void onItemUsed(byte slot, byte tgrt, byte ammt)
