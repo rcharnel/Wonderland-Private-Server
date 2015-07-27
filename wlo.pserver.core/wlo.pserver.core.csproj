@@ -58,6 +58,8 @@
     <Compile Include="DataBase\CharacterDataBase.cs" />
     <Compile Include="DataBase\GameDataBase.cs" />
     <Compile Include="DataBase\UserDataBase.cs" />
+    <Compile Include="Game\Bots\Cupid.cs" />
+    <Compile Include="Game\Bots\GmBot.cs" />
     <Compile Include="Game\Delegates.cs" />
     <Compile Include="Game\Enums\BattleEnum.cs" />
     <Compile Include="Game\Enums\CharEnums.cs" />
@@ -81,6 +83,7 @@
     <Compile Include="Game\User.cs" />
     <Compile Include="Network\ActionCodes\AC.cs" />
     <Compile Include="Network\Packet.cs" />
+    <Compile Include="Network\SocketClient.cs" />
     <Compile Include="Plugin\InteractableObj.cs" />
     <Compile Include="Plugin\PluginHost.cs" />
     <Compile Include="Plugin\PluginObj.cs" />

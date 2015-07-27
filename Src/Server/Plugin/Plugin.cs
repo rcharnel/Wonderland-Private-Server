@@ -15,7 +15,7 @@ using DataBase;
 using Network.ActionCodes;
 using Game;
 
-namespace Server.Plugin
+namespace Plugin
 {
     public class PluginManager : PluginHost
     {

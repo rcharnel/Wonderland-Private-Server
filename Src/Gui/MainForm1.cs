@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.IO;
-using Server.Plugin;
+using Plugin;
 
 namespace Wonderland_Private_Server
 {
@@ -120,7 +120,7 @@ namespace Wonderland_Private_Server
             phostManager.Intialize();
            
             cGlobal.gLoginServer = new Server.LoginServer();
-            cGlobal.gWorld = new Server.WorldServer();
+            cGlobal.gWorld = new Server.WorldServer(phostManager);
 
             //cGlobal.WLO_World = new Server.WloWorldNode();
             //cGlobal.gCharacterDataBase = new DataManagement.DataBase.CharacterDataBase();

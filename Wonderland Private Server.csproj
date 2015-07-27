@@ -111,6 +111,7 @@
     <Compile Include="Src\Network\ActionCodes\AC35.cs" />
     <Compile Include="Src\Network\Client.cs" />
     <Compile Include="Src\Server\Plugin\Plugin.cs" />
+    <Compile Include="Src\Server\System\MapSystem.cs" />
     <Compile Include="Src\Server\WebServer.cs" />
     <Compile Include="Src\Network\ActionCodes\AC0.cs" />
     <Compile Include="Src\Network\ActionCodes\AC63.cs" />
@@ -288,7 +289,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" />
+      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

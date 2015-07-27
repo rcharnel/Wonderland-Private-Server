@@ -387,10 +387,10 @@ namespace Game
 
         async protected virtual void onWarp_Out(byte portalID, Player src, WarpData To, bool toTent)
         {
-            //src.PrevMap = new WarpData();
-            //src.PrevMap.DstMap = (ushort)MapID;
-            //src.PrevMap.DstX_Axis = src.CurX;
-            //src.PrevMap.DstY_Axis = src.CurY;
+            src.PrevMap = new WarpData();
+            src.PrevMap.DstMap = (ushort)MapID;
+            src.PrevMap.DstX_Axis = src.CurX;
+            src.PrevMap.DstY_Axis = src.CurY;
 
             SendAc12(src, portalID, To, toTent);
                 m_playerlist.Remove(src);
@@ -427,23 +427,23 @@ namespace Game
                 #region Regular Warp
                 case TeleportType.Regular:
                     {
-                        //if (TypeofMap != MapType.Regular && portalID == 1)  //create warp from Prev Map
-                        //{
-                        //    onWarp_Out(portalID, ref sender, sender.PrevMap, (teletype == TeleportType.Tent));// warp out of map
-                        //}
-                        //else
-                        //{
-                        //    var WarpID = (int)Events[Portals[portalID].unknownbytearray1[0]].SubEntry[0].SubEntry[0].dialog2;
-                        //    if (WarpID == 0)
-                        //    {
+                        if (Type != MapType.RegularMap && portalID == 1)  //create warp from Prev Map
+                        {
+                            onWarp_Out(portalID, sender, sender.PrevMap, (teletype == TeleportType.Tent));// warp out of map
+                        }
+                        else
+                        {
+                            //var WarpID = (int)Events[Portals[portalID].unknownbytearray1[0]].SubEntry[0].SubEntry[0].dialog2;
+                            //if (WarpID == 0)
+                            //{
 
-                        //        tmp = new SendPacket();
-                        //        tmp.PackArray(new byte[] { 20, 8 });
-                        //        sender.Send(tmp); return false;
-                        //    }
-                        //    onWarp_Out(portalID, ref sender, new WarpData(Destinations[(byte)WarpID]), (teletype == TeleportType.Tent));// warp out of map
-                        //    cGlobal.WLO_World.onTelePort(portalID, new WarpData(Destinations[(byte)WarpID]), ref sender);
-                        //}
+                            //    tmp = new SendPacket();
+                            //    tmp.PackArray(new byte[] { 20, 8 });
+                            //    sender.Send(tmp); return false;
+                            //}
+                            //onWarp_Out(portalID, sender, new WarpData(Destinations[(byte)WarpID]), (teletype == TeleportType.Tent));// warp out of map
+                            //cGlobal.WLO_World.onTelePort(portalID, new WarpData(Destinations[(byte)WarpID]), ref sender);
+                        }
                     } break;
                 #endregion
                 case TeleportType.Special:
@@ -645,7 +645,7 @@ namespace Game
                 tmp.Add(SendPacket.FromFormat("bb", 23, 102));
                 tmp.Add(SendPacket.FromFormat("bb", 20, 8));
                 t.Flags.Add(PlayerFlag.InMap); //t.CharacterState = PlayerState.inMap;
-                t.Send(new SendPacket(tmp.End(),tmp.End().Count()));
+                t.Send(new SendPacket(tmp.End()));
             }
 
         #endregion

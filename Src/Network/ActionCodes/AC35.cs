@@ -13,7 +13,7 @@ namespace Network.ActionCodes
         public override int ID { get { return 35; } }
         public override void  ProcessPkt(Player p, Packet r)
         {
-            switch (r.B)
+            switch (r.Unpack8())
             {
                 case 2: Recv2(ref p, r); break;
             }

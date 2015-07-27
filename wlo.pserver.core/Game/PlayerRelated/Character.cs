@@ -94,7 +94,7 @@ namespace Game
             p.Add(CharName);
             p.Add(NickName);
             p.Add(0);
-            Send( new SendPacket(p.End(),p.End().Count()));
+            Send( new SendPacket(p.End()));
         }
         public void Send_5_3() //logging in player info
         {
@@ -135,7 +135,7 @@ namespace Game
             p.Add(Reborn);
             p.Add((byte)Job);
             p.Add((byte)Potential);
-            Send(new SendPacket(p.End(), p.End().Count()));
+            Send(new SendPacket(p.End()));
         }
 
         #region Inotify Property
@@ -217,7 +217,7 @@ namespace Game
             p.Add(src.CharName);
             p.Add(src.NickName);
             p.Add(255);
-            return new SendPacket(p.End(),p.End().Count());
+            return new SendPacket(p.End());
         }
     }
 }

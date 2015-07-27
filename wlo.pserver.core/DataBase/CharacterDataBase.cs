@@ -7,7 +7,10 @@ using System.Collections.Concurrent;
 using MySql.Data.MySqlClient;
 using System.Data;
 using Game;
+using Game.Bots;
 using RCLibrary.Core;
+using RCLibrary.Core.Networking;
+using System.Reflection;
 
 
 namespace DataBase
@@ -24,6 +27,7 @@ namespace DataBase
 
     public sealed class CharacterDataBase :RCLibrary.Core.DataBase
     {
+        ConcurrentDictionary<int,Character> Characters_Online;
         List<CharacterDataRequest> CacheCharacters;
 
         const string DBServer = "CharacterDataBase";
@@ -44,6 +48,7 @@ namespace DataBase
         public CharacterDataBase()
         {
             //DBAssist = new DBConnector.DBOAuth();
+            Characters_Online = new ConcurrentDictionary<int, Character>();
             CacheCharacters = new List<CharacterDataRequest>();
             DebugSystem.Write("[Init] - Configuring restricted Names");
             Setup();
@@ -114,7 +119,7 @@ namespace DataBase
 
             #region charquest Columns
             Dictionary<string, string> charquest = new Dictionary<string, string>();
-            charquest.Add("pri_key", "int/NN/PK");
+            charquest.Add("pri_key", "int/NN/AI/PK");
             charquest.Add("charID", "int/NN");
             charquest.Add("quest_started", "int");
             charquest.Add("quest_pos", "int");
@@ -122,7 +127,7 @@ namespace DataBase
 
             #region charunlocks Columns
             Dictionary<string, string> charunlocks = new Dictionary<string, string>();
-            charunlocks.Add("pri_key", "int/NN/PK");
+            charunlocks.Add("pri_key", "int/NN/AI/PK");
             charunlocks.Add("charID", "int/NN");
             charunlocks.Add("maploc", "int");
             charunlocks.Add("clickID", "int");
@@ -130,7 +135,7 @@ namespace DataBase
 
             #region inv
             Dictionary<string, string> inv = new Dictionary<string, string>();
-            inv.Add("pri_key", "int/NN/PK");
+            inv.Add("pri_key", "int/NN/AI/PK");
             inv.Add("invIdx", "int/NN");
             inv.Add("charID", "int");
             inv.Add("storID", "int");
@@ -146,7 +151,7 @@ namespace DataBase
 
             #region stats
             Dictionary<string, string> stats = new Dictionary<string, string>();
-            stats.Add("pri_key", "int/NN/PK");
+            stats.Add("pri_key", "int/NN/AI/PK");
             stats.Add("statIdx", "int/NN");
             stats.Add("charID", "int");
             stats.Add("statID", "int");
@@ -181,6 +186,7 @@ namespace DataBase
                                     case "text": str += "text "; break;
                                     case "int": str += "int(11) "; break;
                                     case "NN": str += "NOT NULL "; break;
+                                    case "AI": str += "AUTO_INCREMENT "; break;
                                     case "PK": nonsqlite_prikey = "PRIMARY KEY (" + t.Key + ")"; break;
                                 }
                         } break;
@@ -933,25 +939,25 @@ namespace DataBase
         {
             if (charID == 0) return false;
 
-            //if (Cache.ContainsKey((int)charID))
-            //{
-            //    t.ID = Cache[(int)charID].ID;
-            //    t.Head = Cache[(int)charID].Head;
-            //    t.Body = Cache[(int)charID].Body;
-            //    t.CharacterName = Cache[(int)charID].m_name;
-            //    t.Nickname = Cache[(int)charID].Nickname;
-            //    t.LoginMap = Cache[(int)charID].LoginMap;
-            //    t.X = Cache[(int)charID].X;
-            //    t.Y = Cache[(int)charID].Y;
-            //    t.HairColor = Cache[(int)charID].HairColor;
-            //    t.SkinColor = Cache[(int)charID].SkinColor;
-            //    t.ClothingColor = Cache[(int)charID].ClothingColor;
-            //    t.EyeColor = Cache[(int)charID].EyeColor;
-            //    t.SetGold((int)Cache[(int)charID].Gold);
-            //    t.Element = Cache[(int)charID].Element;
-            //    t.Job = Cache[(int)charID].Job;
-            //    return;
-            //}
+            if (Cache.ContainsKey((int)charID))
+            {
+                t.CharID = Cache[(int)charID].CharID;
+                t.Head = Cache[(int)charID].Head;
+                t.Body = Cache[(int)charID].Body;
+                t.CharName = Cache[(int)charID].CharName;
+                t.NickName = Cache[(int)charID].NickName;
+                t.LoginMap = Cache[(int)charID].LoginMap;
+                t.CurX = Cache[(int)charID].CurX;
+                t.CurY = Cache[(int)charID].CurY;
+                t.HairColor = Cache[(int)charID].HairColor;
+                t.SkinColor = Cache[(int)charID].SkinColor;
+                t.ClothingColor = Cache[(int)charID].ClothingColor;
+                t.EyeColor = Cache[(int)charID].EyeColor;
+                t.SetGold((int)Cache[(int)charID].Gold);
+                t.Element = Cache[(int)charID].Element;
+                t.Job = Cache[(int)charID].Job;
+                return true;
+            }
 
             DataTable src = null;
             DataRow[] rows = new DataRow[0];
@@ -959,8 +965,8 @@ namespace DataBase
 
 
 
-            //try { src = GetDataTable("SELECT * FROM characters where charID = '" + charID + "'");  }
-            //catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
+            try { src = GetDataTable("SELECT * FROM characters where charID = '" + charID + "'"); }
+            catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
 
             if (src.Rows.Count > 0)
             {
@@ -1034,7 +1040,7 @@ namespace DataBase
                     }
                 }
             }
-            return false;
+            return true;
         }
 
         public bool WriteNewPlayer(uint charID, Player player)
@@ -1251,6 +1257,83 @@ namespace DataBase
             #endregion
 
             return true;
+        }
+
+        public void SendOnlineCharacters(Player src)
+        {
+            PacketBuilder tmp = new PacketBuilder();
+            tmp.Begin(null);
+
+            Packet p;
+            foreach (var y in (from c in Assembly.GetExecutingAssembly().GetTypes()
+                               where c.IsClass && c.IsSubclassOf(typeof(GmBot))
+                               select c))
+            {
+                var c = (Activator.CreateInstance(y) as GmBot);
+                p = new Packet();
+                p.Pack8(4);
+                p.Pack32(c.CharID);
+                p.Pack8((byte)c.Body); //body style
+                p.Pack8((byte)c.Element); //element
+                p.Pack8(c.Level); //level
+                p.Pack16(10019); //map id
+                p.Pack16(722); //x
+                p.Pack16(995); //y
+                p.Pack8(0);
+                p.Pack16(c.Head);
+                p.Pack16(c.HairColor);
+                p.Pack16(c.SkinColor);
+                p.Pack16(c.ClothingColor);
+                p.Pack16(c.EyeColor);
+                p.Pack8(c.WornCount);//clothesAmmt); // ammt of clothes
+                p.PackArray(c.Worn_Equips);
+                p.Pack32(0); p.Pack8(0); //??
+                p.PackBool(c.Reborn); //is rebirth
+                p.Pack8((byte)c.Job); //rb class
+                p.PackString(c.CharName);//(BYTE*)c.CharacterName,c.nameLen); //CharacterName
+                p.PackString(c.NickName);//(BYTE*)c.nick,c.nickLen); //nickname
+                p.Pack8(255); //??
+                p.SetHeader();
+                tmp.Add(p);
+            }
+            foreach (var c in Characters_Online.Values)
+            {
+                p = new Packet();
+                p.Pack8(4);
+                p.Pack32(c.CharID);
+                p.Pack8((byte)c.Body); //body style
+                p.Pack8((byte)c.Element); //element
+                p.Pack8(c.Level); //level
+                p.Pack16((ushort)c.CurMap.MapID); //map id
+                p.Pack16(c.CurX); //x
+                p.Pack16(c.CurY); //y
+                p.Pack8(0); p.Pack8(c.Head); p.Pack8(0);
+                p.Pack16(c.HairColor);
+                p.Pack16(c.SkinColor);
+                p.Pack16(c.ClothingColor);
+                p.Pack16(c.EyeColor);
+                p.Pack8(c.WornCount);//clothesAmmt); // ammt of clothes
+                p.PackArray(c.Worn_Equips);
+                p.Pack32(0); p.Pack8(0); //??
+                p.PackBool(c.Reborn); //is rebirth
+                p.Pack8((byte)c.Job); //rb class
+                p.PackString(c.CharName);//(BYTE*)c.CharacterName,c.nameLen); //CharacterName
+                p.PackString(c.NickName);//(BYTE*)c.nick,c.nickLen); //nickname
+                p.Pack8(255); //??
+                p.SetHeader();
+                tmp.Add(p);
+            }
+            src.Send(new Packet(tmp.End()));
+        }
+
+        public void OnCharacterJoin(Character src)
+        {
+            Characters_Online.TryAdd((int)src.CharID,src);
+        }
+        public void OnCharacterLeave(Character src)
+        {
+            Character s;
+            Characters_Online.TryRemove((int)src.CharID,out s);
         }
     }
 }

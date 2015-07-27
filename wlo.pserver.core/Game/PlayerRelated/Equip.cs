@@ -1293,8 +1293,8 @@ namespace Game.Code
                     tmp.Add(SendPacket.FromFormat("bbbbdd", 8, 1, 206, 1, FullSP, 0));
                     tmp.Add(SendPacket.FromFormat("bbbbdd", 8, 1, 33, 1, Wis, 0));
                 }
-
-                Send( new SendPacket(tmp.End(),tmp.End().Count()));
+                
+                Send(new SendPacket(tmp.End()));
             }
         }
 

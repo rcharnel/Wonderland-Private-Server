@@ -72,6 +72,7 @@ namespace Network.ActionCodes
                     tmp.Pack8(2);
                     tmp.Pack32(p.UserAcc.UserID);
                     p.Send(tmp);
+                    cGlobal.gWorld.OnLogin(p);
                     //NormalLog(p);
                     #endregion
                 }

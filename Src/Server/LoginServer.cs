@@ -40,7 +40,7 @@ namespace Server
         public override void ListenThread()
         {
 
-            Client3 client;
+            SocketClient client;
             bool bKeepAlive = true;
 
             try
@@ -56,7 +56,7 @@ namespace Server
                     try
                     {
                         m_bKeepAlive = bKeepAlive;
-                        client = new Client3(m_Socket.Accept());
+                        client = new SocketClient(m_Socket.Accept());
                         client.SetBlock(false);
                         bool found = false;
                         DebugSystem.Write(string.Format("New client [{0}] connected from Port " + 6414 + ".", client.SockAddress()));

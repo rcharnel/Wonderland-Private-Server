@@ -8,17 +8,20 @@ using System.Net.Sockets;
 using System.Collections.Concurrent;
 using System.Reflection;
 using Game;
+using Game.Code;
+using Game.Maps;
 using Network;
 using Plugin;
+using RCLibrary.Core.Networking;
 
 namespace Server
 {
     /// <summary>
     /// Handles the Recv and SendPacket Proccesing of all clients
     /// </summary>
-    public class WorldServer:WorldServerHost
+    public class WorldServer:MapSystem,WorldServerHost
     {
-        Thread Mainthrd,Mapthrd,Eventthrd;
+        Thread Mainthrd,Eventthrd;
         bool killFlag;
         readonly ManualResetEvent mylock;
         //readonly Semaphore ProcessLock,SendLock;
@@ -29,13 +32,13 @@ namespace Server
         /// <summary>
         /// List of Players
         /// </summary>
-        List<Player> Players = new List<Player>();
+        Queue<Player> QueuedPlayerLogin;
 
 
         /// <summary>
         /// Maps loaded into the world
         /// </summary>
-        ConcurrentDictionary<ushort, GameMap> MapList = new ConcurrentDictionary<ushort, GameMap>();
+        ConcurrentDictionary<ushort, GameMap> MapList;
                
         // System.Diagnostics.Stopwatch exptimer = new System.Diagnostics.Stopwatch();
         /// <summary>
@@ -47,22 +50,16 @@ namespace Server
         ///// </summary>
         //public int Clients_inGame { get { int a = 0; ConnectedPlayers.Values.ToList().ForEach(c => a += c.Values.Count(n => n.inGame)); return a; } }
 
-        public WorldServer()
+        public WorldServer(PluginManager src):base(src)
         {
             mylock = new ManualResetEvent(false);
+            QueuedPlayerLogin = new Queue<Player>();
+            MapList = new ConcurrentDictionary<ushort, GameMap>();
         }
-
-
-
-        public void OnNewClient(Player client)
+        
+        public void OnLogin(Player client)
         {
-
-            if (Players.Contains(client))
-                client.Disconnect();
-            else
-                Players.Add(client);
-
-            mylock.Set();
+            QueuedPlayerLogin.Enqueue(client);
         }
 
         public void QueueAssistToolClient(Socket client)
@@ -91,9 +88,6 @@ namespace Server
             Mainthrd = new Thread(new ThreadStart(MainLoop));
             Mainthrd.Name = "World Manager Main Thread";
             Mainthrd.Init();
-            Mapthrd = new Thread(new ThreadStart(Mapwrk));
-            Mapthrd.Name = "World Manager Map Thread";
-            Mapthrd.Init();
             Eventthrd = new Thread(new ThreadStart(Eventwrk));
             Eventthrd.Name = "World Manager Event Thread";
             Eventthrd.Init();
@@ -105,8 +99,6 @@ namespace Server
             mylock.Set();
             while (Mainthrd != null && Mainthrd.IsAlive) { Thread.Sleep(1); }
             Mainthrd = null;
-            while (Mapthrd != null && Mapthrd.IsAlive) { Thread.Sleep(1); }
-            Mapthrd = null;
             while (Eventthrd != null && Eventthrd.IsAlive) { Thread.Sleep(1); }
             Eventthrd = null;
         }
@@ -119,35 +111,16 @@ namespace Server
             {
                 #region Queued Clients
 
-                try
+
+                if (QueuedPlayerLogin.Count > 0)
                 {
+                    Player src;
 
-                    Parallel.ForEach<Player>(Players, new Action<Player>(c =>
-                        {
-                            if (c.TimeIdle > new TimeSpan(0, 5, 0) || c.isDisconnected())
-                            {
-                                if (!c.isDisconnected())
-                                    c.Disconnect();
-                                DebugSystem.Write(DebugItemType.Info_Light, "Client {0} timed out.", c.SockAddress());
-                                c.Send(new SendPacket(new byte[] { 1, 7 }));
-                                DeadClients.Enqueue(c);
-                            }
-
-
-                        }));
-                }
-                catch (AggregateException e)
-                {
-                    foreach (var se in e.InnerExceptions)
-                    {
-                    }
-                }
-
-                if (DeadClients.Count > 0)
-                {
+                    if (!(src = QueuedPlayerLogin.Dequeue()).isDisconnected())
+                        CommenceLogin(src);
                 }
                 #endregion
-                Thread.Sleep(1);
+                Thread.Sleep(2);
             }
             while (!killFlag);
 
@@ -341,6 +314,21 @@ namespace Server
         //        catch (Exception e) { DLogger.ErrorLog(e); }
         //    }
         //}
+        public async void onTelePort(TeleportType teletype, byte portalID, WarpData map, Player target)
+        {
+             
+            if (MapList.Values.Count(c => c.MapID == map.DstMap) == 0)
+            {
+                //Create Map
+                GameMap tmp = GetMap(map.DstMap);
+                //cGlobal.gGameDataBase.SetupMap(ref tmp);
+                if (MapList.TryAdd((ushort)tmp.MapID, tmp))
+                    DebugSystem.Write(DebugItemType.Info_Heavy, "Loaded Map {0}", tmp.MapID);
+            }
+
+            MapList.Values.Single(c => c.MapID == map.DstMap).Teleport(teletype, target, portalID, map);
+            
+        }
        
         /// <summary>
         /// Broadcasts a packet to all
@@ -348,8 +336,8 @@ namespace Server
         /// <param CharacterName="pkt"></param>
         public void Broadcast(SendPacket pkt)
         {
-            foreach (var p in Players)
-                p.Send(pkt);
+            //foreach (var p in Players)
+            //    p.Send(pkt);
         }
         /// <summary>
         /// Broadcast's a direct packet or a packet that will ignore the selcected
@@ -456,5 +444,108 @@ namespace Server
         //    //    d.onPlayerLogin(to.ID);
         //    //}
         //}    
+
+        public void CommenceLogin(Player src)
+        {
+
+            src.Flags.Add(PlayerFlag.Logging_into_Map);
+
+            src.Send(Packet.FromFormat("bb", 20, 8));
+            src.Send(Packet.FromFormat("bbbw", 24, 5, 183, 0));
+            src.Send(Packet.FromFormat("bbbw", 24, 5, 53, 0));
+            src.Send(Packet.FromFormat("bbbw", 24, 5, 52, 0));
+            src.Send(Packet.FromFormat("bbbw", 24, 5, 54, 0));
+            src.Send(Packet.FromFormat("bbbswb", 70, 1, 23, "Something", 194, 0));
+            src.Send(Packet.FromFormat("bbb", 20, 33, 0));
+            //-----Player Stats values--------
+            src.Send8_1(false);
+            Thread.Sleep(5);
+            src.Send(Packet.FromFormat("bbb", 14, 13, 3));
+            //-----Im Mall List
+            // //g.ac75.Send_1(g.gImMall_Manager.Get_75IM);
+            src.Send(Packet.FromFormat("bbw", 75, 8, 0));
+            Packet d = new Packet(new byte[] { 244, 68, 41, 0, 104, 1, 1, 0, 12, 44, 137, 1, 45, 137, 1, 25, 134, 1, 24, 134, 1, 22, 134, 1, 23, 134, 1, 76, 133, 1, 99, 133, 1, 100, 133, 1, 41, 133, 1, 91, 133, 1, 88, 133, 1 });
+
+            src.Send(d);
+
+            //------Player Base Info------------------
+            //cGlobal.gGameDataBase.LoadPlayerData(src);
+            src.Send_3_Me();
+            cGlobal.gCharacterDataBase.SendOnlineCharacters(src);
+            //-----------send sidebar---------------------
+            //------------Player Data---------------------
+            src.Send_5_3();
+            src.Send(Packet.FromArray(src.Inv.GetAC23_5()));
+            src.Send(Packet.FromArray(src._23_11Data));
+            ////SendQuest----------------------
+            // SendPacket g = new SendPacket();
+            // //    g.PackArray(new byte[]{(24, 6);
+            // //    g.PackArray(new byte[] { 001, 008, 047, 001, 002, 244, 050, 001, 003, 012, 043, 001 });
+            // //    g.SetSize();
+            // //    Send(g);
+            // //    g = new SPacket();
+            // //    g.PackArray(new byte[]{(53, 10);
+            // //    g.PackArray(new byte[] { 032, 164, 036, 002, 037, 240, 038, 041, 058, 048, 083, 015 });
+            // //    g.SetSize();
+            // //    Send(g);
+            // //    g = new SPacket();
+            // //    g.PackArray(new byte[]{(26, 7);
+            // //    g.PackArray(new byte[] { 001, 002, 002, 128, 003, 002, 004, 128 ,008,
+            // //                066, 009, 096, 010, 008, 011, 010 ,013, 001 });
+            // //    g.SetSize();
+            // //    Send(g);
+            src.Send(Packet.FromFormat("bbd", 26, 4, src.Gold));
+            src.Send(Packet.FromArray(src.Settings.ToArray()));
+            //src.MyFriends.SendFriendList();
+
+            // //pets
+            // //-----------------------------------   
+            //---------Warp Info---------------------------------------------------
+            // //put me in my maps list
+
+            src.Flags.Add(PlayerFlag.Warping);
+            onTelePort(TeleportType.Login, 0, new WarpData() { DstMap = src.LoginMap, DstX_Axis = src.CurX, DstY_Axis = src.CurY }, src);
+
+            src.Send(Packet.FromFormat("bbb", 5, 15, 0));
+            src.Send(Packet.FromFormat("bbw", 62, 53, 2));
+            src.Send(Packet.FromFormat("bbb", 5, 21, src.Slot));
+            src.Send(Packet.FromFormat("bbdw", 5, 11, 15085, 5000));
+            // //g.ac5.Send_11(15085, 0);//244, 68, 8, 0, 5, 11, 237, 58, 0, 0, 0, 0, 
+            //---------------------------------
+            //g.ac62.Send_4(g.packet.cCharacter.cCharacterID); //tent items
+            //--------------------------------------
+            src.Send(Packet.FromFormat("bbb", 5, 14, 2));
+            src.Send(Packet.FromFormat("bbb", 5, 16, 0));
+            src.Send(Packet.FromFormat("bbbl", 23, 140, 3, DateTime.Now.ToOADate()));
+            src.Send(Packet.FromFormat("bbbl", 25, 44, 2, DateTime.Now.ToOADate()));
+            // //g.ac23.Send_106(1, 1);
+            src.Send(Packet.FromFormat("bbb", 23, 160, 3));
+            src.Send(Packet.FromFormat("bbb", 75, 7, 1));
+            src.Send(Packet.FromFormat("bbbs", 23, 57, 0, "Welcome to the  WLO 4 EVER Community Server :! Enjoy !!"));
+            src.Send(Packet.FromFormat("bbb", 69, 1, 71));
+            src.Send(Packet.FromFormat("bbb", 20, 60, 1));
+            src.Send(Packet.FromArray(new byte[] { 66, 1, 001, 012, 043, 000, 000, 000, 000, 000, 000, 000, 000 }));
+
+            for (byte a = 1; a < 11; a++)
+                src.Send(Packet.FromFormat("bbbw", 5, 13, a, 0));
+            for (byte a = 1; a < 11; a++)
+                src.Send(Packet.FromFormat("bbbw", 5, 24, a, 0));
+
+            src.Send(Packet.FromFormat("bbbw", 23, 162, 2, 0));
+            src.Send(Packet.FromFormat("bbd", 26, 10, 0));
+            src.Send(Packet.FromFormat("bbw", 23, 204, 1));
+            src.Send(Packet.FromFormat("bbbbd", 23, 208, 2, 3, 0));
+            src.Send(Packet.FromFormat("bbbbd", 23, 208, 2, 4, 0));
+            src.Send(Packet.FromFormat("bb", 1, 11));
+            src.Send(Packet.FromFormat("bbbbbb", 15, 19, 4, 6, 9, 94));
+            src.Send(Packet.FromArray(new byte[] { 54, 89, 2, 2, 90, 2, 1, 91, 2, 1, 189, 2, 2, 190, 2, 1, 191, 2, 1 }));
+            src.Send(Packet.FromFormat("bbdddd", 35, 4, 0, 0, 0, 0));//first 0 is im
+            src.Send(Packet.FromFormat("bbbbbb", 90, 1, 0, 2, 2, 3));
+            src.Send(Packet.FromFormat("bb", 5, 4));
+            //src.SetSendMode(SendMode.Normal);
+            src.Flags.Add(PlayerFlag.InMap);
+
+
+        }
     }
 }

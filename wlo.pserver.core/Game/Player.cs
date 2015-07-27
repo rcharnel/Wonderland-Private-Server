@@ -52,7 +52,7 @@ using Game.Maps;
 
             readonly object mlock = new object();
 
-            Client3 m_socket;
+            SocketClient m_socket;
             Thread net;
 
             PlayerFlagManager m_Flags;
@@ -79,7 +79,7 @@ using Game.Maps;
             #endregion
 
 
-            public Player(Client3 src,DataFiles.PhxItemDat itemdat)
+            public Player(SocketClient src,DataFiles.PhxItemDat itemdat)
                 : base(src.SendPacket,itemdat)
             {
                 m_socket = src;
@@ -339,14 +339,12 @@ using Game.Maps;
             
             public Action<Player> OnDisconnect;
 
-            public void Send(SendPacket p)
-            {
-                p.SetHeader();
-                p.Encode();
+            public void Send(IPacket p)
+            {                
                 m_socket.SendPacket(p);
             }
 
-            public void Send(SendPacket p, RCLibrary.Core.Networking.PacketFlags pFlags)
+            public void Send(IPacket p, RCLibrary.Core.Networking.PacketFlags pFlags)
             {
                 p.Flags = pFlags;
                 Send(p);

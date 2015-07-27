@@ -76,7 +76,7 @@ namespace Network.ActionCodes
                 {
                     cGlobal.gUserDataBase.Update_Player_ID(tp.UserAcc.DataBaseID, tp.CharID, (byte)tp.Slot);
                     cGlobal.gUserDataBase.UpdateUser(tp.UserAcc.DataBaseID, tp.UserAcc.Cipher);
-                    //NormalLog(tp);
+                    cGlobal.gWorld.OnLogin(tp);
                 }
                 else
                     throw new Exception("unable to write player");

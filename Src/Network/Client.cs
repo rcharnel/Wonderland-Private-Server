@@ -10,11 +10,11 @@ using System.Net;
 
 namespace Network
 {
-    class LoginClient : ConcurrentDictionary<Client3, Player>
+    class LoginClient : ConcurrentDictionary<SocketClient, Player>
     {
         public IPAddress SrcIP { get; private set; }
 
-        public Player AddSock(Client3 src)
+        public Player AddSock(SocketClient src)
         {
             if (Count == 0) SrcIP = src.IPAddr;
 
@@ -26,7 +26,7 @@ namespace Network
                 return null;
         }
 
-        void RemSock(Client3 src)
+        void RemSock(SocketClient src)
         {
             Player tmp;
             TryRemove(src, out tmp);
