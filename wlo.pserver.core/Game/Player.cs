@@ -339,15 +339,16 @@ using Game.Maps;
             
             public Action<Player> OnDisconnect;
 
-            public void Send(IPacket p)
-            {                
+            public void Send(byte[] src, RCLibrary.Core.Networking.PacketFlags pFlags = PacketFlags.None)
+            {
+                SendPacket p = new SendPacket(src);
+                p.Flags = pFlags;
                 m_socket.SendPacket(p);
             }
-
-            public void Send(IPacket p, RCLibrary.Core.Networking.PacketFlags pFlags)
+            public void Send(SendPacket p, RCLibrary.Core.Networking.PacketFlags pFlags = PacketFlags.None)
             {
                 p.Flags = pFlags;
-                Send(p);
+                m_socket.SendPacket(p);
 
             }
             
@@ -355,12 +356,11 @@ using Game.Maps;
             {
                 try
                 {
-                    RCLibrary.Core.Networking.Packet p;
-                    p = (RCLibrary.Core.Networking.Packet)g;
+                    RecievePacket p = new RecievePacket(g.Buffer);
 
                     if (m_socket.isDisconnected()) { return; }
                     DebugSystem.Write(DebugItemType.Network_Heavy, "Recv Data from {0} Data:{1}", SockAddress(), p.ToString());
-                    p.m_nUnpackIndex = 4;
+                    p.SetPtr();
                     var b = p.Unpack8();
                     Network.ActionCodes.AC ac = Network.ActionCodes.AC.GetAction(b);
                     if (ac != null)

@@ -115,7 +115,7 @@ namespace Game.Code
         {
             if (ItemID == 0) return null;
 
-            SendPacket tmp = new SendPacket(false);
+            SendPacket tmp = new SendPacket();
             tmp.Pack16(ItemID);
             tmp.Pack8(Damage);
             tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
@@ -981,15 +981,16 @@ namespace Game.Code
             {
                 lock (m_Lock)
                 {
-                    SendPacket tmp = new SendPacket(false);
+                    PacketBuilder tmp = new PacketBuilder();
+                    tmp.Begin(null);
                     if (WornCount > 0)
                     {
 
                         for (byte a = 1; a < 7; a++)
                             if (this[a].ItemID > 0)
-                                tmp.Pack16(this[a].ItemID);
+                                tmp.Add(this[a].ItemID);
                     }
-                    return tmp.Buffer;
+                    return tmp.End();
                 }
             }
         }
@@ -1002,42 +1003,44 @@ namespace Game.Code
             {
                 lock (m_Lock)
                 {
-                    SendPacket tmp = new SendPacket(false);
+                    PacketBuilder tmp = new PacketBuilder();
+                    tmp.Begin(null);
                     for (byte n = 1; n < 7; n++)
                         if (this[n].ItemID != 0)
-                            tmp.Pack16(this[n].ItemID);
+                            tmp.Add(this[n].ItemID);
                         else
-                            tmp.Pack16(0);
+                            tmp.Add((ushort)0);
 
-                    return tmp.Buffer;
+                    return tmp.End();
                 }
             }
         }
         /// <summary>
         /// 23 11 Equip packet
         /// </summary>
-        public IEnumerable<byte> _23_11Data
+        public byte[] _23_11Data
         {
             get
             {
                 lock (m_Lock)
                 {
-                    SendPacket tmp = new SendPacket(false);
-                    tmp.Pack8(23);
-                    tmp.Pack8(11);
+                    PacketBuilder tmp = new PacketBuilder();
+                    tmp.Begin();
+                    tmp.Add((byte)23);
+                    tmp.Add((byte)11);
                     if (WornCount > 0)
                     {
                         for (byte n = 1; n < 7; n++)
                         {
                             if (this[n].ItemID != 0)
                             {
-                                tmp.Pack16(this[n].ItemID);
-                                tmp.Pack8(this[n].Damage);
-                                tmp.PackArray(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                                tmp.Add(this[n].ItemID);
+                                tmp.Add(this[n].Damage);
+                                tmp.Add(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
                             }
                         }
                     }
-                    return tmp.Buffer;
+                    return tmp.End();
                 }
             }
         }
@@ -1133,7 +1136,7 @@ namespace Game.Code
                 {
                     Dictionary<byte, uint[]> tmp = new Dictionary<byte, uint[]>();
                     for (byte a = 1; a < 7; a++)
-                        tmp.Add(a, new uint[] { equippedItems[a].ItemID, equippedItems[a].Damage, equippedItems[a].Ammt, (uint)equippedItems[a].Wear_At, 0, 0, 0, 0 });
+                        tmp.Add(a, new uint[] { this[a].ItemID, this[a].Damage, this[a].Ammt, (uint)this[a].Wear_At, 0, 0, 0, 0 });
                     return tmp;
                 }
             }
@@ -1146,9 +1149,9 @@ namespace Game.Code
         /// <param name="p"></param>
         /// <param name="client"></param>
         /// 
-        public virtual void ProcessSocket(Player src, RCLibrary.Core.Networking.Packet p)
+        public virtual void ProcessSocket(Player src, RecievePacket p)
         {
-            p.m_nUnpackIndex = 4;
+            p.SetPtr();
 
             var a = p.Unpack8();
             var b = p.Unpack8();
@@ -1176,7 +1179,6 @@ namespace Game.Code
                                         tmp2.Pack8(2);
                                         tmp2.Pack32(src.CharID);
                                         tmp2.Pack16(item.ItemID);
-                                        tmp2.SetHeader();
                                         //src.CurMap.Broadcast(tmp2, "Ex", src.CharID);
 
                                         tmp2 = new SendPacket();
@@ -1184,7 +1186,6 @@ namespace Game.Code
                                         tmp2.Pack8(17);
                                         tmp2.Pack8(loc);
                                         tmp2.Pack8(loc);
-                                        tmp2.SetHeader();
                                         Send(tmp2);
                                     }
                                 } break;
@@ -1211,7 +1212,6 @@ namespace Game.Code
                                                 tmp2.Pack8(16);
                                                 tmp2.Pack8(loc);
                                                 tmp2.Pack8(dst);
-                                                tmp2.SetHeader();
                                                 Send(tmp2);
 
                                                 tmp2 = new SendPacket();
@@ -1219,7 +1219,6 @@ namespace Game.Code
                                                 tmp2.Pack8(1);
                                                 tmp2.Pack32(src.CharID);
                                                 tmp2.Pack16(eq.ItemID);
-                                                tmp2.SetHeader();
                                                 //src.CurMap.Broadcast(tmp2, "Ex", src.CharID);
                                             }
                                         }
@@ -1305,7 +1304,6 @@ namespace Game.Code
             p.Pack8(36);
             p.Pack8(1);
             p.Pack64((ulong)TotalExp);
-            p.SetHeader();
             Send(p);
         }
 
@@ -1448,7 +1446,7 @@ namespace Game.Code
         #region Gold Methods
         public void SendGold()
         {
-            Send(SendPacket.FromFormat("bbd", 26, 4, Gold));
+            Send(new SendPacket(SendPacket.FromFormat("bbd", 26, 4, Gold)));
         }
         public bool AddGold(int g)
         {
@@ -1464,7 +1462,7 @@ namespace Game.Code
             lock (m_Lock)
             {
                 if (gold < g) return false;
-                Send(SendPacket.FromFormat("bbd", 26, 2, g));
+                Send(new SendPacket(SendPacket.FromFormat("bbd", 26, 2, g)));
                 gold -= g;
                 return true;
             }

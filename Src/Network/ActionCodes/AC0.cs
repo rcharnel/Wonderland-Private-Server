@@ -18,7 +18,7 @@ namespace Network.ActionCodes
             }
         }
 
-        public override void ProcessPkt(Player c, RCLibrary.Core.Networking.Packet p)
+        public override void ProcessPkt(Player c, RecievePacket p)
         {
             SendPacket s = new SendPacket();
             s.Pack8(1);

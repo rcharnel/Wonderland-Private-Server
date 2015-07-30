@@ -11,6 +11,7 @@ using Game.Bots;
 using RCLibrary.Core;
 using RCLibrary.Core.Networking;
 using System.Reflection;
+using Network;
 
 
 namespace DataBase
@@ -818,20 +819,20 @@ namespace DataBase
         public void DeleteCharacter(UInt32 ID)
         {
 
-            //try { Delete(TableName, "charID = '" + ID + "';");}
-            //catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
+            try { Delete("characters", "charID = '" + ID + "';"); }
+            catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
 
-            //try { Delete("stats", "charID = '" + ID + "';"); }
-            //catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
+            try { Delete("stats", "charID = '" + ID + "';"); }
+            catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
 
-            //try { Delete("inventory", "charID = '" + ID + "';"); }
-            //catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
+            try { Delete("inventory", "charID = '" + ID + "';"); }
+            catch (MySqlException ex) { DebugSystem.Write(new ExceptionData(ex)); throw; }
 
-            //if (Cache.ContainsKey((int)ID))
-            //{
-            //    Character t;
-            //    Cache.TryRemove((int)ID, out t);
-            //}
+            if (Cache.ContainsKey((int)ID))
+            {
+                Character t;
+                Cache.TryRemove((int)ID, out t);
+            }
         }
 
         public Character GetCharacterData(uint charID)
@@ -896,11 +897,7 @@ namespace DataBase
                         case 26: t.CurSP = ushort.Parse(row["StatusUp"].ToString()); break;
                         case 38: t.SkillPoints = ushort.Parse(row["StatusUp"].ToString()); break;
                         case 36: t.TotalExp = long.Parse(row["StatusUp"].ToString()); break;
-                        case 28: t.Str = ushort.Parse(row["StatusUp"].ToString()); break;
-                        case 29: t.Con = ushort.Parse(row["StatusUp"].ToString()); break;
-                        case 30: t.Agi = ushort.Parse(row["StatusUp"].ToString()); break;
-                        case 27: t.Int = ushort.Parse(row["StatusUp"].ToString()); break;
-                        case 33: t.Wis = ushort.Parse(row["StatusUp"].ToString()); break;
+                        default: t.SetBaseStat(row["statID"], ushort.Parse(row["StatusUp"].ToString())); break;
                     }
                 }
             }
@@ -1032,7 +1029,7 @@ namespace DataBase
                     id = ushort.Parse(rows[i]["itemID"].ToString());
                     if (id != 0)
                     {
-                        //t[byte.Parse(rows[i]["pos"].ToString())].CopyFrom(cGlobal.gItemManager.GetItem(id));
+                        t[byte.Parse(rows[i]["pos"].ToString())].CopyFrom(ItemDat.GetItemByID(id));
                         t[byte.Parse(rows[i]["pos"].ToString())].Ammt = 1;
                         t[byte.Parse(rows[i]["pos"].ToString())].Damage = byte.Parse(rows[i]["dmg"].ToString());
                         //                    tmp4.Add((byte)i, new string[]{id.ToString(), rows[i]["socketID"].ToString(), rows[i]["bombID"].ToString(),rows[i]["sewID"].ToString(), 
@@ -1264,13 +1261,13 @@ namespace DataBase
             PacketBuilder tmp = new PacketBuilder();
             tmp.Begin(null);
 
-            Packet p;
+            SendPacket p;
             foreach (var y in (from c in Assembly.GetExecutingAssembly().GetTypes()
                                where c.IsClass && c.IsSubclassOf(typeof(GmBot))
                                select c))
             {
                 var c = (Activator.CreateInstance(y) as GmBot);
-                p = new Packet();
+                p = new SendPacket();
                 p.Pack8(4);
                 p.Pack32(c.CharID);
                 p.Pack8((byte)c.Body); //body style
@@ -1293,12 +1290,11 @@ namespace DataBase
                 p.PackString(c.CharName);//(BYTE*)c.CharacterName,c.nameLen); //CharacterName
                 p.PackString(c.NickName);//(BYTE*)c.nick,c.nickLen); //nickname
                 p.Pack8(255); //??
-                p.SetHeader();
                 tmp.Add(p);
             }
             foreach (var c in Characters_Online.Values)
             {
-                p = new Packet();
+                p = new SendPacket();
                 p.Pack8(4);
                 p.Pack32(c.CharID);
                 p.Pack8((byte)c.Body); //body style
@@ -1320,16 +1316,16 @@ namespace DataBase
                 p.PackString(c.CharName);//(BYTE*)c.CharacterName,c.nameLen); //CharacterName
                 p.PackString(c.NickName);//(BYTE*)c.nick,c.nickLen); //nickname
                 p.Pack8(255); //??
-                p.SetHeader();
                 tmp.Add(p);
             }
-            src.Send(new Packet(tmp.End()));
+            src.Send(tmp.End());
         }
 
         public void OnCharacterJoin(Character src)
         {
             Characters_Online.TryAdd((int)src.CharID,src);
         }
+
         public void OnCharacterLeave(Character src)
         {
             Character s;

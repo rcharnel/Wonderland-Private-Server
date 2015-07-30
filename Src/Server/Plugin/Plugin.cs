@@ -47,7 +47,7 @@ namespace Plugin
             var appDataPath = Environment.CurrentDirectory;
             var dbPath = Path.Combine(appDataPath, "Maps");
 
-            if (!Directory.Exists(dbPath)) { throw new Exception("This Server uses a DropBox shared hmmmm.... did you steal source code :D"); }
+            if (!Directory.Exists(dbPath)) Directory.CreateDirectory(dbPath);
 
 
             folderwatch.Path = dbPath;

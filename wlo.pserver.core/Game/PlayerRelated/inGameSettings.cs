@@ -49,7 +49,7 @@ namespace Game.Code
 
         public void ProcessSocket(Packet p)
         {
-            p.m_nUnpackIndex = 4;
+            p.SetPtr();
 
             var a = p.Unpack8();
             var b = p.Unpack8();
@@ -79,7 +79,7 @@ namespace Game.Code
             }
         }
 
-        public IEnumerable<byte> ToArray()
+        public byte[] ToArray()
         {
            RCLibrary.Core.Networking.PacketBuilder tmp = new RCLibrary.Core.Networking.PacketBuilder();
             tmp.Begin();

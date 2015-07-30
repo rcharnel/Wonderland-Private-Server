@@ -103,13 +103,14 @@ namespace Wonderland_Private_Server
             cGlobal.Run = true;
             DebugSystem.Initialize(ref MainOutput, true);
             DebugSystem.VerboseLvl = 1;
-            
-            DebugSystem.Write("[Init] - Initializing DataBase Objects");
-            cGlobal.gUserDataBase = new DataBase.UserDataBase();
-            cGlobal.gCharacterDataBase = new DataBase.CharacterDataBase();
+
             DebugSystem.Write("[Init] - Initializing DataFile Objects");
             cGlobal.ItemDatManager = new DataFiles.PhxItemDat();
             cGlobal.ItemDatManager.Load(Environment.CurrentDirectory + "\\Data\\itemDat.wpdat");
+            DebugSystem.Write("[Init] - Initializing DataBase Objects");
+            cGlobal.gUserDataBase = new DataBase.UserDataBase();
+            cGlobal.gCharacterDataBase = new DataBase.CharacterDataBase();
+            cGlobal.gCharacterDataBase.ItemDat = cGlobal.ItemDatManager;
             DebugSystem.Write("[Init] - Intializing Systems Please Wait.....");
             cGlobal.ApplicationTasks = new Server.TaskManager();
             cGlobal.Update_System = new Server.System.UpdateSystem();
@@ -216,22 +217,24 @@ namespace Wonderland_Private_Server
 
             
             DebugSystem.Write("Testing Connection to UserDatabase");
-            if (cGlobal.gUserDataBase.TestConnection())
-                DebugSystem.Write("Connection Successful");
-            else
-                DebugSystem.Write("Connection not successful\r\n unable to authencate  users connecting to server");
-
-            DebugSystem.Write("Testing Connection to Character Database");
-            if (cGlobal.gCharacterDataBase.TestConnection())
+            try
             {
-                DebugSystem.Write("Connection Successful");
-                DebugSystem.Write("Verifying DataBase Tables");
-                cGlobal.gCharacterDataBase.VerifySetup();
-            }
-            else
-                DebugSystem.Write("Connection not successful\r\n unable to create neccesary tables for the server");
+                if (cGlobal.gUserDataBase.TestConnection())
+                    DebugSystem.Write("Connection Successful");
+                else
+                    DebugSystem.Write("Connection not successful\r\n unable to authencate  users connecting to server");
 
-           
+                DebugSystem.Write("Testing Connection to Character Database");
+                if (cGlobal.gCharacterDataBase.TestConnection())
+                {
+                    DebugSystem.Write("Connection Successful");
+                    DebugSystem.Write("Verifying DataBase Tables");
+                    cGlobal.gCharacterDataBase.VerifySetup();
+                }
+                else
+                    DebugSystem.Write("Connection not successful\r\n unable to create neccesary tables for the server");
+            }
+            catch (Exception e) { DebugSystem.Write(new ExceptionData(e)); }
 
 
             #endregion

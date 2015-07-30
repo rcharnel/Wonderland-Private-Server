@@ -74,13 +74,17 @@ namespace Server.System
             GitClient.onError += client_onError;
             GitClient.infopipe += client_infopipe;
             GitClient.onNewUpdate +=GitClient_onNewUpdate;
+
+
+            Assembly myass = Assembly.GetExecutingAssembly();
+            string loc = Assembly.GetExecutingAssembly().Location;
+            AppVer = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
             CheckForUpdates_Application();
             CheckForUpdates_Map();
 
             DebugSystem.Write("[Init] - Creating Update Tasks");
             cGlobal.ApplicationTasks.CreateTask(new ApplicationUpdateCheck_Task(new TimeSpan(0, 10, 0)));
             cGlobal.ApplicationTasks.CreateTask(new MapUpdateCheck_Task(new TimeSpan(0, 5, 30)));
-            AppVer = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetCallingAssembly().Location).FileVersion);
 
         }
 

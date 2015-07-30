@@ -13,7 +13,7 @@ namespace Network.ActionCodes
     public class AC
     {
         public virtual int ID { get { return 0; } }
-        public virtual void ProcessPkt(Player c, RCLibrary.Core.Networking.Packet p)
+        public virtual void ProcessPkt(Player c, RecievePacket p)
         {
             switch (p.B)
             {

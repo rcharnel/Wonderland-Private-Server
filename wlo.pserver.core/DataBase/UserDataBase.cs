@@ -9,7 +9,6 @@ using Game;
 using System.Threading;
 using RCLibrary.Core;
 using Game.Code;
-using BCrypt.Net;
 
 namespace DataBase
 {
@@ -52,45 +51,6 @@ namespace DataBase
             return resp;
         }
         
-        bool isValidAccount(string username)
-        {
-
-            return (GetDataTable("SELECT * FROM " + TableName + " where " + Username_Ref + " = @userchk", new DbParam("@userchk", username)) != null);
-        }
-
-        public uint isValidAccount(string username, string pass)
-        {
-            uint rem = 0;
-            
-            DataRow[] rows;
-
-            var table = GetDataTable("SELECT * FROM " + TableName + " where " + Username_Ref + " = @userchk", new DbParam("@userchk", username));
-
-            if (table.Rows.Count > 0)
-            {
-                rows = new DataRow[table.Rows.Count];
-                table.Rows.CopyTo(rows, 0);
-
-                if (VerifySaltedPassword(pass, rows[0]["members_pass_salt"].ToString(), rows[0][Password_Ref].ToString()))
-                    uint.TryParse(rows[0][DataBaseID_Ref].ToString(), out rem);
-                else
-                    rem = 0;
-
-                //string hpass = BCrypt.Net.BCrypt.HashPassword(pass, "$2a$13$" + rows[0]["members_pass_salt"].ToString());
-
-                //ip board ver 4
-                //if (BCrypt.Net.BCrypt.Verify(pass, rows[0][Password_Ref].ToString()))
-                //    uint.TryParse(rows[0][DataBaseID_Ref].ToString(), out rem);
-                //else
-                //    rem = 0;
-
-            }
-            else
-                rem = 0;
-
-            return rem;
-        }
-
         public override bool VerifySaltedPassword(string password, string salt, string with)
         {
             return (hashMD5(hashMD5(salt) + hashMD5(password))== with);
@@ -116,11 +76,11 @@ namespace DataBase
             return true;
         }
 
-        public string[] GetUserData(uint user, string pass)
+        public bool GetUserData(string user, string pass,out uint userID,out string[] userData)
         {
             DataRow[] rows = new DataRow[0];
 
-            var src = GetDataTable("SELECT * FROM " + TableName + " WHERE " + DataBaseID_Ref + " = @id", new DbParam("@id", user));
+            var src = GetDataTable("SELECT * FROM " + TableName + " WHERE " + Username_Ref + " = @id", new DbParam("@id", user));
 
             if (src.Rows.Count > 0)
             {
@@ -136,14 +96,17 @@ namespace DataBase
                 //}
                 if (VerifySaltedPassword(pass,rows[0]["members_pass_salt"].ToString(),rows[0][Password_Ref].ToString()))
                 {
-                    string ch = "0";
+                    string ch = "";
                     if (rows[0][Char_Delete_Code_Ref] != DBNull.Value)
                         ch = rows[0][Char_Delete_Code_Ref].ToString();
-
-                    return new string[] { rows[0][Username_Ref].ToString(), ch, (rows[0][IM_Ref].ToString() == "") ? "0" : rows[0][IM_Ref].ToString() };
+                    uint.TryParse(rows[0][DataBaseID_Ref].ToString(), out userID);
+                    userData = new string[] { rows[0][Username_Ref].ToString(), ch, (rows[0][IM_Ref].ToString() == "") ? "0" : rows[0][IM_Ref].ToString() };
+                    return true;
                 }
             }
-            return null;
+            userID = 0;
+            userData = null;
+            return false;
         }
 
         public int GetIMPoints(uint user)

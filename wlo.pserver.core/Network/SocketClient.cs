@@ -21,8 +21,6 @@ namespace Network
 
         public override void SendPacket(RCLibrary.Core.Networking.IPacket p)
         {
-            p.SetHeader();
-            p.Encode();
             base.SendPacket(p);
         }
     }

@@ -61,7 +61,7 @@ namespace Game
             m_colors = new Dictionary<string, string>();
         }
 
-        public override void ProcessSocket(Player src, RCLibrary.Core.Networking.Packet p)
+        public override void ProcessSocket(Player src, RecievePacket p)
         {
             base.ProcessSocket(src, p);
         }
@@ -72,7 +72,7 @@ namespace Game
             m_colors.Clear();
         }
 
-        public void Send_3_Me()
+        public void SendCharacterData()
         {
             PacketBuilder p = new PacketBuilder();
             p.Begin();

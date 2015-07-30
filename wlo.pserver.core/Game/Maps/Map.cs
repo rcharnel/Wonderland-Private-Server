@@ -261,8 +261,8 @@ namespace Game
                         //        o.dropin = DateTime.Now.AddMinutes(2);
                         //    }
                         //}
-                        src.Send(new SendPacket(Packet.FromFormat("bbwb", 23, 2, res.ItemID, 1)));
-                        Broadcast(new SendPacket(Packet.FromFormat("bbwb", 23, 2, res.ItemID, 0)), "Ex", src.CharID);
+                        src.Send( SendPacket.FromFormat("bbwb", 23, 2, res.ItemID, 1));
+                        Broadcast( SendPacket.FromFormat("bbwb", 23, 2, res.ItemID, 0), "Ex", src.CharID);
                     }
                 }
             });
@@ -294,21 +294,18 @@ namespace Game
                     p.Pack8((byte)0);
                     p.Pack32(player.CharID);
                     p.PackArray(player.Worn_Equips);
-                    p.SetHeader();
                     Broadcast(p);
                     p = new SendPacket();
                     p.Pack8((byte)10);
                     p.Pack8((byte)3);
                     p.Pack32(player.CharID);
                     p.Pack8((byte)255);
-                    p.SetHeader();
                     Broadcast(p);
                     p = new SendPacket();
                     p.Pack8((byte)5);
                     p.Pack8((byte)8);
                     p.Pack32(player.CharID);
                     p.Pack8((byte)0);
-                    p.SetHeader();
                     Broadcast(p);
 
                     //send to me
@@ -318,14 +315,12 @@ namespace Game
                     p.Pack16((ushort)MapID);
                     p.Pack16(r.CurX);
                     p.Pack16(r.CurY);
-                    p.SetHeader();
                     player.Send(p);
                     p = new SendPacket();
                     p.Pack8((byte)5);
                     p.Pack8((byte)0);
                     p.Pack32(r.CharID);
                     p.PackArray(r.Worn_Equips);
-                    p.SetHeader();
                     player.Send(p);
                 }
 
@@ -354,14 +349,12 @@ namespace Game
                     p.Pack8((byte)0);
                     p.Pack32(src.CharID);
                     p.PackArray(src.Worn_Equips);
-                    p.SetHeader();
                     r.Send(p);
                     p = new SendPacket();
                     p.Pack8((byte)10);
                     p.Pack8((byte)3);
                     p.Pack32(src.CharID);
                     p.Pack8((byte)255);
-                    p.SetHeader();
                     r.Send(p);//maybe guild info???
 
                     //send to me
@@ -371,14 +364,12 @@ namespace Game
                     p.Pack16((ushort)MapID);
                     p.Pack32(r.CurX);
                     p.Pack32(r.CurY);
-                    p.SetHeader();
                     src.Send(p);
                     p = new SendPacket();
                     p.Pack8(5);
                     p.Pack8(0);
                     p.Pack32(r.CharID);
                     p.PackArray(r.Worn_Equips);
-                    p.SetHeader();
                     src.Send(p);
                 }
             }
@@ -399,28 +390,24 @@ namespace Game
         public virtual bool Teleport(TeleportType teletype, Player sender, byte portalID, WarpData warp = null)
         {
             if (teletype == TeleportType.Regular || teletype == TeleportType.CmD)
-                sender.Send(new SendPacket(Packet.FromFormat("bb",20,7)));
+                sender.Send( SendPacket.FromFormat("bb",20,7));
 
             SendPacket tmp = new SendPacket();
             tmp.Pack8((byte)23);
             tmp.Pack8((byte)32);
             tmp.Pack32(sender.CharID);
-            tmp.SetHeader();
             sender.Send(tmp);
             tmp = new SendPacket();
             tmp.Pack8((byte)23);
             tmp.Pack8((byte)112);
             tmp.Pack32(sender.CharID);
-            tmp.SetHeader();
             sender.Send(tmp);
             tmp = new SendPacket();
             tmp.Pack8((byte)23);
             tmp.Pack8((byte)132);
             tmp.Pack32(sender.CharID);
-            tmp.SetHeader();
             sender.Send(tmp);
             sender.Flags.Add(PlayerFlag.Warping);
-            onWarp_Out(portalID, sender, warp, (teletype == TeleportType.Tent));// warp out of map
 
             switch (teletype)
             {
@@ -437,9 +424,9 @@ namespace Game
                             //if (WarpID == 0)
                             //{
 
-                            //    tmp = new SendPacket();
-                            //    tmp.PackArray(new byte[] { 20, 8 });
-                            //    sender.Send(tmp); return false;
+                                tmp = new SendPacket();
+                                tmp.PackArray(new byte[] { 20, 8 });
+                                sender.Send(tmp); return false;
                             //}
                             //onWarp_Out(portalID, sender, new WarpData(Destinations[(byte)WarpID]), (teletype == TeleportType.Tent));// warp out of map
                             //cGlobal.WLO_World.onTelePort(portalID, new WarpData(Destinations[(byte)WarpID]), ref sender);
@@ -534,7 +521,7 @@ namespace Game
                 #endregion
                 //SendNpcs(t);
                 //SendItems(t);
-                SendOpenTents(t);
+                //SendOpenTents(t);
 
 
                 foreach (var r in m_playerlist)
@@ -731,7 +718,6 @@ namespace Game
                 sp.Pack8(1);
                 sp.Pack8(1);
             }
-            sp.SetHeader();
             Broadcast(sp);
         }
 

@@ -314,20 +314,25 @@ namespace Server
         //        catch (Exception e) { DLogger.ErrorLog(e); }
         //    }
         //}
-        public async void onTelePort(TeleportType teletype, byte portalID, WarpData map, Player target)
+        public bool onTelePort(TeleportType teletype, byte portalID, WarpData map, Player target)
         {
              
             if (MapList.Values.Count(c => c.MapID == map.DstMap) == 0)
             {
                 //Create Map
-                GameMap tmp = GetMap(map.DstMap);
-                //cGlobal.gGameDataBase.SetupMap(ref tmp);
-                if (MapList.TryAdd((ushort)tmp.MapID, tmp))
-                    DebugSystem.Write(DebugItemType.Info_Heavy, "Loaded Map {0}", tmp.MapID);
+                GameMap tmp = null;
+                if ((tmp = GetMap(map.DstMap)) != null)
+                {
+                    //cGlobal.gGameDataBase.SetupMap(ref tmp);
+                    if (MapList.TryAdd((ushort)tmp.MapID, tmp))
+                        DebugSystem.Write(DebugItemType.Info_Heavy, "Loaded Map {0}", tmp.MapID);
+                }
+                else
+                    return false;
             }
 
             MapList.Values.Single(c => c.MapID == map.DstMap).Teleport(teletype, target, portalID, map);
-            
+            return true;
         }
        
         /// <summary>
@@ -450,33 +455,33 @@ namespace Server
 
             src.Flags.Add(PlayerFlag.Logging_into_Map);
 
-            src.Send(Packet.FromFormat("bb", 20, 8));
-            src.Send(Packet.FromFormat("bbbw", 24, 5, 183, 0));
-            src.Send(Packet.FromFormat("bbbw", 24, 5, 53, 0));
-            src.Send(Packet.FromFormat("bbbw", 24, 5, 52, 0));
-            src.Send(Packet.FromFormat("bbbw", 24, 5, 54, 0));
-            src.Send(Packet.FromFormat("bbbswb", 70, 1, 23, "Something", 194, 0));
-            src.Send(Packet.FromFormat("bbb", 20, 33, 0));
+            src.Send(SendPacket.FromFormat("bb", 20, 8));
+            src.Send(SendPacket.FromFormat("bbbw", 24, 5, 183, 0));
+            src.Send(SendPacket.FromFormat("bbbw", 24, 5, 53, 0));
+            src.Send(SendPacket.FromFormat("bbbw", 24, 5, 52, 0));
+            src.Send(SendPacket.FromFormat("bbbw", 24, 5, 54, 0));
+            src.Send(SendPacket.FromFormat("bbbswb", 70, 1, 23, "Something", 194, 0));
+            src.Send(SendPacket.FromFormat("bbb", 20, 33, 0));
             //-----Player Stats values--------
             src.Send8_1(false);
             Thread.Sleep(5);
-            src.Send(Packet.FromFormat("bbb", 14, 13, 3));
+            src.Send(SendPacket.FromFormat("bbb", 14, 13, 3));
             //-----Im Mall List
             // //g.ac75.Send_1(g.gImMall_Manager.Get_75IM);
-            src.Send(Packet.FromFormat("bbw", 75, 8, 0));
-            Packet d = new Packet(new byte[] { 244, 68, 41, 0, 104, 1, 1, 0, 12, 44, 137, 1, 45, 137, 1, 25, 134, 1, 24, 134, 1, 22, 134, 1, 23, 134, 1, 76, 133, 1, 99, 133, 1, 100, 133, 1, 41, 133, 1, 91, 133, 1, 88, 133, 1 });
+            src.Send(SendPacket.FromFormat("bbw", 75, 8, 0));
+            SendPacket d = new SendPacket(new byte[] { 244, 68, 41, 0, 104, 1, 1, 0, 12, 44, 137, 1, 45, 137, 1, 25, 134, 1, 24, 134, 1, 22, 134, 1, 23, 134, 1, 76, 133, 1, 99, 133, 1, 100, 133, 1, 41, 133, 1, 91, 133, 1, 88, 133, 1 });
 
             src.Send(d);
 
             //------Player Base Info------------------
             //cGlobal.gGameDataBase.LoadPlayerData(src);
-            src.Send_3_Me();
+            src.SendCharacterData();
             cGlobal.gCharacterDataBase.SendOnlineCharacters(src);
             //-----------send sidebar---------------------
             //------------Player Data---------------------
             src.Send_5_3();
-            src.Send(Packet.FromArray(src.Inv.GetAC23_5()));
-            src.Send(Packet.FromArray(src._23_11Data));
+            src.Send(new SendPacket(src.Inv.GetAC23_5()));
+            src.Send(new SendPacket(src._23_11Data));
             ////SendQuest----------------------
             // SendPacket g = new SendPacket();
             // //    g.PackArray(new byte[]{(24, 6);
@@ -494,8 +499,8 @@ namespace Server
             // //                066, 009, 096, 010, 008, 011, 010 ,013, 001 });
             // //    g.SetSize();
             // //    Send(g);
-            src.Send(Packet.FromFormat("bbd", 26, 4, src.Gold));
-            src.Send(Packet.FromArray(src.Settings.ToArray()));
+            src.Send(SendPacket.FromFormat("bbd", 26, 4, src.Gold));
+            src.Send(new SendPacket(src.Settings.ToArray()));
             //src.MyFriends.SendFriendList();
 
             // //pets
@@ -504,44 +509,49 @@ namespace Server
             // //put me in my maps list
 
             src.Flags.Add(PlayerFlag.Warping);
-            onTelePort(TeleportType.Login, 0, new WarpData() { DstMap = src.LoginMap, DstX_Axis = src.CurX, DstY_Axis = src.CurY }, src);
+            if (!onTelePort(TeleportType.Login, 0, new WarpData() { DstMap = src.LoginMap, DstX_Axis = src.CurX, DstY_Axis = src.CurY }, src))
+            {
+                var ex = new Exception("Map " + src.LoginMap + " not found for player");
+                DebugSystem.Write(new ExceptionData(ex));
+                throw ex;
+            }
 
-            src.Send(Packet.FromFormat("bbb", 5, 15, 0));
-            src.Send(Packet.FromFormat("bbw", 62, 53, 2));
-            src.Send(Packet.FromFormat("bbb", 5, 21, src.Slot));
-            src.Send(Packet.FromFormat("bbdw", 5, 11, 15085, 5000));
+            src.Send(SendPacket.FromFormat("bbb", 5, 15, 0));
+            src.Send(SendPacket.FromFormat("bbw", 62, 53, 2));
+            src.Send(SendPacket.FromFormat("bbb", 5, 21, src.Slot));
+            src.Send(SendPacket.FromFormat("bbdw", 5, 11, 15085, 5000));
             // //g.ac5.Send_11(15085, 0);//244, 68, 8, 0, 5, 11, 237, 58, 0, 0, 0, 0, 
             //---------------------------------
             //g.ac62.Send_4(g.packet.cCharacter.cCharacterID); //tent items
             //--------------------------------------
-            src.Send(Packet.FromFormat("bbb", 5, 14, 2));
-            src.Send(Packet.FromFormat("bbb", 5, 16, 0));
-            src.Send(Packet.FromFormat("bbbl", 23, 140, 3, DateTime.Now.ToOADate()));
-            src.Send(Packet.FromFormat("bbbl", 25, 44, 2, DateTime.Now.ToOADate()));
+            src.Send(SendPacket.FromFormat("bbb", 5, 14, 2));
+            src.Send(SendPacket.FromFormat("bbb", 5, 16, 0));
+            src.Send(SendPacket.FromFormat("bbbl", 23, 140, 3, DateTime.Now.ToOADate()));
+            src.Send(SendPacket.FromFormat("bbbl", 25, 44, 2, DateTime.Now.ToOADate()));
             // //g.ac23.Send_106(1, 1);
-            src.Send(Packet.FromFormat("bbb", 23, 160, 3));
-            src.Send(Packet.FromFormat("bbb", 75, 7, 1));
-            src.Send(Packet.FromFormat("bbbs", 23, 57, 0, "Welcome to the  WLO 4 EVER Community Server :! Enjoy !!"));
-            src.Send(Packet.FromFormat("bbb", 69, 1, 71));
-            src.Send(Packet.FromFormat("bbb", 20, 60, 1));
-            src.Send(Packet.FromArray(new byte[] { 66, 1, 001, 012, 043, 000, 000, 000, 000, 000, 000, 000, 000 }));
+            src.Send(SendPacket.FromFormat("bbb", 23, 160, 3));
+            src.Send(SendPacket.FromFormat("bbb", 75, 7, 1));
+            src.Send(SendPacket.FromFormat("bbbs", 23, 57, 0, "Welcome to the  WLO 4 EVER Community Server :! Enjoy !!"));
+            src.Send(SendPacket.FromFormat("bbb", 69, 1, 71));
+            src.Send(SendPacket.FromFormat("bbb", 20, 60, 1));
+            src.Send(new SendPacket(new byte[] { 244,68,13,0,66, 1, 001, 012, 043, 000, 000, 000, 000, 000, 000, 000, 000 }));
 
             for (byte a = 1; a < 11; a++)
-                src.Send(Packet.FromFormat("bbbw", 5, 13, a, 0));
+                src.Send(SendPacket.FromFormat("bbbw", 5, 13, a, 0));
             for (byte a = 1; a < 11; a++)
-                src.Send(Packet.FromFormat("bbbw", 5, 24, a, 0));
+                src.Send(SendPacket.FromFormat("bbbw", 5, 24, a, 0));
 
-            src.Send(Packet.FromFormat("bbbw", 23, 162, 2, 0));
-            src.Send(Packet.FromFormat("bbd", 26, 10, 0));
-            src.Send(Packet.FromFormat("bbw", 23, 204, 1));
-            src.Send(Packet.FromFormat("bbbbd", 23, 208, 2, 3, 0));
-            src.Send(Packet.FromFormat("bbbbd", 23, 208, 2, 4, 0));
-            src.Send(Packet.FromFormat("bb", 1, 11));
-            src.Send(Packet.FromFormat("bbbbbb", 15, 19, 4, 6, 9, 94));
-            src.Send(Packet.FromArray(new byte[] { 54, 89, 2, 2, 90, 2, 1, 91, 2, 1, 189, 2, 2, 190, 2, 1, 191, 2, 1 }));
-            src.Send(Packet.FromFormat("bbdddd", 35, 4, 0, 0, 0, 0));//first 0 is im
-            src.Send(Packet.FromFormat("bbbbbb", 90, 1, 0, 2, 2, 3));
-            src.Send(Packet.FromFormat("bb", 5, 4));
+            src.Send(SendPacket.FromFormat("bbbw", 23, 162, 2, 0));
+            src.Send(SendPacket.FromFormat("bbd", 26, 10, 0));
+            src.Send(SendPacket.FromFormat("bbw", 23, 204, 1));
+            src.Send(SendPacket.FromFormat("bbbbd", 23, 208, 2, 3, 0));
+            src.Send(SendPacket.FromFormat("bbbbd", 23, 208, 2, 4, 0));
+            src.Send(SendPacket.FromFormat("bb", 1, 11));
+            src.Send(SendPacket.FromFormat("bbbbbb", 15, 19, 4, 6, 9, 94));
+            src.Send(new SendPacket(new byte[] { 244,68,19,0,54, 89, 2, 2, 90, 2, 1, 91, 2, 1, 189, 2, 2, 190, 2, 1, 191, 2, 1 }));
+            src.Send(SendPacket.FromFormat("bbdddd", 35, 4, 0, 0, 0, 0));//first 0 is im
+            src.Send(SendPacket.FromFormat("bbbbbb", 90, 1, 0, 2, 2, 3));
+            src.Send(SendPacket.FromFormat("bb", 5, 4));
             //src.SetSendMode(SendMode.Normal);
             src.Flags.Add(PlayerFlag.InMap);
 

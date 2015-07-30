@@ -146,7 +146,7 @@ namespace Game.Code
                                 else
                                     this[slot].Clear();
                             }
-                        if (senddata) owner.Send(new SendPacket(Packet.FromFormat("bbbb", 23, 9, at, ammt)));
+                        if (senddata) owner.Send( SendPacket.FromFormat("bbbb", 23, 9, at, ammt));
                         return remItem;
                     }
                 }
@@ -224,7 +224,6 @@ namespace Game.Code
                         tmp.Pack32(0);
                         tmp.Pack32(0);
                         tmp.Pack16(0);
-                        tmp.SetHeader();
                         owner.Send(tmp);
                     }
                     if (totalammt == item.Ammt || at != 0)
@@ -259,7 +258,6 @@ namespace Game.Code
                     {
                         tmp.Pack8(wasplaced);
                         tmp.Pack8(to);
-                        tmp.SetHeader();
                         owner.Send(tmp);
                     }
                 }
@@ -268,7 +266,7 @@ namespace Game.Code
 
         public void ProcessSocket(Packet p)
         {
-            p.m_nUnpackIndex = 4;
+            p.SetPtr();
 
             var a = p.Unpack8();
             var b = p.Unpack8();
@@ -311,7 +309,7 @@ namespace Game.Code
                         if (this[pos].ItemID > 0)
                         {
                             // test confirm destroy item
-                            owner.Send(new SendPacket(Packet.FromFormat("bbwb", 23, 26, this[pos].ItemID, qnt)));
+                            owner.Send( SendPacket.FromFormat("bbwb", 23, 26, this[pos].ItemID, qnt));
                             RemoveItem(pos, qnt);
                         }
                     } break;
@@ -345,11 +343,11 @@ namespace Game.Code
             get { lock (mylock) { return 50 - FilledCount; } }
         }
 
-        public IEnumerable<byte> GetAC23_5()
+        public byte[] GetAC23_5()
         {
             lock (mylock)
             {
-                SendPacket tmp = new SendPacket(false);
+                SendPacket tmp = new SendPacket();
                 tmp.Pack8(23);
                 tmp.Pack8(5);
                 if (FilledCount > 0)

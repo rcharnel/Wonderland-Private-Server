@@ -11,7 +11,7 @@ namespace Network.ActionCodes
     public class AC35 : AC
     {
         public override int ID { get { return 35; } }
-        public override void  ProcessPkt(Player p, Packet r)
+        public override void ProcessPkt(Player p, RecievePacket r)
         {
             switch (r.Unpack8())
             {
@@ -19,11 +19,11 @@ namespace Network.ActionCodes
             }
         }
 
-        void Recv2(ref Player p, Packet e)
+        void Recv2(ref Player p, RecievePacket e)
         {
-            e.m_nUnpackIndex += 14;
-            string pw = e.UnpackString();
             byte slot = e.Unpack8();
+            string uknw = e.UnpackString();
+            string pw = e.UnpackString();
 
             if (p.UserAcc.Cipher == pw)
             {
@@ -33,21 +33,21 @@ namespace Network.ActionCodes
 
                 if (cGlobal.gCharacterDataBase.GetCharacterData(p.UserAcc.Character1ID) == null && cGlobal.gCharacterDataBase.GetCharacterData(p.UserAcc.Character2ID) == null)
                     p.UserAcc.Cipher = "";
-                p.Send(new SendPacket(Packet.FromFormat("bbbb", 24, 5, 53, 0)));
-                p.Send(new SendPacket(Packet.FromFormat("bbbb", 24, 5, 52, 0)));
-                p.Send(new SendPacket(Packet.FromFormat("bbbb", 24, 5, 54, 0)));
-                p.Send(new SendPacket(Packet.FromFormat("bbbb", 24, 5, 183, 0)));
-                p.Send(new SendPacket(Packet.FromFormat("bb", 20, 8)));
-                p.Send(new SendPacket(Packet.FromFormat("bbbb", 35, 2, 1, slot)));
+                p.Send( SendPacket.FromFormat("bbbb", 24, 5, 53, 0));
+                p.Send( SendPacket.FromFormat("bbbb", 24, 5, 52, 0));
+                p.Send( SendPacket.FromFormat("bbbb", 24, 5, 54, 0));
+                p.Send( SendPacket.FromFormat("bbbb", 24, 5, 183, 0));
+                p.Send( SendPacket.FromFormat("bb", 20, 8));
+                p.Send( SendPacket.FromFormat("bbbb", 35, 2, 1, slot));
             }
             else
-                p.Send(new SendPacket(Packet.FromFormat("bbbb", 35, 2, 3, slot)));
+                p.Send( SendPacket.FromFormat("bbbb", 35, 2, 3, slot));
 
         }
 
         void Send_24_5(Player player, byte value)
         {
-            player.Send(new SendPacket(Packet.FromFormat("bbbb", 24, 5, value, 0)));
+            player.Send( SendPacket.FromFormat("bbbb", 24, 5, value, 0));
 
         }
     }

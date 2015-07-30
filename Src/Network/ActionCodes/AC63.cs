@@ -13,7 +13,7 @@ namespace Network.ActionCodes
     {
         public override int ID { get { return 63; } }
 
-        public override void ProcessPkt(Player p,  Packet r)
+        public override void ProcessPkt(Player p,  RecievePacket r)
         {
             switch (r.Unpack8())
             {
@@ -25,7 +25,7 @@ namespace Network.ActionCodes
 
         }
 
-        void Recv3(ref Player p, Packet r)
+        void Recv3(ref Player p, RecievePacket r)
         {
             //try
             //{
@@ -36,7 +36,7 @@ namespace Network.ActionCodes
             //catch (Exception t) { Utilities.LogServices.Log(t); }
         }
 
-        void Recv2(ref Player p, Packet e)
+        void Recv2(ref Player p, RecievePacket e)
         {
             try
             {
@@ -44,13 +44,13 @@ namespace Network.ActionCodes
 
                 if ((charNum < 1) || (charNum > 2))//by userid
                 {
-                    p.Send(new SendPacket(Packet.FromFormat("bb", 0, 32)));
+                    p.Send( SendPacket.FromFormat("bb", 0, 32));
                     return;
                 }
 
                 p.Slot = charNum;
 
-                if (cGlobal.gCharacterDataBase.GetCharacterData( (p.Slot == 1)?p.UserAcc.Character1ID:p.UserAcc.Character2ID) == null) // char is not created
+                if (!cGlobal.gCharacterDataBase.GetCharacterData( (p.Slot == 1)?p.UserAcc.Character1ID:p.UserAcc.Character2ID,ref p)) // char is not created
                 {
                     #region Create Character
                     cGlobal.gUserDataBase.Update_Player_ID(p.UserAcc.DataBaseID, p.CharID, charNum);
@@ -66,7 +66,6 @@ namespace Network.ActionCodes
                 else
                 {
                     #region Login
-                    cGlobal.gCharacterDataBase.GetCharacterData((p.Slot == 1) ? p.UserAcc.Character1ID : p.UserAcc.Character2ID, ref p);
                     SendPacket tmp = new SendPacket();
                     tmp.Pack8(63);
                     tmp.Pack8(2);
@@ -85,10 +84,11 @@ namespace Network.ActionCodes
         /// </summary>
         /// <param name="p"></param>
         /// <param name="r"></param>
-        void Recv4(ref Player p, Packet r)
+        void Recv4(ref Player p, RecievePacket r)
         {
             try
             {
+                throw new Exception();
                 int loginState = 0; //0-good login  1-bad un/pw  2-dup log 3-wrong version 4-need update
 
                 //sending username and password
@@ -102,10 +102,10 @@ namespace Network.ActionCodes
                 byte lcLen = r.Unpack8();
                 byte key = r.Unpack8();
                 char[] lCode = new char[20];
-                Array.Copy(r.Buffer, r.m_nUnpackIndex, lCode, 0, lcLen);
+                Array.Copy(r.Buffer, r.GetPtr(), lCode, 0, lcLen);
                 for (int n = 0; n < lcLen; n++)
                     lCode[n] = (char)((byte)lCode[n] ^ (byte)key);
-                r.m_nUnpackIndex += lcLen;
+                r.SetPtr((int)(r.GetPtr() + lcLen));
 
                 if ((name.Length < 4) || (name.Length > 14))
                 {
@@ -116,11 +116,11 @@ namespace Network.ActionCodes
                     loginState = 1;
                 }
                 else if (version < 1096)//bad aloign version
-                { 
+                {
                     loginState = 3;
                 }
                 else if ((lcLen < 2) || (lcLen > 15))//bad login code length
-                { 
+                {
                     loginState = 4;
                 }
 
@@ -133,52 +133,45 @@ namespace Network.ActionCodes
                     uint dbid = 0;
                     //check if user exist on wloforever
                     #region Validate Account
-                       p.UserAcc.DataBaseID =  (uint)cGlobal.gUserDataBase.isValidAccount(name, password);
 
-                        if (p.UserAcc.DataBaseID != 0)
+                    if (cGlobal.gUserDataBase.GetUserData(name, password, out dbid, out userdata))
+                    {
+                        if ((p.UserAcc.DataBaseID = dbid) != 0)
                         {
                             if (cGlobal.gLoginServer.IsOnline(p.UserAcc.UserID))
-                            {
-                                //TODO implement Disconnect
                                 loginState = 2;
-                                cGlobal.gLoginServer.Disconnect(p.UserAcc.UserID);
+                            else if (userdata != null)
+                            {
+                                p.UserAcc.UserName = userdata[0];
+                                p.UserAcc.Cipher = userdata[1];
+                                p.UserAcc.IM = int.Parse(userdata[2]);
                             }
                             else
-                            {
-                                userdata =  cGlobal.gUserDataBase.GetUserData(p.UserAcc.DataBaseID, password);
-                                if (userdata != null)
-                                {
-                                    p.UserAcc.UserName = userdata[0];
-                                    p.UserAcc.Cipher = userdata[1];
-                                    p.UserAcc.IM = int.Parse(userdata[2]);
-                                }
-                                else
-                                    loginState = 1;
-                            }
+                                loginState = 1;
                         }
-                        else
-                            loginState = 1;
+                    }
+                    else
+                        loginState = 1;
                     #endregion
                 }
                 //if (userdata != null)
                 //    if (userdata.Length != 6)
-                        //loginState = 1;
-                    //else if (userdata.Length == 6 && userdata[4].ToString() == "0" && myhost.GameWorld.ServerStatus == ServerMode.TestMode)
-                    //    loginState = 6;
+                //loginState = 1;
+                //else if (userdata.Length == 6 && userdata[4].ToString() == "0" && myhost.GameWorld.ServerStatus == ServerMode.TestMode)
+                //    loginState = 6;
 
                 #region Result of Login State
                 // here we do the results of loginstate
                 switch (loginState)
                 {
                     case 0:
-                        {                            
+                        {
                             SendPacket tmp = new SendPacket();
                             tmp.Pack8(63);
                             tmp.Pack8(2);
                             tmp.Pack32(p.UserAcc.UserID);
                             p.Send(tmp);
 
-                            
                             tmp = new SendPacket();
                             tmp.Pack8(63);
                             tmp.Pack8(1);
@@ -187,46 +180,47 @@ namespace Network.ActionCodes
                             p.Send(tmp);
 
                             //p.State = PlayerState.Connected_CharacterSelection;
-                            p.Send(new SendPacket(Packet.FromFormat("bb", 35, 11)));
+                            p.Send( SendPacket.FromFormat("bb", 35, 11));
 
                         } break;
                     case 1:
                         {
-                            p.Send(new SendPacket(Packet.FromFormat("bb", 63, 2)));
-                            p.Send(new SendPacket(Packet.FromFormat("bb", 1, 6)));
+                            p.Send( SendPacket.FromFormat("bb", 63, 2));
+                            p.Send( SendPacket.FromFormat("bb", 1, 6));
                         } break;
                     case 2:
                         {
                             //if (status != null) status("Server", "Already logged in. ( " + p.UserName + " )");
-                            p.Send(new SendPacket(Packet.FromFormat("bb", 63, 2)));
-                            p.Send(new SendPacket(Packet.FromFormat("bb", 0, 19)));
+                            p.Send( SendPacket.FromFormat("bb", 63, 2));
+                            p.Send( SendPacket.FromFormat("bb", 0, 19));
+                            cGlobal.gLoginServer.Disconnect(p.UserAcc.UserID);
                         } break;
                     case 3:
                         {
                             SendPacket sp = new SendPacket();// PSENDPACKET PackSend = new SENDPACKET;
                             //PackSend->Clear();
-                            p.Send(new SendPacket(Packet.FromFormat("bb", 0, 17)));
+                            p.Send( SendPacket.FromFormat("bb", 0, 17));
                             p.Send(sp);
                         } break;
                     case 4:
                         {
                             SendPacket sp = new SendPacket();// PSENDPACKET PackSend = new SENDPACKET;
                             //PackSend->Clear();
-                            p.Send(new SendPacket(Packet.FromFormat("bb", 0, 65)));
+                            p.Send( SendPacket.FromFormat("bb", 0, 65));
                             p.Send(sp);
                         } break;
                     case 5:
                         {
                             SendPacket sp = new SendPacket();// PSENDPACKET PackSend = new SENDPACKET;
                             //PackSend->Clear();
-                            p.Send(new SendPacket(Packet.FromFormat("bb", 1, 7)));
+                            p.Send( SendPacket.FromFormat("bb", 1, 7));
                             p.Send(sp);
                         } break;
                     case 6:
                         {
                             SendPacket sp = new SendPacket();// PSENDPACKET PackSend = new SENDPACKET;
                             //PackSend->Clear();
-                            p.Send(new SendPacket(Packet.FromFormat("bb", 0, 79)));
+                            p.Send( SendPacket.FromFormat("bb", 0, 79));
                             p.Send(sp);
                         } break;
                 }
