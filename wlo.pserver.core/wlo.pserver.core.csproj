@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data, Version=6.9.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MySql.Data.6.9.7\lib\net45\MySql.Data.dll</HintPath>
@@ -57,6 +60,8 @@
     <Compile Include="DataBase\Migration\characterDB_Mig.cs" />
     <Compile Include="DataBase\Migration\DBMigrationWiz.cs" />
     <Compile Include="DataBase\UserDataBase.cs" />
+    <Compile Include="Game\Battle\Battle.cs" />
+    <Compile Include="Game\Battle\BattleScene.cs" />
     <Compile Include="Game\Bots\Cupid.cs" />
     <Compile Include="Game\Bots\GmBot.cs" />
     <Compile Include="Game\Delegates.cs" />
@@ -90,7 +95,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Game\Battle\" />
     <Folder Include="Game\Interface\" />
     <Folder Include="Game\Objects\" />
     <Folder Include="Game\PetRelated\" />

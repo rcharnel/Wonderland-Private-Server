@@ -88,7 +88,6 @@ namespace Network.ActionCodes
         {
             try
             {
-                throw new Exception();
                 int loginState = 0; //0-good login  1-bad un/pw  2-dup log 3-wrong version 4-need update
 
                 //sending username and password

@@ -987,7 +987,7 @@ namespace DataBase
             }
             else
             {
-                DebugSystem.Write(new ExceptionData(ExceptionSeverity.Warning, "Character not found for " + charID));
+                DebugSystem.Write("Character not found for " + charID);
                 return false;
             }
             //load stat data

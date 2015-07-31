@@ -15,6 +15,7 @@ namespace Wonderland_Private_Server
 {
     public partial class Form1 : Form
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         bool blockclose = true;
 
         PluginManager phostManager;
@@ -105,6 +106,7 @@ namespace Wonderland_Private_Server
             DebugSystem.VerboseLvl = 1;
 
             DebugSystem.Write("[Init] - Initializing DataFile Objects");
+            log.Info("[Init] - Initializing DataFile Objects");
             cGlobal.ItemDatManager = new DataFiles.PhxItemDat();
             cGlobal.ItemDatManager.Load(Environment.CurrentDirectory + "\\Data\\itemDat.wpdat");
             DebugSystem.Write("[Init] - Initializing DataBase Objects");

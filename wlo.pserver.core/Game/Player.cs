@@ -20,6 +20,8 @@ using Game.Maps;
         
         public class PlayerFlagManager
         {
+            private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
             List<PlayerFlag> m_Flags;
 
             public PlayerFlagManager()
@@ -48,6 +50,8 @@ using Game.Maps;
 
         public class Player : Game.Character, IDisposable, INotifyPropertyChanged
         {
+            private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
             #region Definitions
 
             readonly object mlock = new object();
