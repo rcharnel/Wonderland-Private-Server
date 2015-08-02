@@ -74,7 +74,7 @@ namespace Network.ActionCodes
 
                 if (cGlobal.gCharacterDataBase.WriteNewPlayer(tp.CharID, tp))
                 {
-                    cGlobal.gUserDataBase.Update_Player_ID(tp.UserAcc.DataBaseID, tp.CharID, (byte)tp.Slot);
+                    //cGlobal.gUserDataBase.Update_Player_ID(tp.UserAcc.DataBaseID, tp.CharID, (byte)tp.Slot);
                     cGlobal.gUserDataBase.UpdateUser(tp.UserAcc.DataBaseID, tp.UserAcc.Cipher);
                     cGlobal.gWorld.OnLogin(tp);
                 }

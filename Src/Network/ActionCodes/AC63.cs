@@ -53,7 +53,7 @@ namespace Network.ActionCodes
                 if (!cGlobal.gCharacterDataBase.GetCharacterData( (p.Slot == 1)?p.UserAcc.Character1ID:p.UserAcc.Character2ID,ref p)) // char is not created
                 {
                     #region Create Character
-                    cGlobal.gUserDataBase.Update_Player_ID(p.UserAcc.DataBaseID, p.CharID, charNum);
+                    //cGlobal.gUserDataBase.Update_Player_ID(p.UserAcc.DataBaseID, p.CharID, charNum);
                     //p.State = PlayerState.Connected_CharacterCreation;
 
                     SendPacket tmp = new SendPacket();

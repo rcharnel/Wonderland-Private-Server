@@ -12,6 +12,8 @@ namespace Network.ActionCodes
 {
     public class AC
     {
+        protected readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public virtual int ID { get { return 0; } }
         public virtual void ProcessPkt(Player c, RecievePacket p)
         {

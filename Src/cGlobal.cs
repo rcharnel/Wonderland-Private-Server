@@ -10,6 +10,7 @@ using Wonderland_Private_Server.Config;
 using System.Collections.Concurrent;
 using Server;
 using Server.System;
+using System.Diagnostics;
 
 namespace System
 {
@@ -18,8 +19,8 @@ namespace System
 
         
         public static bool Run;
-        
 
+        public static string SrvVersion { get { return new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion).ToString(); } }
         public static Server.Config.Settings SrvSettings;
 
         public static DataBase.CharacterDataBase gCharacterDataBase;

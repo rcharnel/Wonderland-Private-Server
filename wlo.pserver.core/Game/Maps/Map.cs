@@ -19,8 +19,8 @@ namespace Game
     {
         uint MapID { get; set; }
         MapType Type { get; }
-        //void Broadcast(SendPacket pkt);
-        //void Broadcast(SendPacket pkt, string parameter, params object[] To);
+        void Broadcast(SendPacket pkt);
+        void Broadcast(SendPacket pkt, string parameter, params object[] To);
         bool Teleport(TeleportType teletype, Player sender, byte portalID, WarpData warp = null);
     }
 
@@ -692,7 +692,7 @@ namespace Game
         /// </summary>
         /// <param name="pkt"></param>
         /// <param name="To">"Multiple target IDs as string to send to specific people"</param>
-        public async void Broadcast(SendPacket pkt, string parameter, params object[] To)
+        public void Broadcast(SendPacket pkt, string parameter, params object[] To)
         {
                 switch (parameter)
                 {

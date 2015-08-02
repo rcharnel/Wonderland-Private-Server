@@ -5,15 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Game;
 
-namespace Wonderland_Private_Server.Code.Interface
+namespace Game.Battle
 {
     public interface Fighter
     {
         uint ID { get; }
-        BattleSide BattlePosition { get; set; }
+        BattleRole BattlePosition { get; set; }
         eFighterType TypeofFighter { get; }
         FighterState BattleState { get; }
-        Game.Code.PetRelated.PetList Pets { get; }
+        //Game.Code.PetRelated.PetList Pets { get; }
         //BattleAction myAction { get; set; }
         UInt16 ClickID { get; set; }
         UInt32 OwnerID { get; set; }
@@ -36,5 +36,7 @@ namespace Wonderland_Private_Server.Code.Interface
         Int32 FullDef { get; }
         Int32 FullMdef { get; }
         Int32 FullSpd { get; }
+
+        void OnNewBattle(Game.Battle.BattleScene battle);
     }
 }

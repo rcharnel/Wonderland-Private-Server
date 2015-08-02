@@ -17,6 +17,7 @@ using Game.Maps;
 
     namespace Game
     {
+        public delegate void PlayerSocketInfo(Character src);
         
         public class PlayerFlagManager
         {
@@ -52,6 +53,10 @@ using Game.Maps;
         {
             private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+            #region Events
+            public event PlayerSocketInfo Disconnected;
+            #endregion
+
             #region Definitions
 
             readonly object mlock = new object();
@@ -75,6 +80,7 @@ using Game.Maps;
             User m_useracc;
             Inventory m_inv;
             ClientSettings m_settings;
+            Game.Battle.BattleScene m_battle;
             //MailManager m_Mail;
             //Friendlist m_friendlist;
             //RiceBall m_riceball;
@@ -126,7 +132,7 @@ using Game.Maps;
             public override void Clear()
             {
                 m_Flags = new PlayerFlagManager();
-                //m_inv.RemoveAll(true);
+                m_inv.RemoveAll(true);
                 QueueData = new Queue<SendPacket>(25);
                 UserAcc.Clear();
                 base.Clear();
@@ -217,7 +223,7 @@ using Game.Maps;
             public EquipManager Eqs { get { return ((EquipManager)this) ?? null; } }
             //public cPetList Pets { get { return m_pets; } }
             //public Tent Tent { get { return m_tent; } }
-            //public BattleArea BattleScene { get { return m_battle; } set { m_battle = value; } }
+            public Game.Battle.BattleScene MyBattle { get { return m_battle; } set { m_battle = value; } }
             //public cRiceBall RiceBall { get { return m_riceball; } }
             //public SendType DataOut
             //{
@@ -341,8 +347,6 @@ using Game.Maps;
 
             #region ClientSock
             
-            public Action<Player> OnDisconnect;
-
             public void Send(byte[] src, RCLibrary.Core.Networking.PacketFlags pFlags = PacketFlags.None)
             {
                 SendPacket p = new SendPacket(src);
@@ -376,7 +380,9 @@ using Game.Maps;
 
                     base.ProcessSocket(this, p);
                     m_inv.ProcessSocket(p);
-                    //m_setting.ProcessSocket(p);
+                    m_settings.ProcessSocket(p);
+                    if (m_battle != null)
+                        m_battle.ProcessSocket(p);
 
 
                 }
@@ -835,11 +841,11 @@ using Game.Maps;
 
             #endregion
 
-            #region Event
+            #region Internal Events
             void m_socket_onConnectionLost()
             {
                 if (net != null && net.IsAlive) net.Abort();
-                if (OnDisconnect != null) OnDisconnect(this);
+                if (Disconnected != null) Disconnected(this);
             }
             public void onTick_Tick()
             {
@@ -879,6 +885,30 @@ using Game.Maps;
             #endregion
             
             #region Game.Mail
+
+            #endregion
+
+            #region Game.Battle
+            public void OnBattle_Start(Game.Battle.BattleScene battle)
+            {
+            }
+
+            void Battle_OnNewRound(List<Game.Battle.Fighter> fighters_on_my_side, List<Game.Battle.Fighter> fighters_on_other_side)
+            {
+                PacketBuilder tmp = new PacketBuilder();
+                tmp.Begin(null);
+
+                foreach (var f in fighters_on_my_side)
+                {
+                    tmp.Add(SendPacket.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 25, f.CurHP, 0));
+                    tmp.Add(SendPacket.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 26, f.CurSP, 0));
+                }
+                foreach (var f in fighters_on_other_side)
+                    tmp.Add(SendPacket.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 25, f.CurHP, 0));
+
+                tmp.Add(SendPacket.FromFormat("bb", 52, 1));
+                Send(tmp.End());
+            }
 
             #endregion
 

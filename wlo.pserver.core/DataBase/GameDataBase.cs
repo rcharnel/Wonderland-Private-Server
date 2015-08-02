@@ -14,6 +14,8 @@ namespace DataBase
         const string DBServer = "GameDataBase";
         //DBConnector.DBOAuth DBAssist;
 
+        public DataFiles.PhxItemDat ItemDat { private get; set; }
+
         public GameDataBase()
         {
             //DBAssist = new DBConnector.DBOAuth();
@@ -26,99 +28,99 @@ namespace DataBase
             DataTable src = null;
 
         }
-        //public void LoadFinalData(ref Player c)
-        //{
-        //    DataTable src = null;
-            
-        //    #region Inventory
-        //    src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM inventory where charID = '" + c.ID + "'");
+        public void LoadFinalData(Player c)
+        {
+            DataTable src = null;
 
-        //    if (src.Rows.Count > 0)
-        //    {
-        //        ushort id;
+            #region Inventory
+            src = GetDataTable("SELECT * FROM inventory where charID = '" + c.CharID + "'");
 
-        //        for (int i = 0; i < src.Rows.Count; i++)
-        //        {
-        //            id = ushort.Parse(src.Rows[i]["itemID"].ToString());
-        //            switch (uint.Parse(src.Rows[i]["storID"].ToString()))
-        //            {
-        //                case 0:
-        //                    if (id != 0)
-        //                    {
-        //                        var data = new InvItem();
-        //                        data.CopyFrom(cGlobal.gItemManager.GetItem(id));
-        //                        data.Ammt = byte.Parse(src.Rows[i]["qty"].ToString());
-        //                        data.Damage = byte.Parse(src.Rows[i]["dmg"].ToString());
-        //                        c.Inv[byte.Parse(src.Rows[i]["pos"].ToString())] = data;
-        //                        //rows[i]["socketID"].ToString(), rows[i]["bombID"].ToString(),rows[i]["sewID"].ToString(),rows[i]["dmg"].ToString(),rows[i]["forge"].ToString(), , });
-        //                    }
-        //                    break;
-        //            }
-        //        }
-        //    }
+            if (src.Rows.Count > 0)
+            {
+                ushort id;
 
-        //    src = null;
-        //    #endregion
+                for (int i = 0; i < src.Rows.Count; i++)
+                {
+                    id = ushort.Parse(src.Rows[i]["itemID"].ToString());
+                    switch (uint.Parse(src.Rows[i]["storID"].ToString()))
+                    {
+                        case 0:
+                            if (id != 0)
+                            {
+                                Game.Code.InvItem data = new Game.Code.InvItem();
+                                data.CopyFrom(ItemDat.GetItemByID(id));
+                                data.Ammt = byte.Parse(src.Rows[i]["qty"].ToString());
+                                data.Damage = byte.Parse(src.Rows[i]["dmg"].ToString());
+                                c.Inv[byte.Parse(src.Rows[i]["pos"].ToString())].CopyFrom(data);
+                                //rows[i]["socketID"].ToString(), rows[i]["bombID"].ToString(),rows[i]["sewID"].ToString(),rows[i]["dmg"].ToString(),rows[i]["forge"].ToString(), , });
+                            }
+                            break;
+                    }
+                }
+            }
 
-        //    #region Tent
-        //    #endregion
+            src = null;
+            #endregion
 
-        //    #region Friends
-        //    src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.ID + "'");
+            #region Tent
+            #endregion
 
-        //    if (src.Rows.Count > 0)
-        //        c.LoadFriends(src.Rows[0]["Friends"].ToString());
+            #region Friends
+            //src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.ID + "'");
 
-        //    src = null;
-        //    #endregion
+            //if (src.Rows.Count > 0)
+            //    c.LoadFriends(src.Rows[0]["Friends"].ToString());
 
-        //    #region Mail
-        //    src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.ID + "'");
-            
-        //    if (src.Rows.Count > 0)
-        //    {
-        //        //foreach (string m in src.Rows[0]["Mail"].ToString().Split('&'))
-        //        //{
-        //        //    if (m == "none") break;
-        //        //    Mail tmp = new Mail();
-        //        //    tmp.Load(m);
-        //        //    var re = cGlobal.WLO_World.GetPlayer(tmp.targetid);
-        //        //    if (tmp.type == "Send")
-        //        //    {
-        //        //        if (!tmp.isSent && re != null)
-        //        //        {
-        //        //            c.MailBox.Add(tmp);
-        //        //            re.RecvMailfrom(c, tmp.message, tmp.when);
-        //        //        }
-        //        //        else
-        //        //            c.MailBox.Add(tmp);
-        //        //    }
-        //        //    else
-        //        //        c.MailBox.Add(tmp);
-        //        //}
-        //    }
-        //    #endregion
+            src = null;
+            #endregion
 
-        //    #region Skills
+            #region Mail
+            src = GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.CharID + "'");
 
-        //    #endregion
+            if (src.Rows.Count > 0)
+            {
+                //foreach (string m in src.Rows[0]["Mail"].ToString().Split('&'))
+                //{
+                //    if (m == "none") break;
+                //    Mail tmp = new Mail();
+                //    tmp.Load(m);
+                //    var re = cGlobal.WLO_World.GetPlayer(tmp.targetid);
+                //    if (tmp.type == "Send")
+                //    {
+                //        if (!tmp.isSent && re != null)
+                //        {
+                //            c.MailBox.Add(tmp);
+                //            re.RecvMailfrom(c, tmp.message, tmp.when);
+                //        }
+                //        else
+                //            c.MailBox.Add(tmp);
+                //    }
+                //    else
+                //        c.MailBox.Add(tmp);
+                //}
+            }
+            #endregion
 
-        //    #region Settings
-        //    src = cGlobal.gDataBaseConnection.GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.ID + "'");
+            #region Skills
 
-        //    if (src.Rows.Count > 0)
-        //        c.Settings.Load_SystemFlag(src.Rows[0]["Settings"].ToString());
+            #endregion
 
-        //    src = null;
-        //    #endregion
+            #region Settings
+            src = GetDataTable("SELECT * FROM charactersextdata where charID = '" + c.CharID + "'");
 
-        //    #region Quests
-        //    #endregion
+            if (src.Rows.Count > 0)
+                c.Settings.Load(src.Rows[0]["Settings"].ToString());
 
-        //    #region SideBar
-        //    #endregion
+            src = null;
+            #endregion
 
-        //}
+            #region Quests
+            #endregion
+
+            #region SideBar
+            #endregion
+
+        }
 
         public ushort GetBattleBG(ushort map)
         {

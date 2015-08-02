@@ -37,7 +37,7 @@ namespace Game
     {
         miss = 2,
     }
-    public enum BattleSide
+    public enum BattleRole
     {
         none,
         Defending = 2,
@@ -48,7 +48,7 @@ namespace Game
     {
         none = 0,
         player = 2,
-        Npc = 7,
+        Npc_Mob = 7,
         Watcher = 2,
         Pet = 4,
     }

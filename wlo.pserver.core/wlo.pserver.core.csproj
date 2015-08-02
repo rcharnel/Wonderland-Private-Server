@@ -60,8 +60,12 @@
     <Compile Include="DataBase\Migration\characterDB_Mig.cs" />
     <Compile Include="DataBase\Migration\DBMigrationWiz.cs" />
     <Compile Include="DataBase\UserDataBase.cs" />
-    <Compile Include="Game\Battle\Battle.cs" />
-    <Compile Include="Game\Battle\BattleScene.cs" />
+    <Compile Include="Game\Battle\Battle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Game\Battle\BattleScene.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Game\Bots\Cupid.cs" />
     <Compile Include="Game\Bots\GmBot.cs" />
     <Compile Include="Game\Delegates.cs" />
@@ -76,6 +80,7 @@
     <Compile Include="Game\Enums\SkillEnums.cs" />
     <Compile Include="Game\Enums\StatEnums.cs" />
     <Compile Include="Game\Enums\WorldEnums.cs" />
+    <Compile Include="Game\Interface\Fighter.cs" />
     <Compile Include="Game\Inventory.cs" />
     <Compile Include="Game\Item.cs" />
     <Compile Include="Game\Maps\Map.cs" />
@@ -95,7 +100,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Game\Interface\" />
     <Folder Include="Game\Objects\" />
     <Folder Include="Game\PetRelated\" />
     <Folder Include="Game\Quests\" />

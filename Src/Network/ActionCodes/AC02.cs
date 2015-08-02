@@ -3,38 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wonderland_Private_Server.Network;
-using Wonderland_Private_Server.Code.Objects;
-using Wonderland_Private_Server.Code.Enums;
-using Wlo.Core;
+using Game;
+using Network;
 
-namespace Wonderland_Private_Server.ActionCodes
+namespace Network.ActionCodes
 {
     public class AC02 : AC
     {
         public override int ID { get { return 2; } }
-        public override void ProcessPkt(ref Player r, RecvPacket p)
+        public override void ProcessPkt( Player r, RecievePacket p)
         {
-            switch (p.B)
+            switch (p.Unpack8())
             {
                 // case 1: Recv1(ref r, p); break;
-                case 2: Recv2(ref r, p); break;
-                default: Utilities.LogServices.Log("AC " + p.A + "," + p.B + " has not been coded"); break;
+                case 2: Recv2(r, p); break;
             }
         }
-        void Recv1(ref Player p, RecvPacket r)
+        void Recv1(Player p, RecievePacket r)
+        {
+            
+        }
+        void Recv2(Player p, RecievePacket r)
         {
             try
             {
-
-            }
-            catch (Exception t) { Utilities.LogServices.Log(t); }
-        }
-        void Recv2(ref Player p, RecvPacket r)
-        {
-            try
-            {
-                string str = r.UnpackNChar(2);
+                string str = r.UnpackStringN();
                 string[] words = str.Split(' ');
                 if (words.Length >= 1)
                 {
@@ -61,31 +54,21 @@ namespace Wonderland_Private_Server.ActionCodes
                                                     try { ammt = byte.Parse(words[3]); }
                                                     catch { }
                                                 }
-                                                InvItemCell i = new InvItemCell();
-                                                i.CopyFrom(cGlobal.gItemManager.GetItem(itemid));
-                                                i.Ammt = ammt;
+                                                //InvItemCell i = new InvItemCell();
+                                                //i.CopyFrom(cGlobal.gItemManager.GetItem(itemid));
+                                                //i.Ammt = ammt;
 
                                                 #region filter item
                                                 switch (itemid)
                                                 {
                                                    case 34076: // radio set only 1 item 
-                                                        byte a = 0;
-                                                        if (p.Inv.ContainsItem(34076,out a))
-                                                        {
-
+                                                       {
+                                                           if (!p.Inv.ContainsItem(34076) && !p.Eqs.IsEquipped(34076))
+                                                               p.Inv.AddItem(itemid, ammt);
                                                         }
-                                                        else
-                                                        {
-                                                            p.Inv.AddItem(i);
-                                                        }
-
                                                         break;
 
-                                                   default:
-
-                                                        p.Inv.AddItem(i);
-
-                                                        break;
+                                                   default:p.Inv.AddItem(itemid,ammt);break;
 
                                                 }
                                                 #endregion
@@ -94,52 +77,57 @@ namespace Wonderland_Private_Server.ActionCodes
 
                                         } break;
 #endregion
-
+ 
                                 } break;
 
                             }break;
 #endregion
                         #region warp
-                        case ":warp":
-                            {
-                                try
-                                {
-                                    WarpData tmp = new WarpData();
-                                    tmp.DstMap = ushort.Parse(words[1]);
-                                    tmp.DstX_Axis = ushort.Parse(words[2]);
-                                    tmp.DstY_Axis = ushort.Parse(words[3]);
-                                    p.CurrentMap.Teleport(TeleportType.CmD, ref p, (byte)0, tmp);
-                                }
-                                catch { }
-                            }break;
+                        //case ":warp":
+                        //    {
+                        //        try
+                        //        {
+                        //            WarpData tmp = new WarpData();
+                        //            tmp.DstMap = ushort.Parse(words[1]);
+                        //            tmp.DstX_Axis = ushort.Parse(words[2]);
+                        //            tmp.DstY_Axis = ushort.Parse(words[3]);
+                        //            p.CurrentMap.Teleport(TeleportType.CmD, ref p, (byte)0, tmp);
+                        //        }
+                        //        catch { }
+                        //    }break;
                         #endregion
 
                         #region CommandLine Develops
-                        case "cmd":
-                            switch (words[1])
-                            {
-                                case "1":
-                                    {
-                                       cGlobal.gGuildSystem.CreateNewGuild(ref p, "balaiada");
-                                    }
-                                    break;  
+                        //case "cmd":
+                        //    switch (words[1])
+                        //    {
+                        //        case "1":
+                        //            {
+                        //               cGlobal.gGuildSystem.CreateNewGuild(ref p, "balaiada");
+                        //            }
+                        //            break;  
                               
-                                case "2":
-                                    p.CurGuild.GuilMail(p.UserID, p.UserID, "11");
+                        //        case "2":
+                        //            p.CurGuild.GuilMail(p.UserID, p.UserID, "11");
 
-                                    break;
-                            }
+                        //            break;
+                        //    }
 
-                            break;
+                        //    break;
                         #endregion
                         #region Default
 
                         default :
-                            SendPacket s = new SendPacket();
-                            s.Pack(new byte[]{2,2});
-                            s.Pack(p.ID);
-                            s.PackNString(str);
-                            p.CurrentMap.Broadcast(s, p.UserID);
+                            {
+                                RCLibrary.Core.Networking.PacketBuilder tmp = new RCLibrary.Core.Networking.PacketBuilder();
+                                tmp.Begin();
+                                tmp.Add((byte)2);
+                                tmp.Add((byte)2);
+                                tmp.Add(p.CharID);
+                                tmp.Add(str,true);
+
+                                p.CurMap.Broadcast(new SendPacket(tmp.End()), "Ex", p.CharID);
+                            }
                             break;
                         #endregion
                     }
@@ -147,7 +135,7 @@ namespace Wonderland_Private_Server.ActionCodes
             }
 
                        
-            catch (Exception t) { Utilities.LogServices.Log(t); }
+            catch (Exception t) { log.Error(t.Message,t); }
         }
     }
 }

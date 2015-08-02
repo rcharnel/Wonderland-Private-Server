@@ -108,6 +108,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Src\Network\ActionCodes\AC02.cs" />
     <Compile Include="Src\Network\ActionCodes\AC09.cs" />
     <Compile Include="Src\Network\ActionCodes\AC12.cs" />
     <Compile Include="Src\Network\ActionCodes\AC20.cs" />

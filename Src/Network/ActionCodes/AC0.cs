@@ -24,7 +24,7 @@ namespace Network.ActionCodes
             s.Pack8(1);
             s.Pack8(9);
             s.PackArray(new byte[] { 107, 000, 001, });
-            s.PackStringN("WloPsrv");
+            s.PackStringN(cGlobal.SrvVersion);
             c.Send( s);
             s = new SendPacket();
             s.Pack8(54);

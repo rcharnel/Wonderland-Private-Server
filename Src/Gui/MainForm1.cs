@@ -113,6 +113,8 @@ namespace Wonderland_Private_Server
             cGlobal.gUserDataBase = new DataBase.UserDataBase();
             cGlobal.gCharacterDataBase = new DataBase.CharacterDataBase();
             cGlobal.gCharacterDataBase.ItemDat = cGlobal.ItemDatManager;
+            cGlobal.gGameDataBase = new DataBase.GameDataBase();
+            cGlobal.gGameDataBase.ItemDat = cGlobal.ItemDatManager;
             DebugSystem.Write("[Init] - Intializing Systems Please Wait.....");
             cGlobal.ApplicationTasks = new Server.TaskManager();
             cGlobal.Update_System = new Server.System.UpdateSystem();

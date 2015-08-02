@@ -71,6 +71,18 @@ namespace Game.Code
         #endregion
 
 
+        public bool ContainsItem(ushort ItemID)
+        {
+            lock (mylock)
+            {
+                for (byte a = 1; a < 51; a++)
+                {
+                    if (this[a].ItemID == ItemID)
+                        return true;
+                }
+                return false;
+            }
+        }
         /// <summary>
         /// Used to check if an item exists in the list
         /// </summary>
@@ -153,6 +165,9 @@ namespace Game.Code
                 catch (Exception e) { DebugSystem.Write(new ExceptionData(e)); }
                 return null;
             }
+        }
+        public void AddItem(ushort ID, int amt)
+        {
         }
         /// <summary>
         /// Adds an item to the Inventory

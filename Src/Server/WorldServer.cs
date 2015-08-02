@@ -474,9 +474,11 @@ namespace Server
             src.Send(d);
 
             //------Player Base Info------------------
-            //cGlobal.gGameDataBase.LoadPlayerData(src);
+            cGlobal.gGameDataBase.LoadFinalData(src);
             src.SendCharacterData();
             cGlobal.gCharacterDataBase.SendOnlineCharacters(src);
+            cGlobal.gCharacterDataBase.OnCharacterJoin(src);
+            src.Disconnected += cGlobal.gCharacterDataBase.OnCharacterLeave;
             //-----------send sidebar---------------------
             //------------Player Data---------------------
             src.Send_5_3();

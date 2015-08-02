@@ -1055,6 +1055,7 @@ namespace Game.Code
             }
         }
 
+        #region Data Storage
         public List<long[]> Stat_toSave
         {
             get
@@ -1141,6 +1142,7 @@ namespace Game.Code
                 }
             }
         }
+        #endregion
 
         /// <summary>
         /// Processes Network Related Packets
@@ -1500,6 +1502,10 @@ namespace Game.Code
         public void FillSP()
         {
             m_cursp = FullSP;
+        }
+        public bool IsEquipped(ushort src)
+        {
+            return (equippedItems.Count(c => c.ItemID == src) > 0);
         }
         public void SetBaseStat(object stat, object value)
         {
