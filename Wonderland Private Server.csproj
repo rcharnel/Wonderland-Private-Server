@@ -257,6 +257,7 @@
     <Content Include="DLLS\Phoenix.Core.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="DLLS\PhoenixData.dll" />
     <Content Include="DLLS\RCLibrary.dll" />
     <Content Include="DLLS\System.Data.SQLite.dll" />
     <None Include="DLLS\Wlo.Core.dll" />
