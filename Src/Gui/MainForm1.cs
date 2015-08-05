@@ -280,7 +280,7 @@ namespace Wonderland_Private_Server
                 #region TaskManager
                 cGlobal.ApplicationTasks.onUpdateTick();
                 #endregion
-                Thread.Sleep(1);
+                Thread.Sleep(10);
             }
             while (cGlobal.Run);
 
@@ -305,6 +305,8 @@ namespace Wonderland_Private_Server
 
             cGlobal.Run = false;
             blockclose = false;
+
+            
             this.Invoke(new Action(() => { Close(); }));
         }
 

@@ -1321,15 +1321,22 @@ namespace DataBase
             src.Send(tmp.End());
         }
 
-        public void OnCharacterJoin(Character src)
+        public void OnCharacterJoin(Player src)
         {
             Characters_Online.TryAdd((int)src.CharID,src);
         }
 
-        public void OnCharacterLeave(Character src)
+        public void OnCharacterLeave(Player src)
         {
             Character s;
-            Characters_Online.TryRemove((int)src.CharID,out s);
+            if (Characters_Online.TryRemove((int)src.CharID, out s))
+            {
+                //Begin Saving Character Data
+                WritePlayer(src.CharID,src);
+
+
+
+            }
         }
     }
 }

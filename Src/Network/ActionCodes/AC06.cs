@@ -3,49 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wonderland_Private_Server.Code.Objects;
-using Wonderland_Private_Server.Network;
-using Wonderland_Private_Server.Utilities;
-using Wlo.Core;
+using Network;
+using Game;
 
-namespace Wonderland_Private_Server.ActionCodes
+namespace Network.ActionCodes
 {
     public class AC06:AC
     {
         public override int ID { get { return 06; } }
-        public override void ProcessPkt(ref Player r, RecvPacket p)
+        public override void ProcessPkt(Player r, RecievePacket p)
         {
-                switch (p.B)
+                switch (p.Unpack8())
                 {
-                    case 1: Recv1(ref r, p); break;
-                    case 2: Recv2(ref r, p); break;
-                    case 3: Recv3(ref r, p); break;
-                    default: LogServices.Log(p.A + "," + p.B + " Has not been coded"); break;
+                    case 1: Recv1(r, p); break;
+                    //case 2: Recv2(r, p); break;
+                    //case 3: Recv3(r, p); break;
                 }
         }
-        void Recv1(ref Player p, RecvPacket g)
+        void Recv1(Player p, RecievePacket g)
         {
-            if (g.Size > 5)
+            if (g.Count > 5)
             {
                 byte direction = g.Unpack8();
-                p.X = g.Unpack16();
-                p.Y = g.Unpack16();
+                p.CurX = g.Unpack16();
+                p.CurY = g.Unpack16();
                 //WORD unknown = p->Unpack16(7);
                 //p.Info.e = 0;
-                SendPacket tmp = new SendPacket();
-                tmp.Pack(new byte[] { 6, 1 });
-                tmp.Pack(p.ID);
-                tmp.Pack(direction);
-                tmp.Pack(p.X);
-                tmp.Pack(p.Y);
-                tmp.SetHeader();
-                p.CurrentMap.Broadcast(tmp, p.ID);
+                p.CurMap.Broadcast(SendPacket.FromFormat("bbdbww", 6, 1, p.CharID, direction, p.CurX, p.CurY));
             }
         }
-        void Recv2(ref Player p, Packet r)
+        void Recv2(Player p, RecievePacket r)
         {
         }
-        void Recv3(ref Player p, Packet r)
+        void Recv3(Player p, RecievePacket r)
         {
         }
     }

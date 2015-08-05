@@ -17,7 +17,7 @@ using Game.Maps;
 
     namespace Game
     {
-        public delegate void PlayerSocketInfo(Character src);
+        public delegate void PlayerSocketInfo(Player src);
         
         public class PlayerFlagManager
         {
@@ -98,7 +98,7 @@ using Game.Maps;
                 QueueData = new Queue<SendPacket>(25);
 
                 
-                m_inv = new Inventory(this);
+                m_inv = new Inventory(this,itemdat);
                 onWearEquip = m_inv.onWearEquip;
                 onEquip_Remove = m_inv.onUnEquip;
 

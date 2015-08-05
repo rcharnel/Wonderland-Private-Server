@@ -13,13 +13,17 @@ namespace Game.Code
 {
     public class Inventory
     {
+        DataFiles.PhxItemDat ItemDat;
+
+
         Player owner;
         private readonly object mylock;
         private InvItem[] m_Items;
 
-        public Inventory(Player src)
+        public Inventory(Player src,DataFiles.PhxItemDat ItemDat)
         {
             owner = src;
+            this.ItemDat = ItemDat;
             mylock = new object();
             m_Items = new InvItem[50];
             for (int a = 0; a < 50; a++)
@@ -166,8 +170,12 @@ namespace Game.Code
                 return null;
             }
         }
-        public void AddItem(ushort ID, int amt)
+        public void AddItem(ushort ID, byte amt)
         {
+            InvItem i = new InvItem();
+            i.CopyFrom(ItemDat.GetItemByID(ID));
+            i.Ammt = amt;
+            AddItem(i);
         }
         /// <summary>
         /// Adds an item to the Inventory
@@ -462,7 +470,8 @@ namespace Game.Code
     public class TentInventoryManager : Inventory
     {
 
-        public TentInventoryManager(Player src):base(src)
+        public TentInventoryManager(Player src, DataFiles.PhxItemDat ItemDat)
+            : base(src,ItemDat)
         {
 
         }

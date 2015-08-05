@@ -248,8 +248,8 @@ namespace Game.Code
             {
                 switch ((byte)Type)
                 {
-                    case 10: return true;
-                    case 15: return false;
+
+                    case 10:
                     case 17:
                     case 20:
                     case 21:
