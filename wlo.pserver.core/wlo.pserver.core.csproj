@@ -40,11 +40,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MySql.Data.6.9.7\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="PhoenixData">
-      <HintPath>..\..\..\..\Dropbox\Wonderland Online Dev Group\Pserver Core\Tools\PhoenixData\bin\Debug\PhoenixData.dll</HintPath>
+    <Reference Include="PhoenixData, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLLS\PhoenixData.dll</HintPath>
     </Reference>
-    <Reference Include="RCLibrary">
-      <HintPath>..\..\..\..\Dropbox\Wonderland Online Dev Group\Pserver Core\CServer\RCLibrary\bin\Debug\RCLibrary.dll</HintPath>
+    <Reference Include="RCLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLLS\RCLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
