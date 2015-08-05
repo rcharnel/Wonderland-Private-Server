@@ -38,3 +38,29 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonder
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Utilities.Update.GitUpdateItem.resources
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\GupdtSrv.dll
+c:\CCNet\build\bin\Debug\DLLS\Phoenix.Core.dll
+c:\CCNet\build\bin\Debug\Tutorials\x64\SQLite.Interop.dll
+c:\CCNet\build\bin\Debug\x86\SQLite.Interop.dll
+c:\CCNet\build\bin\Debug\Wonderland Private Server.exe.config
+c:\CCNet\build\bin\Debug\Wonderland Private Server.exe
+c:\CCNet\build\bin\Debug\Wonderland Private Server.pdb
+c:\CCNet\build\bin\Debug\GupdtSrv.dll
+c:\CCNet\build\bin\Debug\log4net.dll
+c:\CCNet\build\bin\Debug\Octokit.dll
+c:\CCNet\build\bin\Debug\PhoenixData.dll
+c:\CCNet\build\bin\Debug\RCLibrary.dll
+c:\CCNet\build\bin\Debug\System.Data.SQLite.dll
+c:\CCNet\build\bin\Debug\System.Data.SQLite.Linq.dll
+c:\CCNet\build\bin\Debug\wlo.pserver.core.dll
+c:\CCNet\build\bin\Debug\MySql.Data.dll
+c:\CCNet\build\bin\Debug\wlo.pserver.core.pdb
+c:\CCNet\build\bin\Debug\log4net.xml
+c:\CCNet\build\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
+c:\CCNet\build\obj\Debug\Wonderland_Private_Server.Form1.resources
+c:\CCNet\build\obj\Debug\Wonderland_Private_Server.Properties.Resources.resources
+c:\CCNet\build\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
+c:\CCNet\build\obj\Debug\Gui.TaskItem.resources
+c:\CCNet\build\obj\Debug\Gui.Update.GitUpdateItem.resources
+c:\CCNet\build\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache
+c:\CCNet\build\obj\Debug\Wonderland Private Server.exe
+c:\CCNet\build\obj\Debug\Wonderland Private Server.pdb

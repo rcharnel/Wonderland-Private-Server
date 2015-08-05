@@ -9,3 +9,15 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\obj\Debug\wlo.pserver.core.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\obj\Debug\wlo.pserver.core.pdb
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\obj\Debug\wlo.pserver.core.csprojResolveAssemblyReference.cache
+c:\CCNet\build\wlo.pserver.core\bin\Debug\wlo.pserver.core.dll.config
+c:\CCNet\build\wlo.pserver.core\bin\Debug\wlo.pserver.core.dll
+c:\CCNet\build\wlo.pserver.core\bin\Debug\wlo.pserver.core.pdb
+c:\CCNet\build\wlo.pserver.core\bin\Debug\log4net.dll
+c:\CCNet\build\wlo.pserver.core\bin\Debug\MySql.Data.dll
+c:\CCNet\build\wlo.pserver.core\bin\Debug\PhoenixData.dll
+c:\CCNet\build\wlo.pserver.core\bin\Debug\RCLibrary.dll
+c:\CCNet\build\wlo.pserver.core\bin\Debug\System.Data.SQLite.dll
+c:\CCNet\build\wlo.pserver.core\bin\Debug\log4net.xml
+c:\CCNet\build\wlo.pserver.core\obj\Debug\wlo.pserver.core.csprojResolveAssemblyReference.cache
+c:\CCNet\build\wlo.pserver.core\obj\Debug\wlo.pserver.core.dll
+c:\CCNet\build\wlo.pserver.core\obj\Debug\wlo.pserver.core.pdb
