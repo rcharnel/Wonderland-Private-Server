@@ -167,6 +167,7 @@ namespace Wonderland_Private_Server
             cGlobal.gUserDataBase.CharacterID1_Ref = cGlobal.SrvSettings.DB.CharacterID1_Ref;
             cGlobal.gUserDataBase.CharacterID2_Ref = cGlobal.SrvSettings.DB.CharacterID2_Ref;
             cGlobal.gUserDataBase.Char_Delete_Code_Ref = cGlobal.SrvSettings.DB.Char_Delete_Code_Ref;
+            cGlobal.gUserDataBase.PassVerification = (Game.VerifyPassType)cGlobal.SrvSettings.DB.PassVerification;
             //if (GitUptOption.SelectedIndex != (byte)cGlobal.SrvSettings.Update.UpdtControl)
             //    GitUptOption.SelectedIndex = (byte)cGlobal.SrvSettings.Update.UpdtControl;
 
@@ -215,6 +216,7 @@ namespace Wonderland_Private_Server
              UserID_Ref.DataBindings.Add("Text", cGlobal.SrvSettings.DB, "UserID_Ref");
              IM_Ref.DataBindings.Add("Text", cGlobal.SrvSettings.DB, "IM_Ref");
              Char_Delete_Code_Ref.DataBindings.Add("Text", cGlobal.SrvSettings.DB, "Char_Delete_Code_Ref");
+            _passVerifi.DataBindings.Add("SelectedIndex",cGlobal.SrvSettings.DB,"PassVerification");
             #endregion
 
             #region DataBase Initialization
@@ -416,6 +418,7 @@ namespace Wonderland_Private_Server
         {
             cGlobal.SrvSettings.Update.WarnofUpdate = updt_warn.Checked;
         }
+
 
 
         

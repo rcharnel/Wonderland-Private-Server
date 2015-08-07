@@ -17,7 +17,7 @@ namespace DataBase
         None,
     }
 
-
+    
 
     public sealed class UserDataBase : RCLibrary.Core.DataBase
     {
@@ -32,7 +32,9 @@ namespace DataBase
         public string CharacterID2_Ref = "character2ID";
         public string IM_Ref = "IM";
         public string Char_Delete_Code_Ref = "char_delete_code";
-        
+        public VerifyPassType PassVerification;
+
+
         List<User> GOnlineUsers;
 
         bool shutdown = false;
@@ -49,6 +51,11 @@ namespace DataBase
             bool resp = (GOnlineUsers.Count(c => c.UserName == user) > 0);
             DebugSystem.Write(DebugItemType.Info_Heavy, "Checking if User '{0}' is Online... [Resp]: {1}", DebugItemType.Info_Heavy, user, resp);
             return resp;
+        }
+
+        public override bool VerifyPassword(string check, string with)
+        {
+            return base.VerifyPassword(check, with);
         }
         
         public override bool VerifySaltedPassword(string password, string salt, string with)
@@ -86,22 +93,37 @@ namespace DataBase
             {
                 rows = new DataRow[src.Rows.Count];
                 src.Rows.CopyTo(rows, 0);
-                //if (BCrypt.Net.BCrypt.Verify(pass, rows[0][Password_Ref].ToString()))
-                //{
-                //    string ch = "0";
-                //    if (rows[0][Char_Delete_Code_Ref] != DBNull.Value)
-                //        ch = rows[0][Char_Delete_Code_Ref].ToString();
 
-                //    return new string[] { rows[0][Username_Ref].ToString(), ch, (rows[0][IM_Ref].ToString() == "")?"0":rows[0][IM_Ref].ToString()};
-                //}
-                if (VerifySaltedPassword(pass,rows[0]["members_pass_salt"].ToString(),rows[0][Password_Ref].ToString()))
+                switch (PassVerification)
                 {
-                    string ch = "";
-                    if (rows[0][Char_Delete_Code_Ref] != DBNull.Value)
-                        ch = rows[0][Char_Delete_Code_Ref].ToString();
-                    uint.TryParse(rows[0][DataBaseID_Ref].ToString(), out userID);
-                    userData = new string[] { rows[0][Username_Ref].ToString(), ch, (rows[0][IM_Ref].ToString() == "") ? "0" : rows[0][IM_Ref].ToString() };
-                    return true;
+                    case VerifyPassType.None:
+                         if (VerifyPassword(pass, rows[0][Password_Ref].ToString()))
+                        {
+                            string ch = "";
+                            if (rows[0][Char_Delete_Code_Ref] != DBNull.Value)
+                                ch = rows[0][Char_Delete_Code_Ref].ToString();
+                            uint.TryParse(rows[0][DataBaseID_Ref].ToString(), out userID);
+                            userData = new string[] { rows[0][Username_Ref].ToString(), ch, (rows[0][IM_Ref].ToString() == "") ? "0" : rows[0][IM_Ref].ToString() };
+                            return true;
+                        } break;
+                    //if (BCrypt.Net.BCrypt.Verify(pass, rows[0][Password_Ref].ToString()))
+                    //{
+                    //    string ch = "0";
+                    //    if (rows[0][Char_Delete_Code_Ref] != DBNull.Value)
+                    //        ch = rows[0][Char_Delete_Code_Ref].ToString();
+
+                    //    return new string[] { rows[0][Username_Ref].ToString(), ch, (rows[0][IM_Ref].ToString() == "")?"0":rows[0][IM_Ref].ToString()};
+                    //}
+                    case VerifyPassType.IPBoard_3x:
+                        if (VerifySaltedPassword(pass, rows[0]["members_pass_salt"].ToString(), rows[0][Password_Ref].ToString()))
+                        {
+                            string ch = "";
+                            if (rows[0][Char_Delete_Code_Ref] != DBNull.Value)
+                                ch = rows[0][Char_Delete_Code_Ref].ToString();
+                            uint.TryParse(rows[0][DataBaseID_Ref].ToString(), out userID);
+                            userData = new string[] { rows[0][Username_Ref].ToString(), ch, (rows[0][IM_Ref].ToString() == "") ? "0" : rows[0][IM_Ref].ToString() };
+                            return true;
+                        } break;
                 }
             }
             userID = 0;

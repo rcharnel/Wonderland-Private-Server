@@ -52,6 +52,8 @@
             this.label28 = new System.Windows.Forms.Label();
             this.tabPage20 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this._passVerifi = new System.Windows.Forms.ComboBox();
             this.Char_Delete_Code_Ref = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
             this.IM_Ref = new System.Windows.Forms.TextBox();
@@ -456,6 +458,8 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Controls.Add(this._passVerifi);
             this.groupBox3.Controls.Add(this.Char_Delete_Code_Ref);
             this.groupBox3.Controls.Add(this.label14);
             this.groupBox3.Controls.Add(this.IM_Ref);
@@ -475,9 +479,31 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "User DataBase  Table Column Linking";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 42);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(77, 13);
+            this.label2.TabIndex = 19;
+            this.label2.Text = "PassVerication";
+            // 
+            // _passVerifi
+            // 
+            this._passVerifi.FormattingEnabled = true;
+            this._passVerifi.Items.AddRange(new object[] {
+            "None",
+            "IP Board 3.x",
+            "IP Board 4.x",
+            "phpBB"});
+            this._passVerifi.Location = new System.Drawing.Point(98, 39);
+            this._passVerifi.Name = "_passVerifi";
+            this._passVerifi.Size = new System.Drawing.Size(174, 21);
+            this._passVerifi.TabIndex = 18;
+            // 
             // Char_Delete_Code_Ref
             // 
-            this.Char_Delete_Code_Ref.Location = new System.Drawing.Point(366, 39);
+            this.Char_Delete_Code_Ref.Location = new System.Drawing.Point(381, 39);
             this.Char_Delete_Code_Ref.Name = "Char_Delete_Code_Ref";
             this.Char_Delete_Code_Ref.Size = new System.Drawing.Size(143, 20);
             this.Char_Delete_Code_Ref.TabIndex = 17;
@@ -485,7 +511,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(263, 42);
+            this.label14.Location = new System.Drawing.Point(278, 42);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(97, 13);
             this.label14.TabIndex = 16;
@@ -1587,6 +1613,8 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TextBox IM_Ref;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox _passVerifi;
     }
 }
 

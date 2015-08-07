@@ -6,11 +6,21 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public enum Storagetype
+    public enum StorageType
     {
         PlayerInv,
         TentStoreroom,
         PlayerEq,
         PetEq,
     }
+
+    public enum VerifyPassType
+    {
+        None,
+        IPBoard_3x,
+        IPBoard_4x,
+        phpbb,
+    }
+
+
 }

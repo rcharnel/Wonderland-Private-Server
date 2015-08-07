@@ -45,7 +45,7 @@ namespace Server.Config
         public string _CharacterID2_Ref; public string CharacterID2_Ref { get { return _CharacterID2_Ref; } set { SetField(ref _CharacterID2_Ref, value); } }
         public string _IM_Ref; public string IM_Ref { get { return _IM_Ref; } set { SetField(ref _IM_Ref, value); } }
         public string _Char_Delete_Code_Ref; public string Char_Delete_Code_Ref { get { return _Char_Delete_Code_Ref; } set { SetField(ref _Char_Delete_Code_Ref, value); } }
-
+        public int _PassVerifi; public int PassVerification { get { return _PassVerifi; } set { SetField(ref _PassVerifi, value); } }
 
         #region Inotify Property
         public event PropertyChangedEventHandler PropertyChanged;
