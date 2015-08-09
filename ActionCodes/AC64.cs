@@ -32,12 +32,12 @@ namespace Wonderland_Private_Server.ActionCodes
         }
         void Recv2(ref Player r, RecvPacket p)
         {
-            try { }
+            try { r.Tent.Floors[1].ContinueBuild(r, p.Unpack8(2)); }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
         void Recv3(ref Player r, RecvPacket p)
         {
-            try { }
+            try { r.Tent.Floors[1].StopBuild(r, p.Unpack8(2)); }
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
     }

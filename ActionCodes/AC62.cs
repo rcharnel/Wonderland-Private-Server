@@ -18,7 +18,7 @@ namespace Wonderland_Private_Server.ActionCodes
                 {
                     case 1: Recv1(ref p, r); break;
                     case 3: Recv3(ref p, r); break;//rotate, move objects in tent.
-                   
+                    case 4: Recv4(ref p, r); break; // add item type especial
                     default: LogServices.Log(r.A + "," + r.B + " Has not been coded"); break;
                 }
         }
@@ -38,6 +38,12 @@ namespace Wonderland_Private_Server.ActionCodes
                 byte rotate = r.Unpack8(16);                
                 p.Tent.Floors[1].Rotate_Move_Object(p, pos,ax,ay,floor,rotate); }
                 
+            catch (Exception t) { Utilities.LogServices.Log(t); }
+        }
+        void Recv4(ref Player p, RecvPacket r)
+        {
+            try { }
+
             catch (Exception t) { Utilities.LogServices.Log(t); }
         }
     }

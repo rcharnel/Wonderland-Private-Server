@@ -8,11 +8,12 @@ using Wonderland_Private_Server.Code.Enums;
 using Wonderland_Private_Server.Network;
 using Wonderland_Private_Server.DataManagement.DataFiles;
 using System.Timers;
+using System.Diagnostics;
 
 namespace Wonderland_Private_Server.Code.Objects
 {
     #region class tent map
-    public class Tent:Map//Map allows the server to treat this as a map however
+    public class Tent : Map//Map allows the server to treat this as a map however
     {
         readonly object locker = new object();
         Player owner;
@@ -22,15 +23,16 @@ namespace Wonderland_Private_Server.Code.Objects
         public ushort MapX;
         public ushort MapY;
         public bool Closed;
-        
+
         ushort floorcolor = 39062, wallcolor = 39064;
-        
+
         public Tent()
         {
             // holy test need dataobjetct to load
             TentFloor f = new TentFloor(1);
         }
-        public Tent(Player src):base()
+        public Tent(Player src)
+            : base()
         {
             Closed = true;
             MType = MapType.Tent;
@@ -52,8 +54,8 @@ namespace Wonderland_Private_Server.Code.Objects
             }
         }
 
-        
-        override protected  void LoadData()
+
+        override protected void LoadData()
         {
             //pre setup tent with base
         }
@@ -88,7 +90,7 @@ namespace Wonderland_Private_Server.Code.Objects
             warp.DstX_Axis = MapX;
             warp.DstY_Axis = MapY;
             //warp Players  out
-            foreach(var f in Floors)
+            foreach (var f in Floors)
             {
 
                 foreach (var p in mapPlayers.Values.ToList())
@@ -113,7 +115,7 @@ namespace Wonderland_Private_Server.Code.Objects
                     p.Y = warp.DstY_Axis;//switch y
                     //cGlobal.WLO_World.Teleport(f.Key, warp, p);
                     p.DataOut = SendType.Normal;
-                    
+
                 }
             }
             Closed = true;
@@ -126,7 +128,7 @@ namespace Wonderland_Private_Server.Code.Objects
                 for (int a = 0; a < Players.Count; a++)
                 {
                     if (mapPlayers.Values.ToList()[a].ID == src.ID) return;
-                } 
+                }
 
                 src.CurrentMap = this;
                 mapPlayers.Add(src.ID, src);
@@ -333,7 +335,7 @@ namespace Wonderland_Private_Server.Code.Objects
         }
         public void onWarp_Out(byte portalID, Player src, WarpData To)
         {
-          mapPlayers.Remove(src.ID);
+            mapPlayers.Remove(src.ID);
         }
 
         public void UpdateMap()
@@ -341,18 +343,17 @@ namespace Wonderland_Private_Server.Code.Objects
 
         }
     }
-#endregion
+    #endregion
 
     public class TentFloor
     {
-        public delegate void BuildDelegate(byte nkey);
-        public BuildDelegate BuildTimerEventHandler;
-        System.Windows.Forms.Timer t;
+
         byte floorloc;
+        Player Host;
         public bool Mill; // have mill tool ? true or false
         byte CurrentJob;
         cCompound2Dat CB = new cCompound2Dat();
-        Dictionary<byte ,TentItem> ItemTent; // she started have 2 itens....
+        Dictionary<byte, TentItem> ItemTent; // she started have 2 itens....
         Dictionary<byte, ItemBuild> Build;
         Dictionary<byte, byte> Axis = new Dictionary<byte, byte>();
         int count { get { return ItemTent.Count; } }
@@ -360,7 +361,7 @@ namespace Wonderland_Private_Server.Code.Objects
         public TentFloor(byte ID)
         {
             floorloc = ID;
-            ItemTent = new Dictionary<byte ,TentItem>();
+            ItemTent = new Dictionary<byte, TentItem>();
             Build = new Dictionary<byte, ItemBuild>();
 
             LoadItemTent();// holy test
@@ -390,7 +391,7 @@ namespace Wonderland_Private_Server.Code.Objects
             c.ukn = 10;
             c.floor = 0;
             c.pick = 0;
-            ItemTent.Add(1,c);
+            ItemTent.Add(1, c);
             c = new TentItem();
             c.index = 2;
             c.ItemID = 38055;
@@ -412,7 +413,7 @@ namespace Wonderland_Private_Server.Code.Objects
             c.ukn = 10;
             c.floor = 0;
             c.pick = 0;
-            ItemTent.Add(2,c);
+            ItemTent.Add(2, c);
             c = new TentItem();
             c.index = 3;
             c.ItemID = 39046;
@@ -436,6 +437,11 @@ namespace Wonderland_Private_Server.Code.Objects
             c.pick = 1;
             ItemTent.Add(3, c);
         }
+
+
+
+        #region Create Item tent
+
         public void Create_NewObject_Tent(Player src, RecvPacket r)
         {
             byte t = r.Unpack8(2);
@@ -445,9 +451,9 @@ namespace Wonderland_Private_Server.Code.Objects
             //byte qnt1 = r.Unpack8(15);
 
             var formula = CB.buildList[Index]; // get  formula
-            
+
             var item = cGlobal.gItemManager.GetItem(formula.resultID); // get item
-            
+
             if (ItemTent.ContainsKey(t))
             {
                 // Tool used == tool
@@ -455,14 +461,14 @@ namespace Wonderland_Private_Server.Code.Objects
                 {
                     if (CheckMaterial()) // have material to building? yes
                     {
-                        byte c = (byte)(pount + 1);
-                        if (AddBuilding(c, item,formula))
+                        CurrentJob = (byte)(pount + 1);
+                        if (AddBuilding(CurrentJob, item, formula))
                         {
-                            StartBuild(src,c); // started building
+                            StartBuild(src, CurrentJob); // started building
                         }
                     }
                 }
-            }            
+            }
 
         }
         bool CheckMaterial()
@@ -470,13 +476,8 @@ namespace Wonderland_Private_Server.Code.Objects
             // here need verify item in inventory
             return true;
         }
-        bool AddBuilding(byte nKey, cItem ci,cBuildElement c)
-        {            
-            ItemBuild i = new ItemBuild();
-            i.item = ci;
-            i.TimerTotal = c.buildTime;
-            i.CurTimer = 0;
-            i.qnt = 1;
+        bool AddBuilding(byte nKey, cItem ci, cBuildElement c)
+        {           
 
             if (Build.ContainsKey(nKey))
             {
@@ -484,10 +485,19 @@ namespace Wonderland_Private_Server.Code.Objects
             }
             else
             {
+                ItemBuild i = new ItemBuild();
+                i.BuildTimerEventHandler += BuildDone;
+                i.item = ci;
+                i.TimerTotal = c.buildTime;
+                i.CurTimer = 0;
+                i.qnt = 1;
+            
                 Build.Add(nKey, i);
+                
                 return true;
-            }               
+            }
         }
+       
 
         void StartBuild(Player src, byte nkey)
         {
@@ -497,28 +507,138 @@ namespace Wonderland_Private_Server.Code.Objects
             Send64_2(src, nkey);
             Send64_10(src);
             Send64_11(src);
-            Process(src,Build[nkey].TimerTotal);          
-            BuildDone(src, nkey); // if item done send this.            
+
+            //BuildDone(src, nkey); // if item done send this.            
         }
 
-        void Process(Player src, ushort Interval)
+       
+
+        void BuildDone(byte Ckey)
         {
-            t = new System.Windows.Forms.Timer();
-            t.Interval = Interval; // specify interval time as you want
-            //t.Tag = src.UserID;
-            t.Tick += new EventHandler(timer_Tick);
-            t.Start();
+            if (Build.ContainsKey(Ckey))
+            {
+                if (Convert_Item_To_TentItem(ref Host, 1, CurrentJob))// player,floor,current Build
+                {
+                    Send64_9(Host);
+                }
+                else
+                {
+                    Send62_1(Ckey);
+                }
+
+                Send64_4(Host,Ckey); // remove item list build
+            }
         }
-        void timer_Tick(object sender, EventArgs e)
+        bool Convert_Item_To_TentItem(ref Player src, byte CurFloor, byte curJob)
         {
-            t.Stop();           
-            BuildDone(((Player)sender), CurrentJob);
+            var i = Build[curJob].item;  // get item done.
+            if (Check_Especial(i.ItemID))
+            {
+                InvItemCell t = new InvItemCell();
+                t.CopyFrom(cGlobal.gItemManager.GetItem(t.ItemID));
+                t.Ammt = 1;
+                src.Inv.AddItem(t);
+                return true;
+            }
+            else
+            {
+                //default = auto 0;
+                TentItem b = new TentItem();
+                b.citem = i;
+                b.floor = CurFloor;
+                b.ukn = 10;
+                b.tentX = 48;///x
+                b.tentY = 46;//y
+                b.tentZ = 1; //visible.
+                byte c = (byte)(count + 1);
+                ItemTent.Add(c, b);
+                return false;
+            }
         }
+        bool Check_Especial(ushort ItemID)
+        {
+            switch (ItemID)
+            {
+                case 38004: return true;//	Great Driver 
+                case 38031: return true;//	Brand Iron 
+                case 38035: return true;//	Rope Saw	
+                case 38036: return true;//	Wooden Saw
+                case 38037: return true;//	Whetstone
+                case 38040: return true;//Needle
+                case 38054: return true;//	Pliers
+                case 38058: return true;//	Stone Knife
+
+                default: return false;
+
+            }
+        }
+        public void StopBuild(Player src, byte i)
+        {
+            if (Build.ContainsKey(i))
+            {
+                // stop Build item
+                Build[i].Stop();
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 64, 3 });
+                s.Pack8(i);
+                src.Send(s);
+            }
+        }
+        public void ContinueBuild(Player src, byte i)
+        {
+            if (Build.ContainsKey(i))
+            {
+                Send64_10(src);
+
+                Build[i].Continue();
+
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 64, 1 });
+                s.Pack8(i);
+                s.Pack16(Build[i].item.ItemID);
+                s.Pack32(Build[i].CurTimer);
+                s.Pack8(1);
+                src.Send(s);
+                Send64_2(src, i);
+            }
+        }
+
+        #endregion
         #region Send Packet
+        void Send62_1(byte nkey)
+        {         
+                
+                SendPacket s = new SendPacket();
+                s.PackArray(new byte[] { 62, 1 });
+                s.Pack16(nkey); // index list item tent
+                s.Pack16(ItemTent[nkey].ItemID);
+                s.Pack32(ItemTent[nkey].tentX); // x
+                s.Pack32(ItemTent[nkey].tentY); // y
+                s.Pack32(ItemTent[nkey].tentZ);//z
+                s.Pack8(ItemTent[nkey].rotate);// (i.rotate);
+                s.Pack32(ItemTent[nkey].especial);//i.especial);
+                s.Pack16(0);//.a1);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack16(0);
+                s.Pack32(ItemTent[nkey].ukn);// if tool = 10 i.ukn);
+                s.Pack32(0);
+                s.Pack8(ItemTent[nkey].floor);//i.floor);
+                s.Pack8(ItemTent[nkey].pick);
+                s.Pack32(0);
+                s.Pack32(0);
+                Host.Send(s);       
+        }
         public void Send62_4(Player p)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] {62, 4});
+            s.PackArray(new byte[] { 62, 4 });
             s.Pack32(p.UserID);
             #region Loop
             foreach (var i in ItemTent.Values)
@@ -553,25 +673,25 @@ namespace Wonderland_Private_Server.Code.Objects
         void Send64_10(Player p)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] {64,10,0,0,0,0,0 });            
+            s.PackArray(new byte[] { 64, 10, 0, 0, 0, 0, 0 });
             p.Send(s);
         }
         void Send64_9(Player p)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] {64,9});
+            s.PackArray(new byte[] { 64, 9 });
             p.Send(s);
         }
         void Send64_11(Player p)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 64,11});
+            s.PackArray(new byte[] { 64, 11 });
             p.Send(s);
         }
-        void Send64_2(Player p,byte nkey)
+        void Send64_2(Player p, byte nkey)
         {
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 64,2});
+            s.PackArray(new byte[] { 64, 2 });
             s.Pack8(nkey);
             p.Send(s);
         }
@@ -583,182 +703,122 @@ namespace Wonderland_Private_Server.Code.Objects
             s.Pack16(Build[nkey].item.ItemID);
             s.Pack32(0);
             s.Pack8(1);
-            p.Send(s);            
+            p.Send(s);
         }
-        
+
         void Send64_4(Player p, byte nkey)
         {
             Build.Remove(nkey);
             SendPacket s = new SendPacket();
-            s.PackArray(new byte[] { 64, 4 });            
+            s.PackArray(new byte[] { 64, 4 });
             s.Pack8(nkey);
             p.Send(s);
 
         }
         #endregion
-
-        void BuildDone(Player src, byte Currentkey)
+        #region Methods Tent
+        public void Rotate_Move_Object(Player src, byte pos, byte ax, byte ay, byte floor, byte rotate)
         {
-            byte c = (byte)(count + 1);
-            if (Convert_Item_To_TentItem(ref src, 1, Currentkey,c))
+            if (ItemTent.ContainsKey(pos))
             {
-                Send64_9(src);
-            }
-            else
-            {
+                ItemTent[pos].tentX = ax;
+                ItemTent[pos].tentY = ay;
+                ItemTent[pos].rotate = rotate;
+
                 SendPacket s = new SendPacket();
-                s.PackArray(new byte[] { 62, 1 });
-                s.Pack16(c); // index list item tent
-                s.Pack16(ItemTent[c].ItemID);
-                s.Pack32(ItemTent[c].tentX); // x
-                s.Pack32(ItemTent[c].tentY); // y
-                s.Pack32(ItemTent[c].tentZ);//z
-                s.Pack8(ItemTent[c].rotate);// (i.rotate);
-                s.Pack32(ItemTent[c].especial);//i.especial);
-                s.Pack16(0);//.a1);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack16(0);
-                s.Pack32(ItemTent[c].ukn);// if tool = 10 i.ukn);
-                s.Pack32(0);
-                s.Pack8(ItemTent[c].floor);//i.floor);
-                s.Pack8(ItemTent[c].pick);
-                s.Pack32(0);
-                s.Pack32(0);
-                src.Send(s);                
+                s.PackArray(new byte[] { 62, 3 });
+                s.Pack16(pos);
+                s.Pack32(ax);
+                s.Pack32(ay);
+                s.Pack32(floor);
+                s.Pack8(rotate);
+                src.Send(s);
+                //broadcast current tent here.
             }
-
-            Send64_4(src, Currentkey); // remove item list build
         }
-        public void Rotate_Move_Object(Player src,byte pos,byte ax,byte ay, byte floor,byte rotate)
-        {  
-                if (ItemTent.ContainsKey(pos))
-                {                   
-                    ItemTent[pos].tentX= ax;
-                    ItemTent[pos].tentY = ay;
-                    ItemTent[pos].rotate = rotate;
+        public void ADD_Object_Especial(ref Player src, byte pos, byte tool)
+        {
+             byte ccount = (byte)(count + 1);
+            // need check item in inv here.
+            var item = src.Inv[pos];
 
-                    SendPacket s = new SendPacket();
-                    s.PackArray(new byte[] {62,3});
-                    s.Pack16(pos);
-                    s.Pack32(ax);
-                    s.Pack32(ay);
-                    s.Pack32(floor);
-                    s.Pack8(rotate);
-                    src.Send(s);
-                    //broadcast current tent here.
+            src.Inv.RemoveItem(pos,1);
+            for(int a =0; a < 10; a++)
+            {
+                if (ItemTent[tool].accessory[a] == null)
+                {
+                    ItemTent[tool].accessory[a] = ccount;
                 }
             }
-
-        bool Convert_Item_To_TentItem(ref Player src,byte CurFloor,byte curkey,byte nkey )
-        {
-            var i = Build[curkey].item;  // get item done.
-            if (Check_Especial(i.ItemID))
-            {
-                InvItemCell c = new InvItemCell();
-                c.CopyFrom(cGlobal.gItemManager.GetItem(i.ItemID));
-                c.Ammt = 1;
-                src.Inv.AddItem(c);
-
-                return true;
-            }
-            else
-            {
-                //default = auto 0;
-                TentItem b = new TentItem();
-                b.citem = i;
-                b.floor = CurFloor;                
-                b.ukn = 10;
-                b.tentX = 48;///x
-                b.tentY = 46;//y
-                b.tentZ = 1; //visible.
-                ItemTent.Add(nkey, b);
-
-                return false;
-            }
+            
         }
-        bool Check_Especial(ushort ItemID)
+        public void Add_Object_Tent(ushort ItemID,byte ax, byte ay,byte az,byte floor)
         {
-            switch (ItemID)
-            {
-                case 38004: return true;//	Great Driver 
-                case 38031: return true;//	Brand Iron 
-                case 38035: return true;//	Rope Saw	
-                case 38036: return true;//	Wooden Saw
-                case 38037: return true;//	Whetstone
-                case 38040: return true;//Needle
-                case 38054: return true;//	Pliers
-                case 38058: return true;//	Stone Knife
-                    
-                default: return false;
+                // remove item inv here.
+                byte ccount = (byte)(count + 1);
+                var item = cGlobal.gItemManager.GetItem(ItemID);
+                TentItem i = new TentItem();
+                i.citem = item;
+                i.tentX = ax;
+                i.tentY = ay;
+                i.tentZ = az;
+                i.floor = floor;
+                i.ukn = 10;
+                ItemTent.Add(ccount, i);
+                Send62_1(ccount);           
+        }
+        
+        #endregion
 
-            }
-        }
-        public void StopBuild(Player src, byte i)
-        {
-            if (Build.ContainsKey(i))
-            {
-                // stop Build item
-                Build[i].CurTimer = 1234; // get cur timer
-                SendPacket s = new SendPacket();
-                s.PackArray(new byte[] {64,3});
-                s.Pack8(i);
-                src.Send(s);
-            }
-        }
-        public void ContinueBuild(Player src, byte i)
-        {
-            if (Build.ContainsKey(i))
-            {
-                Send64_10(src);
 
-                // continue Build item                
-                SendPacket s = new SendPacket();
-                s.PackArray(new byte[] {64,1});
-                s.Pack8(i);
-                s.Pack16(Build[i].item.ItemID);
-                s.Pack32(Build[i].CurTimer);
-                s.Pack8(1);
-                src.Send(s);
-                Send64_2(src, i);
-            }
-        }
     }
 
 
     public class ItemBuild
     {
-        //public delegate void TimerTick();
-        //public event TimerTick TimerEventHandler;
-        public cItem item;               
+        public delegate void B(byte nkey);
+        public B BuildTimerEventHandler;
+        System.Windows.Forms.Timer t;
+        Stopwatch stopWatch;
+
+        byte CKey;
+        public cItem item;
         public ushort CurTimer;
         public ushort TimerTotal;
         public byte qnt;
-       // public bool End { get { return End; } }
 
-       // System.Windows.Forms.Timer t;
-
-        //public void start()
-        //{
-        //    t = new System.Windows.Forms.Timer();
-        //    t.Interval = 15000; // specify interval time as you want
-        //    t.Tick += new EventHandler(timer_Tick);
-
-        //    t.Start();
-        //}
-        //public void timer_Tick(object sender, EventArgs e)
-        //{
-        //    t.Stop();
-        //    if (TimerEventHandler != null)
-        //        TimerEventHandler();
-        //}
-        
-    }    
-    
+        public void Start(byte nKey)
+        {
+            stopWatch= new Stopwatch();
+            stopWatch.Start();
+            CKey = nKey;
+            t = new System.Windows.Forms.Timer();
+            t.Interval = TimerTotal; // specify interval time as you want
+            t.Tick += new EventHandler(timer_Tick);
+            t.Start();
+        }
+        void timer_Tick(object sender, EventArgs e)
+        {
+            t.Stop();
+            stopWatch.Stop();
+            if (BuildTimerEventHandler != null)
+                BuildTimerEventHandler(CKey);
+        }
+        public void Stop()
+        {
+            t.Stop(); 
+            stopWatch.Stop();
+            CurTimer = (ushort)stopWatch.ElapsedMilliseconds;
+               
+        }
+        public void Continue()
+        {
+            t = new System.Windows.Forms.Timer();
+            t.Interval = CurTimer; // specify interval time as you want
+            t.Tick += new EventHandler(timer_Tick);
+            t.Start();
+        }
+    }
 }
+    
+
