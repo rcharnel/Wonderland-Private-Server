@@ -28,7 +28,6 @@ C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debu
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\MySql.Data.dll
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Octokit.dll
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\DBConnector.pdb
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.xml
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Form1.resources
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Properties.Resources.resources
@@ -36,5 +35,8 @@ C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debu
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Utilities.Update.GitUpdateItem.resources
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
-C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Utilities.Update.GitUpdateItem.resources
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\GupdtSrv.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.TaskItem.resources
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.Linq.dll
+C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.xml
