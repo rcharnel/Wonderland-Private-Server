@@ -1,0 +1,11 @@
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\wlo.pserver.core.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\wlo.pserver.core.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\PhoenixData.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\RCLibrary.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\System.Data.SQLite.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\PhoenixData.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\RCLibrary.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\System.Data.SQLite.xml
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\obj\Debug\wlo.pserver.core.dll
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\obj\Debug\wlo.pserver.core.pdb
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\obj\Debug\wlo.pserver.core.csprojResolveAssemblyReference.cache
