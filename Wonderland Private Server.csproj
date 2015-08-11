@@ -216,9 +216,7 @@
     <Content Include="DLLS\System.Data.SQLite.dll" />
     <Content Include="DLLS\Wlo.Core.dll" />
     <Content Include="Tutorials\x64\SQLite.Interop.dll" />
-    <Content Include="x64\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="x64\SQLite.Interop.dll" />
     <Content Include="x86\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
