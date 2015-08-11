@@ -49,27 +49,48 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DBConnector">
-      <HintPath>DBConnector\bin\Debug\DBConnector.dll</HintPath>
+    <Reference Include="EntityFramework">
+      <HintPath>packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="GupdtSrv, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Dropbox\Dlls\GupdtSrv.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.8.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <Private>True</Private>
+    <Reference Include="log4net">
+      <HintPath>packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\MySql.Data.6.9.7\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="Octokit, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\Octokit.0.4.1\lib\net45\Octokit.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite">
-      <HintPath>packages\System.Data.SQLite.Core.1.0.94.0\lib\net45\System.Data.SQLite.dll</HintPath>
+    <Reference Include="PhoenixData, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLS\PhoenixData.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.SQLite.Linq">
-      <HintPath>packages\System.Data.SQLite.Linq.1.0.94.1\lib\net45\System.Data.SQLite.Linq.dll</HintPath>
+    <Reference Include="RCLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLS\RCLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.97.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\System.Data.SQLite.Core.1.0.97.0\lib\net45\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6">
+      <HintPath>packages\System.Data.SQLite.EF6.1.0.97.0\lib\net45\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.97.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\System.Data.SQLite.Linq.1.0.97.0\lib\net45\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml.Linq" />
@@ -82,127 +103,61 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionCodes\AC.cs" />
-    <Compile Include="ActionCodes\AC0.cs" />
-    <Compile Include="ActionCodes\AC06.cs" />
-    <Compile Include="ActionCodes\AC08.cs" />
-    <Compile Include="ActionCodes\AC09.cs" />
-    <Compile Include="ActionCodes\AC11.cs" />
-    <Compile Include="ActionCodes\AC12.cs" />
-    <Compile Include="ActionCodes\AC2.cs" />
-    <Compile Include="ActionCodes\AC20.cs" />
-    <Compile Include="ActionCodes\AC23.cs" />
-    <Compile Include="ActionCodes\AC32.cs" />
-    <Compile Include="ActionCodes\AC33.cs" />
-    <Compile Include="ActionCodes\AC35.cs" />
-    <Compile Include="ActionCodes\AC39.cs" />
-    <Compile Include="ActionCodes\AC50.cs" />
-    <Compile Include="ActionCodes\AC62.cs" />
-    <Compile Include="ActionCodes\AC63.cs" />
-    <Compile Include="ActionCodes\AC64.cs" />
-    <Compile Include="ActionCodes\AC65.cs" />
-    <Compile Include="ActionCodes\AC82.cs" />
-    <Compile Include="ActionCodes\AC85.cs" />
-    <Compile Include="Bots\Cupid.cs" />
-    <Compile Include="Bots\GmBot.cs" />
-    <Compile Include="cGlobal.cs" />
-    <Compile Include="Code\Enums\BattleEnum.cs" />
-    <Compile Include="Code\Enums\CharEnums.cs" />
-    <Compile Include="Code\Enums\Class1.cs" />
-    <Compile Include="Code\Enums\DataBaseEnums.cs" />
-    <Compile Include="Code\Enums\DBEnums.cs" />
-    <Compile Include="Code\Enums\ItemEnums.cs" />
-    <Compile Include="Code\Enums\MapEnums.cs" />
-    <Compile Include="Code\Enums\NpcEnums.cs" />
-    <Compile Include="Code\Enums\PetEnums.cs" />
-    <Compile Include="Code\Enums\PlayerEnums.cs" />
-    <Compile Include="Code\Enums\SkillEnums.cs" />
-    <Compile Include="Code\Enums\StatEnums.cs" />
-    <Compile Include="Code\Enums\WorldEnums.cs" />
-    <Compile Include="Code\Interface\Fighter.cs" />
-    <Compile Include="Code\Interface\guildmember.cs" />
-    <Compile Include="Code\Objects\Battle.cs" />
-    <Compile Include="Code\Objects\Character.cs" />
-    <Compile Include="Code\Objects\Class1.cs" />
-    <Compile Include="Code\Objects\Equipement.cs" />
-    <Compile Include="Code\Objects\Guild.cs" />
-    <Compile Include="Code\Objects\inGameSettings.cs" />
-    <Compile Include="Code\Objects\Instance.cs" />
-    <Compile Include="Code\Objects\Inventory.cs" />
-    <Compile Include="Code\Objects\Item.cs" />
-    <Compile Include="Code\Objects\Mail.cs" />
-    <Compile Include="Code\Objects\MessageGuild.cs" />
-    <Compile Include="Code\Objects\Pet.cs" />
-    <Compile Include="Code\Objects\Player.cs" />
-    <Compile Include="Code\Objects\Quest.cs" />
-    <Compile Include="Code\Objects\RiceBall.cs" />
-    <Compile Include="Code\Objects\Skills.cs" />
-    <Compile Include="Code\Objects\Team.cs" />
-    <Compile Include="Code\Objects\Tent.cs" />
-    <Compile Include="Code\Objects\TentItem.cs" />
-    <Compile Include="Code\Objects\Trade.cs" />
-    <Compile Include="Code\Objects\Warp.cs" />
-    <Compile Include="Config\Game\PetConfigs.cs" />
-    <Compile Include="Config\Repository.cs" />
-    <Compile Include="Config\Update.cs" />
-    <Compile Include="DataManagement\DataBase\CharacterDataBase.cs" />
-    <Compile Include="DataManagement\DataBase\GameDataBase.cs" />
-    <Compile Include="DataManagement\DataBase\UserDataBase.cs" />
-    <Compile Include="DataManagement\DataFiles\Compound2Dat.cs" />
-    <Compile Include="DataManagement\DataFiles\EveExt.cs" />
-    <Compile Include="DataManagement\DataFiles\EveLoader.cs" />
-    <Compile Include="DataManagement\DataFiles\GroundMMg.cs" />
-    <Compile Include="DataManagement\DataFiles\ItemManager.cs" />
-    <Compile Include="DataManagement\DataFiles\NpcManager.cs" />
-    <Compile Include="DataManagement\DataFiles\SceneLoader.cs" />
-    <Compile Include="DataManagement\DataFiles\SkillManager.cs" />
-    <Compile Include="Delegates.cs" />
-    <Compile Include="Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GM\BigLetterLogo.cs" />
-    <Compile Include="Maps\Islands\NorthIsland\NorthIsland60000\TopNorthIsland%2860000%29.cs" />
-    <Compile Include="Maps\Map.cs" />
-    <Compile Include="Maps\MapObject.cs" />
-    <Compile Include="Network\Client.cs" />
-    <Compile Include="Network\Socket.cs" />
-    <Compile Include="Network\Listener.cs" />
-    <Compile Include="Network\Packet.cs" />
-    <Compile Include="Network\WorldManager.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Config\Settings.cs" />
-    <Compile Include="UI\GitUpdateItem.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\GitUpdateItem.Designer.cs">
-      <DependentUpon>GitUpdateItem.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ShutDown Dialog.cs">
+    <Compile Include="Src\cGlobal.cs" />
+    <Compile Include="Src\Gui\MainForm1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\ShutDown Dialog.Designer.cs">
+    <Compile Include="Src\Gui\MainForm1.Designer.cs">
+      <DependentUpon>MainForm1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Src\Gui\ShutDown Dialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Src\Gui\ShutDown Dialog.Designer.cs">
       <DependentUpon>ShutDown Dialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\TaskItem.cs">
+    <Compile Include="Src\Gui\TaskItem.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\TaskItem.Designer.cs">
+    <Compile Include="Src\Gui\TaskItem.Designer.cs">
       <DependentUpon>TaskItem.cs</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\Log.cs" />
-    <Compile Include="Utilities\Request\RequestManager.cs" />
-    <Compile Include="Utilities\Request\requests.cs" />
-    <Compile Include="Utilities\Task\ApplicationUpdate_Task.cs" />
-    <Compile Include="Utilities\Task\taskItem.cs" />
-    <Compile Include="Utilities\Task\TaskManager.cs" />
-    <Compile Include="Web\WebServer.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="Src\Gui\Update\GitUpdateItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Src\Gui\Update\GitUpdateItem.Designer.cs">
+      <DependentUpon>GitUpdateItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Src\Network\ActionCodes\AC0.cs" />
+    <Compile Include="Src\Network\ActionCodes\AC02.cs" />
+    <Compile Include="Src\Network\ActionCodes\AC06.cs" />
+    <Compile Include="Src\Network\ActionCodes\AC09.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Src\Network\ActionCodes\AC12.cs" />
+    <Compile Include="Src\Network\ActionCodes\AC20.cs" />
+    <Compile Include="Src\Network\ActionCodes\AC63.cs" />
+    <Compile Include="Src\Network\Client.cs" />
+    <Compile Include="Src\Program.cs" />
+    <Compile Include="Src\Server\Bots\Cupid.cs" />
+    <Compile Include="Src\Server\Bots\GmBot.cs" />
+    <Compile Include="Src\Server\Config\DB\DataBase.cs" />
+    <Compile Include="Src\Server\Config\Game\PetConfigs.cs" />
+    <Compile Include="Src\Server\Config\Settings.cs" />
+    <Compile Include="Src\Server\Config\Update.cs" />
+    <Compile Include="Src\Server\GM\BigLetterLogo.cs" />
+    <Compile Include="Src\Server\LoginServer.cs" />
+    <Compile Include="Src\Server\Plugin\Plugin.cs" />
+    <Compile Include="Src\Server\System\MapSystem.cs" />
+    <Compile Include="Src\Server\System\TaskSystem\TaskManager.cs" />
+    <Compile Include="Src\Server\System\TaskSystem\Task\ApplicationUpdate_Task.cs" />
+    <Compile Include="Src\Server\System\TaskSystem\Task\taskItem.cs" />
+    <Compile Include="Src\Server\System\UpdateSystem.cs" />
+    <Compile Include="Src\Server\Utilities\Request\RequestManager.cs" />
+    <Compile Include="Src\Server\Utilities\Request\requests.cs" />
+    <Compile Include="Src\Server\WorldServer.cs" />
+    <Compile Include="Tutorials\Creating Dll for Database Connection.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -213,12 +168,19 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UI\ShutDown Dialog.resx">
+    <EmbeddedResource Include="Src\Gui\MainForm1.resx">
+      <DependentUpon>MainForm1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Src\Gui\ShutDown Dialog.resx">
       <DependentUpon>ShutDown Dialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\TaskItem.resx">
+    <EmbeddedResource Include="Src\Gui\TaskItem.resx">
       <DependentUpon>TaskItem.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Src\Gui\Update\GitUpdateItem.resx">
+      <DependentUpon>GitUpdateItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -229,21 +191,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
+    <None Include="Src\App.config" />
+    <None Include="Src\packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\Debug\Data\" />
     <Folder Include="bin\Release\Data\" />
-    <Folder Include="GM\Commands\" />
-    <Folder Include="Items\" />
-    <Folder Include="Maps\Islands\NorthIsland\NorthIsland60000\Items\" />
-    <Folder Include="Maps\Islands\NorthIsland\NorthIsland60000\Objs\" />
-    <Folder Include="Maps\Islands\NorthIsland\NorthIsland60000\Portals\" />
-    <Folder Include="Quests\" />
-    <Folder Include="UI\WebUI\" />
-    <Folder Include="Utilities\Update\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Debug\UnRar.exe" />
@@ -255,6 +208,14 @@
     <EmbeddedResource Include="Resources\bullet_red.png" />
     <EmbeddedResource Include="Resources\checkmark-24-48.png" />
     <EmbeddedResource Include="Resources\install_button.png" />
+    <Content Include="DLLS\GupdtSrv.dll" />
+    <Content Include="DLLS\Octokit.dll" />
+    <Content Include="DLLS\Phoenix.Core.dll" />
+    <Content Include="DLLS\PhoenixData.dll" />
+    <Content Include="DLLS\RCLibrary.dll" />
+    <Content Include="DLLS\System.Data.SQLite.dll" />
+    <Content Include="DLLS\Wlo.Core.dll" />
+    <Content Include="Tutorials\x64\SQLite.Interop.dll" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -279,13 +240,26 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="wlo.pserver.core\wlo.pserver.core.csproj">
+      <Project>{d549af04-f847-4474-819f-64bb1c09d90d}</Project>
+      <Name>wlo.pserver.core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
+      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <Import Project="packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\System.Data.SQLite.Core.1.0.97.0\build\net45\System.Data.SQLite.Core.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
