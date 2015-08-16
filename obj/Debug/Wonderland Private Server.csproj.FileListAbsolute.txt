@@ -10,7 +10,6 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonder
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.pdb
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.dll
-C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\x64\SQLite.Interop.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\x86\SQLite.Interop.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\MySql.Data.dll
 C:\Users\degraca\Documents\SERVER VERSAO ORIG\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe.config
@@ -50,3 +49,4 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\Entity
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.EF6.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\EntityFramework.xml
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\Data\ServerDataBase.db.temp

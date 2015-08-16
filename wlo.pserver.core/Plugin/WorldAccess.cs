@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game;
+using Game.Maps;
 using Network;
 
 namespace Plugin

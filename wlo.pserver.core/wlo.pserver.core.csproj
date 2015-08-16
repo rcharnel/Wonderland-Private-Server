@@ -82,16 +82,30 @@
     <Compile Include="Game\Enums\PlayerEnums.cs" />
     <Compile Include="Game\Enums\SkillEnums.cs" />
     <Compile Include="Game\Enums\StatEnums.cs" />
+    <Compile Include="Game\Enums\TentEnums.cs" />
     <Compile Include="Game\Enums\WorldEnums.cs" />
     <Compile Include="Game\Interface\Fighter.cs" />
     <Compile Include="Game\Inventory.cs" />
     <Compile Include="Game\Item.cs" />
+    <Compile Include="Game\Maps\Code\InteractableObjects.cs" />
+    <Compile Include="Game\Maps\Code\ShoppingCart.cs" />
     <Compile Include="Game\Maps\Map.cs" />
-    <Compile Include="Game\Maps\WarpData.cs" />
+    <Compile Include="Game\Maps\MapObject.cs" />
+    <Compile Include="Game\Maps\Code\WalkableObjects.cs" />
+    <Compile Include="Game\Maps\Code\WarpData.cs" />
+    <Compile Include="Game\Maps\Code\ShopKeeper.cs" />
+    <Compile Include="Game\Maps\Code\QuestNpc.cs" />
+    <Compile Include="Game\Maps\Code\TalkableObject.cs" />
+    <Compile Include="Game\Maps\WarpDest.cs" />
+    <Compile Include="Game\Maps\WarpPortal.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\PlayerRelated\Character.cs" />
     <Compile Include="Game\PlayerRelated\Equip.cs" />
     <Compile Include="Game\PlayerRelated\inGameSettings.cs" />
+    <Compile Include="Game\PlayerRelated\Tent\Tent.cs" />
+    <Compile Include="Game\PlayerRelated\Tent\TentItem.cs" />
+    <Compile Include="Game\PlayerRelated\Tent\TentItemContainer.cs" />
+    <Compile Include="Game\PlayerRelated\Tent\Tools.cs" />
     <Compile Include="Game\User.cs" />
     <Compile Include="Network\ActionCodes\AC.cs" />
     <Compile Include="Network\Packet.cs" />
@@ -103,12 +117,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Game\Maps\SpecialMaps\" />
     <Folder Include="Game\Objects\" />
     <Folder Include="Game\PetRelated\" />
+    <Folder Include="Game\PlayerRelated\Tent\Manufacture\" />
     <Folder Include="Game\Quests\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\System.Data.SQLite.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\obj\Debug\wlo.pserver.core.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\obj\Debug\wlo.pserver.core.pdb
-C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\wlo.pserver.core.dll.config
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\log4net.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\MySql.Data.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\bin\Debug\log4net.xml
+C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\wlo.pserver.core\obj\Debug\wlo.pserver.core.csprojResolveAssemblyReference.cache

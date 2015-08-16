@@ -33,7 +33,9 @@ namespace Game
         protected List<Player> m_playerlist;
         protected List<Item> ItemsDropped;
         //protected ConcurrentDictionary<int, Battle> Battles;
-        //protected ConcurrentDictionary<uint, Tent> Tents;
+        protected ConcurrentDictionary<uint, Tent> Tents;
+        protected Dictionary<byte, WarpDest> Destinations;
+        protected Dictionary<byte, WarpPortal> Portals;
 
         protected Queue<Player> DisconnectedQueue;
         protected Queue<KeyValuePair<DateTime, Action>> WaitingtoLogin;
@@ -42,28 +44,35 @@ namespace Game
         protected string m_name;
 
         bool shutdown = false;
-
+        
 
 
         public GameMap()
         {
+            
             m_playerlist = new List<Player>();
             ItemsDropped = new List<Item>(255);
             DisconnectedQueue = new Queue<Player>(50);
             WaitingtoLogin = new Queue<KeyValuePair<DateTime, Action>>(105);
-            //Tents = new ConcurrentDictionary<uint, Tent>();
+            Tents = new ConcurrentDictionary<uint, Tent>();
             //Battles = new ConcurrentDictionary<int, Battle>();
+            Destinations = new Dictionary<byte, WarpDest>();
+            Portals = new Dictionary<byte, WarpPortal>();
         }
         public GameMap(Plugin.PluginHost host, System.IO.FileInfo src)
             : base(src)
         {
+            
             myhost = (Plugin.PluginHost)host;
             m_playerlist = new List<Player>();
             ItemsDropped = new List<Item>(255);
             DisconnectedQueue = new Queue<Player>(50);
             WaitingtoLogin = new Queue<KeyValuePair<DateTime, Action>>(105);
-            //Tents = new ConcurrentDictionary<uint, Tent>();
+            Tents = new ConcurrentDictionary<uint, Tent>();
             //Battles = new ConcurrentDictionary<int, Battle>();
+            Destinations = new Dictionary<byte, WarpDest>();
+            Portals = new Dictionary<byte, WarpPortal>();
+
             LoadData();
 
         }
@@ -74,7 +83,11 @@ namespace Game
         /// </summary>
         protected virtual void LoadData()
         {
+            this.LogInfo("tesT");
             DebugSystem.Write("["+Assembly.GetAssembly(this.GetType()).FullName+"] - Initializing Map " + MapID + " - " + MapName);
+
+            var myDllAssembly = Assembly.GetAssembly(this.GetType());
+
             #region load Interactable Objects for this map
 
             //load data from data files
@@ -96,47 +109,48 @@ namespace Game
             //}
 
             //DLogger.DllLog((myDllAssembly == null) ? Assembly.GetExecutingAssembly().FullName : myDllAssembly.FullName, "loaded " + MapObjects.Count + " Map Objects");
-            //#endregion
+            #endregion
 
-            //#region load Warp Destinations for this map
+            #region load Warp Destinations for this map
 
-            //foreach (var y in (from c in myDllAssembly.GetTypes()
-            //                   where c.IsClass && c.IsPublic && typeof(WarpData).IsAssignableFrom(c)
-            //                   select c))
-            //{
-            //    WarpData m = null;
-            //    try
-            //    {
-            //        m = (Activator.CreateInstance(y) as WarpData);
-            //    }
-            //    catch { DLogger.DllError("PserverDataPlugin", "Map.cs LoadData", new Exception("failed to load Warp Destination " + (Activator.CreateInstance(y) as InteractableObj).clickID)); }
-            //    if (!Destinations.ContainsKey((byte)m.ID))
-            //        Destinations.Add((byte)m.ID, m);
+            foreach (var y in (from c in myDllAssembly.GetTypes()
+                               where c.IsClass && c.IsPublic && typeof(WarpDest).IsAssignableFrom(c)
+                               select c))
+            {
+                WarpDest m = null;
+                try
+                {
+                    m = (Activator.CreateInstance(y) as WarpDest);
+                }
+                catch { DebugSystem.Write("failed to load Warp Destination " + (Activator.CreateInstance(y) as WarpDest).clickID); }
+                if (!Destinations.ContainsKey((byte)m.clickID))
+                    Destinations.Add((byte)m.clickID, m);
 
-            //}
+            }
             //DLogger.DllLog((myDllAssembly == null) ? Assembly.GetExecutingAssembly().FullName : myDllAssembly.FullName, "loaded " + Destinations.Count + " Warp Destinations");
-            //#endregion
+            #endregion
 
-            //#region load Warp Portals for this map
+            #region load Warp Portals for this map
 
-            //foreach (var y in (from c in myDllAssembly.GetTypes()
-            //                   where c.IsClass && c.IsPublic && typeof(WarpPortal).IsAssignableFrom(c)
-            //                   select c))
-            //{
-            //    WarpPortal m = null;
-            //    try
-            //    {
-            //        m = (Activator.CreateInstance(y) as WarpPortal);
-            //    }
-            //    catch { DLogger.DllError("PserverDataPlugin", "Map.cs LoadData", new Exception("failed to load Warp Portal " + (Activator.CreateInstance(y) as InteractableObj).clickID)); }
-            //    if (!Portals.ContainsKey((byte)m.ID))
-            //        Portals.Add((byte)m.ID, m);
-            //}
+            foreach (var y in (from c in myDllAssembly.GetTypes()
+                               where c.IsClass && c.IsPublic && typeof(WarpPortal).IsAssignableFrom(c)
+                               select c))
+            {
+                WarpPortal m = null;
+                try
+                {
+                    m = (Activator.CreateInstance(y) as WarpPortal);
+                }
+                catch { DebugSystem.Write("failed to load Warp Portal " + (Activator.CreateInstance(y) as MapObject).CickID); }
+                if (!Portals.ContainsKey((byte)m.CickID))
+                    Portals.Add((byte)m.CickID, m);
+            }
 
             //DLogger.DllLog((myDllAssembly == null) ? Assembly.GetExecutingAssembly().FullName : myDllAssembly.FullName, "loaded " + Portals.Count + " Warp Portals");
             #endregion
 
         }
+
 
         #region Properties
         public virtual MapType Type { get { return MapType.RegularMap; } }
@@ -373,6 +387,7 @@ namespace Game
                     src.Send(p);
                 }
             }
+
             SendMapInfo(src);
         }
 
@@ -472,10 +487,10 @@ namespace Game
                 #region Cmd Warp
                 case TeleportType.CmD:
                     {
-                        //onWarp_Out(portalID, ref sender, warp, (teletype == TeleportType.Tent));// warp out of map
-                        //sender.X = warp.DstX_Axis;//switch x
-                        //sender.Y = warp.DstY_Axis;//switch y
-                        //cGlobal.WLO_World.onTelePort(portalID, warp, ref sender);
+                        onWarp_Out(portalID, sender, warp, (teletype == TeleportType.Tent));// warp out of map
+                        sender.CurX = warp.DstX_Axis;//switch x
+                        sender.CurY = warp.DstY_Axis;//switch y
+                        //base.myhost.GameWorld.Teleport( ,portalID, warp, sender);
                     } break;
                 #endregion
                 case TeleportType.Login: onLogin(sender); break;
@@ -638,16 +653,16 @@ namespace Game
         #endregion
 
         #region Tent
-        //public void onTentOpened(Tent Tentsrc)
-        //{
-        //    if (Tents.TryAdd(Tentsrc.MapID, Tentsrc))
-        //        Broadcast(SendPacket.FromFormat("bbdWddW", 65, 1, Tentsrc.MapID, 36002, Tentsrc.X, Tentsrc.Y, 0));
-        //}
-        //public void onTentClosing(Tent tent)
-        //{
-        //    if (Tents.TryRemove(tent.MapID, out tent))
-        //        Broadcast(SendPacket.FromFormat("bbd", 65, 4, tent.MapID));
-        //}
+        public void onTentOpened(Tent Tentsrc)
+        {
+            if (Tents.TryAdd(Tentsrc.MapID, Tentsrc))
+                Broadcast(SendPacket.FromFormat("bbdWddW", 65, 1, Tentsrc.MapID, 36002, Tentsrc.X, Tentsrc.Y, 0));
+        }
+        public void onTentClosing(Tent tent)
+        {
+            if (Tents.TryRemove(tent.MapID, out tent))
+                Broadcast(SendPacket.FromFormat("bbd", 65, 4, tent.MapID));
+        }
         public void onEnterTent(UInt32 ID, Player p)
         {
             WarpData tmp = new WarpData();
@@ -659,22 +674,22 @@ namespace Game
 
         void SendOpenTents(Player p)
         {
-            //if (Tents.Count > 0)
-            //{
-            //    SendPacket tmp = new SendPacket();
-            //    tmp.Pack8((byte)65);
-            //    tmp.Pack8((byte)3);
-            //    Parallel.ForEach(Tents.Values, r =>
-            //    {
-            //        tmp.Pack32(r.MapID);
-            //        tmp.Pack16(36002);
-            //        tmp.Pack32(r.X);
-            //        tmp.Pack32(r.Y);
-            //        tmp.Pack8((byte)0);
-            //        tmp.Pack8((byte)0);
-            //    });
-            //    p.Send(tmp);
-            //}
+            if (Tents.Count > 0)
+            {
+                SendPacket tmp = new SendPacket();
+                tmp.Pack8((byte)65);
+                tmp.Pack8((byte)3);
+                Parallel.ForEach(Tents.Values, r =>
+                {
+                    tmp.Pack32(r.MapID);
+                    tmp.Pack16(36002);
+                    tmp.Pack32(r.X);
+                    tmp.Pack32(r.Y);
+                    tmp.Pack8((byte)0);
+                    tmp.Pack8((byte)0);
+                });
+                p.Send(tmp);
+            }
         }
 
         #endregion
