@@ -24,6 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -81,6 +82,7 @@
     <Compile Include="Game\Enums\PetEnums.cs" />
     <Compile Include="Game\Enums\PlayerEnums.cs" />
     <Compile Include="Game\Enums\SkillEnums.cs" />
+    <Compile Include="Game\Enums\SocketEnum.cs" />
     <Compile Include="Game\Enums\StatEnums.cs" />
     <Compile Include="Game\Enums\TentEnums.cs" />
     <Compile Include="Game\Enums\WorldEnums.cs" />
@@ -107,10 +109,12 @@
     <Compile Include="Game\PlayerRelated\Tent\TentItemContainer.cs" />
     <Compile Include="Game\PlayerRelated\Tent\Tools.cs" />
     <Compile Include="Game\User.cs" />
+    <Compile Include="Generics\Tools.cs" />
     <Compile Include="Network\ActionCodes\AC.cs" />
     <Compile Include="Network\Packet.cs" />
     <Compile Include="Network\SocketClient.cs" />
     <Compile Include="Plugin\InteractableObj.cs" />
+    <Compile Include="Plugin\MapHost.cs" />
     <Compile Include="Plugin\PluginHost.cs" />
     <Compile Include="Plugin\PluginObj.cs" />
     <Compile Include="Plugin\WorldAccess.cs" />

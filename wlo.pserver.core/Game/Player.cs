@@ -47,7 +47,7 @@ using Game.Maps;
                 return m_Flags.Contains(flag);
             }
         }
-
+        
 
         public class Player : Game.Character, IDisposable, INotifyPropertyChanged
         {
@@ -350,17 +350,30 @@ using Game.Maps;
 
             #region ClientSock
 
+            /// <summary>
+            /// Send Player a packet
+            /// </summary>
+            /// <param name="src"></param>
             public void Send(SendPacket src)
             {
+                if (src.Flags == PacketFlags.Queued || src.Flags == PacketFlags.Queue_Dc)
+                {
+                    src.Flags -= PacketFlags.Queued;
+                    QueueData.Enqueue(src);
+                    return;
+                }
                 Send(src, src.Flags);
             }
-            
-            public void Send(byte[] src, RCLibrary.Core.Networking.PacketFlags pFlags = PacketFlags.None)
+            public void Send(byte[] src)
+            {
+
+            }
+            public void Send(byte[] src, RCLibrary.Core.Networking.PacketFlags pFlags)
             {
                 SendPacket p = new SendPacket(src);
                 Send(p, pFlags);
             }
-            public void Send(SendPacket p, RCLibrary.Core.Networking.PacketFlags pFlags = PacketFlags.None)
+            public void Send(SendPacket p, RCLibrary.Core.Networking.PacketFlags pFlags)
             {
                 if (pFlags == PacketFlags.Queued || pFlags == PacketFlags.Queue_Dc)
                 {
@@ -393,9 +406,12 @@ using Game.Maps;
 
                     base.ProcessSocket(this, p);
                     m_inv.ProcessSocket(p);
-                    m_settings.ProcessSocket(p);
+                    if (m_settings != null)
+                        m_settings.ProcessSocket(p);
                     if (m_battle != null)
                         m_battle.ProcessSocket(p);
+                    if (m_tent != null)
+                        m_tent.Process(this, p);
 
 
                 }
@@ -457,13 +473,13 @@ using Game.Maps;
 
                 foreach (var f in fighters_on_my_side)
                 {
-                    tmp.Add(SendPacket.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 25, f.CurHP, 0));
-                    tmp.Add(SendPacket.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 26, f.CurSP, 0));
+                    tmp.Add(Tools.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 25, f.CurHP, 0));
+                    tmp.Add(Tools.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 26, f.CurSP, 0));
                 }
                 foreach (var f in fighters_on_other_side)
-                    tmp.Add(SendPacket.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 25, f.CurHP, 0));
+                    tmp.Add(Tools.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 25, f.CurHP, 0));
 
-                tmp.Add(SendPacket.FromFormat("bb", 52, 1));
+                tmp.Add(Tools.FromFormat("bb", 52, 1));
                 Send(tmp.End());
             }
 

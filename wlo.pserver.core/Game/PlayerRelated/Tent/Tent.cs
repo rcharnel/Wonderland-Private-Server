@@ -15,25 +15,24 @@ namespace Game.Code
 
 
 
-    public class Tent : GameMap
+    public partial class Tent : GameMap
     {
         Game.Player _owner;
         GameMap _ownerMap;
         //List<TentFloor> _floors;
 
         uint _mapx, _mapy;
-        bool _locked, _closed;
+        bool _locked, firstime, _closed;
 
         ushort _floorcolor = 39062, _wallcolor = 39064;
 
         public Tent(Game.Player src)
         {
             _owner = src;
-            m_mapid = src.CharID;
-            m_name = src.CharName + "'s Home";
+            firstime = true;
             //_floors = new List<TentFloor>();
             //_floors.Add(new TentFloor() { MapID = (ushort)_floors.Count });
-            //_closed = true;
+            _closed = true;
         }
 
         public uint X { get { return _mapx; } }
@@ -46,7 +45,7 @@ namespace Game.Code
             _mapy = _owner.CurY;
             _ownerMap = (GameMap)_owner.CurMap;
             _ownerMap.onTentOpened(this);
-            _owner.Send(SendPacket.FromFormat("bbb", 62, 59, 2));
+            _owner.Send(Tools.FromFormat("bbb", 62, 59, 2));
             _closed = false;
         }
         public void Close()
@@ -102,17 +101,34 @@ namespace Game.Code
             {
             }
         }
-        protected override void onWarp_In(byte portalID, Player src, WarpData from)
+        public override string MapName
         {
-            base.onWarp_In(portalID, src, from);
-
-            // add to first floor
-            // _floors[0].onPlayerEntered(src);
-
+            get
+            {
+                return _owner.CharName + "'s Home";
+            }
         }
-        protected override void onWarp_Out(byte portalID, Player src, WarpData To, bool toTent)
+        public override MapType Type
         {
-            base.onWarp_Out(portalID, src, To, toTent);
+            get
+            {
+                return MapType.Tent;
+            }
+        }
+
+        protected override void LoadData()
+        {
+            base.LoadData();
+        }
+
+
+        protected override void Warp_In(TeleportType teletype, Player src, WarpData from = null, byte portalID = 0)
+        {
+            base.Warp_In(teletype, src, from, portalID);
+        }
+        protected override void Warp_Out(byte portalID, Player src, WarpData To, bool toTent)
+        {
+            base.Warp_Out(portalID, src, To, toTent);
         }
         protected async override void SendMapInfo(Player t, bool login = false)
         {
@@ -125,8 +141,8 @@ namespace Game.Code
             #region TentItems (62,4)
             #endregion
 
-            t.Send(SendPacket.FromFormat("bbw", 62, 14, _floorcolor));//floor
-            t.Send(SendPacket.FromFormat("bbw", 62, 15, _wallcolor));//wallpaper
+            t.Send(Tools.FromFormat("bbw", 62, 14, _floorcolor));//floor
+            t.Send(Tools.FromFormat("bbw", 62, 15, _wallcolor));//wallpaper
 
             //65,11 ???
 
@@ -146,20 +162,20 @@ namespace Game.Code
 
             RCLibrary.Core.Networking.PacketBuilder tmp = new RCLibrary.Core.Networking.PacketBuilder();
             tmp.Begin(null);
-            tmp.Add(SendPacket.FromFormat("bb", 23, 138));
+            tmp.Add(Tools.FromFormat("bb", 23, 138));
 
             foreach (var r in m_playerlist)
             {
-                tmp.Add(SendPacket.FromFormat("bbd", 23, 122, r.CharID));
-                tmp.Add(SendPacket.FromFormat("bbdb", 10, 3, r.CharID, 255));
+                tmp.Add(Tools.FromFormat("bbd", 23, 122, r.CharID));
+                tmp.Add(Tools.FromFormat("bbdb", 10, 3, r.CharID, 255));
 
                 if (r.CharID != t.CharID)
                 {
-                    r.Send(SendPacket.FromFormat("bbd", 23, 122, t.CharID));
-                    r.Send(SendPacket.FromFormat("bbdb", 10, 3, t.CharID, 255));
+                    r.Send(Tools.FromFormat("bbd", 23, 122, t.CharID));
+                    r.Send(Tools.FromFormat("bbdb", 10, 3, t.CharID, 255));
 
                     if (r.Emote != 0)
-                        tmp.Add(SendPacket.FromFormat("bbdb", 32, 2, r.CharID, r.Emote));
+                        tmp.Add(Tools.FromFormat("bbdb", 32, 2, r.CharID, r.Emote));
 
                     #region Pets in Map
                     //if (t.Pets.BattlePet != null)//to them
@@ -228,12 +244,12 @@ namespace Game.Code
                     #endregion
                     //23_76                    
                 }
-                tmp.Add(SendPacket.FromFormat("bbd", 23, 76, r.CharID));
+                tmp.Add(Tools.FromFormat("bbd", 23, 76, r.CharID));
 
             }
 
-            tmp.Add(SendPacket.FromFormat("bb", 23, 102));
-            tmp.Add(SendPacket.FromFormat("bb", 20, 8));
+            tmp.Add(Tools.FromFormat("bb", 23, 102));
+            tmp.Add(Tools.FromFormat("bb", 20, 8));
             t.Flags.Add(Game.PlayerFlag.InTent); //t.CharacterState = PlayerState.inMap;
         }
 
@@ -241,6 +257,16 @@ namespace Game.Code
 
         void onPlayerLeaving(Game.Player src)
         {
+        }
+
+        public override void Process(Player src, RecievePacket data)
+        {
+            //resets pointer in packet
+            data.SetPtr();
+
+
+
+            base.Process(src, data);
         }
     }
     

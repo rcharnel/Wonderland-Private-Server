@@ -46,7 +46,7 @@ namespace Server
             while (true);
         }
 
-        protected GameMap GetMap(ushort ID)
+        protected virtual GameMap GetMap(ushort ID)
         {
             if (pluginList != null)
                 if (pluginList.MapList.Count(c => c.MapID == ID) == 1)

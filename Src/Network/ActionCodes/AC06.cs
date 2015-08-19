@@ -29,7 +29,7 @@ namespace Network.ActionCodes
                 p.CurY = g.Unpack16();
                 //WORD unknown = p->Unpack16(7);
                 //p.Info.e = 0;
-                p.CurMap.Broadcast(SendPacket.FromFormat("bbdbww", 6, 1, p.CharID, direction, p.CurX, p.CurY));
+                p.CurMap.Broadcast(Tools.FromFormat("bbdbww", 6, 1, p.CharID, direction, p.CurX, p.CurY));
             }
         }
         void Recv2(Player p, RecievePacket r)

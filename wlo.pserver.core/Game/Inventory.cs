@@ -162,7 +162,7 @@ namespace Game.Code
                                 else
                                     this[slot].Clear();
                             }
-                        if (senddata) owner.Send( SendPacket.FromFormat("bbbb", 23, 9, at, ammt));
+                        if (senddata) owner.Send( Tools.FromFormat("bbbb", 23, 9, at, ammt));
                         return remItem;
                     }
                 }
@@ -287,7 +287,7 @@ namespace Game.Code
             }
         }
 
-        public void ProcessSocket(Packet p)
+        public void ProcessSocket(RecievePacket p)
         {
             p.SetPtr();
 
@@ -317,7 +317,7 @@ namespace Game.Code
                         if (this[pos].ItemID > 0)
                             switch (this[pos].Type)
                             {
-                                //case eItemType.Tent: owner.Tent.Open(); break;
+                                case eItemType.Tent: owner.Tent.Open(); break;
                             }
                     }
                     break;
@@ -332,7 +332,7 @@ namespace Game.Code
                         if (this[pos].ItemID > 0)
                         {
                             // test confirm destroy item
-                            owner.Send( SendPacket.FromFormat("bbwb", 23, 26, this[pos].ItemID, qnt));
+                            owner.Send( Tools.FromFormat("bbwb", 23, 26, this[pos].ItemID, qnt));
                             RemoveItem(pos, qnt);
                         }
                     } break;

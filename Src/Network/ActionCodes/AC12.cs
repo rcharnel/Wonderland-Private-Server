@@ -27,12 +27,12 @@ namespace Wonderland_Private_Server.ActionCodes
             {
                 if (!p.ContinueInteraction())
                 {
-                    p.Send(SendPacket.FromFormat("bb", 20, 8));
+                    p.Send(Tools.FromFormat("bb", 20, 8));
 
                     if (p.Flags.HasFlag(PlayerFlag.Warping))
                     {
                         p.Flags.Add(PlayerFlag.InMap);
-                        p.Send(SendPacket.FromFormat("bb", 5, 4));
+                        p.Send(Tools.FromFormat("bb", 5, 4));
                     }
                     
                     //switch (p.Flags.)

@@ -33,6 +33,7 @@ namespace Plugin
         public CharacterDataBase gCharacterDataBase  { get { return cGlobal.gCharacterDataBase; } }
         public UserDataBase gUserDataBase  { get { return cGlobal.gUserDataBase; } }
         public WorldServerHost GameWorld { get { return cGlobal.gWorld; } }
+        public MapHost gMapManager { get { return (cGlobal.gWorld as MapHost); } }
         //public ItemManager ItemDataBase { get { return cGlobal.WloItemManager; } }
         //public NpcDat NpcDataBase { get { return cGlobal.WloNpcManager; } }
         //public SkillDataFile SkillManager { get { return cGlobal.WloSkillManager; } }
