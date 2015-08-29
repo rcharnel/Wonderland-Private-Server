@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
@@ -7,6 +7,7 @@
 /.gitignore.BASE.99844.gitignore
 /.gitignore.LOCAL.99844.gitignore
 /.gitignore.REMOTE.99844.gitignore
+[Dd]ebug*/
 /bin/Debug/database.override.txt
 /bin/Debug/EntityFramework.SqlServer.xml
 /bin/Debug/EntityFramework.xml
@@ -22,6 +23,7 @@
 /bin/Release/EntityFramework.xml
 /bin/Release/wlophoenixlogFile7292015.txt
 /BuildLog.txt
+/packages/
 /obj/Debug/Gui.TaskItem.resources
 /obj/Debug/Gui.Update.GitUpdateItem.resources
 /wlo.pserver.Bot/obj/Debug/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs
