@@ -50,3 +50,26 @@ C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\Entity
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.EF6.dll
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\EntityFramework.xml
 C:\Users\Rommel JR\Documents\Projects\Wonderland-Private-Server\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe.config
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.exe
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.pdb
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\x86\SQLite.Interop.dll
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\GupdtSrv.dll
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\log4net.dll
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\MySql.Data.dll
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\Octokit.dll
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\PhoenixData.dll
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\RCLibrary.dll
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\System.Data.SQLite.dll
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\wlo.pserver.core.dll
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\wlo.pserver.core.pdb
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\log4net.xml
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csprojResolveAssemblyReference.cache
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Properties.Resources.resources
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.Form1.resources
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\obj\Debug\Wonderland_Private_Server.UI.ShutDown_Dialog.resources
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\obj\Debug\Gui.TaskItem.resources
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\obj\Debug\Gui.Update.GitUpdateItem.resources
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\obj\Debug\Wonderland Private Server.csproj.GenerateResource.Cache
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.exe
+C:\Users\Owner\Documents\GitHubVisualStudio\Wonderland-Private-Server\bin\Debug\Wonderland Private Server.pdb
