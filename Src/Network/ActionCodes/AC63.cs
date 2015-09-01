@@ -44,7 +44,7 @@ namespace Network.ActionCodes
 
                 if ((charNum < 1) || (charNum > 2))//by userid
                 {
-                    p.Send( SendPacket.FromFormat("bb", 0, 32));
+                    p.Send( Tools.FromFormat("bb", 0, 32));
                     return;
                 }
 
@@ -179,47 +179,47 @@ namespace Network.ActionCodes
                             p.Send(tmp);
 
                             //p.State = PlayerState.Connected_CharacterSelection;
-                            p.Send( SendPacket.FromFormat("bb", 35, 11));
+                            p.Send( Tools.FromFormat("bb", 35, 11));
 
                         } break;
                     case 1:
                         {
-                            p.Send( SendPacket.FromFormat("bb", 63, 2));
-                            p.Send( SendPacket.FromFormat("bb", 1, 6));
+                            p.Send( Tools.FromFormat("bb", 63, 2));
+                            p.Send( Tools.FromFormat("bb", 1, 6));
                         } break;
                     case 2:
                         {
                             //if (status != null) status("Server", "Already logged in. ( " + p.UserName + " )");
-                            p.Send( SendPacket.FromFormat("bb", 63, 2));
-                            p.Send( SendPacket.FromFormat("bb", 0, 19));
+                            p.Send( Tools.FromFormat("bb", 63, 2));
+                            p.Send( Tools.FromFormat("bb", 0, 19));
                             cGlobal.gLoginServer.Disconnect(p.UserAcc.UserID);
                         } break;
                     case 3:
                         {
                             SendPacket sp = new SendPacket();// PSENDPACKET PackSend = new SENDPACKET;
                             //PackSend->Clear();
-                            p.Send( SendPacket.FromFormat("bb", 0, 17));
+                            p.Send( Tools.FromFormat("bb", 0, 17));
                             p.Send(sp);
                         } break;
                     case 4:
                         {
                             SendPacket sp = new SendPacket();// PSENDPACKET PackSend = new SENDPACKET;
                             //PackSend->Clear();
-                            p.Send( SendPacket.FromFormat("bb", 0, 65));
+                            p.Send( Tools.FromFormat("bb", 0, 65));
                             p.Send(sp);
                         } break;
                     case 5:
                         {
                             SendPacket sp = new SendPacket();// PSENDPACKET PackSend = new SENDPACKET;
                             //PackSend->Clear();
-                            p.Send( SendPacket.FromFormat("bb", 1, 7));
+                            p.Send( Tools.FromFormat("bb", 1, 7));
                             p.Send(sp);
                         } break;
                     case 6:
                         {
                             SendPacket sp = new SendPacket();// PSENDPACKET PackSend = new SENDPACKET;
                             //PackSend->Clear();
-                            p.Send( SendPacket.FromFormat("bb", 0, 79));
+                            p.Send( Tools.FromFormat("bb", 0, 79));
                             p.Send(sp);
                         } break;
                 }

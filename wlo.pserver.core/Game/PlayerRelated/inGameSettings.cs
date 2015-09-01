@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RCLibrary.Core.Networking;
+using Network;
 
 namespace Game.Code
 {
@@ -47,7 +48,7 @@ namespace Game.Code
                 ChannelCodeType.worldchannel;
         }
 
-        public void ProcessSocket(Packet p)
+        public void ProcessSocket(RecievePacket p)
         {
             p.SetPtr();
 

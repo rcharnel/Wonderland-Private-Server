@@ -15,7 +15,7 @@ namespace Plugin
         CharacterDataBase gCharacterDataBase { get; }
         GameDataBase gGameDataBase { get; }
         WorldServerHost GameWorld { get; }
-      
+        MapHost gMapManager { get; }
 
         #region DataFiles
         //ItemManager ItemDataBase { get; }

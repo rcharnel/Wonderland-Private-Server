@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace Game.Maps
 {
-    public class WarpDest
+    class ShopKeeper:InteractableObjects
     {
-        public int clickID;
-        public int DstID;
-        public int DstX, DstY;
-        public AccessFlags accessBy;
+
     }
 }

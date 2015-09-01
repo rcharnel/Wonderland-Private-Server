@@ -10,7 +10,7 @@ using System.ComponentModel;
 namespace Plugin
 {
 
-    public abstract class PluginObj
+    public abstract class PluginObj:Object
     {
         protected PluginHost myhost;
         protected byte[] hash;

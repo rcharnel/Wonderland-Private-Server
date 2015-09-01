@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Game;
 using Network;
+using Game.Maps;
 
 namespace Network.ActionCodes
 {
@@ -83,18 +84,18 @@ namespace Network.ActionCodes
                             }break;
 #endregion
                         #region warp
-                        //case ":warp":
-                        //    {
-                        //        try
-                        //        {
-                        //            WarpData tmp = new WarpData();
-                        //            tmp.DstMap = ushort.Parse(words[1]);
-                        //            tmp.DstX_Axis = ushort.Parse(words[2]);
-                        //            tmp.DstY_Axis = ushort.Parse(words[3]);
-                        //            p.CurrentMap.Teleport(TeleportType.CmD, ref p, (byte)0, tmp);
-                        //        }
-                        //        catch { }
-                        //    }break;
+                        case ":warp":
+                            {
+                                try
+                                {
+                                    WarpData tmp = new WarpData();
+                                    tmp.DstMap = ushort.Parse(words[1]);
+                                    tmp.DstX_Axis = ushort.Parse(words[2]);
+                                    tmp.DstY_Axis = ushort.Parse(words[3]);
+                                    p.CurMap.Teleport(TeleportType.CmD, p, (byte)0, tmp);
+                                }
+                                catch { }
+                            } break;
                         #endregion
 
                         #region CommandLine Develops

@@ -12,9 +12,8 @@ namespace Game.Maps
         None,
         Any = 1,
     }
-    public class WarpPortal
+    public class WarpPortal:MapObject
     {
-        public int clickID;
         public int DstID;
         public int x, y;
         public AccessFlags accessBy;

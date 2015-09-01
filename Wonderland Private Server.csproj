@@ -105,6 +105,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\cGlobal.cs" />
+    <Compile Include="Src\Debugging\Debug.cs" />
     <Compile Include="Src\Gui\MainForm1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -181,6 +182,9 @@
       <DependentUpon>GitUpdateItem.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="Data\ServerDataBase.db.temp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -197,6 +201,8 @@
   <ItemGroup>
     <Folder Include="bin\Debug\Data\" />
     <Folder Include="bin\Release\Data\" />
+    <Folder Include="Src\Server\Database\Editor\" />
+    <Folder Include="Src\Server\Database\Migration\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Debug\UnRar.exe" />
@@ -247,7 +253,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" />
+      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" />
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

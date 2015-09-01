@@ -25,11 +25,11 @@ namespace Wonderland_Private_Server.ActionCodes
         void Recv8(Player p, RecievePacket r)
         {
             if (!p.CurMap.Teleport(TeleportType.Regular, p, (byte)r.Unpack16()))
-                p.Send(SendPacket.FromFormat("bb", 20, 8));
+                p.Send(Tools.FromFormat("bb", 20, 8));
         }
         void Recv1(Player p, RecievePacket r)
         {
-            p.Send(SendPacket.FromFormat("bb", 20, 8));
+            p.Send(Tools.FromFormat("bb", 20, 8));
             //if (!p.CurrentMap.ProccessInteraction(r.Unpack8(), ref p))
             //{
             //    SendPacket tmp = new SendPacket();
@@ -41,12 +41,12 @@ namespace Wonderland_Private_Server.ActionCodes
         {
             if (!p.ContinueInteraction())
             {
-                p.Send(SendPacket.FromFormat("bb", 20, 8));
+                p.Send(Tools.FromFormat("bb", 20, 8));
 
                 if (p.Flags.HasFlag(PlayerFlag.Warping))
                 {
                     p.Flags.Add(PlayerFlag.InMap);
-                    p.Send(SendPacket.FromFormat("bb", 5, 4));
+                    p.Send(Tools.FromFormat("bb", 5, 4));
                 }
 
                 //switch (p.State)

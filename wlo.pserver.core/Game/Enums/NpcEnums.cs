@@ -10,6 +10,11 @@ namespace Game
     {
         None,
         RegularNpc,
+        ShopKeeper,
         Mob,
+    }
+    public enum InteractionType
+    {
+
     }
 }

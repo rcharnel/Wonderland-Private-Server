@@ -48,7 +48,7 @@ namespace Network.ActionCodes
                     {
                         //make sure no save of data by setting values to 0
                         tp.Clear();
-                        tp.Send( SendPacket.FromFormat("bb", 0, 30));
+                        tp.Send( Tools.FromFormat("bb", 0, 30));
                         return;
                     }
                 }
@@ -87,7 +87,7 @@ namespace Network.ActionCodes
             catch (Exception t)
             {
                 DebugSystem.Write(new ExceptionData(t));
-                tp.Send( SendPacket.FromFormat("bb", 0, 30));
+                tp.Send( Tools.FromFormat("bb", 0, 30));
             }
 
 
@@ -99,11 +99,11 @@ namespace Network.ActionCodes
             string name = e.UnpackStringN();
             if ((nameLen < 4) || (nameLen > 14) || !cGlobal.gCharacterDataBase.LockName(tp.UserAcc.DataBaseID, name))
             {
-                tp.Send( SendPacket.FromFormat("bbb", 9, 3, 1));
+                tp.Send( Tools.FromFormat("bbb", 9, 3, 1));
                 return;
             }
             tp.CharName = name;
-            tp.Send( SendPacket.FromFormat("bbb", 9, 3, 0));
+            tp.Send( Tools.FromFormat("bbb", 9, 3, 0));
         }
 
 

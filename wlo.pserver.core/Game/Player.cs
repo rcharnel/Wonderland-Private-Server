@@ -47,7 +47,7 @@ using Game.Maps;
                 return m_Flags.Contains(flag);
             }
         }
-
+        
 
         public class Player : Game.Character, IDisposable, INotifyPropertyChanged
         {
@@ -85,7 +85,7 @@ using Game.Maps;
             //Friendlist m_friendlist;
             //RiceBall m_riceball;
             //PetList m_petlist;
-            //Tent m_tent;
+            Tent m_tent;
             #endregion
 
 
@@ -101,13 +101,14 @@ using Game.Maps;
                 m_inv = new Inventory(this,itemdat);
                 onWearEquip = m_inv.onWearEquip;
                 onEquip_Remove = m_inv.onUnEquip;
+                m_tent = new Tent(this);
 
                 m_useracc = new User();
                 Flags = new PlayerFlagManager();
                 m_settings = new ClientSettings();
                 //m_friendlist = new Friendlist(new Action<SendPacket>(SendPacket));
                 //m_Mail = new MailManager(this);
-                //m_tent = new Tent(this);
+                
                 //m_petlist = new PetList(this);
 
                 while (m_socket.m_IncomingPackets.Count > 0)
@@ -115,6 +116,7 @@ using Game.Maps;
                     IPacket p;
                     m_socket.m_IncomingPackets.TryDequeue(out p);
                     ProcessSocket(p);
+
                 }
 
 
@@ -221,8 +223,9 @@ using Game.Maps;
             //}
             public Inventory Inv { get { return m_inv ?? null; } }
             public EquipManager Eqs { get { return ((EquipManager)this) ?? null; } }
+            public byte Emote { get { lock (mlock)return emote; } set { lock (mlock)emote = value; } }
             //public cPetList Pets { get { return m_pets; } }
-            //public Tent Tent { get { return m_tent; } }
+            public Tent Tent { get { return m_tent; } }
             public Game.Battle.BattleScene MyBattle { get { return m_battle; } set { m_battle = value; } }
             //public cRiceBall RiceBall { get { return m_riceball; } }
             //public SendType DataOut
@@ -346,15 +349,38 @@ using Game.Maps;
             #region ThreadSafe  Methods
 
             #region ClientSock
-            
-            public void Send(byte[] src, RCLibrary.Core.Networking.PacketFlags pFlags = PacketFlags.None)
+
+            /// <summary>
+            /// Send Player a packet
+            /// </summary>
+            /// <param name="src"></param>
+            public void Send(SendPacket src)
+            {
+                if (src.Flags == PacketFlags.Queued || src.Flags == PacketFlags.Queue_Dc)
+                {
+                    src.Flags -= PacketFlags.Queued;
+                    QueueData.Enqueue(src);
+                    return;
+                }
+                Send(src, src.Flags);
+            }
+            public void Send(byte[] src)
+            {
+
+            }
+            public void Send(byte[] src, RCLibrary.Core.Networking.PacketFlags pFlags)
             {
                 SendPacket p = new SendPacket(src);
-                p.Flags = pFlags;
-                m_socket.SendPacket(p);
+                Send(p, pFlags);
             }
-            public void Send(SendPacket p, RCLibrary.Core.Networking.PacketFlags pFlags = PacketFlags.None)
+            public void Send(SendPacket p, RCLibrary.Core.Networking.PacketFlags pFlags)
             {
+                if (pFlags == PacketFlags.Queued || pFlags == PacketFlags.Queue_Dc)
+                {
+                    p.Flags -= PacketFlags.Queued;
+                    QueueData.Enqueue(p);
+                    return;
+                }
                 p.Flags = pFlags;
                 m_socket.SendPacket(p);
 
@@ -380,9 +406,12 @@ using Game.Maps;
 
                     base.ProcessSocket(this, p);
                     m_inv.ProcessSocket(p);
-                    m_settings.ProcessSocket(p);
+                    if (m_settings != null)
+                        m_settings.ProcessSocket(p);
                     if (m_battle != null)
                         m_battle.ProcessSocket(p);
+                    if (m_tent != null)
+                        m_tent.Process(this, p);
 
 
                 }
@@ -428,6 +457,35 @@ using Game.Maps;
             //        }
             //    }
             //}
+                       
+
+            #endregion
+            
+            #region Game.Battle
+            public void OnBattle_Start(Game.Battle.BattleScene battle)
+            {
+            }
+
+            void Battle_OnNewRound(List<Game.Battle.Fighter> fighters_on_my_side, List<Game.Battle.Fighter> fighters_on_other_side)
+            {
+                PacketBuilder tmp = new PacketBuilder();
+                tmp.Begin(null);
+
+                foreach (var f in fighters_on_my_side)
+                {
+                    tmp.Add(Tools.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 25, f.CurHP, 0));
+                    tmp.Add(Tools.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 26, f.CurSP, 0));
+                }
+                foreach (var f in fighters_on_other_side)
+                    tmp.Add(Tools.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 25, f.CurHP, 0));
+
+                tmp.Add(Tools.FromFormat("bb", 52, 1));
+                Send(tmp.End());
+            }
+
+            #endregion
+            
+            #region Game.Mail
 
             #endregion
 
@@ -552,6 +610,56 @@ using Game.Maps;
 
             //    Send(p);
             //}
+            
+            public bool Load_CharacterInfo(Character data)
+            {
+                if (data == null) return false;
+                CharID = data.CharID;
+                CharName = data.CharName;
+                Slot = data.Slot;
+                Head = data.Head;
+                Body = data.Body;
+                TotalExp = 95000478;//data.TotalEXP
+                CharName = data.CharName;
+                NickName = data.NickName;
+                LoginMap = data.LoginMap;
+                CurSP = data.CurSP;
+                CurHP = data.CurHP;
+                CurX = data.CurX;
+                CurY = data.CurY;
+                HairColor = data.HairColor;
+                SkinColor = data.SkinColor;
+                ClothingColor = data.ClothingColor;
+                EyeColor = data.EyeColor;
+                SetGold((int)data.Gold);
+                Element = data.Element;
+                Job = data.Job;
+                Potential = data.Potential;
+                foreach (var stat in data.GetStatArray())
+                    SetBaseStat(stat[0], stat[1]);
+
+                for (byte a = 1; a < 7; a++)
+                    this[a].CopyFrom(data[a]);
+
+                //remove
+                FillHP();
+                FillSP();
+
+                return true;
+            }
+            public bool ContinueInteraction()
+            {
+                if (QueueData.Count == 1)
+                {
+                    m_socket.SendPacket(QueueData.Dequeue());
+                    return false;// (object_interactingwith != null);
+                }
+                else if (QueueData.Count > 1)
+                {
+                    m_socket.SendPacket(QueueData.Dequeue()); return true;
+                }
+                return false;
+            }
 
             #endregion
 
@@ -832,7 +940,7 @@ using Game.Maps;
             //public Inventory Inv { get { return m_inv; } }
             
            
-            public byte Emote { get { lock (mlock)return emote; } set { lock (mlock)emote = value; } }
+            
             //public MailManager Mail { get { return m_Mail; } }
             //public Friendlist MyFriends { get { return m_friendlist; } }
             //public RiceBall Disguise { get { return m_riceball; } }
@@ -857,16 +965,7 @@ using Game.Maps;
             public string DisplayName { get { return SockAddress() + " ID: " + UserAcc.UserID + " User: " + UserAcc.UserName + " Char: " + CharName; } }
 
             #endregion
-
-            #region IEventRequester
-            public object WhoIam { get { return this; } }
-            public bool isThere { get { return !isDisconnected(); } }
-            #endregion
-
-            #region ISocket
-                        
-            #endregion
-
+            
             #region Inotify Property
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -884,83 +983,11 @@ using Game.Maps;
             }
             #endregion
             
-            #region Game.Mail
+            
 
-            #endregion
-
-            #region Game.Battle
-            public void OnBattle_Start(Game.Battle.BattleScene battle)
-            {
-            }
-
-            void Battle_OnNewRound(List<Game.Battle.Fighter> fighters_on_my_side, List<Game.Battle.Fighter> fighters_on_other_side)
-            {
-                PacketBuilder tmp = new PacketBuilder();
-                tmp.Begin(null);
-
-                foreach (var f in fighters_on_my_side)
-                {
-                    tmp.Add(SendPacket.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 25, f.CurHP, 0));
-                    tmp.Add(SendPacket.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 26, f.CurSP, 0));
-                }
-                foreach (var f in fighters_on_other_side)
-                    tmp.Add(SendPacket.FromFormat("bbbbbwd", 51, 1, f.GridX, f.GridY, 25, f.CurHP, 0));
-
-                tmp.Add(SendPacket.FromFormat("bb", 52, 1));
-                Send(tmp.End());
-            }
-
-            #endregion
+            
 
 
-            public bool Load_CharacterInfo(Character data)
-            {
-                if (data == null) return false;
-                CharID = data.CharID;
-                CharName = data.CharName;
-                Slot = data.Slot;
-                Head = data.Head;
-                Body = data.Body;
-                TotalExp = 95000478;//data.TotalEXP
-                CharName = data.CharName;
-                NickName = data.NickName;
-                LoginMap = data.LoginMap;
-                CurSP = data.CurSP;
-                CurHP = data.CurHP;
-                CurX = data.CurX;
-                CurY = data.CurY;
-                HairColor = data.HairColor;
-                SkinColor = data.SkinColor;
-                ClothingColor = data.ClothingColor;
-                EyeColor = data.EyeColor;
-                SetGold((int)data.Gold);
-                Element = data.Element;
-                Job = data.Job;
-                Potential = data.Potential;
-                foreach (var stat in data.GetStatArray())
-                    SetBaseStat(stat[0], stat[1]);
-
-                for (byte a = 1; a < 7; a++)
-                    this[a].CopyFrom(data[a]);
-
-                //remove
-                FillHP();
-                FillSP();
-
-                return true;
-            }
-            public bool ContinueInteraction()
-            {
-                if (QueueData.Count == 1)
-                {
-                    m_socket.SendPacket(QueueData.Dequeue());
-                    return false;// (object_interactingwith != null);
-                }
-                else if (QueueData.Count > 1)
-                {
-                    m_socket.SendPacket(QueueData.Dequeue()); return true;
-                }
-                return false;
-            }
+            
         }
     }
